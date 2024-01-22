@@ -9,10 +9,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           src={SwimmingPool}
           alt="A big pool in background"
           quality="100"
-          layout="fill"
         />
       </div>
-      {children}
+      <div className="flex h-screen items-center justify-center">
+        {children}
+      </div>
     </>
   );
 }
