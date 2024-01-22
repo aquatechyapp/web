@@ -1,9 +1,13 @@
+'use client';
+
 import TabIcon from '@/components/ui/tab-icon';
 import SideMenuNavLink from './SideMenuNavLink';
 import CustomerIcon from '@/components/ui/customer-icon';
 import RouteIcon from '@/components/ui/route-icon';
 import TeamIcon from '@/components/ui/team-icon';
 import { AvatarIcon, DashboardIcon } from '@radix-ui/react-icons';
+import { IoSettingsOutline } from 'react-icons/io5';
+import { IoIosHelpCircleOutline } from 'react-icons/io';
 
 export default function SideMenuNav() {
   return (
@@ -22,28 +26,36 @@ export default function SideMenuNav() {
           </div>
         </div>
         <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
-          <SideMenuNavLink Icon={TabIcon} text="Dashboard" />
-          <SideMenuNavLink Icon={CustomerIcon} text="Customers" />
-          <SideMenuNavLink Icon={RouteIcon} text="Routes" />
-          <SideMenuNavLink Icon={TeamIcon} text="My team " />
-          <SideMenuNavLink Icon={DashboardIcon} text="Integrations" />
-          <SideMenuNavLink Icon={AvatarIcon} text="My Account " />
+          <SideMenuNavLink href="/dashboard" Icon={TabIcon} text="Dashboard" />
+          <SideMenuNavLink
+            href="/customers"
+            Icon={CustomerIcon}
+            text="Customers"
+          />
+          <SideMenuNavLink href="/routes" Icon={RouteIcon} text="Routes" />
+          <SideMenuNavLink href="/my-team" Icon={TeamIcon} text="My team " />
+          <SideMenuNavLink
+            href="/integrations"
+            Icon={DashboardIcon}
+            text="Integrations"
+          />
+          <SideMenuNavLink
+            href="/my-account"
+            Icon={AvatarIcon}
+            text="My Account "
+          />
         </div>
-        <div className="flex flex-col items-start justify-start">
-          <div className="flex h-[108px] flex-col items-start justify-start gap-1 self-stretch pb-2">
-            <div className="relative h-12 bg-black">
-              <div className="absolute left-[24px] top-[12px] h-6 opacity-90" />
-              <div className="font-['General Sans'] absolute left-[71px] top-[16px] text-base font-medium leading-none text-zinc-100">
-                Settings
-              </div>
-            </div>
-            <div className="relative h-12 bg-black">
-              <div className="absolute left-[24px] top-[12px] h-6  opacity-90" />
-              <div className="font-['General Sans'] absolute left-[71px] top-[16px] text-base font-medium leading-none text-zinc-100">
-                Help center
-              </div>
-            </div>
-          </div>
+        <div className="flex w-[100%] flex-col justify-start">
+          <SideMenuNavLink
+            href="/settings"
+            Icon={IoSettingsOutline}
+            text="Settings"
+          />
+          <SideMenuNavLink
+            href="/help"
+            Icon={IoIosHelpCircleOutline}
+            text="Help center"
+          />
         </div>
       </div>
     </aside>
