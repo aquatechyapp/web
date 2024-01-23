@@ -15,15 +15,15 @@ export default function SideMenuNavLink({ Icon, text, href }: Props) {
       href={href}
       className={`flex h-12 w-[100%] items-center justify-center   ${isActive && 'border-r-4 border-indigo-500 bg-gray-800 '}`}
     >
-      <div className="flex w-[80%] items-center justify-center">
-        <div className="opacity-90">
+      <div className="flex w-[80%] items-center ">
+        <div className="mr-4">
           <Icon
-            className={`"mr-4 ${isActive ? 'text-indigo-500' : 'text-gray-300'}`}
+            className={`opacity-90 ${isActive ? 'text-indigo-500' : 'text-gray-300'}`}
             height={24}
             width={24}
           />
         </div>
-        <div className="font-['General Sans']  text-base font-medium leading-none text-slate-50">
+        <div className="font-['General Sans'] w-[100%]  text-base font-medium leading-none text-slate-50">
           {text}
         </div>
       </div>

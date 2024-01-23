@@ -49,7 +49,7 @@ export default function Dashboard() {
           <StatisticCard type="income" />
           <StatisticCard type="expenses" />
           <StatisticCard type="profit" />
-          <StatisticCard type="customers" />
+          <StatisticCard type="clients" />
         </div>
         <div className="Row inline-flex items-start justify-start gap-6 self-stretch">
           <ActionButton type="add_client" />

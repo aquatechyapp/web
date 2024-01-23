@@ -5,10 +5,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex grid h-screen w-screen grid-cols-6">
       <SideMenuNav />
-
       <div className="col-span-5 bg-[#FAFAFA]">
         <TopBarMenu />
-        {children}
+        <main className="pl-7">{children}</main>
       </div>
     </div>
   );

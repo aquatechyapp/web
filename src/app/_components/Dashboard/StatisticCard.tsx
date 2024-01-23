@@ -22,15 +22,15 @@ const types = {
     prefix: '$',
     Icon: TfiMoney
   },
-  customers: {
-    title: 'Customers',
+  clients: {
+    title: 'Clients',
     color: 'from-purple-700 to-blue-600',
     prefix: '',
     Icon: IoMdPersonAdd
   }
 };
 
-type StatisticCardType = 'income' | 'expenses' | 'profit' | 'customers';
+type StatisticCardType = 'income' | 'expenses' | 'profit' | 'clients';
 
 type Props = {
   type: StatisticCardType;

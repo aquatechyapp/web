@@ -8,6 +8,7 @@ export default function TopBarMenu() {
       <div className="flex items-center justify-start gap-6">
         <div className="flex items-center justify-start gap-6">
           <div className="flex items-center justify-start gap-2">
+            {/* Componente dropdown pra selecionar rota eu acho */}
             <div className="font-['General Sans'] text-2xl font-semibold leading-9 text-gray-800">
               Dashboard
             </div>

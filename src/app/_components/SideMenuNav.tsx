@@ -27,11 +27,7 @@ export default function SideMenuNav() {
         </div>
         <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
           <SideMenuNavLink href="/dashboard" Icon={TabIcon} text="Dashboard" />
-          <SideMenuNavLink
-            href="/customers"
-            Icon={CustomerIcon}
-            text="Customers"
-          />
+          <SideMenuNavLink href="/clients" Icon={CustomerIcon} text="Clients" />
           <SideMenuNavLink href="/routes" Icon={RouteIcon} text="Routes" />
           <SideMenuNavLink href="/my-team" Icon={TeamIcon} text="My team " />
           <SideMenuNavLink
