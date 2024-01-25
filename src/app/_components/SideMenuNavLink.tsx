@@ -8,8 +8,10 @@ type Props = {
 };
 
 export default function SideMenuNavLink({ Icon, text, href }: Props) {
-  const pathname = usePathname();
-  const isActive = href === pathname;
+  let pathname = usePathname();
+  pathname = pathname.split('/')[1];
+
+  const isActive = href === '/' + pathname;
   return (
     <Link
       href={href}

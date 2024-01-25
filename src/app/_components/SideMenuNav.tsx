@@ -2,12 +2,12 @@
 
 import TabIcon from '@/components/ui/tab-icon';
 import SideMenuNavLink from './SideMenuNavLink';
-import CustomerIcon from '@/components/ui/customer-icon';
 import RouteIcon from '@/components/ui/route-icon';
 import TeamIcon from '@/components/ui/team-icon';
 import { AvatarIcon, DashboardIcon } from '@radix-ui/react-icons';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { IoIosHelpCircleOutline } from 'react-icons/io';
+import ClientIcon from '@/components/ui/client-icon';
 
 export default function SideMenuNav() {
   return (
@@ -27,7 +27,7 @@ export default function SideMenuNav() {
         </div>
         <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
           <SideMenuNavLink href="/dashboard" Icon={TabIcon} text="Dashboard" />
-          <SideMenuNavLink href="/clients" Icon={CustomerIcon} text="Clients" />
+          <SideMenuNavLink href="/clients" Icon={ClientIcon} text="Clients" />
           <SideMenuNavLink href="/routes" Icon={RouteIcon} text="Routes" />
           <SideMenuNavLink href="/my-team" Icon={TeamIcon} text="My team " />
           <SideMenuNavLink
