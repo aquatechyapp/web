@@ -1,5 +1,3 @@
-import InfoItem from './InfoItem';
-
 type Props = {
   title: string;
   description: string;
