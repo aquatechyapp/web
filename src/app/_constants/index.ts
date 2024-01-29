@@ -3,8 +3,6 @@ import RouteIcon from '@/components/ui/route-icon';
 import TabIcon from '@/components/ui/tab-icon';
 import TeamIcon from '@/components/ui/team-icon';
 import { AvatarIcon, DashboardIcon } from '@radix-ui/react-icons';
-import { IoIosHelpCircleOutline } from 'react-icons/io';
-import { IoSettingsOutline } from 'react-icons/io5';
 
 export const routes = [
   {
@@ -39,15 +37,15 @@ export const routes = [
   }
 ];
 
-const settings = [
-  {
-    text: 'Help',
-    href: '/help',
-    icon: IoIosHelpCircleOutline
-  },
-  {
-    text: 'Settings',
-    href: '/settings',
-    icon: IoSettingsOutline
-  }
-];
+// const settings = [
+//   {
+//     text: 'Help',
+//     href: '/help',
+//     icon: IoIosHelpCircleOutline
+//   },
+//   {
+//     text: 'Settings',
+//     href: '/settings',
+//     icon: IoSettingsOutline
+//   }
+// ];

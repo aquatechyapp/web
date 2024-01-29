@@ -1,4 +1,4 @@
-export function Card({ image, name, role, email, phone }) {
+export function Card({ name, role, email, phone }) {
   return (
     <div className="inline-flex h-[248px] w-[211px] flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4">
       <div className="flex h-[138px] flex-col items-center justify-start gap-4 self-stretch">

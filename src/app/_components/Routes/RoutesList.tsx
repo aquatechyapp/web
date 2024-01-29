@@ -65,7 +65,7 @@ const routes = [
   }
 ];
 
-function RouteItem({ image, name, address, id, index }) {
+function RouteItem({ name, address, id, index }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -123,7 +123,6 @@ export function RoutesList() {
   function handleDragStart(event) {
     setActive(event.active.data.current.sortable.index);
   }
-  console.log(active);
 
   return (
     <div className="inline-flex w-[100%] flex-col items-center justify-start gap-3.5 rounded-lg border border-zinc-200 bg-white p-6">
@@ -146,7 +145,6 @@ export function RoutesList() {
             <RouteItem
               id={route.id}
               key={route.id}
-              // address={'route.address'}
               address={route.address}
               image={route.image}
               name={route.name}
@@ -160,7 +158,6 @@ export function RoutesList() {
               <RouteItem
                 id={items[active].id}
                 key={items[active].id}
-                // address={'items[active].address'}
                 address={items[active].address}
                 image={items[active].image}
                 name={items[active].name}

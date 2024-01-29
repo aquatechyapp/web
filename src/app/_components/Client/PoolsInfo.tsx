@@ -1,12 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { MdDeleteOutline, MdOutlineEdit } from 'react-icons/md';
 import BasicInformation from './BasicInformation';
 import Services from './Services';
 
-function PoolCard({ pool }) {
+function PoolCard() {
   const [tab, setTab] = useState<'pool_info' | 'services'>('pool_info');
 
   const handleTabChange = (tab: 'pool_info' | 'services') => {
