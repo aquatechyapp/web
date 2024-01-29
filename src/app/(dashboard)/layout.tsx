@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <SideMenuNav />
       <div className="col-span-5 bg-[#FAFAFA]">
         <TopBarMenu />
-        <main className="pl-7">{children}</main>
+        <main className="px-7">{children}</main>
       </div>
     </div>
   );

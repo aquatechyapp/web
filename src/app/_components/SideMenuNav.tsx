@@ -29,14 +29,14 @@ export default function SideMenuNav() {
           <SideMenuNavLink href="/dashboard" Icon={TabIcon} text="Dashboard" />
           <SideMenuNavLink href="/clients" Icon={ClientIcon} text="Clients" />
           <SideMenuNavLink href="/routes" Icon={RouteIcon} text="Routes" />
-          <SideMenuNavLink href="/my-team" Icon={TeamIcon} text="My team " />
+          <SideMenuNavLink href="/team" Icon={TeamIcon} text="My team " />
           <SideMenuNavLink
             href="/integrations"
             Icon={DashboardIcon}
             text="Integrations"
           />
           <SideMenuNavLink
-            href="/my-account"
+            href="/account"
             Icon={AvatarIcon}
             text="My Account "
           />
