@@ -44,7 +44,7 @@ export default function Dashboard() {
       <div className="my-7 text-2xl font-semibold text-gray-800">
         January, 2024 (01/01 - 01/09)
       </div>
-      <div className="Frame211 inline-flex h-[665px] flex-col items-start justify-start gap-6">
+      <div className="Frame211 inline-flex flex-col items-start justify-start gap-6">
         <div className="Row inline-flex items-start justify-start gap-6 self-stretch">
           <StatisticCard type="income" />
           <StatisticCard type="expenses" />

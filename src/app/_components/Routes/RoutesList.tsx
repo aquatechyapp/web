@@ -126,7 +126,7 @@ export function RoutesList() {
   console.log(active);
 
   return (
-    <div className="inline-flex flex-col items-center justify-start gap-3.5 rounded-lg border border-zinc-200 bg-white p-6">
+    <div className="inline-flex w-[100%] flex-col items-center justify-start gap-3.5 rounded-lg border border-zinc-200 bg-white p-6">
       <WeekdaysNav
         selectedWeekday={selectedWeekday}
         setSelectedWeekday={setSelectedWeekday}
@@ -156,15 +156,17 @@ export function RoutesList() {
         </SortableContext>
         <DragOverlay>
           {active !== null ? (
-            <RouteItem
-              id={items[active].id}
-              key={items[active].id}
-              // address={'items[active].address'}
-              address={items[active].address}
-              image={items[active].image}
-              name={items[active].name}
-              index={active}
-            />
+            <div className="w-[100%]">
+              <RouteItem
+                id={items[active].id}
+                key={items[active].id}
+                // address={'items[active].address'}
+                address={items[active].address}
+                image={items[active].image}
+                name={items[active].name}
+                index={active}
+              />
+            </div>
           ) : null}
         </DragOverlay>
       </DndContext>

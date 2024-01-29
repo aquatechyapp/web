@@ -1,24 +1,19 @@
 import Link from 'next/link';
 import { IoIosSearch } from 'react-icons/io';
-import { MdArrowDropDown, MdNotificationsNone } from 'react-icons/md';
+import { MdNotificationsNone } from 'react-icons/md';
+import { DropdownTop } from './DropdownTop';
 
 export default function TopBarMenu() {
   return (
     <div className="inline-flex h-20 w-[100%] items-center justify-between bg-white px-9 py-5 shadow-inner">
       <div className="flex items-center justify-start gap-6">
         <div className="flex items-center justify-start gap-6">
-          <div className="flex items-center justify-start gap-2">
-            {/* Componente dropdown pra selecionar rota eu acho */}
-            <div className="font-['General Sans'] text-2xl font-semibold leading-9 text-gray-800">
-              Dashboard
-            </div>
-            <MdArrowDropDown />
-          </div>
+          <DropdownTop />
         </div>
       </div>
       <div className="flex items-start justify-start gap-2">
         <Link
-          href="my-account"
+          href="account"
           className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 p-3"
         >
           <div className="font-['General Sans'] text-center text-sm font-medium leading-[14px] text-white">

@@ -1,13 +1,9 @@
 'use client';
 
-import TabIcon from '@/components/ui/tab-icon';
 import SideMenuNavLink from './SideMenuNavLink';
-import RouteIcon from '@/components/ui/route-icon';
-import TeamIcon from '@/components/ui/team-icon';
-import { AvatarIcon, DashboardIcon } from '@radix-ui/react-icons';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { IoIosHelpCircleOutline } from 'react-icons/io';
-import ClientIcon from '@/components/ui/client-icon';
+import { routes } from '../_constants';
 
 export default function SideMenuNav() {
   return (
@@ -26,20 +22,16 @@ export default function SideMenuNav() {
           </div>
         </div>
         <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
-          <SideMenuNavLink href="/dashboard" Icon={TabIcon} text="Dashboard" />
-          <SideMenuNavLink href="/clients" Icon={ClientIcon} text="Clients" />
-          <SideMenuNavLink href="/routes" Icon={RouteIcon} text="Routes" />
-          <SideMenuNavLink href="/team" Icon={TeamIcon} text="My team " />
-          <SideMenuNavLink
-            href="/integrations"
-            Icon={DashboardIcon}
-            text="Integrations"
-          />
-          <SideMenuNavLink
-            href="/account"
-            Icon={AvatarIcon}
-            text="My Account "
-          />
+          {routes.map((route) => {
+            return (
+              <SideMenuNavLink
+                key={route.href}
+                href={route.href}
+                Icon={route.icon}
+                text={route.text}
+              />
+            );
+          })}
         </div>
         <div className="flex w-[100%] flex-col justify-start">
           <SideMenuNavLink
