@@ -26,7 +26,7 @@ export function DropdownTop() {
               {routes.map((route) => {
                 const Icon = route.icon;
                 return (
-                  <div className="flex items-center px-2">
+                  <div className="flex items-center px-2" key={route.href}>
                     <Icon />
                     <ListItem
                       key={route.href}

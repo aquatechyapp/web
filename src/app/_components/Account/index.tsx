@@ -7,7 +7,7 @@ export default function Account() {
       <div className="mt-6 text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
         My account
       </div>
-      <div className="inline-flex w-[100%] flex-col items-start justify-start gap-4 bg-white p-6">
+      <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
         <div className="h-5  text-sm font-medium leading-tight tracking-tight text-zinc-500">
           Basic information
         </div>
@@ -30,7 +30,7 @@ export default function Account() {
           <Input placeholder="Mobile phone" />
           <Input placeholder="E-mail" />
         </div>
-        <Button className="h-10 w-[100%]">Update account</Button>
+        <Button className="h-10 w-full">Update account</Button>
       </div>
     </>
   );

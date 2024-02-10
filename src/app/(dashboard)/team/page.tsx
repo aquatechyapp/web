@@ -1,4 +1,4 @@
-import Team from '@/app/_components/Team';
+import Team from '@/app/(dashboard)/team/_components';
 
 export default function Page() {
   return <Team />;

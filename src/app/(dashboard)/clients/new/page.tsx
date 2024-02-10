@@ -1,5 +1,5 @@
-import AddClient from '@/app/_components/Client/AddClient';
+import { NewClient } from '../_components/NewClient';
 
 export default function Page() {
-  return <AddClient />;
+  return <NewClient />;
 }

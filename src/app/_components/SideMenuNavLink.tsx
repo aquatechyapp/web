@@ -15,7 +15,7 @@ export default function SideMenuNavLink({ Icon, text, href }: Props) {
   return (
     <Link
       href={href}
-      className={`flex h-12 w-[100%] items-center justify-center   ${isActive && 'border-r-4 border-indigo-500 bg-gray-800 '}`}
+      className={`flex h-12 w-full items-center justify-center   ${isActive && 'border-r-4 border-indigo-500 bg-gray-800 '}`}
     >
       <div className="flex w-[80%] items-center ">
         <div className="mr-4">
@@ -25,7 +25,7 @@ export default function SideMenuNavLink({ Icon, text, href }: Props) {
             width={24}
           />
         </div>
-        <div className="font-['General Sans'] w-[100%]  text-base font-medium leading-none text-slate-50">
+        <div className="font-['General Sans'] w-full  text-base font-medium leading-none text-slate-50">
           {text}
         </div>
       </div>

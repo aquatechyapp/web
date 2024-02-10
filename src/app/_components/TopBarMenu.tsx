@@ -5,7 +5,7 @@ import { DropdownTop } from './DropdownTop';
 
 export default function TopBarMenu() {
   return (
-    <div className="inline-flex h-20 w-[100%] items-center justify-between bg-white px-9 py-5 shadow-inner">
+    <div className="inline-flex h-20 w-full items-center justify-between bg-white px-9 py-5 shadow-inner">
       <div className="flex items-center justify-start gap-6">
         <div className="flex items-center justify-start gap-6">
           <DropdownTop />

@@ -1,4 +1,4 @@
-import NewClient from '@/app/_components/Team/NewClient';
+import NewClient from '@/app/(dashboard)/team/_components/NewClient';
 
 export default function Page() {
   return <NewClient />;
