@@ -16,7 +16,8 @@ export default function StateAndCitySelect({
   cityName = 'clientCity'
 }: Props) {
   const [cities, setCities] = useState<ICity[]>([]);
-  const state = form.watch('state');
+  const state = form.watch(stateName);
+  const city = form.watch(cityName);
 
   const handleStateChange = (selectedState: string) => {
     if (!selectedState) return;
@@ -34,6 +35,7 @@ export default function StateAndCitySelect({
       <SelectField
         form={form}
         name={stateName}
+        value={state}
         placeholder="State"
         onValueChange={handleStateChange}
         data={states.map((state) => {
@@ -45,9 +47,10 @@ export default function StateAndCitySelect({
         })}
       />
       <SelectField
-        disabled={cities.length === 0}
+        // disabled={!state || cities.length === 0}
         form={form}
         name={cityName}
+        value={city}
         placeholder={'City'}
         data={cities.map((city) => {
           return {

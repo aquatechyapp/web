@@ -11,16 +11,22 @@ import { useMaskito } from '@maskito/react';
 import { PhoneMask, Weekdays } from '../../constants';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  ComboboxDemo,
-  DropdownMenuCheckboxes
-} from '@/components/ui/multiple-select';
+import { DropdownMenuCheckboxes } from '@/components/ui/multiple-select';
+import { Label } from '@/components/ui/label';
 
 type Props = {
   form: any;
   name: string;
   placeholder?: string;
-  type?: any;
+  type?:
+    | 'checkbox'
+    | 'phone'
+    | 'password'
+    | 'default'
+    | 'textArea'
+    | 'file'
+    | 'sameBillingAddress'
+    | 'weekdays';
   props?: any;
 };
 
@@ -98,20 +104,21 @@ export default function InputField({
         />
       )
     },
-
-    sameBillingAddress: {
+    checkbox: {
       component: (field) => (
         <div className="inline-flex items-start justify-start gap-2 self-stretch">
           <Checkbox
             {...field}
+            {...props}
+            id={name}
             onCheckedChange={() => field.onChange(!field.value)}
           />
-          <label
-            htmlFor="same-billing-address"
+          <Label
+            htmlFor={name}
             className="text-sm font-medium font-semibold leading-none text-gray-400"
           >
-            Billing address is the same than service address.
-          </label>
+            {placeholder}
+          </Label>
         </div>
       )
     },

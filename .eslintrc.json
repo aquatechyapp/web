@@ -5,7 +5,8 @@
   "root": true,
   "plugins": [
     "@typescript-eslint/eslint-plugin",
-    "prettier"
+    "prettier",
+    "@tanstack/eslint-plugin-query"
   ],
   "parser": "@typescript-eslint/parser",
   "extends": [

@@ -13,7 +13,7 @@ export default function TopBarMenu() {
       </div>
       <div className="flex items-start justify-start gap-2">
         <Link
-          href="account"
+          href="/account"
           className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 p-3"
         >
           <div className="font-['General Sans'] text-center text-sm font-medium leading-[14px] text-white">

@@ -12,7 +12,6 @@ interface DropzoneProps
   > {
   classNameWrapper?: string;
   className?: string;
-  dropMessage: string;
   handleOnDrop: (acceptedFiles: FileList | null) => void;
 }
 

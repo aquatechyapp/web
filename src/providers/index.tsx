@@ -1,7 +1,12 @@
 'use client';
 
-import { LoadingProvider } from '@/context';
+import { LoadingProvider } from '@/context/user';
+import { ReactQueryProviderComponent } from './ReactQueryProviderComponent';
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
-  return <LoadingProvider>{children}</LoadingProvider>;
+  return (
+    <ReactQueryProviderComponent>
+      <LoadingProvider>{children}</LoadingProvider>
+    </ReactQueryProviderComponent>
+  );
 };
