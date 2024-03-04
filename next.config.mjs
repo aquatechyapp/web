@@ -1,5 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'aquatechybeta.s3.amazonaws.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com'
+      }
+    ]
+  },
   typescript: {
     ignoreBuildErrors: true
   },

@@ -7,20 +7,30 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
-const techs = ['John', 'Doe'];
-export default function TechnicianSelect() {
+export default function TechnicianSelect({
+  technicians,
+  onChange,
+  defaultValue
+}) {
   return (
-    <Select>
-      <SelectTrigger>
-        <SelectValue placeholder="Technician..." />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          {techs.map((tech) => (
-            <SelectItem value={tech}>{tech}</SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <div className="mt-2 my-4">
+      <Select onValueChange={onChange} defaultValue={defaultValue}>
+        <SelectTrigger>
+          <SelectValue placeholder="Technician..." />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {technicians.map((technician) => (
+              <SelectItem
+                key={technician.subcontractor.id}
+                value={technician.subcontractor.id}
+              >
+                {technician.subcontractor.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
   );
 }

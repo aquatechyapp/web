@@ -22,6 +22,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/use-toast';
 import { useUserContext } from '@/context/user';
 import { useEffect } from 'react';
+import { dateSchema } from '@/schemas/date';
 
 export default function Page() {
   const { user } = useUserContext();
@@ -303,20 +304,6 @@ const additionalSchemas = z.object({
   assignmentToId: z.string().min(1),
   photo: z.array(z.any())
 });
-
-const dateSchema = z
-  .object({
-    startOn: z.coerce.date(),
-    endAfter: z.coerce.date()
-  })
-  .refine((data) => isBefore(data.startOn, data.endAfter), {
-    message: 'Must be before the end date',
-    path: ['startOn']
-  })
-  .refine((data) => isBefore(data.startOn, data.endAfter), {
-    message: 'Must be after the start date',
-    path: ['endAfter']
-  });
 
 const poolAndClientSchema = clientSchema
   .and(poolSchema)
