@@ -84,7 +84,7 @@ export default function ShowClient({ client }) {
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div className="NameStatus flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
-                <div className="Text font-['Public Sans'] self-stretch text-center text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
+                <div className="self-stretch text-center text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
                   {client.name}
                 </div>
                 <div className="BillingAddress font-['Public Sans'] text-sm font-medium leading-tight tracking-tight text-gray-500">
@@ -93,13 +93,12 @@ export default function ShowClient({ client }) {
               </div>
             </div>
             <div className="Details flex flex-col items-center justify-start gap-[18px]">
-              <div className="ListItem1Col inline-flex w-[312px] items-start justify-start gap-2">
-                <div className="FiSrEnvelope relative h-[18px] w-[18px]" />
+              <div className="inline-flex w-[312px] items-start justify-start gap-2">
                 <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
                     Email
                   </div>
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
                     {client.email1}
                   </div>
                 </div>
@@ -109,13 +108,12 @@ export default function ShowClient({ client }) {
                   </div>
                 </div>
               </div>
-              <div className="ListItem1Col inline-flex w-[312px] items-start justify-start gap-2">
-                <div className="FiSrSmartphone relative h-[18px] w-[18px]" />
+              <div className="inline-flex w-[312px] items-start justify-start gap-2">
                 <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
                     Phone Number
                   </div>
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
                     {client.phone1}
                   </div>
                 </div>
@@ -125,13 +123,12 @@ export default function ShowClient({ client }) {
                   </div>
                 </div>
               </div>
-              <div className="ListItem1Col inline-flex w-[312px] items-start justify-start gap-2">
-                <div className="FiSrFileCheck relative h-[18px] w-[18px]" />
+              <div className="inline-flex w-[312px] items-start justify-start gap-2">
                 <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
                     Locations
                   </div>
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
                     {client.pools.length > 0
                       ? client.pools.length === 1
                         ? '1 Pool'
@@ -140,32 +137,30 @@ export default function ShowClient({ client }) {
                   </div>
                 </div>
               </div>
-              <div className="ListItem1Col inline-flex w-[312px] items-start justify-start gap-2">
-                <div className="FiSrTimeCheck relative h-[18px] w-[18px]" />
+              <div className="inline-flex w-[312px] items-start justify-start gap-2">
                 <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
                     Last Service
                   </div>
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
                     {client.lastService != undefined
                       ? format(new Date(client.lastService), 'MMMM, dd, yyyy')
                       : 'No Services'}
                   </div>
                 </div>
               </div>
-              <div className="ListItem1Col inline-flex w-[312px] items-start justify-start gap-2">
-                <div className="FiSrCalendar relative h-[18px] w-[18px]" />
-                <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
+              <div className="inline-flex w-[312px] items-start justify-start gap-2">
+                <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
                     Joined
                   </div>
-                  <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
+                  <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
                     {format(new Date(client.createdAt), 'MMMM, dd, yyyy')}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex items-center flex-col w-52 gap-2">
+            <div className="flex items-center flex-col w-full gap-2">
               <div className="w-full flex justify-center gap-2">
                 <Button className="w-full" variant={'outline'}>
                   E-mail
@@ -192,10 +187,10 @@ export default function ShowClient({ client }) {
               <div className="RightBadgeStatisticCard inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-5">
                 <div className="TitleNumbers inline-flex items-start justify-start gap-4 self-stretch">
                   <div className="TitleNumbers inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
-                    <div className="Text font-['Public Sans'] self-stretch text-base font-medium leading-normal tracking-tight text-zinc-500">
+                    <div className="self-stretch text-base font-medium leading-normal tracking-tight text-zinc-500">
                       Monthly payment
                     </div>
-                    <div className="Text font-['Public Sans'] self-stretch text-[28px] font-semibold tracking-tight text-neutral-800">
+                    <div className="self-stretch text-[28px] font-semibold tracking-tight text-neutral-800">
                       {calculateTotalMonthlyOfAllPools(client.pools)}
                     </div>
                   </div>
@@ -207,10 +202,10 @@ export default function ShowClient({ client }) {
               <div className="RightBadgeStatisticCard inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-5">
                 <div className="TitleNumbers inline-flex items-start justify-start gap-4 self-stretch">
                   <div className="TitleNumbers inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
-                    <div className="Text font-['Public Sans'] self-stretch text-base font-medium leading-normal tracking-tight text-zinc-500">
+                    <div className="self-stretch text-base font-medium leading-normal tracking-tight text-zinc-500">
                       Services
                     </div>
-                    <div className="Text font-['Public Sans'] self-stretch text-[28px] font-semibold tracking-tight text-neutral-800">
+                    <div className="self-stretch text-[28px] font-semibold tracking-tight text-neutral-800">
                       {calculateTotalAssignmentsOfAllPools(client.pools)}
                     </div>
                   </div>
