@@ -25,7 +25,8 @@ export default function TechnicianSelect({
                 key={technician.subcontractor.id}
                 value={technician.subcontractor.id}
               >
-                {technician.subcontractor.name}
+                {technician.subcontractor.firstName}{' '}
+                {technician.subcontractor.lastName}
               </SelectItem>
             ))}
           </SelectGroup>

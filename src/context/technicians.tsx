@@ -26,7 +26,8 @@ export const TechniciansProvider = ({
       {
         subcontractor: {
           id: user.id,
-          name: `${user.firstName} ${user.lastName}`
+          firstName: user.firstName,
+          lastName: user.lastName
         }
       },
       ...user.subcontractors.filter((sub) => sub.status === 'Accepted')
