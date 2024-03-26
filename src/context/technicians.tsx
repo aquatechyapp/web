@@ -1,12 +1,20 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useUserContext } from './user';
 import { isEmpty } from '@/utils';
+import { WorkRelation } from '@/interfaces/User';
 
-const TechniciansContext = createContext({
+type TechniciansContextType = {
+  assignmentToId: string;
+  setAssignmentToId: (assignmentToId: string) => void;
+  technicians: WorkRelation[];
+  setTechnicians: (data: WorkRelation[]) => void;
+};
+
+const TechniciansContext = createContext<TechniciansContextType>({
   assignmentToId: '',
-  setAssignmentToId: (assignmentToId) => {},
+  setAssignmentToId: () => {},
   technicians: [],
-  setTechnicians: (data) => {}
+  setTechnicians: () => {}
 });
 
 export const TechniciansProvider = ({
