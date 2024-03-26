@@ -41,7 +41,7 @@ export const AssignmentsProvider = ({
   const userId = Cookies.get('userId');
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['assignments'],
+    queryKey: ['assignments', userId],
     queryFn: async () => {
       if (!userId) {
         queryClient.cancelQueries({ queryKey: ['assignments'] });
