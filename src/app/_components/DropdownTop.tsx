@@ -10,7 +10,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger
-} from '@/components/ui/navigation-menu';
+} from '@/app/_components/ui/navigation-menu';
 import { routes } from '../_constants';
 
 export function DropdownTop() {

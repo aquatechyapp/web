@@ -3,7 +3,8 @@ import {
   FormField,
   FormItem,
   FormMessage
-} from '@/components/ui/form';
+} from '@/app/_components/ui/form';
+import { Label } from '@/app/_components/ui/label';
 import {
   Select,
   SelectContent,
@@ -11,7 +12,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select';
+} from '@/app/_components/ui/select';
 
 type Props = {
   data: { key: string; value: string; name: string }[];
@@ -35,6 +36,7 @@ export default function SelectField({
       render={({ field }) => {
         return (
           <FormItem className="w-full">
+            <Label>{placeholder}</Label>
             <FormControl>
               <Select onValueChange={field.onChange} {...props}>
                 <SelectTrigger

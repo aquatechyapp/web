@@ -1,10 +1,11 @@
-import { DatePicker } from '@/components/ui/date-picker';
+import { DatePicker } from '@/app/_components/ui/date-picker';
 import {
   FormControl,
   FormField,
   FormItem,
   FormMessage
-} from '@/components/ui/form';
+} from '@/app/_components/ui/form';
+import { Label } from '@/app/_components/ui/label';
 
 type Props = {
   props?: any;
@@ -21,6 +22,7 @@ export default function DatePickerField({ form, name, placeholder }: Props) {
       render={({ field }) => {
         return (
           <FormItem className="w-full">
+            <Label>{placeholder}</Label>
             <FormControl>
               <DatePicker placeholder={placeholder} onChange={field.onChange} />
             </FormControl>

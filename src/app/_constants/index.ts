@@ -1,7 +1,7 @@
-import ClientIcon from '@/components/ui/client-icon';
-import RouteIcon from '@/components/ui/route-icon';
-import TabIcon from '@/components/ui/tab-icon';
-import TeamIcon from '@/components/ui/team-icon';
+import ClientIcon from '@/app/_components/ui/client-icon';
+import RouteIcon from '@/app/_components/ui/route-icon';
+import TabIcon from '@/app/_components/ui/tab-icon';
+import TeamIcon from '@/app/_components/ui/team-icon';
 import { AvatarIcon, DashboardIcon } from '@radix-ui/react-icons';
 
 export const routes = [

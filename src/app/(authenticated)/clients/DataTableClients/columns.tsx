@@ -3,8 +3,8 @@
 import { Client } from '@/constants/interfaces';
 import { ColumnDef } from '@tanstack/react-table';
 import NamePhoto from './cell-name-photo';
-import ActionButtons from './cell-action-buttons';
 import Phones from './cell-phone';
+import ActionButtons from './cell-action-buttons';
 
 export const columns: ColumnDef<Client>[] = [
   {
@@ -19,11 +19,22 @@ export const columns: ColumnDef<Client>[] = [
   },
   {
     accessorKey: 'address',
-    header: 'Address'
+    header: 'Address',
+    cell: (props) => {
+      return (
+        <div className="">
+          {props.row.original.city}, {props.row.original.address}
+        </div>
+      );
+    }
   },
   {
-    header: 'Actions',
     id: 'actions',
     cell: (props) => <ActionButtons {...props} />
+  },
+  {
+    id: 'deactivatedAt',
+    accessorKey: 'deactivatedAt',
+    filterFn: 'deactivatedAt'
   }
 ];

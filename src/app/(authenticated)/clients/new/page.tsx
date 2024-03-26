@@ -1,8 +1,8 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
+import { Input } from '@/app/_components/ui/input';
+import { Button } from '@/app/_components/ui/button';
+import { Form } from '@/app/_components/ui/form';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import InputField from '@/app/_components/InputField';
@@ -19,10 +19,11 @@ import { useRouter } from 'next/navigation';
 import { InputFile } from '@/app/_components/InputFile';
 import { isBefore } from 'date-fns';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/app/_components/ui/use-toast';
 import { useUserContext } from '@/context/user';
 import { useEffect } from 'react';
 import { dateSchema } from '@/schemas/date';
+import { Separator } from '@/app/_components/ui/separator';
 
 export default function Page() {
   const { user } = useUserContext();
@@ -40,7 +41,6 @@ export default function Page() {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       push('/clients');
       toast({
-        variant: 'destructive',
         title: 'Client added successfully',
         className: 'bg-green-500 text-white'
       });
@@ -74,20 +74,22 @@ export default function Page() {
       phone1: '',
       lockerCode: '',
       montlyPayment: null,
-      poolNotes: '',
+      poolNotes: null,
       poolAddress: '',
       poolCity: '',
       enterSide: '',
       email1: '',
-      clientName: '',
+      firstName: '',
+      lastName: '',
       clientAddress: '',
-      clientNotes: '',
+      clientNotes: null,
       clientZip: '',
       poolState: '',
       poolZip: '',
       sameBillingAddress: false,
       clientCity: '',
-      clientState: ''
+      clientState: '',
+      customerCode: ''
     }
   });
 
@@ -117,16 +119,17 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
+        <div className="inline-flex flex-col items-start justify-start gap-4 bg-white p-6 w-full">
           <div className="h-5 text-sm font-medium leading-tight tracking-tight text-zinc-500">
             Basic information
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
-            <InputField form={form} name="clientName" placeholder="Full name" />
+            <InputField form={form} name="firstName" placeholder="First name" />
+            <InputField form={form} name="lastName" placeholder="Last name" />
             <InputField form={form} name="company" placeholder="Company" />
             <InputField
               form={form}
-              name="lockerCode"
+              name="customerCode"
               placeholder="Customer code"
             />
           </div>
@@ -137,10 +140,15 @@ export default function Page() {
               placeholder="Billing address"
             />
             <StateAndCitySelect form={form} />
-            <InputField form={form} name="clientZip" placeholder="Zip code" />
+            <InputField
+              form={form}
+              name="clientZip"
+              placeholder="Zip code"
+              type="zip"
+            />
           </div>
-          <div className="ContactInformation font-['Public Sans'] h-5 text-sm font-medium leading-tight tracking-tight text-zinc-500">
-            Contact information
+          <div className="flex items-center w-full text-sm font-medium text-zinc-500 mt-4 whitespace-nowrap">
+            <span className="mr-2">Contact information</span>
           </div>
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
             <InputField
@@ -156,30 +164,24 @@ export default function Page() {
               placeholder="Invoice e-mail"
             />
           </div>
-          <div className="h-5 self-stretch text-sm font-medium leading-tight tracking-tight text-zinc-500">
-            Notes about client (customer won't see that)
-          </div>
-
           <InputField
+            label="Notes about client (customer won't see that)"
             name="clientNotes"
             form={form}
             placeholder="Type clients notes here..."
             type="textArea"
           />
-          <div className="self-stretch  text-sm font-medium leading-tight tracking-tight text-zinc-500">
-            Service information
+          <div className="flex items-center w-full text-sm font-medium text-zinc-500 mt-2 whitespace-nowrap">
+            <span className="mr-2">Service information</span>
           </div>
-
           <div className="inline-flex items-start justify-start gap-2 self-stretch">
             <InputField
               form={form}
               name="sameBillingAddress"
               type="checkbox"
               placeholder="Billing address is the same than service address"
-              // onChange={handleSameBillingAddress}
             />
           </div>
-
           <div className="inline-flex items-start justify-start gap-2 self-stretch">
             <InputField
               form={form}
@@ -200,15 +202,20 @@ export default function Page() {
                 stateName="poolState"
                 cityName="poolCity"
               />
-              <InputField form={form} name="poolZip" placeholder="Zip code" />
+              <InputField
+                form={form}
+                name="poolZip"
+                placeholder="Zip code"
+                type="zip"
+              />
             </div>
           )}
-
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
             <InputField
               form={form}
               name="montlyPayment"
               placeholder="Monthly payment by client"
+              type="currencyValue"
             />
             <InputField form={form} name="lockerCode" placeholder="Gate code" />
             <InputField form={form} name="enterSide" placeholder="Enter side" />
@@ -226,15 +233,16 @@ export default function Page() {
                 name="poolNotes"
                 form={form}
                 placeholder="Location notes..."
+                label="Notes about location (customer won't see that)"
                 type="textArea"
               />
             </div>
-            <div className="h-44 w-full inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
+            <div className="h-44 w-full inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch mt-8">
               <InputFile handleChange={handleImagesChange} />
             </div>
           </div>
-          <div className="h-5 self-stretch text-sm font-medium leading-tight tracking-tight text-zinc-500">
-            Assignment information
+          <div className="flex items-center w-full text-sm font-medium text-zinc-500 mt-4 whitespace-nowrap">
+            <span className="mr-2">Assignment information</span>
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <SelectField
@@ -302,37 +310,11 @@ const additionalSchemas = z.object({
   frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
   sameBillingAddress: z.boolean(),
   assignmentToId: z.string().min(1),
-  photo: z.array(z.any())
+  photo: z.array(z.any()),
+  customerCode: z.string().nullable()
 });
 
 const poolAndClientSchema = clientSchema
   .and(poolSchema)
   .and(additionalSchemas)
   .and(dateSchema);
-
-const defaultValue2 = {
-  assignmentToId: '65d3bf1b79b4b4244e9ecc06',
-  animalDanger: false,
-  phone1: '+1 (231) 231-2312',
-  lockerCode: null,
-  montlyPayment: null,
-  poolNotes: 'a',
-  poolAddress: 'asdasdasd',
-  poolCity: 'Washington, D.C.',
-  enterSide: '123',
-  email1: 'mauricio@mauricio.com',
-  clientName: 'cliente com foto real',
-  clientAddress: 'asdasdasd',
-  clientNotes: 'a',
-  clientZip: '123123',
-  poolState: 'DC',
-  poolZip: '123123',
-  sameBillingAddress: true,
-  clientCity: 'Washington, D.C.',
-  clientState: 'DC',
-  poolType: 'Salt',
-  weekday: 'FRIDAY',
-  frequency: 'BIWEEKLY',
-  startOn: '2024-02-22T03:00:00.000Z',
-  endAfter: '2024-02-29T03:00:00.000Z'
-};

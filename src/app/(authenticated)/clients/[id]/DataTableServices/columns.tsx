@@ -2,10 +2,11 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/_components/ui/button';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { Assignment, Pool, Service } from '@/constants/interfaces';
 import { clientAxios } from '@/services/clientAxios';
+import { zipImages } from '@/lib/js-zip';
 
 export const columns: ColumnDef<Service>[] = [
   {
@@ -41,7 +42,26 @@ export const columns: ColumnDef<Service>[] = [
   {
     accessorKey: '',
     header: 'Photos',
-    cell: (props) => <span>Download photos</span>
+    cell: (props) =>
+      props.row.original.photos.length > 0 ? (
+        <Button
+          variant={'link'}
+          onClick={() => {
+            zipImages(props.row.original.photos).then((zipContent) => {
+              const url = URL.createObjectURL(zipContent);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = 'images.zip';
+              link.click();
+              URL.revokeObjectURL(url);
+            });
+          }}
+        >
+          Download photos
+        </Button>
+      ) : (
+        'No photos'
+      )
   },
   {
     header: 'Actions',

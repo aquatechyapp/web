@@ -13,7 +13,8 @@ const states = State.getStatesOfCountry('US');
 export default function StateAndCitySelect({
   form,
   stateName = 'clientState',
-  cityName = 'clientCity'
+  cityName = 'clientCity',
+  ...props
 }: Props) {
   const [cities, setCities] = useState<ICity[]>([]);
   const state = form.watch(stateName);
@@ -37,7 +38,6 @@ export default function StateAndCitySelect({
         name={stateName}
         value={state}
         placeholder="State"
-        onValueChange={handleStateChange}
         data={states.map((state) => {
           return {
             key: state.isoCode,
@@ -45,6 +45,7 @@ export default function StateAndCitySelect({
             name: state.name
           };
         })}
+        {...props}
       />
       <SelectField
         // disabled={!state || cities.length === 0}
@@ -59,6 +60,7 @@ export default function StateAndCitySelect({
             name: city.name
           };
         })}
+        {...props}
       />
     </div>
   );

@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/app/_components/ui/button';
+import { Input } from '@/app/_components/ui/input';
 
 export default function Account() {
   return (
@@ -21,7 +21,7 @@ export default function Account() {
           <Input placeholder="Address" />
           <Input placeholder="State" />
           <Input placeholder="City" />
-          <Input placeholder="Zip code" />
+          <Input placeholder="Zip code" type="zip" />
         </div>
         <div className="h-5 w-[213.40px] text-sm font-medium leading-tight tracking-tight text-zinc-500">
           Contact information

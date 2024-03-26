@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import ClientInfo from './ClientInfo';
-import PoolsInfo from './PoolsInfo';
+import PoolHeader from './PoolHeader';
 import { format } from 'date-fns';
 import {
   calculateTotalAssignmentsOfAllPools,
@@ -13,6 +13,14 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { clientSchema } from '@/schemas/client';
 import { poolSchema } from '@/schemas/pool';
+import { Button } from '@/app/_components/ui/button';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage
+} from '@/app/_components/ui/avatar';
+import { useDeactivateClient } from '@/hooks/react-query/clients/deactivateClient';
+import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
 
 const additionalSchemas = z.object({
   weekday: z.enum(
@@ -54,10 +62,9 @@ export default function ShowClient({ client }) {
       clientName: client.name || ''
     }
   });
+  const { mutate: deactivateClient, isPending } = useDeactivateClient();
 
-  const handleTabChange = (tab: 'client_info' | 'pools') => {
-    setTab(tab);
-  };
+  if (isPending) return <LoadingSpinner />;
 
   return (
     <div>
@@ -67,12 +74,15 @@ export default function ShowClient({ client }) {
             <div className="w-[100% - 16px] absolute left-2 right-2 top-2 h-[148px] rounded bg-gradient-to-b from-sky-400 to-teal-400" />
 
             <div className="PhotoName flex h-[206px] flex-col items-center justify-start gap-3 self-stretch">
-              <div className="Avatar z-10 inline-flex items-start justify-start gap-2">
-                <img
-                  className="Photo h-[140px] w-[140px] rounded-[100px]"
-                  src="https://via.placeholder.com/140x140"
+              <Avatar className="h-[140px] w-[140px]">
+                <AvatarImage
+                  src={
+                    client.pools[0].photos[0] ||
+                    'https://via.placeholder.com/140x140'
+                  }
                 />
-              </div>
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
               <div className="NameStatus flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
                 <div className="Text font-['Public Sans'] self-stretch text-center text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
                   {client.name}
@@ -122,7 +132,11 @@ export default function ShowClient({ client }) {
                     Locations
                   </div>
                   <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
-                    43 Project
+                    {client.pools.length > 0
+                      ? client.pools.length === 1
+                        ? '1 Pool'
+                        : `${client.pools.length} Pools`
+                      : 'No Pools'}
                   </div>
                 </div>
               </div>
@@ -133,7 +147,9 @@ export default function ShowClient({ client }) {
                     Last Service
                   </div>
                   <div className="Text font-['Public Sans'] self-stretch text-sm font-medium leading-tight tracking-tight text-neutral-800">
-                    January, 17, 2024
+                    {client.lastService != undefined
+                      ? format(new Date(client.lastService), 'MMMM, dd, yyyy')
+                      : 'No Services'}
                   </div>
                 </div>
               </div>
@@ -149,22 +165,23 @@ export default function ShowClient({ client }) {
                 </div>
               </div>
             </div>
-            <div className="Action inline-flex items-start justify-start gap-4 self-stretch">
-              <div className="PrimaryButton flex h-10 shrink grow basis-0 items-center justify-center gap-1 rounded-lg bg-gray-100 px-3.5 py-2.5">
-                <div className="Icon flex h-5 w-5 items-center justify-center gap-2 p-2">
-                  <div className="FiSrEnvelope relative h-4 w-4" />
-                </div>
-                <div className="Text font-['Public Sans'] text-sm font-semibold leading-tight tracking-tight text-neutral-800">
-                  Email
-                </div>
-              </div>
-              <div className="PrimaryButton flex h-10 shrink grow basis-0 items-center justify-center gap-1 rounded-lg bg-neutral-800 px-3.5 py-2.5">
-                <div className="Icon flex h-5 w-5 items-center justify-center gap-2 p-2">
-                  <div className="FiSrCommentAlt relative h-4 w-4" />
-                </div>
-                <div className="Text font-['Public Sans'] text-sm font-semibold leading-tight tracking-tight text-white">
+            <div className="flex items-center flex-col w-52 gap-2">
+              <div className="w-full flex justify-center gap-2">
+                <Button className="w-full" variant={'outline'}>
+                  E-mail
+                </Button>
+                <Button className="w-full" variant={'outline'}>
                   Message
-                </div>
+                </Button>
+              </div>
+              <div className="w-full">
+                <Button
+                  onClick={() => deactivateClient(client.id)}
+                  className="w-full"
+                  variant={'destructive'}
+                >
+                  Deactivate Client
+                </Button>
               </div>
             </div>
           </div>
@@ -205,7 +222,7 @@ export default function ShowClient({ client }) {
             </div>
             <div className="RegularTabs inline-flex items-start justify-start gap-4 self-stretch border-b border-zinc-200">
               <div
-                onClick={() => handleTabChange('client_info')}
+                onClick={() => setTab('client_info')}
                 className="RegularTab inline-flex flex-col items-start justify-start gap-2.5"
               >
                 <div
@@ -218,7 +235,7 @@ export default function ShowClient({ client }) {
                 )}
               </div>
               <div
-                onClick={() => handleTabChange('pools')}
+                onClick={() => setTab('pools')}
                 className="RegularTab inline-flex flex-col items-start justify-start gap-2.5"
               >
                 <div
@@ -232,9 +249,9 @@ export default function ShowClient({ client }) {
               </div>
             </div>
             {tab === 'client_info' ? (
-              <ClientInfo form={form} />
+              <ClientInfo client={client} />
             ) : (
-              <PoolsInfo form={form} pools={client.pools} />
+              <PoolHeader form={form} pools={client.pools} />
             )}
           </div>
         </div>

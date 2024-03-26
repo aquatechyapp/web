@@ -1,50 +1,14 @@
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import useLocalStorage from '@/hooks/useLocalStorage';
-import { clientAxios } from '@/services/clientAxios';
-import { ModalAcceptInvite } from './ModalAcceptInvite';
-import Loading from '../loading';
-import { useState } from 'react';
+import { Separator } from '@/app/_components/ui/separator';
 
-export function SubcontractorCard({
-  email,
-  phone,
-  name,
-  type,
-  status,
-  workRelationId
-}) {
-  const [user, setUser] = useLocalStorage('user', '');
-  const [isLoading, setIsLoading] = useState(false);
-  const handleAcceptWorkRelation = async () => {
-    setIsLoading(true);
-    try {
-      const res = await clientAxios.patch('/workrelations', {
-        workRelationId,
-        newStatus: 'Accepted'
-      });
-      if (res.status === 200) {
-        alert('Subcontractor accepted');
-        // update only status to 'Accepted' in that subcontractor inside user
-        setUser((user) => ({
-          ...user,
-          subcontractors: user.subcontractors.map((subcontractor) => {
-            if (subcontractor.id === workRelationId) {
-              return { ...subcontractor, status: 'Accepted' };
-            }
-            return subcontractor;
-          })
-        }));
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+type Props = {
+  email: string;
+  phone: string;
+  name: string;
+  type: string;
+  status: string;
+};
 
-  if (isLoading) return <Loading />;
-
+export function SubcontractorCard({ email, phone, name, type, status }: Props) {
   return (
     <div className="inline-flex w-56 flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4">
       <div className="flex h-[138px] flex-col items-center justify-start gap-4 self-stretch">

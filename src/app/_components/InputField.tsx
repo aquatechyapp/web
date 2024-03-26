@@ -3,16 +3,18 @@ import {
   FormField,
   FormItem,
   FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@/app/_components/ui/form';
+import { Input } from '@/app/_components/ui/input';
 import { MaskitoOptions } from '@maskito/core';
 
 import { useMaskito } from '@maskito/react';
 import { PhoneMask, Weekdays } from '../../constants';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DropdownMenuCheckboxes } from '@/components/ui/multiple-select';
-import { Label } from '@/components/ui/label';
+import { Textarea } from '@/app/_components/ui/textarea';
+import { Checkbox } from '@/app/_components/ui/checkbox';
+import { DropdownMenuCheckboxes } from '@/app/_components/ui/multiple-select';
+import { Label } from '@/app/_components/ui/label';
+import { Search } from './ui/input-with-icon';
+import { CurrencyInput, InputMasked } from './InputMasked';
 
 type Props = {
   form: any;
@@ -26,8 +28,12 @@ type Props = {
     | 'textArea'
     | 'file'
     | 'sameBillingAddress'
-    | 'weekdays';
+    | 'weekdays'
+    | 'zip'
+    | 'percentValue'
+    | 'currencyValue';
   props?: any;
+  label?: string;
 };
 
 export default function InputField({
@@ -35,6 +41,7 @@ export default function InputField({
   name,
   placeholder,
   type = 'default',
+  label,
   ...props
 }: Props) {
   const digitsOnlyMask: MaskitoOptions = {
@@ -43,18 +50,37 @@ export default function InputField({
   const inputRef = useMaskito({ options: digitsOnlyMask });
 
   const types = {
-    phone: {
+    zip: {
       component: (field) => (
         <Input
-          type="tel"
           placeholder={placeholder}
+          type="tel"
           {...field}
-          ref={inputRef}
           onInput={(e) => {
             form.setValue(name, e.target.value);
           }}
+          {...props}
         />
       )
+    },
+    phone: {
+      component: (field) => {
+        // const { ref, ...rest } = form.register(name);
+        // arranjar uma maneira de fazer o react-hook-form funcionar com o maskito
+        // como estou passando uma ref para esse input, o react-hook-form não está obervando as mudanças
+        return (
+          <Input
+            type="tel"
+            placeholder={placeholder}
+            {...field}
+            ref={inputRef}
+            onInput={(e) => {
+              form.setValue(name, e.target.value);
+            }}
+            {...props}
+          />
+        );
+      }
     },
     password: {
       component: (field) => (
@@ -74,6 +100,7 @@ export default function InputField({
           type="text"
           placeholder={placeholder}
           {...field}
+          {...props}
           onInput={(e) => {
             form.setValue(name, e.target.value);
           }}
@@ -90,17 +117,6 @@ export default function InputField({
           onInput={(e) => {
             form.setValue(field.name, e.target.value);
           }}
-        />
-      )
-    },
-    file: {
-      component: (field) => (
-        <Input
-          accept=".jpg, .jpeg, .png, .svg, .gif, .mp4"
-          type="file"
-          onChange={(e) =>
-            field.onChange(e.target.files ? e.target.files[0] : null)
-          }
         />
       )
     },
@@ -128,15 +144,45 @@ export default function InputField({
           onChange={(weekdays) => field.onChange(weekdays)}
         />
       )
+    },
+    percentValue: {
+      component: (field) => (
+        <InputMasked
+          mask={type}
+          field={field}
+          placeholder={placeholder}
+          name={name}
+          form={form}
+          {...field}
+          {...props}
+        />
+      )
+    },
+    currencyValue: {
+      component: (field) => (
+        <InputMasked
+          mask={type}
+          field={field}
+          placeholder={placeholder}
+          name={name}
+          form={form}
+          {...field}
+          {...props}
+        />
+      )
     }
   };
+
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => {
         return (
-          <FormItem className="w-full">
+          <FormItem className="w-full h-full">
+            {!['checkbox'].includes(type) && (
+              <Label>{label || placeholder}</Label>
+            )}
             <FormControl>{types[type].component(field)}</FormControl>
             <FormMessage />
           </FormItem>

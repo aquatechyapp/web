@@ -4,8 +4,14 @@ export function createFormData(data: Record<string, string>) {
   const formData = new FormData();
   for (const key in data) {
     switch (key) {
+      case 'firstName' || 'lastName':
+        formData.append('clientName', `${data.firstName} ${data.lastName}`);
+        break;
       case 'photo':
         data[key].forEach((photo) => formData.append(key, photo.file));
+        break;
+      case 'montlyPayment':
+        formData.append(key, null);
         break;
       default:
         formData.append(key, data[key]);
@@ -20,7 +26,7 @@ export function calculateTotalMonthlyOfAllPools(pools: Pool[]) {
 }
 
 export function calculateTotalAssignmentsOfAllPools(pools: Pool[]) {
-  return pools.reduce((acc, pool) => acc + pool.assignments.length, 0);
+  return pools.reduce((acc, pool) => acc + pool.services.length, 0);
 }
 
 export function buildSelectOptions(
@@ -33,3 +39,6 @@ export function buildSelectOptions(
     value: item[value]
   }));
 }
+
+export const isEmpty = (val) =>
+  val == null || !(Object.keys(val) || val).length;

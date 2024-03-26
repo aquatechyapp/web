@@ -1,54 +1,115 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/app/_components/ui/button';
+import { useToast } from '@/app/_components/ui/use-toast';
 import { clientAxios } from '@/services/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { IoEyeOutline } from 'react-icons/io5';
-import { ModalDeleteClient } from './modal-delete-client';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger
+} from '@/app/_components/ui/dropdown-menu';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { MdDeleteOutline } from 'react-icons/md';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger
+} from '@/app/_components/ui/dialog';
+import React, { useEffect, useState } from 'react';
+import { useDeleteClient } from '@/hooks/react-query/clients/deleteClient';
+import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
+import { ModalAddPool } from './modal-add-pool';
+
+const ModalDeleteClient = ({ handleDelete, clientOwnerId }) => {
+  return (
+    <DialogContent>
+      <DialogTitle>Are you sure?</DialogTitle>
+      <DialogDescription>
+        Once you delete the client, you will lose all the information related
+      </DialogDescription>
+      <div className="flex justify-around">
+        <DialogTrigger>
+          <Button
+            variant={'destructive'}
+            onClick={() => handleDelete(clientOwnerId)}
+          >
+            Delete
+          </Button>
+        </DialogTrigger>
+        <DialogTrigger>
+          <Button variant={'outline'}>Cancel</Button>
+        </DialogTrigger>
+      </div>
+    </DialogContent>
+  );
+};
 
 export default function ActionButtons({ ...props }) {
   const { push } = useRouter();
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const { mutate: handleSubmit, isPending } = useMutation({
-    mutationFn: async () =>
-      await clientAxios.delete('/clients', {
-        data: { id: props.row.original.id }
-      }),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['clients'] }),
-    onSuccess: () => {
-      // queryClient.invalidateQueries({ queryKey: ['clients'] });
-      // push('/clients');
-      toast({
-        variant: 'default',
-        title: 'Client deleted successfully',
-        className: 'bg-green-500 text-white'
-      });
-    },
-    onError: (error) => {
-      toast({
-        variant: 'default',
-        title: 'Error deleting client',
-        className: 'bg-red-500 text-white'
-      });
-    }
-  });
-  const handleView = () => {
-    push(`/clients/${props.row.original.id}`);
-  };
+  const [modalType, setModalType] = useState('');
+  const [open, setOpen] = useState(false);
+
+  const clientOwnerId = props.row.original.id;
+
+  const { mutate: mutateDeleteClient } = useDeleteClient();
+  const { mutate: mutateAddPool } = useAddPoolToClient();
+
   return (
-    <div className="flex items-center gap-4">
-      <Button variant="ghost" size="icon" onClick={() => handleView()}>
-        <IoEyeOutline />
-      </Button>
-      <ModalDeleteClient handleSubmit={handleSubmit}>
-        <Button disabled={isPending} variant="destructive" size="sm">
-          <FaRegTrashAlt />
-        </Button>
-      </ModalDeleteClient>
-    </div>
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="self-center">
+            <Button size="icon" variant="ghost">
+              <BsThreeDotsVertical className="text-stone-500" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem
+              onClick={() => push(`/clients/${props.row.original.id}`)}
+            >
+              View
+            </DropdownMenuItem>
+            <DialogTrigger asChild className="w-full">
+              <DropdownMenuItem onClick={() => setModalType('ModalAddPool')}>
+                Add Pool
+              </DropdownMenuItem>
+            </DialogTrigger>
+            <DialogTrigger asChild className="w-full">
+              <DropdownMenuItem
+                onClick={() => setModalType('ModalDeleteClient')}
+              >
+                <div className="text-red-500  flex items-center w-full">
+                  Delete
+                  <DropdownMenuShortcut>
+                    <MdDeleteOutline size={14} />
+                  </DropdownMenuShortcut>
+                </div>
+              </DropdownMenuItem>
+            </DialogTrigger>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {modalType === 'ModalDeleteClient' ? (
+          <ModalDeleteClient
+            handleDelete={mutateDeleteClient}
+            clientOwnerId={clientOwnerId}
+          />
+        ) : (
+          <ModalAddPool
+            open={open}
+            setOpen={setOpen}
+            handleAddPool={mutateAddPool}
+            clientOwnerId={clientOwnerId}
+          />
+        )}
+      </Dialog>
+    </>
   );
 }

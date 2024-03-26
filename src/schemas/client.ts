@@ -80,13 +80,20 @@ export const clientSchema = z.object({
       required_error: 'E-mail is required.'
     })
     .email({ message: 'Invalid e-mail.' }),
-  clientName: z
+  firstName: z
     .string({
       required_error: 'Name is required.',
       invalid_type_error: 'Name must be a string.'
     })
     .trim()
-    .min(1, { message: 'Name must be at least 1 character.' }),
+    .min(1, { message: 'First name must be at least 1 character.' }),
+  lastName: z
+    .string({
+      required_error: 'Last name is required.',
+      invalid_type_error: 'Last name must be a string.'
+    })
+    .trim()
+    .min(1, { message: 'Last name must be at least 1 character.' }),
   clientNotes: z
     .string({
       required_error: 'Notes are required.',

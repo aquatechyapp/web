@@ -1,20 +1,19 @@
 'use client';
 
-import { Form } from '@/components/ui/form';
+import { Form } from '@/app/_components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import InputField from '../../_components/InputField';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/_components/ui/button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { clientAxios } from '@/services/clientAxios';
 import Cookies from 'js-cookie';
 import useLocalStorage from '@/hooks/useLocalStorage';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/components/ui/use-toast';
-import Loading from '@/app/(authenticated)/loading';
+import { useMutation } from '@tanstack/react-query';
+import { useToast } from '@/app/_components/ui/use-toast';
 import { useUserContext } from '@/context/user';
 
 const formSchema = z.object({
@@ -38,9 +37,8 @@ export default function Page() {
     mutationFn: async (data) => await clientAxios.post('/sessions', data),
     onSuccess: ({ data }) => {
       Cookies.set('accessToken', data.accessToken);
-      Cookies.set('userId', data.user.userId);
+      Cookies.set('userId', data.user.id);
       setUser(data.user);
-
       push('/dashboard');
       toast({
         variant: 'default',

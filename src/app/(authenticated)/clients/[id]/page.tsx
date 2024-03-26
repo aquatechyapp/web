@@ -1,10 +1,9 @@
 'use client';
 
-import { api } from '@/services/api';
+import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
 import ShowClient from './ShowClient';
 import { clientAxios } from '@/services/clientAxios';
 import { useEffect, useState } from 'react';
-import Loading from '../../loading';
 
 // export default function Page() {
 //   return <DetailedClient />;
@@ -25,7 +24,7 @@ export default function Page({ params: { id } }) {
     getData();
   }, []);
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return <LoadingSpinner />;
 
   return <ShowClient client={client} />;
 }

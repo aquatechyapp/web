@@ -3,26 +3,34 @@
 import Link from 'next/link';
 
 import { useForm } from 'react-hook-form';
-import { Form } from '@/components/ui/form';
+import { Form } from '@/app/_components/ui/form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import InputField from '../../_components/InputField';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
-import { ToastAction } from '@/components/ui/toast';
+import { Button } from '@/app/_components/ui/button';
+import { useToast } from '@/app/_components/ui/use-toast';
+import { ToastAction } from '@/app/_components/ui/toast';
 import { useRouter } from 'next/navigation';
 import StateAndCitySelect from '../../_components/StateAndCitySelect';
 import { clientAxios } from '@/services/clientAxios';
 import { useMutation } from '@tanstack/react-query';
 
-const phoneRegex = new RegExp(
-  /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
-);
 const formSchema = z
   .object({
     firstName: z.string().min(2, { message: 'First name is required' }),
     lastName: z.string().min(2, { message: 'Last name is required' }),
-    phone: z.string().regex(phoneRegex, 'Phone number is required'),
+    phone: z.preprocess(
+      (value) => {
+        return value.replace(/\D/g, '').slice(1);
+      },
+      z
+        .string({
+          required_error: 'Phone is required.',
+          invalid_type_error: 'Phone must be a string.'
+        })
+        .min(1, { message: 'Phone number is required.' })
+        .length(10, { message: 'Phone number must be 10 digits.' })
+    ),
     email: z.string().email({ message: 'Invalid email' }),
     password: z
       .string()
@@ -83,12 +91,10 @@ export default function Page() {
   });
 
   const handleSubmit = async (data) => {
-    const phone = data.phone.replace(/\D/g, '').slice(1);
     const formattedData = {
       ...data,
       language: 'Portuguese',
-      name: data.firstName + data.lastName,
-      phone
+      name: data.firstName + data.lastName
     };
     mutate(formattedData);
   };

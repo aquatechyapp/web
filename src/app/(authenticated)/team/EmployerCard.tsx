@@ -1,16 +1,29 @@
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import useLocalStorage from '@/hooks/useLocalStorage';
+import { Button } from '@/app/_components/ui/button';
+import { Separator } from '@/app/_components/ui/separator';
 import { clientAxios } from '@/services/clientAxios';
 import { ModalAcceptInvite } from './ModalAcceptInvite';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/app/_components/ui/use-toast';
 
-export function EmployerCard({ email, phone, name, workRelationId, status }) {
+type Props = {
+  email: string;
+  phone: string;
+  name: string;
+  workRelationId: string;
+  status: string;
+};
+
+export function EmployerCard({
+  email,
+  phone,
+  name,
+  workRelationId,
+  status
+}: Props) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { mutate: handleSubmit, isPending } = useMutation({
-    mutationFn: async (data) =>
+  const { mutate: handleSubmit } = useMutation({
+    mutationFn: async () =>
       await clientAxios.patch('/workrelations', {
         workRelationId,
         newStatus: 'Accepted'
@@ -23,7 +36,7 @@ export function EmployerCard({ email, phone, name, workRelationId, status }) {
         className: 'bg-green-500 text-white'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         variant: 'default',
         title: 'Error accepting invite',
@@ -31,30 +44,6 @@ export function EmployerCard({ email, phone, name, workRelationId, status }) {
       });
     }
   });
-
-  // const handleAcceptWorkRelation = async () => {
-  //   try {
-  //     const res = await clientAxios.patch('/workrelations', {
-  //       workRelationId,
-  //       newStatus: 'Accepted'
-  //     });
-  //     if (res.status === 200) {
-  //       alert('Subcontractor accepted');
-  //       // update only status to 'Accepted' in that subcontractor inside user
-  //       setUser((user) => ({
-  //         ...user,
-  //         subcontractors: user.subcontractors.map((subcontractor) => {
-  //           if (subcontractor.id === workRelationId) {
-  //             return { ...subcontractor, status: 'Accepted' };
-  //           }
-  //           return subcontractor;
-  //         })
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   return (
     <div className="inline-flex w-56 flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4">
@@ -74,7 +63,7 @@ export function EmployerCard({ email, phone, name, workRelationId, status }) {
       </div>
       {status === 'NotAccepted' && (
         <ModalAcceptInvite handleSubmit={handleSubmit}>
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white text-sm py-1 px-2 rounded-full animate-bounce">
+          <Button className="bg-orange-500 hover:bg-orange-600 h-7 text-white text-sm py-1 px-2 rounded-full animate-bounce">
             Accept invite
           </Button>
         </ModalAcceptInvite>

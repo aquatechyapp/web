@@ -1,13 +1,11 @@
 'use client';
 
-import ActionButtons from './ActionButtons';
-import FilterBar from './FilterBar';
 import { clientAxios } from '@/services/clientAxios';
 
-import Loading from '../loading';
 import { columns } from './DataTableClients/columns';
 import { DataTableClients } from './DataTableClients';
 import { useQuery } from '@tanstack/react-query';
+import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
 
 export default function Page() {
   const { data, isLoading, isSuccess } = useQuery({
@@ -19,13 +17,11 @@ export default function Page() {
     staleTime: Infinity
   });
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return <LoadingSpinner />;
 
   if (isSuccess) {
     return (
       <div className="flex flex-col gap-6">
-        <ActionButtons />
-        <FilterBar />
         <DataTableClients columns={columns} data={data} />
       </div>
     );
