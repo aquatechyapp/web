@@ -46,6 +46,7 @@ export function DialogTransferRoute({ assignmentToId, assignments }: Props) {
       weekday: format(new Date(), 'EEEE').toUpperCase(),
       startOn: undefined,
       endAfter: undefined,
+      onlyAt: undefined,
       type: 'once'
     }
   });
@@ -72,7 +73,7 @@ export function DialogTransferRoute({ assignmentToId, assignments }: Props) {
     useTransferPermanentlyRoute();
 
   const isPending = isPendingOnce || isPendingPermanently;
-  console.log(form.formState.errors);
+
   async function transferRoute() {
     const isValid = await validateForm();
     if (isValid) {

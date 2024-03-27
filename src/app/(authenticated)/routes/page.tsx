@@ -36,7 +36,7 @@ export type Weekdays =
   | 'Saturday';
 
 export default function Page() {
-  const { assignmentToId } = useTechniciansContext();
+  const { assignmentToId, setAssignmentToId } = useTechniciansContext();
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayContext();
   const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } =
@@ -90,6 +90,11 @@ export default function Page() {
     setSelectedWeekday(weekday);
   }
 
+  function handleChangeTechnician(technicianId: string) {
+    setAssignmentToId(technicianId);
+    form.setValue('assignmentToId', technicianId);
+  }
+
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
   return (
@@ -114,11 +119,7 @@ export default function Page() {
                     </TabsTrigger>
                   ))}
                 </TabsList>
-                <TechnicianSelect
-                  onChange={(technicianId) =>
-                    form.setValue('assignmentToId', technicianId)
-                  }
-                />
+                <TechnicianSelect onChange={handleChangeTechnician} />
                 <div className="flex gap-2 mt-2">
                   <DialogNewAssignment form={form} />
                   <DialogTransferRoute

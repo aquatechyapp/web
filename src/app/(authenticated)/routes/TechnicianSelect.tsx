@@ -15,11 +15,9 @@ type Props = {
 };
 
 export default function TechnicianSelect({ onChange }: Props) {
-  const { assignmentToId, setAssignmentToId, technicians } =
-    useTechniciansContext();
+  const { assignmentToId, technicians } = useTechniciansContext();
 
   function handleChange(technicianId: string) {
-    setAssignmentToId(technicianId);
     onChange(technicianId);
   }
 

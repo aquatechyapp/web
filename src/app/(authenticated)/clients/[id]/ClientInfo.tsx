@@ -37,7 +37,6 @@ const poolAndClientSchema = clientSchema.and(poolSchema).and(additionalSchemas);
 
 export default function ClientInfo({ client }) {
   const { mutate, isPending } = useUpdateClient();
-
   // const form = useForm<z.infer<typeof poolAndClientSchema>>({
   const form = useForm({
     // resolver: zodResolver(poolAndClientSchema),
@@ -52,6 +51,8 @@ export default function ClientInfo({ client }) {
     }
   });
 
+  const phoneChanged = form.watch('phone1') !== client.phone1;
+
   if (isPending) return <LoadingSpinner />;
 
   const handleSubmit = async (data) => {
@@ -59,7 +60,7 @@ export default function ClientInfo({ client }) {
       form.getValues(),
       form.formState.dirtyFields
     );
-    if (form.watch('phone1') !== client.phone1) {
+    if (phoneChanged) {
       dirtyFields = {
         ...dirtyFields,
         phone1: form.watch('phone1')
@@ -124,7 +125,7 @@ export default function ClientInfo({ client }) {
           className="h-[100%]"
           placeholder="Type client notes here..."
         /> */}
-        {form.formState.isDirty && (
+        {(form.formState.isDirty || phoneChanged) && (
           <Button type="submit" className="w-full">
             Save
           </Button>

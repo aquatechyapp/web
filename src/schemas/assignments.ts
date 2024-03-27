@@ -10,6 +10,10 @@ export const transferAssignmentsSchema = z
     startOn: z.coerce.date().optional(),
     endAfter: z.coerce.date().optional()
   })
+  .refine((data) => (data.type === 'once' ? data.onlyAt : false), {
+    message: 'Is required',
+    path: ['onlyAt']
+  })
   .refine(
     (data) =>
       data.type === 'once' ? true : isBefore(data.startOn, data.endAfter),
@@ -25,8 +29,4 @@ export const transferAssignmentsSchema = z
       message: 'Must be after the start date',
       path: ['endAfter']
     }
-  )
-  .refine((data) => data.type === 'permanently', {
-    message: 'Is required',
-    path: ['onlyAt']
-  });
+  );
