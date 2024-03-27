@@ -65,21 +65,20 @@ export function AssignmentsList({ handleDragEnd }) {
   const { mutate } = useMutation({
     mutationFn: async (assignmentId: string) =>
       await clientAxios.delete('/assignments', { data: { assignmentId } }),
-    onError: () => {
-      toast({
-        title: 'Error deleting assignment',
-        className: 'bg-red-500 text-white'
-      });
-    },
     onSuccess: (_, assignmentId) => {
       toast({
         title: 'Assignment deleted successfully',
         className: 'bg-green-500 text-white'
       });
-      // aqui tem que verificar, pois o mapa não está atualizando
-      queryClient.setQueryData(['assignments'], (oldData: Assignment[]) => {
-        return oldData.filter((a) => a.id !== assignmentId);
+    },
+    onError: (e) => {
+      toast({
+        title: 'Error deleting assignment',
+        className: 'bg-red-500 text-white'
       });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['assignments'] });
     }
   });
 
