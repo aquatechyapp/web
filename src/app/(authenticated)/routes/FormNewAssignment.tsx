@@ -6,6 +6,7 @@ import { buildSelectOptions } from '@/utils';
 import { Frequencies } from '@/constants';
 import { clientAxios } from '@/services/clientAxios';
 import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import { useEffect } from 'react';
 
 export const FormNewAssignment = ({ form }) => {
   const { data, isLoading, isError } = useQuery({
@@ -17,8 +18,11 @@ export const FormNewAssignment = ({ form }) => {
     staleTime: Infinity
   });
 
-  if (isLoading) return <LoadingSpinner />;
+  useEffect(() => {
+    form.reset();
+  }, []);
 
+  if (isLoading) return <LoadingSpinner />;
   const clientId = form.watch('client');
 
   return (
