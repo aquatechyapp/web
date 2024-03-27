@@ -1,16 +1,12 @@
 'use client';
 import { format } from 'date-fns';
-import { useState } from 'react';
 import TechnicianSelect from './TechnicianSelect';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/app/_components/ui/button';
-import { clientAxios } from '@/services/clientAxios';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { dateSchema } from '@/schemas/date';
 import { Form } from '@/app/_components/ui/form';
-import { useToast } from '@/app/_components/ui/use-toast';
 import { AssignmentsList } from './AssignmentsList';
 import {
   Tabs,
@@ -19,20 +15,16 @@ import {
   TabsTrigger
 } from '@/app/_components/ui/tabs';
 import Map from './Map';
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle
-} from '@/app/_components/ui/dialog';
-import { FormNewAssignment } from './FormNewAssignment';
+
 import { arrayMove } from '@dnd-kit/sortable';
 import { useTechniciansContext } from '@/context/technicians';
 import { useAssignmentsContext } from '@/context/assignments';
 import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
-import { isEmpty } from '@/utils';
 import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
-import { Assignment, CreateAssignment } from '@/interfaces/Assignments';
+import { Assignment } from '@/interfaces/Assignments';
 import { useWeekdayContext } from '@/context/weekday';
+import { DialogNewAssignment } from './dialog-new-assignment';
+import { DialogTransferRoute } from './dialog-transfer-route';
 
 export type Weekdays =
   | 'Sunday'
@@ -44,36 +36,11 @@ export type Weekdays =
   | 'Saturday';
 
 export default function Page() {
-  const { technicians, assignmentToId, setAssignmentToId } =
-    useTechniciansContext();
+  const { assignmentToId } = useTechniciansContext();
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayContext();
   const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } =
     useUpdateAssignments();
-
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (data: CreateAssignment) =>
-      await clientAxios.post('/assignments', data),
-
-    onError: () => {
-      toast({
-        title: 'Error creating assignment',
-        className: 'bg-red-500 text-white'
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments'] });
-      toast({
-        title: 'Assignment created successfully',
-        className: 'bg-green-500 text-white'
-      });
-    }
-  });
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const form = useForm<z.infer<typeof newAssignmentSchema>>({
     resolver: zodResolver(newAssignmentSchema),
@@ -87,45 +54,9 @@ export default function Page() {
     }
   });
 
-  async function createNewAssignment() {
-    const isValid = await validateForm();
-    if (isValid) {
-      setIsModalOpen(false);
-      mutate({
-        assignmentToId: form.watch('assignmentToId'),
-        poolId: form.watch('poolId'),
-        weekday: form.watch('weekday'),
-        frequency: form.watch('frequency'),
-        startOn: form.watch('startOn'),
-        endAfter: form.watch('endAfter')
-      });
-      form.reset();
-      return;
-    }
-
-    setIsModalOpen(true);
-  }
-
   function getDifference(array1: Assignment[], array2: Assignment[]): boolean {
     return JSON.stringify(array1) !== JSON.stringify(array2);
   }
-
-  // função para resolver bug onde isValid na function createNewAssignment não estava com o valor correto
-  const validateForm = async (): Promise<boolean> => {
-    const _ = form.formState.errors; // also works if you read form.formState.isValid
-    await form.trigger();
-    if (form.formState.isValid) {
-      return true;
-    }
-    if (isEmpty(form.formState.errors)) {
-      console.error('Error in the form');
-    } else {
-      console.error(form.formState.errors);
-    }
-    return false;
-  };
-
-  if (isPending) return <LoadingSpinner />;
 
   function handleDragEnd(event, setActive) {
     const { active, over } = event;
@@ -159,11 +90,6 @@ export default function Page() {
     setSelectedWeekday(weekday);
   }
 
-  function handleChangeTechnician(technicianId: string) {
-    form.setValue('assignmentToId', technicianId);
-    setAssignmentToId(technicianId);
-  }
-
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
   return (
@@ -176,10 +102,7 @@ export default function Page() {
         >
           <div className="inline-flex w-full flex-col items-center justify-start gap-3.5 rounded-lg border border-zinc-200 bg-white py-2">
             <Form {...form}>
-              <form
-                className="w-full px-2"
-                onSubmit={form.handleSubmit(createNewAssignment)}
-              >
+              <form className="w-full px-2">
                 <TabsList className="w-full">
                   {weekdays.map((weekday) => (
                     <TabsTrigger
@@ -192,66 +115,38 @@ export default function Page() {
                   ))}
                 </TabsList>
                 <TechnicianSelect
-                  // por padrão, o User logado é o tecnico selecionado
-                  defaultValue={assignmentToId}
-                  technicians={technicians}
-                  onChange={(technicianId: string) =>
-                    handleChangeTechnician(technicianId)
+                  onChange={(technicianId) =>
+                    form.setValue('assignmentToId', technicianId)
                   }
                 />
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => setIsModalOpen(true)}
-                    className="w-full mt-2"
-                  >
-                    New assignment
-                  </Button>
-
-                  {getDifference(assignments.initial, assignments.current) && (
-                    <Button
-                      onClick={() =>
-                        updateAssignments(
-                          assignments.current.map((assignment) => {
-                            return {
-                              assignmentId: assignment.id,
-                              ...assignment
-                            };
-                          })
-                        )
-                      }
-                      className="w-full mt-2 bg-green-500 hover:bg-green-700"
-                    >
-                      Save
-                    </Button>
-                  )}
+                <div className="flex gap-2 mt-2">
+                  <DialogNewAssignment form={form} />
+                  <DialogTransferRoute
+                    form={form}
+                    assignments={assignments.current}
+                    assignmentToId={assignmentToId}
+                  />
                 </div>
+                {getDifference(assignments.initial, assignments.current) && (
+                  <Button
+                    onClick={() =>
+                      updateAssignments(
+                        assignments.current.map((assignment) => {
+                          return {
+                            assignmentId: assignment.id,
+                            ...assignment
+                          };
+                        })
+                      )
+                    }
+                    className="w-full mt-2 bg-green-500 hover:bg-green-700"
+                  >
+                    Save
+                  </Button>
+                )}
               </form>
             </Form>
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              {form.watch('assignmentToId') && (
-                <>
-                  <DialogContent className="max-w-fit">
-                    <DialogTitle>Create Assignment</DialogTitle>
-                    <FormNewAssignment form={form} />
-                    <div className="flex justify-around">
-                      <Button
-                        onClick={createNewAssignment}
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
-                      >
-                        Accept
-                      </Button>
 
-                      <Button
-                        onClick={() => setIsModalOpen(false)}
-                        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </>
-              )}
-            </Dialog>
             <TabsContent value={selectedWeekday} className="w-full">
               {/* O filtro dos assignments precisa ser feito dentro de AssignmentsList, por causa
                 do componente TabsContent. Esse componente de Tabs se baseia no value para exibir 

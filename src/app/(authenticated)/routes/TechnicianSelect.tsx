@@ -6,22 +6,27 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/app/_components/ui/select';
+import { useTechniciansContext } from '@/context/technicians';
 import { WorkRelation } from '@/interfaces/User';
 
 type Props = {
-  technicians: WorkRelation[];
   onChange: (value: string) => void;
   defaultValue?: string;
 };
 
-export default function TechnicianSelect({
-  technicians,
-  onChange,
-  defaultValue
-}: Props) {
+export default function TechnicianSelect({ onChange }: Props) {
+  const { assignmentToId, setAssignmentToId, technicians } =
+    useTechniciansContext();
+
+  function handleChange(technicianId: string) {
+    setAssignmentToId(technicianId);
+    onChange(technicianId);
+  }
+
   return (
     <div className="mt-2">
-      <Select onValueChange={onChange} defaultValue={defaultValue}>
+      {/* por padrão, o User logado é o tecnico selecionado */}
+      <Select onValueChange={handleChange} defaultValue={assignmentToId}>
         <SelectTrigger>
           <SelectValue placeholder="Technician..." />
         </SelectTrigger>

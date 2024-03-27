@@ -21,7 +21,7 @@ export default function DatePickerField({ form, name, placeholder }: Props) {
       name={name}
       render={({ field }) => {
         return (
-          <FormItem className="w-full">
+          <FormItem className="w-full flex flex-col">
             <Label>{placeholder}</Label>
             <FormControl>
               <DatePicker placeholder={placeholder} onChange={field.onChange} />

@@ -1,12 +1,21 @@
 import { useMaskito } from '@maskito/react';
 import { Input } from '../ui/input';
-import { maskitoNumberOptionsGenerator } from '@maskito/kit';
 import currencyMask from './currencyMask';
 import percentMask from './percentMask';
+import phoneMask from './phoneMask';
 
 const masks = {
   currencyValue: currencyMask,
-  percentValue: percentMask
+  percentValue: percentMask,
+  phone: phoneMask
+};
+
+type Props = {
+  field: any;
+  placeholder: string;
+  name: string;
+  form: any;
+  mask: 'currencyValue' | 'percentValue' | 'phone';
 };
 
 export const InputMasked = ({
@@ -16,7 +25,7 @@ export const InputMasked = ({
   form,
   mask,
   ...props
-}) => {
+}: Props) => {
   const inputRef = useMaskito({ options: masks[mask] });
 
   return (
@@ -27,7 +36,6 @@ export const InputMasked = ({
       onInput={(e) => {
         form.setValue(name, e.target.value);
       }}
-      {...props}
       ref={inputRef}
     />
   );
