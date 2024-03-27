@@ -55,10 +55,16 @@ export default function ClientInfo({ client }) {
   if (isPending) return <LoadingSpinner />;
 
   const handleSubmit = async (data) => {
-    const dirtyFields = filterChangedFormFields(
+    let dirtyFields = filterChangedFormFields(
       form.getValues(),
       form.formState.dirtyFields
     );
+    if (form.watch('phone1') !== client.phone1) {
+      dirtyFields = {
+        ...dirtyFields,
+        phone1: form.watch('phone1')
+      };
+    }
     mutate(dirtyFields);
   };
 

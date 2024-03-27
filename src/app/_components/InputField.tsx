@@ -5,16 +5,12 @@ import {
   FormMessage
 } from '@/app/_components/ui/form';
 import { Input } from '@/app/_components/ui/input';
-import { MaskitoOptions } from '@maskito/core';
 
-import { useMaskito } from '@maskito/react';
-import { PhoneMask, Weekdays } from '../../constants';
 import { Textarea } from '@/app/_components/ui/textarea';
 import { Checkbox } from '@/app/_components/ui/checkbox';
 import { DropdownMenuCheckboxes } from '@/app/_components/ui/multiple-select';
 import { Label } from '@/app/_components/ui/label';
-import { Search } from './ui/input-with-icon';
-import { CurrencyInput, InputMasked } from './InputMasked';
+import { InputMasked } from './InputMasked';
 
 type Props = {
   form: any;
@@ -44,11 +40,6 @@ export default function InputField({
   label,
   ...props
 }: Props) {
-  const digitsOnlyMask: MaskitoOptions = {
-    mask: PhoneMask
-  };
-  const inputRef = useMaskito({ options: digitsOnlyMask });
-
   const types = {
     zip: {
       component: (field) => (
@@ -65,18 +56,14 @@ export default function InputField({
     },
     phone: {
       component: (field) => {
-        // const { ref, ...rest } = form.register(name);
-        // arranjar uma maneira de fazer o react-hook-form funcionar com o maskito
-        // como estou passando uma ref para esse input, o react-hook-form não está obervando as mudanças
         return (
-          <Input
-            type="tel"
+          <InputMasked
+            mask="phone"
+            field={field}
             placeholder={placeholder}
+            name={name}
+            form={form}
             {...field}
-            ref={inputRef}
-            onInput={(e) => {
-              form.setValue(name, e.target.value);
-            }}
             {...props}
           />
         );
