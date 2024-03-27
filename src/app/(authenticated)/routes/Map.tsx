@@ -68,20 +68,26 @@ const Map = ({ assignments, selectedWeekday }) => {
           console.log(result);
           setDirections(result);
 
-          // Pra calcular distancia e duração total terá que fazer um loop nas legs
-          // const totalDistanceBetweenWaypoints = result.routes[0].legs.reduce(
-          //   (acc, leg) => acc + leg.distance.value,
-          //   0
-          // );
-
-          setDistance(result.routes[0].legs[0].distance?.text || '');
-          setDuration(result.routes[0].legs[0].duration?.text || '');
+          const totalDuration = result.routes[0].legs.reduce(
+            (acc, leg) => acc + leg.duration.value,
+            0
+          );
+          const totalDistance = result.routes[0].legs.reduce(
+            (acc, leg) => acc + leg.distance.value,
+            0
+          );
+          setDuration(
+            (totalDuration / 60).toLocaleString('pt-br', {
+              style: 'decimal',
+              maximumSignificantDigits: 2
+            }) + ' min'
+          );
+          setDistance((totalDistance * 0.000621371).toFixed(1) + ' mi');
         }
       }
     );
   }, [assignments, isLoaded]);
 
-  // assignments.length > 0 && fetchDirections();
   if (loadError) {
     return <div>Error loading maps</div>;
   }
