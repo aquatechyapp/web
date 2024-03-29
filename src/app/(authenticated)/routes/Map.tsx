@@ -65,7 +65,6 @@ const Map = ({ assignments, selectedWeekday }) => {
       },
       (result, status) => {
         if (status === 'OK' && result) {
-          console.log(result);
           setDirections(result);
 
           const totalDuration = result.routes[0].legs.reduce(

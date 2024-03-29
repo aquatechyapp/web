@@ -25,6 +25,7 @@ import { Assignment } from '@/interfaces/Assignments';
 import { useWeekdayContext } from '@/context/weekday';
 import { DialogNewAssignment } from './dialog-new-assignment';
 import { DialogTransferRoute } from './dialog-transfer-route';
+import { useState } from 'react';
 
 export type Weekdays =
   | 'Sunday'
@@ -36,6 +37,7 @@ export type Weekdays =
   | 'Saturday';
 
 export default function Page() {
+  const [openTransferDialog, setOpenTransferDialog] = useState(false);
   const { assignmentToId, setAssignmentToId } = useTechniciansContext();
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayContext();
@@ -122,7 +124,17 @@ export default function Page() {
                 <TechnicianSelect onChange={handleChangeTechnician} />
                 <div className="flex gap-2 mt-2">
                   <DialogNewAssignment form={form} />
+                  <Button
+                    type="button"
+                    className="w-full"
+                    variant={'secondary'}
+                    onClick={() => setOpenTransferDialog(true)}
+                  >
+                    Transfer Route
+                  </Button>
                   <DialogTransferRoute
+                    open={openTransferDialog}
+                    setOpen={setOpenTransferDialog}
                     form={form}
                     assignments={assignments.current}
                     assignmentToId={assignmentToId}

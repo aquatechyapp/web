@@ -6,6 +6,7 @@ import {
   FormMessage
 } from '@/app/_components/ui/form';
 import { Label } from '@/app/_components/ui/label';
+import { useWeekdayContext } from '@/context/weekday';
 
 type Props = {
   props?: any;
@@ -14,7 +15,14 @@ type Props = {
   placeholder: string;
 };
 
-export default function DatePickerField({ form, name, placeholder }: Props) {
+export default function DatePickerField({
+  form,
+  name,
+  placeholder
+  // disabledWeekdays = []
+}: Props) {
+  // const { selectedWeekday } = useWeekdayContext();
+  // const weekday = getWeek
   return (
     <FormField
       control={form.control}
@@ -24,7 +32,11 @@ export default function DatePickerField({ form, name, placeholder }: Props) {
           <FormItem className="w-full flex flex-col">
             <Label>{placeholder}</Label>
             <FormControl>
-              <DatePicker placeholder={placeholder} onChange={field.onChange} />
+              <DatePicker
+                placeholder={placeholder}
+                onChange={field.onChange}
+                // disabledWeekdays={disabledWeekdays}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

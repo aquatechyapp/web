@@ -34,6 +34,8 @@ export function DialogNewAssignment({ form }: Props) {
 
   const { mutate, isPending } = useCreateAssignment();
 
+  console.log(form.watch('assignmentToId'));
+
   async function createNewAssignment() {
     const isValid = await validateForm();
     if (isValid) {

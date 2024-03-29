@@ -18,9 +18,9 @@ export const FormNewAssignment = ({ form }) => {
     staleTime: Infinity
   });
 
-  useEffect(() => {
-    form.reset();
-  }, []);
+  // useEffect(() => {
+  //   form.reset(['client', 'startOn', 'endAfter']);
+  // }, []);
 
   if (isLoading) return <LoadingSpinner />;
   const clientId = form.watch('client');

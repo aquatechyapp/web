@@ -13,7 +13,13 @@ import {
   PopoverTrigger
 } from '@/app/_components/ui/popover';
 
-export function DatePicker({ placeholder, onChange }) {
+type Props = {
+  placeholder: string;
+  onChange: (date: Date) => void;
+  disabledWeekdays?: number[];
+};
+
+export function DatePicker({ placeholder, onChange, disabledWeekdays }: Props) {
   const [date, setDate] = React.useState<Date>();
 
   React.useEffect(() => {
@@ -38,6 +44,9 @@ export function DatePicker({ placeholder, onChange }) {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
+          disabled={{
+            dayOfWeek: disabledWeekdays || []
+          }}
           mode="single"
           selected={date}
           onSelect={setDate}

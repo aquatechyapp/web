@@ -20,7 +20,7 @@ export default function WeekdaySelect({ onChange }: Props) {
   const { selectedWeekday } = useWeekdayContext();
 
   return (
-    <div className="mt-2">
+    <div>
       {/* por padrão, o User logado é o tecnico selecionado */}
       <Label>Weekday</Label>
       <Select onValueChange={onChange} defaultValue={selectedWeekday}>

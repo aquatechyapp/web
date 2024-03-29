@@ -1,13 +1,5 @@
 import { Button } from '@/app/_components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger
-} from '@/app/_components/ui/dialog';
-import { useToast } from '@/app/_components/ui/use-toast';
-import { clientAxios } from '@/services/clientAxios';
+import { Dialog, DialogTrigger } from '@/app/_components/ui/dialog';
 import {
   DndContext,
   DragOverlay,
@@ -24,7 +16,6 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useState } from 'react';
 import { MdDragIndicator } from 'react-icons/md';
@@ -33,22 +24,21 @@ import { useTechniciansContext } from '@/context/technicians';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/app/_components/ui/dropdown-menu';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { useUserContext } from '@/context/user';
 import { Assignment } from '@/interfaces/Assignments';
+import { DialogTransferRoute } from './dialog-transfer-route';
+import { DialogDeleteAssignment } from './dialog-delete-assignment';
 
 export function AssignmentsList({ handleDragEnd }) {
   const { user } = useUserContext();
   const { assignments } = useAssignmentsContext();
   const { assignmentToId } = useTechniciansContext();
+  const [openDialogDelete, setOpenDialogDelete] = useState(false);
+  const [openDialogTransfer, setOpenDialogTransfer] = useState(false);
 
   const shouldPermitChangeOrder = assignmentToId !== user?.id;
 
@@ -59,28 +49,6 @@ export function AssignmentsList({ handleDragEnd }) {
       coordinateGetter: sortableKeyboardCoordinates
     })
   );
-
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: async (assignmentId: string) =>
-      await clientAxios.delete('/assignments', { data: { assignmentId } }),
-    onSuccess: (_, assignmentId) => {
-      toast({
-        title: 'Assignment deleted successfully',
-        className: 'bg-green-500 text-white'
-      });
-    },
-    onError: (e) => {
-      toast({
-        title: 'Error deleting assignment',
-        className: 'bg-red-500 text-white'
-      });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments'] });
-    }
-  });
 
   function handleDragStart(event) {
     setActive(event.active.data.current.sortable.index);
@@ -93,7 +61,7 @@ export function AssignmentsList({ handleDragEnd }) {
       </div>
     );
   }
-
+  console.log(assignments.current);
   return (
     <DndContext
       sensors={sensors}
@@ -114,63 +82,35 @@ export function AssignmentsList({ handleDragEnd }) {
               key={assignment.id}
               shouldPermitChangeOrder={shouldPermitChangeOrder}
             />
-            <Dialog>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild className="self-center">
-                  <Button size="icon" variant="ghost">
-                    <BsThreeDotsVertical className="text-stone-500" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuGroup>
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>
-                        Change weekday
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                          <DropdownMenuItem>Sunday</DropdownMenuItem>
-                          <DropdownMenuItem>Monday</DropdownMenuItem>
-                          <DropdownMenuItem>Tuesday</DropdownMenuItem>
-                          <DropdownMenuItem>Wednesday</DropdownMenuItem>
-                          <DropdownMenuItem>Thursday</DropdownMenuItem>
-                          <DropdownMenuItem>Friday</DropdownMenuItem>
-                          <DropdownMenuItem>Saturday</DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                  </DropdownMenuGroup>
-                  <DialogTrigger className="w-full">
-                    <DropdownMenuItem>
-                      <div className="text-red-500  flex items-center w-full">
-                        Delete
-                      </div>
-                    </DropdownMenuItem>
-                  </DialogTrigger>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <DialogContent>
-                <DialogTitle>{assignment.pool.name}</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this assignment?
-                </DialogDescription>
-                <div className="flex justify-around">
-                  <DialogTrigger>
-                    <Button
-                      onClick={() => mutate(assignment.id)}
-                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
-                    >
-                      Accept
-                    </Button>
-                  </DialogTrigger>
-                  <DialogTrigger>
-                    <Button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full">
-                      Cancel
-                    </Button>
-                  </DialogTrigger>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild className="self-center">
+                <Button size="icon" variant="ghost">
+                  <BsThreeDotsVertical className="text-stone-500" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => setOpenDialogTransfer(true)}>
+                  Transfer Assignment
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-red-500"
+                  onClick={() => setOpenDialogDelete(true)}
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DialogDeleteAssignment
+              open={openDialogDelete}
+              setOpen={setOpenDialogDelete}
+              assignment={assignment}
+            />
+            <DialogTransferRoute
+              open={openDialogTransfer}
+              setOpen={setOpenDialogTransfer}
+              assignmentToId={assignmentToId}
+              assignments={[assignment]}
+            />
           </div>
         ))}
       </SortableContext>

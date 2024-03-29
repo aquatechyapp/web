@@ -10,7 +10,7 @@ export const transferAssignmentsSchema = z
     startOn: z.coerce.date().optional(),
     endAfter: z.coerce.date().optional()
   })
-  .refine((data) => (data.type === 'once' ? data.onlyAt : false), {
+  .refine((data) => (data.type === 'once' ? data.onlyAt : true), {
     message: 'Is required',
     path: ['onlyAt']
   })

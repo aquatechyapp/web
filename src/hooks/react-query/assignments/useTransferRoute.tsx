@@ -1,20 +1,25 @@
 import { useToast } from '@/app/_components/ui/use-toast';
-import { useAssignmentsContext } from '@/context/assignments';
 import { Assignment } from '@/interfaces/Assignments';
 import { clientAxios } from '@/services/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TransferOnceObject = {
-  assignmentToId: string;
-  weekday: string;
-  onlyAt: string;
+  assignments: Assignment[];
+  form: {
+    assignmentToId: string;
+    weekday: string;
+    onlyAt: string;
+  };
 };
 
 type TransferPermanentlyObject = {
-  assignmentToId: string;
-  weekday: string;
-  startOn: string;
-  endAfter: string;
+  assignments: Assignment[];
+  form: {
+    assignmentToId: string;
+    weekday: string;
+    startOn: string;
+    endAfter: string;
+  };
 };
 
 async function transferOnce(data: Partial<Assignment>[]) {
@@ -29,19 +34,18 @@ async function transferPermanently(data: Assignment[]) {
 
 export const useTransferOnceRoute = () => {
   const queryClient = useQueryClient();
-  const { assignments } = useAssignmentsContext();
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
-    mutationFn: (form: TransferOnceObject) => {
-      const data = assignments.current
+    mutationFn: (data: TransferOnceObject) => {
+      const assignments = data.assignments
         .filter((a) => a.frequency !== 'ONCE')
         .map((assignment) => {
           return {
             assignmentId: assignment.id,
-            ...form
+            ...data.form
           };
         });
-      return transferOnce(data);
+      return transferOnce(assignments);
     },
     onError: () => {
       toast({
@@ -61,22 +65,20 @@ export const useTransferOnceRoute = () => {
 };
 
 export const useTransferPermanentlyRoute = () => {
-  const { assignments } = useAssignmentsContext();
-
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
-    mutationFn: (form: TransferPermanentlyObject) => {
-      const data: Assignment[] = assignments.current
+    mutationFn: (data: TransferPermanentlyObject) => {
+      const assignments: Assignment[] = data.assignments
         .filter((a) => a.frequency !== 'ONCE')
         .map((assignment) => {
           return {
             ...assignment,
-            ...form,
+            ...data.form,
             assignmentId: assignment.id
           };
         });
-      return transferPermanently(data);
+      return transferPermanently(assignments);
     },
     onError: () => {
       toast({

@@ -1,13 +1,11 @@
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@/app/_components/ui/dialog';
 import { Button } from '@/app/_components/ui/button';
 import { isEmpty } from '@/utils';
 import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
-import { useState } from 'react';
 import TechnicianSelect from './TechnicianSelect';
 import {
   useTransferOnceRoute,
@@ -29,16 +27,22 @@ import {
 } from '@/app/_components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/app/_components/ui/radio-group';
 import DatePickerField from '@/app/_components/DatePickerField';
+import { Label } from '@/app/_components/ui/label';
 import { Assignment } from '@/interfaces/Assignments';
 
 type Props = {
-  assignmentToId: string;
   assignments: Assignment[];
+  assignmentToId: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 };
 
-export function DialogTransferRoute({ assignmentToId, assignments }: Props) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+export function DialogTransferRoute({
+  assignmentToId,
+  open,
+  setOpen,
+  assignments
+}: Props) {
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
     resolver: zodResolver(transferAssignmentsSchema),
     defaultValues: {
@@ -77,43 +81,46 @@ export function DialogTransferRoute({ assignmentToId, assignments }: Props) {
   async function transferRoute() {
     const isValid = await validateForm();
     if (isValid) {
-      setIsModalOpen(false);
+      setOpen(false);
 
       if (shouldTransferOnce) {
         transferOnce({
-          assignmentToId: form.getValues('assignmentToId'),
-          onlyAt: form.getValues('onlyAt'),
-          weekday: form.getValues('weekday')
+          assignments,
+          form: {
+            assignmentToId: form.getValues('assignmentToId'),
+            onlyAt: form.getValues('onlyAt'),
+            weekday: form.getValues('weekday')
+          }
         });
       } else {
         transferPermanently({
-          assignmentToId: form.getValues('assignmentToId'),
-          startOn: form.getValues('startOn'),
-          endAfter: form.getValues('endAfter'),
-          weekday: form.getValues('weekday')
+          assignments,
+          form: {
+            assignmentToId: form.getValues('assignmentToId'),
+            startOn: form.getValues('startOn'),
+            endAfter: form.getValues('endAfter'),
+            weekday: form.getValues('weekday')
+          }
         });
       }
       form.reset();
       return;
     }
 
-    setIsModalOpen(true);
+    setOpen(true);
   }
-
+  console.log(form.getValues('type'));
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogTrigger asChild className="w-full">
-        <Button className="w-full" variant="secondary" type="button">
-          Transfer Route
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-[480px]">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="max-w-[580px] h-[500px]">
         <DialogTitle>Transfer Route</DialogTitle>
         {isPending ? (
           <LoadingSpinner />
         ) : (
           <Form {...form}>
-            <form>
+            <form className="gap-4 flex flex-col">
+              {/* -mb-4 pra remover o gap-4. Não coloquei a Label dentro do componente pois não quero aplicar sempre */}
+              <Label className="-mb-4">Technician</Label>
               <TechnicianSelect
                 onChange={(technicianId) =>
                   form.setValue('assignmentToId', technicianId)
@@ -123,26 +130,28 @@ export function DialogTransferRoute({ assignmentToId, assignments }: Props) {
                 onChange={(weekday) => form.setValue('weekday', weekday)}
               />
               <OptionsOnceOrPermanently form={form} />
-              {shouldTransferOnce ? (
-                <DatePickerField
-                  form={form}
-                  name="onlyAt"
-                  placeholder="Only at"
-                />
-              ) : (
-                <>
+              <div className="mt-1">
+                {shouldTransferOnce ? (
                   <DatePickerField
                     form={form}
-                    name="startOn"
-                    placeholder="Start on"
+                    name="onlyAt"
+                    placeholder="Only at"
                   />
-                  <DatePickerField
-                    form={form}
-                    name="endAfter"
-                    placeholder="End after"
-                  />
-                </>
-              )}
+                ) : (
+                  <div className="flex">
+                    <DatePickerField
+                      form={form}
+                      name="startOn"
+                      placeholder="Start on"
+                    />
+                    <DatePickerField
+                      form={form}
+                      name="endAfter"
+                      placeholder="End after"
+                    />
+                  </div>
+                )}
+              </div>
             </form>
           </Form>
         )}
@@ -155,7 +164,7 @@ export function DialogTransferRoute({ assignmentToId, assignments }: Props) {
           </Button>
 
           <Button
-            onClick={() => setIsModalOpen(false)}
+            onClick={() => setOpen(false)}
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full"
           >
             Cancel
@@ -173,13 +182,13 @@ const OptionsOnceOrPermanently = ({ form }) => {
       name="type"
       render={({ field }) => (
         <div className="flex gap-4">
-          <FormLabel>Choose between transfer...</FormLabel>
           <FormItem className="space-y-3">
+            <FormLabel>Choose between transfer...</FormLabel>
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
                 defaultValue={field.value}
-                className="flex flex-col space-y-1"
+                className="flex space-y-1"
               >
                 <FormItem className="flex items-center space-x-3 space-y-0">
                   <FormControl>
@@ -187,7 +196,11 @@ const OptionsOnceOrPermanently = ({ form }) => {
                   </FormControl>
                   <FormLabel className="font-normal">Once</FormLabel>
                 </FormItem>
-                <FormItem className="flex items-center space-x-3 space-y-0">
+                <FormItem
+                  className="flex items-center space-x-3 space-y-0"
+                  // Necessário pois tinha um space-y aplicando um margin-top
+                  style={{ marginTop: 0 }}
+                >
                   <FormControl>
                     <RadioGroupItem value="permanently" />
                   </FormControl>
