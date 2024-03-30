@@ -35,7 +35,7 @@ import { DialogDeleteAssignment } from './dialog-delete-assignment';
 
 export function AssignmentsList({ handleDragEnd }) {
   const { user } = useUserContext();
-  const { assignments } = useAssignmentsContext();
+  const { assignments, setAssignmentToTransfer } = useAssignmentsContext();
   const { assignmentToId } = useTechniciansContext();
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [openDialogTransfer, setOpenDialogTransfer] = useState(false);
@@ -61,7 +61,7 @@ export function AssignmentsList({ handleDragEnd }) {
       </div>
     );
   }
-  console.log(assignments.current);
+
   return (
     <DndContext
       sensors={sensors}
@@ -89,7 +89,12 @@ export function AssignmentsList({ handleDragEnd }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setOpenDialogTransfer(true)}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setAssignmentToTransfer([assignment]);
+                    setOpenDialogTransfer(true);
+                  }}
+                >
                   Transfer Assignment
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -109,7 +114,7 @@ export function AssignmentsList({ handleDragEnd }) {
               open={openDialogTransfer}
               setOpen={setOpenDialogTransfer}
               assignmentToId={assignmentToId}
-              assignments={[assignment]}
+              assignment={assignment}
             />
           </div>
         ))}

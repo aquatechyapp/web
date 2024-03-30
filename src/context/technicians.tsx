@@ -23,7 +23,7 @@ export const TechniciansProvider = ({
   children: React.ReactNode;
 }) => {
   const { user } = useUserContext();
-  const [assignmentToId, setAssignmentToId] = useState();
+  const [assignmentToId, setAssignmentToId] = useState(user?.id || '');
   const [technicians, setTechnicians] = useState([]);
 
   useEffect(() => {

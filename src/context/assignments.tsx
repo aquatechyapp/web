@@ -19,6 +19,8 @@ type AssignmentsContextType = {
     initial: Assignment[];
     current: Assignment[];
   }) => void;
+  assignmentToTransfer?: Assignment[];
+  setAssignmentToTransfer: (assignment: Assignment[]) => void;
 };
 
 const AssignmentsContext = createContext<AssignmentsContextType>({
@@ -26,7 +28,9 @@ const AssignmentsContext = createContext<AssignmentsContextType>({
     initial: [],
     current: []
   },
-  setAssignments: () => {}
+  setAssignments: () => {},
+  assignmentToTransfer: [],
+  setAssignmentToTransfer: () => {}
 });
 
 export const AssignmentsProvider = ({
@@ -57,6 +61,10 @@ export const AssignmentsProvider = ({
     current: [] as Assignment[]
   });
 
+  const [assignmentToTransfer, setAssignmentToTransfer] = useState<
+    Assignment[]
+  >([]);
+
   useEffect(() => {
     if (!userId) return;
     if (isError || isLoading) return;
@@ -80,7 +88,9 @@ export const AssignmentsProvider = ({
     <AssignmentsContext.Provider
       value={{
         assignments,
-        setAssignments
+        setAssignments,
+        assignmentToTransfer,
+        setAssignmentToTransfer
       }}
     >
       {children}

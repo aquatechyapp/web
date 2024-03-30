@@ -34,21 +34,23 @@ export function DialogNewAssignment({ form }: Props) {
 
   const { mutate, isPending } = useCreateAssignment();
 
-  console.log(form.watch('assignmentToId'));
-
   async function createNewAssignment() {
     const isValid = await validateForm();
     if (isValid) {
       setIsModalOpen(false);
+      const assignmentToId = form.watch('assignmentToId');
       mutate({
-        assignmentToId: form.watch('assignmentToId'),
+        assignmentToId,
         poolId: form.watch('poolId'),
         weekday: form.watch('weekday'),
         frequency: form.watch('frequency'),
         startOn: form.watch('startOn'),
         endAfter: form.watch('endAfter')
       });
+      // preciso guardar o assignmentToId selecionado antes de dar reset, se não vai bugar ao criar 2 assignments seguidos
+      // em um technician que não é o user logado
       form.reset();
+      form.setValue('assignmentToId', assignmentToId);
       return;
     }
 

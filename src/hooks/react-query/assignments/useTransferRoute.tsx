@@ -1,25 +1,20 @@
 import { useToast } from '@/app/_components/ui/use-toast';
+import { useAssignmentsContext } from '@/context/assignments';
 import { Assignment } from '@/interfaces/Assignments';
 import { clientAxios } from '@/services/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TransferOnceObject = {
-  assignments: Assignment[];
-  form: {
-    assignmentToId: string;
-    weekday: string;
-    onlyAt: string;
-  };
+  assignmentToId: string;
+  weekday: string;
+  onlyAt: string;
 };
 
 type TransferPermanentlyObject = {
-  assignments: Assignment[];
-  form: {
-    assignmentToId: string;
-    weekday: string;
-    startOn: string;
-    endAfter: string;
-  };
+  assignmentToId: string;
+  weekday: string;
+  startOn: string;
+  endAfter: string;
 };
 
 async function transferOnce(data: Partial<Assignment>[]) {
@@ -32,17 +27,23 @@ async function transferPermanently(data: Assignment[]) {
   return response.data;
 }
 
-export const useTransferOnceRoute = () => {
+export const useTransferOnceRoute = (isSelected = false) => {
+  const { assignments, assignmentToTransfer } = useAssignmentsContext();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  const assignmentsToTransfer = isSelected
+    ? assignmentToTransfer
+    : assignments.current;
+
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: TransferOnceObject) => {
-      const assignments = data.assignments
+    mutationFn: (form: TransferOnceObject) => {
+      const assignments = assignmentsToTransfer
         .filter((a) => a.frequency !== 'ONCE')
         .map((assignment) => {
           return {
             assignmentId: assignment.id,
-            ...data.form
+            ...form
           };
         });
       return transferOnce(assignments);
@@ -64,17 +65,22 @@ export const useTransferOnceRoute = () => {
   return { mutate, isPending };
 };
 
-export const useTransferPermanentlyRoute = () => {
+export const useTransferPermanentlyRoute = (isSelected = false) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { assignments, assignmentToTransfer } = useAssignmentsContext();
+  const assignmentsToTransfer = isSelected
+    ? assignmentToTransfer
+    : assignments.current;
+
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: TransferPermanentlyObject) => {
-      const assignments: Assignment[] = data.assignments
+    mutationFn: (form: TransferPermanentlyObject) => {
+      const assignments: Assignment[] = assignmentsToTransfer
         .filter((a) => a.frequency !== 'ONCE')
         .map((assignment) => {
           return {
             ...assignment,
-            ...data.form,
+            ...form,
             assignmentId: assignment.id
           };
         });

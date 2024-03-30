@@ -6,11 +6,8 @@ export const useUpdateUser = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data) =>
-      // await clientAxios.patch('/clients', { data, clientId: pathname }),
-      await clientAxios.patch('/users', data),
-    onSuccess: (data, dois, tres) => {
-      console.log(data, dois, tres);
+    mutationFn: async (data) => await clientAxios.patch('/users', data),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       toast({
         variant: 'default',
@@ -18,7 +15,7 @@ export const useUpdateUser = () => {
         className: 'bg-green-500 text-white'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         variant: 'default',
         title: 'Error updating user',

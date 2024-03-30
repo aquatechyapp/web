@@ -31,17 +31,17 @@ import { Label } from '@/app/_components/ui/label';
 import { Assignment } from '@/interfaces/Assignments';
 
 type Props = {
-  assignments: Assignment[];
   assignmentToId: string;
   open: boolean;
   setOpen: (open: boolean) => void;
+  assignment?: Assignment;
 };
 
 export function DialogTransferRoute({
   assignmentToId,
   open,
   setOpen,
-  assignments
+  assignment
 }: Props) {
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
     resolver: zodResolver(transferAssignmentsSchema),
@@ -72,9 +72,9 @@ export function DialogTransferRoute({
   };
 
   const { mutate: transferOnce, isPending: isPendingOnce } =
-    useTransferOnceRoute();
+    useTransferOnceRoute(assignment);
   const { mutate: transferPermanently, isPending: isPendingPermanently } =
-    useTransferPermanentlyRoute();
+    useTransferPermanentlyRoute(assignment);
 
   const isPending = isPendingOnce || isPendingPermanently;
 
@@ -82,25 +82,18 @@ export function DialogTransferRoute({
     const isValid = await validateForm();
     if (isValid) {
       setOpen(false);
-
       if (shouldTransferOnce) {
         transferOnce({
-          assignments,
-          form: {
-            assignmentToId: form.getValues('assignmentToId'),
-            onlyAt: form.getValues('onlyAt'),
-            weekday: form.getValues('weekday')
-          }
+          assignmentToId: form.getValues('assignmentToId'),
+          onlyAt: form.getValues('onlyAt'),
+          weekday: form.getValues('weekday')
         });
       } else {
         transferPermanently({
-          assignments,
-          form: {
-            assignmentToId: form.getValues('assignmentToId'),
-            startOn: form.getValues('startOn'),
-            endAfter: form.getValues('endAfter'),
-            weekday: form.getValues('weekday')
-          }
+          assignmentToId: form.getValues('assignmentToId'),
+          startOn: form.getValues('startOn'),
+          endAfter: form.getValues('endAfter'),
+          weekday: form.getValues('weekday')
         });
       }
       form.reset();
@@ -109,7 +102,7 @@ export function DialogTransferRoute({
 
     setOpen(true);
   }
-  console.log(form.getValues('type'));
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-[580px] h-[500px]">
