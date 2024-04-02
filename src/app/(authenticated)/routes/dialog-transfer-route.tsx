@@ -29,6 +29,9 @@ import { RadioGroup, RadioGroupItem } from '@/app/_components/ui/radio-group';
 import DatePickerField from '@/app/_components/DatePickerField';
 import { Label } from '@/app/_components/ui/label';
 import { Assignment } from '@/interfaces/Assignments';
+import InputField from '@/app/_components/InputField';
+import { useUserContext } from '@/context/user';
+import { useMemo } from 'react';
 
 type Props = {
   assignmentToId: string;
@@ -43,17 +46,24 @@ export function DialogTransferRoute({
   setOpen,
   assignment
 }: Props) {
+  const { user } = useUserContext();
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
     resolver: zodResolver(transferAssignmentsSchema),
     defaultValues: {
       assignmentToId: assignmentToId,
       weekday: format(new Date(), 'EEEE').toUpperCase(),
+      paidByService: null,
       startOn: undefined,
       endAfter: undefined,
       onlyAt: undefined,
       type: 'once'
     }
   });
+
+  const userSelectedAsTechnician = useMemo(
+    () => user?.id === form.watch('assignmentToId'),
+    [form.watch('assignmentToId')]
+  );
 
   const shouldTransferOnce = form.watch('type') === 'once';
 
@@ -86,14 +96,20 @@ export function DialogTransferRoute({
         transferOnce({
           assignmentToId: form.getValues('assignmentToId'),
           onlyAt: form.getValues('onlyAt'),
-          weekday: form.getValues('weekday')
+          weekday: form.getValues('weekday'),
+          paidByService: parseInt(
+            form.getValues('paidByService')?.replaceAll(/\D/g, '')
+          )
         });
       } else {
         transferPermanently({
           assignmentToId: form.getValues('assignmentToId'),
           startOn: form.getValues('startOn'),
           endAfter: form.getValues('endAfter'),
-          weekday: form.getValues('weekday')
+          weekday: form.getValues('weekday'),
+          paidByService: parseInt(
+            form.getValues('paidByService')?.replaceAll(/\D/g, '')
+          )
         });
       }
       form.reset();
@@ -105,7 +121,7 @@ export function DialogTransferRoute({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-[580px] h-[500px]">
+      <DialogContent className="max-w-[580px] h-[540px]">
         <DialogTitle>Transfer Route</DialogTitle>
         {isPending ? (
           <LoadingSpinner />
@@ -119,6 +135,15 @@ export function DialogTransferRoute({
                   form.setValue('assignmentToId', technicianId)
                 }
               />
+              {!userSelectedAsTechnician && (
+                <InputField
+                  name="paidByService"
+                  form={form}
+                  placeholder="0.00$"
+                  label="Paid by Service"
+                  type="currencyValue"
+                />
+              )}
               <WeekdaySelect
                 onChange={(weekday) => form.setValue('weekday', weekday)}
               />
@@ -157,7 +182,10 @@ export function DialogTransferRoute({
           </Button>
 
           <Button
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              form.reset();
+            }}
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full"
           >
             Cancel

@@ -1,6 +1,5 @@
 'use client';
 
-import { Input } from '@/app/_components/ui/input';
 import { Button } from '@/app/_components/ui/button';
 import { Form } from '@/app/_components/ui/form';
 import { useForm } from 'react-hook-form';
@@ -17,13 +16,11 @@ import DatePickerField from '@/app/_components/DatePickerField';
 import { clientAxios } from '@/services/clientAxios';
 import { useRouter } from 'next/navigation';
 import { InputFile } from '@/app/_components/InputFile';
-import { isBefore } from 'date-fns';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/app/_components/ui/use-toast';
 import { useUserContext } from '@/context/user';
 import { useEffect } from 'react';
 import { dateSchema } from '@/schemas/date';
-import { Separator } from '@/app/_components/ui/separator';
 
 export default function Page() {
   const { user } = useUserContext();
@@ -61,7 +58,8 @@ export default function Page() {
           .filter((sub) => sub.status === 'Accepted')
           .map((sub) => ({
             key: sub.id,
-            name: sub.subcontractor.name,
+            name:
+              sub.subcontractor.firstName + ' ' + sub.subcontractor.lastName,
             value: sub.id
           }))
       : [];
@@ -89,7 +87,8 @@ export default function Page() {
       sameBillingAddress: false,
       clientCity: '',
       clientState: '',
-      customerCode: ''
+      customerCode: '',
+      paidByService: undefined
     }
   });
 
@@ -252,6 +251,13 @@ export default function Page() {
               form={form}
               data={subContractors?.length > 0 ? subContractors : []}
             />
+            <InputField
+              name="paidByService"
+              form={form}
+              placeholder="0.00$"
+              label="Paid by Service"
+              type="currencyValue"
+            />
             <SelectField
               name="weekday"
               placeholder="Weekdays"
@@ -264,6 +270,8 @@ export default function Page() {
               form={form}
               data={Frequencies}
             />
+          </div>
+          <div className="inline-flex items-start justify-start gap-4">
             <DatePickerField
               form={form}
               name="startOn"
@@ -311,7 +319,15 @@ const additionalSchemas = z.object({
   sameBillingAddress: z.boolean(),
   assignmentToId: z.string().min(1),
   photo: z.array(z.any()),
-  customerCode: z.string().nullable()
+  customerCode: z.string().nullable(),
+  paidByService: z.preprocess(
+    (val) => parseInt(val?.toString().replaceAll(/\D/g, '')),
+    z.number()
+  ),
+  montlyPayment: z.preprocess(
+    (val) => parseInt(val?.toString().replaceAll(/\D/g, '')),
+    z.number()
+  )
 });
 
 const poolAndClientSchema = clientSchema

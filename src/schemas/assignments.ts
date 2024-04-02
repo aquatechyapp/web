@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { isBefore } from 'date-fns';
+import Cookies from 'js-cookie';
 
 export const transferAssignmentsSchema = z
   .object({
@@ -8,8 +9,17 @@ export const transferAssignmentsSchema = z
     type: z.enum(['once', 'permanently']),
     onlyAt: z.coerce.date().optional(),
     startOn: z.coerce.date().optional(),
-    endAfter: z.coerce.date().optional()
+    endAfter: z.coerce.date().optional(),
+    paidByService: z.string().nullish()
   })
+  .refine(
+    (data) =>
+      Cookies.get('userId') !== data.assignmentToId ? data.paidByService : true,
+    {
+      message: 'Is required',
+      path: ['paidByService']
+    }
+  )
   .refine((data) => (data.type === 'once' ? data.onlyAt : true), {
     message: 'Is required',
     path: ['onlyAt']

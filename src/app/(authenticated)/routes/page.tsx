@@ -54,6 +54,7 @@ export default function Page() {
       poolId: '',
       weekday: format(new Date(), 'EEEE').toUpperCase(),
       frequency: '',
+      paidByService: undefined,
       startOn: undefined,
       endAfter: undefined
     }
@@ -192,6 +193,9 @@ const newAssignmentSchema = z
     poolId: z.string(),
     client: z.string(),
     frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
+    // paidByService must be a number, here we are checking if has value in input,
+    //  but in dialog-new-assignment we are transforming it to a Number
+    paidByService: z.string(),
     weekday: z.string(
       z.enum([
         'SUNDAY',

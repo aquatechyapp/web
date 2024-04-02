@@ -6,7 +6,7 @@ import { buildSelectOptions } from '@/utils';
 import { Frequencies } from '@/constants';
 import { clientAxios } from '@/services/clientAxios';
 import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
-import { useEffect } from 'react';
+import InputField from '@/app/_components/InputField';
 
 export const FormNewAssignment = ({ form }) => {
   const { data, isLoading, isError } = useQuery({
@@ -24,7 +24,6 @@ export const FormNewAssignment = ({ form }) => {
 
   if (isLoading) return <LoadingSpinner />;
   const clientId = form.watch('client');
-
   return (
     <Form {...form}>
       <form className="w-[90%]">
@@ -63,6 +62,13 @@ export const FormNewAssignment = ({ form }) => {
             placeholder="Frequency"
             form={form}
             data={Frequencies}
+          />
+          <InputField
+            name="paidByService"
+            form={form}
+            placeholder="0.00$"
+            label="Paid by Service"
+            type="currencyValue"
           />
           <div className="flex gap-4">
             <DatePickerField

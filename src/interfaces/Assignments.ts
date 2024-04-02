@@ -20,6 +20,7 @@ export type CreateAssignment = {
   frequency: string;
   startOn: Date;
   endAfter: Date;
+  paidByService: number;
 };
 
 export type Pool = {
