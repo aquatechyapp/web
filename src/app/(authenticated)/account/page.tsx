@@ -7,7 +7,9 @@ import { Button } from '@/app/_components/ui/button';
 import { Form } from '@/app/_components/ui/form';
 import { useUserContext } from '@/context/user';
 import { useUpdateUser } from '@/hooks/react-query/user/updateUser';
+import { isEmpty } from '@/utils';
 import { filterChangedFormFields } from '@/utils/getDirtyFields';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function Page() {
@@ -20,9 +22,21 @@ export default function Page() {
       lastName: user?.lastName || '',
       company: user?.company || '',
       phone: user?.phone || '',
-      email: user?.email || ''
+      email: user?.email || '',
+      address: user?.address || '',
+      zip: user?.zip || '',
+      state: user?.state || '',
+      city: user?.city || ''
     }
   });
+
+  const isDirty = useMemo(
+    () =>
+      !isEmpty(
+        filterChangedFormFields(form.getValues(), form.formState.dirtyFields)
+      ),
+    [form.getValues()]
+  );
 
   if (isPending) return <LoadingSpinner />;
 
@@ -49,7 +63,7 @@ export default function Page() {
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <InputField form={form} name={'address'} placeholder="Address" />
-            <StateAndCitySelect form={form} />
+            <StateAndCitySelect form={form} cityName="city" stateName="state" />
             <InputField form={form} name={'zip'} placeholder="Zip code" />
           </div>
           <div className="h-5 w-[213.40px] text-sm font-medium leading-tight tracking-tight text-zinc-500">
@@ -64,7 +78,7 @@ export default function Page() {
             />
             <InputField form={form} name="email" placeholder="E-mail" />
           </div>
-          {form.formState.isDirty && (
+          {isDirty && (
             <Button type="submit" className="h-10 w-full">
               Update account
             </Button>
