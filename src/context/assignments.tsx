@@ -21,6 +21,7 @@ type AssignmentsContextType = {
   }) => void;
   assignmentToTransfer?: Assignment[];
   setAssignmentToTransfer: (assignment: Assignment[]) => void;
+  allAssignments: Assignment[];
 };
 
 const AssignmentsContext = createContext<AssignmentsContextType>({
@@ -30,7 +31,8 @@ const AssignmentsContext = createContext<AssignmentsContextType>({
   },
   setAssignments: () => {},
   assignmentToTransfer: [],
-  setAssignmentToTransfer: () => {}
+  setAssignmentToTransfer: () => {},
+  allAssignments: []
 });
 
 export const AssignmentsProvider = ({
@@ -61,6 +63,8 @@ export const AssignmentsProvider = ({
     current: [] as Assignment[]
   });
 
+  const [allAssignments, setAllAssignments] = useState<Assignment[]>([]);
+
   const [assignmentToTransfer, setAssignmentToTransfer] = useState<
     Assignment[]
   >([]);
@@ -80,6 +84,7 @@ export const AssignmentsProvider = ({
       initial: [...filteredAssignments],
       current: [...filteredAssignments]
     });
+    setAllAssignments(data);
   }, [data, isError, isLoading, selectedWeekday, assignmentToId, userId]);
 
   if (isLoading) return <LoadingSpinner />;
@@ -90,7 +95,8 @@ export const AssignmentsProvider = ({
         assignments,
         setAssignments,
         assignmentToTransfer,
-        setAssignmentToTransfer
+        setAssignmentToTransfer,
+        allAssignments
       }}
     >
       {children}

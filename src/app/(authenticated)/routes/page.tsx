@@ -18,10 +18,7 @@ import Map from './Map';
 
 import { arrayMove } from '@dnd-kit/sortable';
 import { useTechniciansContext } from '@/context/technicians';
-import {
-  AssignmentsProvider,
-  useAssignmentsContext
-} from '@/context/assignments';
+import { useAssignmentsContext } from '@/context/assignments';
 import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
 import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
 import { Assignment } from '@/interfaces/Assignments';
@@ -104,7 +101,7 @@ export default function Page() {
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
   return (
-    <AssignmentsProvider>
+    <div>
       <div className="inline-flex h-[100%] w-full items-start justify-start gap-3 bg-white p-2.5 shadow-inner">
         <div className="w-[50%]">
           <Tabs
@@ -183,7 +180,7 @@ export default function Page() {
           />
         </div>
       </div>
-    </AssignmentsProvider>
+    </div>
   );
 }
 

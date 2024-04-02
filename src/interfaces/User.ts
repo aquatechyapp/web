@@ -10,6 +10,8 @@ export type BasicData = {
   zip: string;
   phone: string;
   email: string;
+  incomeAsACompany: number;
+  incomeAsASubcontractor: number;
 };
 
 export type User = BasicData & {

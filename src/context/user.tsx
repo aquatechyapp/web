@@ -39,9 +39,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       const response = await clientAxios.get(`/users/${userId}`);
 
-      setUser(response.data.user);
+      const user = {
+        ...response.data.user,
+        incomeAsACompany: response.data.incomeAsACompany,
+        incomeAsASubcontractor: response.data.incomeAsASubcontractor
+      };
 
-      return response.data.user;
+      setUser(user);
+
+      return user;
     }
   });
 

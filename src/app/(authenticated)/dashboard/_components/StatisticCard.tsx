@@ -6,12 +6,14 @@ import { TfiMoney } from 'react-icons/tfi';
 const types = {
   income: {
     title: 'Income',
+    subtitle: ' (as a company)',
     color: 'from-blue-600 to-sky-400',
     prefix: '$',
     Icon: CiMoneyBill
   },
   expenses: {
     title: 'Expenses',
+    subtitle: ' (as a sub-contractor)',
     color: 'from-teal-400 to-yellow-400',
     prefix: '$',
     Icon: FaCartArrowDown
@@ -34,9 +36,10 @@ type StatisticCardType = 'income' | 'expenses' | 'profit' | 'clients';
 
 type Props = {
   type: StatisticCardType;
+  value?: number;
 };
 
-export default function StatisticCard({ type }: Props) {
+export default function StatisticCard({ type, value }: Props) {
   const Icon = types[type].Icon;
   return (
     <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-5">
@@ -47,20 +50,22 @@ export default function StatisticCard({ type }: Props) {
           </div>
           <div className="font-['Public Sans'] shrink grow basis-0 text-base font-medium leading-normal tracking-tight text-zinc-500">
             {types[type].title}
+            <span className="text-xs">{types[type]?.subtitle || ''}</span>
           </div>
         </div>
         <div className="font-['Public Sans'] self-stretch text-[32px] font-semibold tracking-tight text-neutral-800">
-          {types[type].prefix}1,985
+          {types[type].prefix}
+          {value}
         </div>
       </div>
-      <div className="flex h-2 flex-col items-start justify-start gap-1 self-stretch">
-        {/* Componente Proggress Bar */}
+      {/* <div className="flex h-2 flex-col items-start justify-start gap-1 self-stretch">
+        Componente Proggress Bar
         <div className="flex h-2 flex-col items-start justify-start gap-2 self-stretch rounded-[100px] bg-gray-100 pr-28">
           <div
             className={`h-2 w-[104px] rounded-[100px] bg-gradient-to-r ${types[type].color}`}
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

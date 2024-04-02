@@ -1,21 +1,12 @@
 'use client';
 
-import { clientAxios } from '@/services/clientAxios';
-
 import { columns } from './DataTableClients/columns';
 import { DataTableClients } from './DataTableClients';
-import { useQuery } from '@tanstack/react-query';
 import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import useGetClients from '@/hooks/react-query/clients/getClients';
 
 export default function Page() {
-  const { data, isLoading, isSuccess } = useQuery({
-    queryKey: ['clients'],
-    queryFn: async () => {
-      const response = await clientAxios('/clients');
-      return response.data;
-    },
-    staleTime: Infinity
-  });
+  const { data, isLoading, isSuccess } = useGetClients();
 
   if (isLoading) return <LoadingSpinner />;
 
