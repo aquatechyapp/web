@@ -9,7 +9,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import InputField from '../../_components/InputField';
 import { Button } from '@/app/_components/ui/button';
 import { useToast } from '@/app/_components/ui/use-toast';
-import { ToastAction } from '@/app/_components/ui/toast';
 import { useRouter } from 'next/navigation';
 import StateAndCitySelect from '../../_components/StateAndCitySelect';
 import { clientAxios } from '@/services/clientAxios';
@@ -19,23 +18,19 @@ const formSchema = z
   .object({
     firstName: z.string().min(2, { message: 'First name is required' }),
     lastName: z.string().min(2, { message: 'Last name is required' }),
-    phone: z.preprocess(
-      (value) => {
-        return value.replace(/\D/g, '').slice(1);
-      },
-      z
-        .string({
-          required_error: 'Phone is required.',
-          invalid_type_error: 'Phone must be a string.'
-        })
-        .min(1, { message: 'Phone number is required.' })
-        .length(10, { message: 'Phone number must be 10 digits.' })
-    ),
+    phone: z
+      .string({
+        required_error: 'Phone is required.',
+        invalid_type_error: 'Phone must be a string.'
+      })
+      .min(1, { message: 'Phone number is required.' }),
     email: z.string().email({ message: 'Invalid email' }),
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters long' }),
     confirmPassword: z.string().min(8, { message: 'Password is required' }),
+    address: z.string().min(2, { message: 'Address is required' }),
+    zip: z.string().min(5, { message: 'Zip code is required' }),
     state: z.string().min(2, { message: 'State is required' }),
     city: z.string().min(2, { message: 'City is required' }),
     company: z.string().optional()
@@ -103,7 +98,7 @@ export default function Page() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="inline-flex w-[480px] flex-col items-start justify-start gap-[18px] rounded-lg bg-white px-6 py-8"
+        className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] rounded-lg bg-white px-6 py-8"
       >
         <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
           <div className="shrink grow basis-0 self-stretch text-center text-2xl font-semibold leading-normal text-gray-600">
@@ -129,9 +124,10 @@ export default function Page() {
         <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
           <InputField form={form} name="firstName" placeholder="First name" />
           <InputField form={form} name="lastName" placeholder="Last name" />
+          <InputField form={form} name="company" placeholder="Company" />
         </div>
-        <InputField form={form} name="company" placeholder="Company" />
-        <div className="inline-flex w-[432px] items-center justify-start gap-1">
+        <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
+          <InputField form={form} name="email" placeholder="E-mail address" />
           <InputField
             form={form}
             name="phone"
@@ -139,17 +135,18 @@ export default function Page() {
             type="phone"
           />
         </div>
-        <InputField form={form} name="email" placeholder="E-mail address" />
+        <div className="inline-flex items-start justify-start gap-2 self-stretch ">
+          <InputField form={form} name="address" placeholder="Address" />
+          <InputField form={form} name="zip" placeholder="Zip" />
+        </div>
         <StateAndCitySelect form={form} stateName="state" cityName="city" />
-        <div className="inline-flex items-center justify-center gap-2 self-stretch ">
+        <div className="inline-flex items-start justify-start gap-2 self-stretch ">
           <InputField
             form={form}
             name="password"
             placeholder="Password"
             type="password"
           />
-        </div>
-        <div className="inline-flex items-center justify-center gap-2 self-stretch ">
           <InputField
             form={form}
             name="confirmPassword"
