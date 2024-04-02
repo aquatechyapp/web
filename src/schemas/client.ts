@@ -102,16 +102,7 @@ export const clientSchema = z.object({
     .trim()
     .min(1, { message: 'Notes must be at least 1 character.' })
     .nullable(),
-  phone1: z.preprocess(
-    (value) => value.replace(/\D/g, '').slice(1),
-    z
-      .string({
-        required_error: 'Name is required.',
-        invalid_type_error: 'Name must be a string.'
-      })
-      .min(1)
-      .length(10, { message: 'Phone number must be 10 digits.' })
-  ),
+  phone1: z.string().max(20, { message: 'Phone number too large.' }),
   clientState: z
     .string({
       required_error: 'State is required.',

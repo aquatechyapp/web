@@ -44,7 +44,6 @@ export const poolSchema = z.object({
     .nullable(),
   // input is a string but I need to transform into a number
 
-  montlyPayment: z.coerce.number().nullable(),
   poolNotes: z
     .string({
       required_error: 'Notes is required.',

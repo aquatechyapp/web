@@ -10,9 +10,6 @@ export function createFormData(data: Record<string, string>) {
       case 'photo':
         data[key].forEach((photo) => formData.append(key, photo.file));
         break;
-      case 'montlyPayment':
-        formData.append(key, null);
-        break;
       default:
         formData.append(key, data[key]);
         break;
