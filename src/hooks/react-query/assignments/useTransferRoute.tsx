@@ -18,12 +18,15 @@ type TransferPermanentlyObject = {
 };
 
 async function transferOnce(data: Partial<Assignment>[]) {
-  const response = await clientAxios.post('/assignments/duplicate', data);
+  const response = await clientAxios.post('/assignments/transferonce', data);
   return response.data;
 }
 
 async function transferPermanently(data: Assignment[]) {
-  const response = await clientAxios.patch('/assignments', data);
+  const response = await clientAxios.post(
+    '/assignments/transferpermanently',
+    data
+  );
   return response.data;
 }
 
