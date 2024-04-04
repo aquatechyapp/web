@@ -72,8 +72,11 @@ export default function Page() {
       </div>
       <div className="Frame211 inline-flex flex-col items-start justify-start gap-6">
         <div className="Row inline-flex items-start justify-start gap-6 self-stretch">
-          <StatisticCard value={user.incomeAsACompany} type="income" />
-          <StatisticCard value={user?.incomeAsASubcontractor} type="expenses" />
+          <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />
+          <StatisticCard
+            value={user?.incomeAsASubcontractor}
+            type="incomeSubcontractor"
+          />
           <StatisticCard value={clients.length} type="clients" />
         </div>
         <div className="Row inline-flex items-start justify-start gap-6 self-stretch">
@@ -82,11 +85,7 @@ export default function Page() {
           <ActionButton type="my_team" />
         </div>
         <div className="Frame212 inline-flex w-[1147px] items-start justify-start gap-6">
-          <InfoCardScrollable
-            title="Pools by city"
-            subtitle=" (as a company)"
-            description="Pools that you are responsible for as a company"
-          >
+          <InfoCardScrollable title="Pools by city" subtitle=" (as a company)">
             {isEmpty(poolsByCityAsCompany) ? (
               <div>No pools found</div>
             ) : (
@@ -104,7 +103,6 @@ export default function Page() {
           <InfoCardScrollable
             title="Pools by city"
             subtitle=" (as a subcontractor)"
-            description="Pools that was assigned to you as a subcontractor"
           >
             {isEmpty(poolsByCityAsSubcontractor) ? (
               <div>No pools found</div>
@@ -120,10 +118,7 @@ export default function Page() {
                 ))
             )}
           </InfoCardScrollable>
-          <InfoCardScrollable
-            title="Assignments by subcontractors"
-            description="Assignments that you have assigned to your subcontractors"
-          >
+          <InfoCardScrollable title="My Team">
             {isEmpty(assignmentsBySubcontractors) ? (
               <div>No pools found</div>
             ) : (

@@ -4,15 +4,15 @@ import { IoMdPersonAdd } from 'react-icons/io';
 import { TfiMoney } from 'react-icons/tfi';
 
 const types = {
-  income: {
+  incomeCompany: {
     title: 'Income',
     subtitle: ' (as a company)',
     color: 'from-blue-600 to-sky-400',
     prefix: '$',
     Icon: CiMoneyBill
   },
-  expenses: {
-    title: 'Expenses',
+  incomeSubcontractor: {
+    title: 'Income',
     subtitle: ' (as a sub-contractor)',
     color: 'from-teal-400 to-yellow-400',
     prefix: '$',
@@ -32,7 +32,11 @@ const types = {
   }
 };
 
-type StatisticCardType = 'income' | 'expenses' | 'profit' | 'clients';
+type StatisticCardType =
+  | 'incomeCompany'
+  | 'incomeSubcontractor'
+  | 'profit'
+  | 'clients';
 
 type Props = {
   type: StatisticCardType;
