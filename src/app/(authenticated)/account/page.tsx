@@ -30,20 +30,33 @@ export default function Page() {
     }
   });
 
+  const phoneIsDirty = useMemo(
+    () => form.watch('phone') !== user?.phone,
+    [form.watch('phone'), user?.phone]
+  );
+
   const isDirty = useMemo(
     () =>
       !isEmpty(
         filterChangedFormFields(form.getValues(), form.formState.dirtyFields)
-      ),
+      ) || phoneIsDirty,
     [form.getValues()]
   );
 
   if (isPending) return <LoadingSpinner />;
 
   function handleSubmit(data) {
-    mutate(
-      filterChangedFormFields(form.getValues(), form.formState.dirtyFields)
+    let dirtyFields = filterChangedFormFields(
+      form.getValues(),
+      form.formState.dirtyFields
     );
+    if (phoneIsDirty) {
+      dirtyFields = {
+        ...dirtyFields,
+        phone: form.getValues().phone
+      };
+      mutate(dirtyFields);
+    }
   }
 
   return (
