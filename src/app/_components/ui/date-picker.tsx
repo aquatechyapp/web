@@ -17,10 +17,14 @@ import { useWeekdayContext } from '@/context/weekday';
 type Props = {
   placeholder: string;
   onChange: (date: Date) => void;
-  disabledWeekdays?: number[];
+  restrictOnlySelectedDay?: boolean;
 };
 
-export function DatePicker({ placeholder, onChange }: Props) {
+export function DatePicker({
+  placeholder,
+  onChange,
+  restrictOnlySelectedDay = false
+}: Props) {
   const [date, setDate] = React.useState<Date>();
   const { selectedWeekday } = useWeekdayContext();
 
@@ -76,7 +80,7 @@ export function DatePicker({ placeholder, onChange }: Props) {
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           disabled={{
-            dayOfWeek: disabledWeekdays || []
+            dayOfWeek: restrictOnlySelectedDay ? disabledWeekdays : []
           }}
           mode="single"
           selected={date}
