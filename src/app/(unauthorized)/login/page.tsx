@@ -38,7 +38,11 @@ export default function Page() {
     onSuccess: ({ data }) => {
       Cookies.set('accessToken', data.accessToken);
       Cookies.set('userId', data.user.id);
-      setUser(data.user);
+      setUser({
+        ...data.user,
+        incomeAsACompany: data.incomeAsACompany,
+        incomeAsASubcontractor: data.incomeAsASubcontractor
+      });
       push('/dashboard');
       toast({
         variant: 'default',
