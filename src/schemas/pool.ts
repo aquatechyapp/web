@@ -50,8 +50,8 @@ export const poolSchema = z.object({
       invalid_type_error: 'Notes must be a string.'
     })
     .trim()
-    .min(1, { message: 'Notes must be at least 1 character.' })
-    .nullable(),
+    // .min(1, { message: 'Notes must be at least 1 character.' })
+    .optional(),
   poolType: z.enum(['Chlorine', 'Salt', 'Other'], {
     required_error: 'poolType is required.',
     invalid_type_error: "Pool type must be 'Chlorine', 'Salt' or 'Other'."

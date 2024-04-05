@@ -11,6 +11,7 @@ export type Assignment = {
   startOn: string;
   weekday: string;
   pool: Pool;
+  paidByService: number;
 };
 
 export type CreateAssignment = {

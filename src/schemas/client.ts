@@ -95,13 +95,10 @@ export const clientSchema = z.object({
     .trim()
     .min(1, { message: 'Last name must be at least 1 character.' }),
   clientNotes: z
-    .string({
-      required_error: 'Notes are required.',
-      invalid_type_error: 'Notes must be a string.'
-    })
+    .string()
     .trim()
-    .min(1, { message: 'Notes must be at least 1 character.' })
-    .nullable(),
+    // .min(1, { message: 'Notes must be at least 1 character.' })
+    .optional(),
   phone1: z.string().max(20, { message: 'Phone number too large.' }),
   clientState: z
     .string({

@@ -19,7 +19,7 @@ export function DropdownTop() {
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger className="text-lg">
-            Components
+            Menu
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul>

@@ -20,6 +20,7 @@ type Props = {
   form: any;
   name: string;
   placeholder: string;
+  label?: string;
 };
 
 export default function SelectField({
@@ -27,6 +28,7 @@ export default function SelectField({
   form,
   name,
   placeholder,
+  label,
   ...props
 }: Props) {
   return (
@@ -36,7 +38,7 @@ export default function SelectField({
       render={({ field }) => {
         return (
           <FormItem className="w-full">
-            <Label>{placeholder}</Label>
+            <Label>{label || placeholder}</Label>
             <FormControl>
               <Select onValueChange={field.onChange} {...props}>
                 <SelectTrigger
