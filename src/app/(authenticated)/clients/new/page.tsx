@@ -19,7 +19,7 @@ import { InputFile } from '@/app/_components/InputFile';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/app/_components/ui/use-toast';
 import { useUserContext } from '@/context/user';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { dateSchema } from '@/schemas/date';
 
 export default function Page() {
@@ -36,6 +36,7 @@ export default function Page() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ['assignments'] });
       push('/clients');
       toast({
         title: 'Client added successfully',
@@ -52,17 +53,22 @@ export default function Page() {
   });
   const { push } = useRouter();
 
-  const subContractors =
-    user?.subcontractors?.length > 0
-      ? user.subcontractors
-          .filter((sub) => sub.status === 'Accepted')
-          .map((sub) => ({
-            key: sub.id,
-            name:
-              sub.subcontractor.firstName + ' ' + sub.subcontractor.lastName,
-            value: sub.id
-          }))
-      : [];
+  const subContractors = useMemo(() => {
+    if (!user) return [];
+    const userAsSubcontractor = {
+      key: user.id,
+      name: user.firstName + ' ' + user.lastName,
+      value: user.id
+    };
+    return user.subcontractors
+      .filter((sub) => sub.status === 'Accepted')
+      .map((sub) => ({
+        key: sub.subcontractorId,
+        name: sub.subcontractor.firstName + ' ' + sub.subcontractor.lastName,
+        value: sub.subcontractorId
+      }))
+      .concat(userAsSubcontractor);
+  }, [user]);
 
   const form = useForm<z.infer<typeof poolAndClientSchema>>({
     resolver: zodResolver(poolAndClientSchema),
@@ -71,8 +77,8 @@ export default function Page() {
       animalDanger: false,
       phone1: '',
       lockerCode: '',
-      montlyPayment: null,
-      poolNotes: null,
+      montlyPayment: undefined,
+      poolNotes: undefined,
       poolAddress: '',
       poolCity: '',
       enterSide: '',
@@ -80,7 +86,7 @@ export default function Page() {
       firstName: '',
       lastName: '',
       clientAddress: '',
-      clientNotes: null,
+      clientNotes: undefined,
       clientZip: '',
       poolState: '',
       poolZip: '',
@@ -88,7 +94,8 @@ export default function Page() {
       clientCity: '',
       clientState: '',
       customerCode: '',
-      paidByService: undefined
+      paidByService: undefined,
+      company: ''
     }
   });
 
@@ -260,7 +267,7 @@ export default function Page() {
             />
             <SelectField
               name="weekday"
-              placeholder="Weekdays"
+              placeholder="Weekday"
               form={form}
               data={Weekdays}
             />
