@@ -26,6 +26,7 @@ import { useWeekdayContext } from '@/context/weekday';
 import { DialogNewAssignment } from './dialog-new-assignment';
 import { DialogTransferRoute } from './dialog-transfer-route';
 import { useState } from 'react';
+import useWindowDimensions from '@/hooks/useWindowDimensions';
 
 export type Weekdays =
   | 'Sunday'
@@ -41,6 +42,7 @@ export default function Page() {
   const { assignmentToId, setAssignmentToId } = useTechniciansContext();
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayContext();
+  const { width } = useWindowDimensions();
   const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } =
     useUpdateAssignments();
 
@@ -113,33 +115,38 @@ export default function Page() {
               <Form {...form}>
                 <form className="w-full px-2">
                   <TabsList className="w-full">
-                    {weekdays.map((weekday) => (
+                    {weekdays.map((weekday, index) => (
                       <TabsTrigger
                         className="flex-1"
                         key={weekday}
                         value={weekday.toUpperCase()}
                       >
-                        {weekday}
+                        {width
+                          ? width < 1440
+                            ? weekdaysShort[index]
+                            : weekday
+                          : weekday}
                       </TabsTrigger>
                     ))}
                   </TabsList>
                   <TechnicianSelect onChange={handleChangeTechnician} />
                   <div className="flex gap-2 mt-2">
                     <DialogNewAssignment form={form} />
-                    <Button
-                      type="button"
-                      className="w-full"
-                      variant={'secondary'}
-                      onClick={() => setOpenTransferDialog(true)}
-                    >
-                      Transfer Route
-                    </Button>
+                    {assignments.current.length > 0 && (
+                      <Button
+                        type="button"
+                        className="w-full"
+                        variant={'secondary'}
+                        onClick={() => setOpenTransferDialog(true)}
+                      >
+                        Transfer Route
+                      </Button>
+                    )}
                     <DialogTransferRoute
                       open={openTransferDialog}
                       setOpen={setOpenTransferDialog}
-                      form={form}
-                      assignments={assignments.current}
                       assignmentToId={assignmentToId}
+                      isEntireRoute={true}
                     />
                   </div>
                   {getDifference(assignments.initial, assignments.current) && (
@@ -216,3 +223,5 @@ const weekdays: Weekdays[] = [
   'Friday',
   'Saturday'
 ];
+
+const weekdaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
