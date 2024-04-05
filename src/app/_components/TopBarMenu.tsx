@@ -1,6 +1,3 @@
-import Link from 'next/link';
-import { IoIosSearch } from 'react-icons/io';
-import { MdNotificationsNone } from 'react-icons/md';
 import { DropdownTop } from './DropdownTop';
 import { AccountDropdownMenu } from './AccountDropdownMenu';
 import { useRouter } from 'next/navigation';
@@ -22,20 +19,20 @@ export default function TopBarMenu() {
         </div>
       </div>
       <div className="flex items-start justify-start gap-2">
-        <Link
+        {/* <Link
           href="/account"
           className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 p-3"
         >
           <div className="font-['General Sans'] text-center text-sm font-medium leading-[14px] text-white">
             My account
           </div>
-        </Link>
-        <div className="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white p-3">
+        </Link> */}
+        {/* <div className="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white p-3">
           <MdNotificationsNone />
         </div>
         <div className="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white p-3">
           <IoIosSearch />
-        </div>
+        </div> */}
         <AccountDropdownMenu handleLogout={handleLogout} />
       </div>
     </div>

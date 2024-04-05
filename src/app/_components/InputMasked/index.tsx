@@ -3,6 +3,7 @@ import { Input } from '../ui/input';
 import currencyMask from './currencyMask';
 import percentMask from './percentMask';
 import phoneMask from './phoneMask';
+import React from 'react';
 
 const masks = {
   currencyValue: currencyMask,
@@ -18,25 +19,21 @@ type Props = {
   mask: 'currencyValue' | 'percentValue' | 'phone';
 };
 
-export const InputMasked = ({
-  field,
-  placeholder,
-  name,
-  form,
-  mask,
-  ...props
-}: Props) => {
-  const inputRef = useMaskito({ options: masks[mask] });
+export const InputMasked = React.forwardRef(
+  ({ field, placeholder, name, form, mask, ...props }: Props) => {
+    const inputRef = useMaskito({ options: masks[mask] });
 
-  return (
-    <Input
-      type="tel"
-      placeholder={placeholder}
-      {...field}
-      onInput={(e) => {
-        form.setValue(name, e.target.value);
-      }}
-      ref={inputRef}
-    />
-  );
-};
+    return (
+      <Input
+        type="tel"
+        placeholder={placeholder}
+        {...field}
+        onInput={(e) => {
+          form.setValue(name, e.target.value);
+        }}
+        ref={inputRef}
+        {...props}
+      />
+    );
+  }
+);

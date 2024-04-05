@@ -16,6 +16,7 @@ export const useCreateAssignment = () => {
         className: 'bg-red-500 text-white'
       });
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       toast({

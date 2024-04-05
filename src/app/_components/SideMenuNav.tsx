@@ -33,7 +33,7 @@ export default function SideMenuNav() {
             );
           })}
         </div>
-        <div className="flex w-full flex-col justify-start">
+        {/* <div className="flex w-full flex-col justify-start">
           <SideMenuNavLink
             href="/settings"
             Icon={IoSettingsOutline}
@@ -44,7 +44,7 @@ export default function SideMenuNav() {
             Icon={IoIosHelpCircleOutline}
             text="Help center"
           />
-        </div>
+        </div> */}
       </div>
     </aside>
   );
