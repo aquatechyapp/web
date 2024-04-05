@@ -39,6 +39,7 @@ export default function Page() {
                     phone={subcontractor.subcontractor.phone}
                     email={subcontractor.subcontractor.email}
                     status={subcontractor.status}
+                    workRelationId={subcontractor.id}
                   />
                 );
               })}

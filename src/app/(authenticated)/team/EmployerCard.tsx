@@ -53,10 +53,10 @@ export function EmployerCard({
           src="https://via.placeholder.com/80x80"
         />
         <div className="flex h-[42px] flex-col items-center justify-center gap-1 self-stretch">
-          <div className="font-['Public Sans'] self-stretch text-center text-sm font-semibold leading-tight tracking-tight text-neutral-800">
+          <div className="self-stretch text-center text-sm font-semibold leading-tight tracking-tight text-neutral-800">
             {name}
           </div>
-          <div className="font-['Public Sans'] self-stretch text-center text-xs font-normal leading-[18px] tracking-tight text-gray-500">
+          <div className="self-stretch text-center text-xs font-normal leading-[18px] tracking-tight text-gray-500">
             Company
           </div>
         </div>
@@ -76,18 +76,18 @@ export function EmployerCard({
       <Separator />
       <div className="flex h-[46px] flex-col items-center justify-center gap-2.5 self-stretch">
         <div className="inline-flex items-center justify-start gap-1 self-stretch">
-          <div className="font-['Public Sans'] w-14 text-xs font-normal leading-[18px] tracking-tight text-gray-500">
+          <div className="w-14 text-xs font-normal leading-[18px] tracking-tight text-gray-500">
             E-mail
           </div>
-          <div className="font-['Public Sans'] h-[18px] shrink grow basis-0 text-right text-xs font-medium leading-[18px] tracking-tight text-gray-400">
+          <div className="h-[18px] shrink grow basis-0 text-right text-xs font-medium leading-[18px] tracking-tight text-gray-400">
             {email}
           </div>
         </div>
         <div className="inline-flex items-center justify-start gap-1 self-stretch">
-          <div className="font-['Public Sans'] w-14 text-xs font-normal leading-[18px] tracking-tight text-gray-500">
+          <div className="w-14 text-xs font-normal leading-[18px] tracking-tight text-gray-500">
             Phone
           </div>
-          <div className="font-['Public Sans'] shrink grow basis-0 text-right text-xs font-medium leading-[18px] tracking-tight text-gray-400">
+          <div className="shrink grow basis-0 text-right text-xs font-medium leading-[18px] tracking-tight text-gray-400">
             {phone}
           </div>
         </div>
