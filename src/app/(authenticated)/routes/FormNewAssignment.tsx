@@ -23,7 +23,10 @@ export const FormNewAssignment = ({ form }) => {
   // }, []);
 
   if (isLoading) return <LoadingSpinner />;
+
   const clientId = form.watch('client');
+  const hasClients = data.length > 0;
+
   return (
     <Form {...form}>
       <form className="w-[90%]">
@@ -37,7 +40,8 @@ export const FormNewAssignment = ({ form }) => {
                 value: 'id'
               }
             )}
-            placeholder="Client"
+            label="Clients"
+            placeholder={hasClients ? 'Client' : 'No clients available'}
             form={form}
             name="client"
           />

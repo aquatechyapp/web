@@ -38,13 +38,15 @@ type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
   assignment?: Assignment;
+  isEntireRoute?: boolean;
 };
 
 export function DialogTransferRoute({
   assignmentToId,
   open,
   setOpen,
-  assignment
+  assignment,
+  isEntireRoute = false
 }: Props) {
   const { user } = useUserContext();
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
@@ -52,7 +54,7 @@ export function DialogTransferRoute({
     defaultValues: {
       assignmentToId: assignmentToId,
       weekday: format(new Date(), 'EEEE').toUpperCase(),
-      paidByService: null,
+      paidByService: assignment?.paidByService || undefined,
       startOn: undefined,
       endAfter: undefined,
       onlyAt: undefined,
@@ -88,29 +90,51 @@ export function DialogTransferRoute({
 
   const isPending = isPendingOnce || isPendingPermanently;
 
+  const buildPayload = () => {
+    const {
+      assignmentToId,
+      onlyAt,
+      weekday,
+      paidByService: paidByServiceUnformatted
+    } = form.getValues();
+    const paidByServiceValue = parseInt(
+      paidByServiceUnformatted?.replaceAll(/\D/g, '')
+    );
+
+    let payload = {};
+
+    if (shouldTransferOnce) {
+      payload = {
+        assignmentToId,
+        onlyAt,
+        weekday,
+        paidByService: paidByServiceValue
+      };
+    } else {
+      payload = {
+        assignmentToId,
+        startOn: form.getValues('startOn'),
+        endAfter: form.getValues('endAfter'),
+        weekday,
+        paidByService: paidByServiceValue
+      };
+    }
+
+    if (isEntireRoute) {
+      delete payload['paidByService'];
+    }
+
+    return payload;
+  };
+
   async function transferRoute() {
     const isValid = await validateForm();
     if (isValid) {
       setOpen(false);
       if (shouldTransferOnce) {
-        transferOnce({
-          assignmentToId: form.getValues('assignmentToId'),
-          onlyAt: form.getValues('onlyAt'),
-          weekday: form.getValues('weekday'),
-          paidByService: parseInt(
-            form.getValues('paidByService')?.replaceAll(/\D/g, '')
-          )
-        });
+        transferOnce(buildPayload());
       } else {
-        transferPermanently({
-          assignmentToId: form.getValues('assignmentToId'),
-          startOn: form.getValues('startOn'),
-          endAfter: form.getValues('endAfter'),
-          weekday: form.getValues('weekday'),
-          paidByService: parseInt(
-            form.getValues('paidByService')?.replaceAll(/\D/g, '')
-          )
-        });
+        transferPermanently(buildPayload());
       }
       form.reset();
       return;
@@ -135,8 +159,10 @@ export function DialogTransferRoute({
                   form.setValue('assignmentToId', technicianId)
                 }
               />
-              {!userSelectedAsTechnician && (
+              {/* quando for transferir rota inteira, não preciso informar paidByService, ele pega de cada assignment */}
+              {!isEntireRoute && (
                 <InputField
+                  disabled={userSelectedAsTechnician}
                   name="paidByService"
                   form={form}
                   placeholder="0.00$"
