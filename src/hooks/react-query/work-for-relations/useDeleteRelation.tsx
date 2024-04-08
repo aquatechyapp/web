@@ -6,7 +6,10 @@ export const useDeleteRelation = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data) => await clientAxios.patch('/workrelations', data),
+    mutationFn: async ({ workRelationId }) =>
+      await clientAxios.delete('/workrelations', {
+        data: { workRelationId }
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       toast({

@@ -30,7 +30,7 @@ export default function DropdownMenuWorkRelation({ workRelationId }: Props) {
   const { isPending, mutate } = useDeleteRelation();
 
   const handleDelete = () => {
-    mutate({ workRelationId, newStatus: 'NotAccepted' });
+    mutate({ workRelationId });
   };
 
   if (isPending) return <LoadingSpinner />;

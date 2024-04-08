@@ -61,7 +61,7 @@ export default function Page() {
       value: user.id
     };
     return user.subcontractors
-      .filter((sub) => sub.status === 'Accepted')
+      .filter((sub) => sub.status === 'Active')
       .map((sub) => ({
         key: sub.subcontractorId,
         name: sub.subcontractor.firstName + ' ' + sub.subcontractor.lastName,
@@ -333,7 +333,8 @@ const additionalSchemas = z.object({
   ),
   montlyPayment: z.preprocess(
     (val) => parseInt(val?.toString().replaceAll(/\D/g, '')),
-    z.number()
+    // tudo isso pra lidar com o caso de opcional, pois se o user não digita nada, o valor é undefined | NaN
+    z.union([z.number().int().positive().min(1), z.nan()]).optional()
   )
 });
 

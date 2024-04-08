@@ -74,14 +74,14 @@ export function DialogNewAssignment({ form }: Props) {
         <div className="flex justify-around">
           <Button
             onClick={createNewAssignment}
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
           >
             Accept
           </Button>
 
           <Button
             onClick={() => setIsModalOpen(false)}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full"
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
           >
             Cancel
           </Button>

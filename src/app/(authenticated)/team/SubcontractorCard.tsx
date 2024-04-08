@@ -35,16 +35,16 @@ export function SubcontractorCard({
           </div>
         </div>
       </div>
-      {status === 'NotAccepted' && (
+      {status === 'Inactive' && (
         // <ModalAcceptInvite handleSubmit={handleAcceptWorkRelation}>
         <div className="bg-orange-500 text-white text-sm py-1 px-2 rounded-full opacity-50">
-          Not accepted
+          Not Active
         </div>
         // </ModalAcceptInvite>
       )}
-      {status === 'Accepted' && (
+      {status === 'Active' && (
         <div className="bg-green-500 text-white text-sm py-1 px-2 rounded-full">
-          Accepted
+          Active
         </div>
       )}
       <Separator />

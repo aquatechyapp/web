@@ -26,13 +26,13 @@ export function EmployerCard({
     mutationFn: async () =>
       await clientAxios.patch('/workrelations', {
         workRelationId,
-        newStatus: 'Accepted'
+        newStatus: 'Active'
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       toast({
         variant: 'default',
-        title: 'Invite accepted successfully',
+        title: 'Invite Active successfully',
         className: 'bg-green-500 text-white'
       });
     },
@@ -61,16 +61,16 @@ export function EmployerCard({
           </div>
         </div>
       </div>
-      {status === 'NotAccepted' && (
+      {status === 'Inactive' && (
         <ModalAcceptInvite handleSubmit={handleSubmit}>
           <Button className="bg-orange-500 hover:bg-orange-600 h-7 text-white text-sm py-1 px-2 rounded-full animate-bounce">
             Accept invite
           </Button>
         </ModalAcceptInvite>
       )}
-      {status === 'Accepted' && (
+      {status === 'Active' && (
         <div className="bg-green-500 text-white text-sm py-1 px-2 rounded-full">
-          Accepted
+          Active
         </div>
       )}
       <Separator />

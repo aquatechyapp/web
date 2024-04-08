@@ -38,7 +38,7 @@ export const TechniciansProvider = ({
           lastName: user.lastName
         }
       },
-      ...user.subcontractors.filter((sub) => sub.status === 'Accepted')
+      ...user.subcontractors.filter((sub) => sub.status === 'Active')
     ]);
   }, [user]);
 
