@@ -3,10 +3,9 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { Button } from '@/app/_components/ui/button';
-import { FaRegTrashAlt } from 'react-icons/fa';
-import { Assignment, Pool, Service } from '@/constants/interfaces';
-import { clientAxios } from '@/services/clientAxios';
 import { zipImages } from '@/lib/js-zip';
+import CellDeleteService from './cell-delete-service';
+import { Service } from '@/interfaces/Service';
 
 export const columns: ColumnDef<Service>[] = [
   {
@@ -40,6 +39,37 @@ export const columns: ColumnDef<Service>[] = [
     }
   },
   {
+    header: 'Chemicals spent',
+    cell: (props) => {
+      const {
+        saltSpent,
+        chlorineSpent,
+        shockSpent,
+        tabletSpent,
+        phosphateSpent
+      } = props.row.original as Service;
+      return (
+        <div>
+          <div>
+            <span>Chlorine {chlorineSpent}</span>
+          </div>
+          <div>
+            <span>Salt {saltSpent}</span>
+          </div>
+          <div>
+            <span>Shock {shockSpent}</span>
+          </div>
+          <div>
+            <span>Tablet {tabletSpent}</span>
+          </div>
+          <div>
+            <span>Phosphate {phosphateSpent}</span>
+          </div>
+        </div>
+      );
+    }
+  },
+  {
     accessorKey: '',
     header: 'Photos',
     cell: (props) =>
@@ -66,23 +96,6 @@ export const columns: ColumnDef<Service>[] = [
   {
     header: 'Actions',
     id: 'actions',
-    cell: (props) => {
-      async function handleDelete() {
-        try {
-          const res = await clientAxios.delete('/services', {
-            data: {
-              id: props.row.original.id
-            }
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      }
-      return (
-        <Button variant="destructive" size="sm" onClick={() => {}}>
-          <FaRegTrashAlt />
-        </Button>
-      );
-    }
+    cell: (props) => <CellDeleteService {...props} />
   }
 ];
