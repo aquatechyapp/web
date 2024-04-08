@@ -43,8 +43,8 @@ const createPoolSchema = poolSchema
           invalid_type_error: 'Notes must be a string.'
         })
         .trim()
-        .min(1, { message: 'Notes must be at least 1 character.' })
-        .nullable(),
+        // .min(1, { message: 'Notes must be at least 1 character.' })
+        .optional(),
       photo: z.array(z.string()).nullable(),
       city: z
         .string({
@@ -66,7 +66,12 @@ const createPoolSchema = poolSchema
           invalid_type_error: 'Address must be a string.'
         })
         .trim()
-        .min(1, { message: 'Address must be at least 1 character.' })
+        .min(1, { message: 'Address must be at least 1 character.' }),
+      montlyPayment: z.preprocess(
+        (val) => parseInt(val?.toString().replaceAll(/\D/g, '')),
+        // tudo isso pra lidar com o caso de opcional, pois se o user não digita nada, o valor é undefined | NaN
+        z.union([z.number().int().positive().min(1), z.nan()]).optional()
+      )
     })
   );
 
@@ -81,8 +86,8 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
       enterSide: '',
       lockerCode: '',
       montlyPayment: undefined,
-      notes: '',
-      poolType: 'Chlorine',
+      notes: undefined,
+      poolType: undefined,
       state: '',
       zip: ''
     }
