@@ -55,7 +55,8 @@ export const AssignmentsProvider = ({
       }
       const response = await clientAxios.get('/assignments');
       return response.data;
-    }
+    },
+    staleTime: 1000 * 60 * 60
   });
 
   const [assignments, setAssignments] = useState({

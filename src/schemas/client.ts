@@ -99,7 +99,7 @@ export const clientSchema = z.object({
     .trim()
     // .min(1, { message: 'Notes must be at least 1 character.' })
     .optional(),
-  phone1: z.string().min(17, { message: 'Phone is missing some caracteres' }),
+  phone1: z.string().min(15, { message: 'Phone is missing some caracteres' }),
   clientState: z
     .string({
       required_error: 'State is required.',

@@ -2,13 +2,16 @@ import { DropdownTop } from './DropdownTop';
 import { AccountDropdownMenu } from './AccountDropdownMenu';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function TopBarMenu() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
     Cookies.remove('accessToken');
     Cookies.remove('userId');
+    queryClient.resetQueries();
     router.push('/login');
   };
   return (

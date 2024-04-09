@@ -21,6 +21,7 @@ import { useToast } from '@/app/_components/ui/use-toast';
 import { useUserContext } from '@/context/user';
 import { useEffect, useMemo } from 'react';
 import { dateSchema } from '@/schemas/date';
+import { paidByServiceSchema } from '@/schemas/assignments';
 
 export default function Page() {
   const { user } = useUserContext();
@@ -327,10 +328,6 @@ const additionalSchemas = z.object({
   assignmentToId: z.string().min(1),
   photo: z.array(z.any()),
   customerCode: z.string().nullable(),
-  paidByService: z.preprocess(
-    (val) => parseInt(val?.toString().replaceAll(/\D/g, '')),
-    z.number()
-  ),
   montlyPayment: z.preprocess(
     (val) => parseInt(val?.toString().replaceAll(/\D/g, '')),
     // tudo isso pra lidar com o caso de opcional, pois se o user não digita nada, o valor é undefined | NaN
@@ -341,4 +338,5 @@ const additionalSchemas = z.object({
 const poolAndClientSchema = clientSchema
   .and(poolSchema)
   .and(additionalSchemas)
-  .and(dateSchema);
+  .and(dateSchema)
+  .and(paidByServiceSchema);

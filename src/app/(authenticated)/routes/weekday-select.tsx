@@ -8,23 +8,20 @@ import {
   SelectValue
 } from '@/app/_components/ui/select';
 import { Weekdays } from '@/constants';
-import { useWeekdayContext } from '@/context/weekday';
 import { WeekdaysSelect } from '@/interfaces/Weekday';
 
 type Props = {
   onChange: (value: string) => void;
-  defaultValue?: string;
+  value: string;
 };
 
-export default function WeekdaySelect({ onChange }: Props) {
-  const { selectedWeekday } = useWeekdayContext();
-
+export default function WeekdaySelect({ onChange, value }: Props) {
   return (
     <div>
       {/* por padrão, o User logado é o tecnico selecionado */}
       <Label>Weekday</Label>
-      <Select onValueChange={onChange} defaultValue={selectedWeekday}>
-        <SelectTrigger>
+      <Select onValueChange={onChange} value={value}>
+        <SelectTrigger className="mt-2">
           <SelectValue placeholder="Technician..." />
         </SelectTrigger>
         <SelectContent>

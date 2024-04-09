@@ -1,4 +1,4 @@
-import { Pool } from '@/constants/interfaces';
+import { Pool } from '@/interfaces/Assignments';
 
 export function createFormData(data: Record<string, string>) {
   const formData = new FormData();

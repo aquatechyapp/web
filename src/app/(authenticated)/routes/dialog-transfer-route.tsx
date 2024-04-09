@@ -26,12 +26,13 @@ import {
   FormMessage
 } from '@/app/_components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/app/_components/ui/radio-group';
-import DatePickerField from '@/app/_components/DatePickerField';
 import { Label } from '@/app/_components/ui/label';
 import { Assignment } from '@/interfaces/Assignments';
 import InputField from '@/app/_components/InputField';
 import { useUserContext } from '@/context/user';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import CalendarField from '@/app/_components/CalendarField';
+import { useWeekdayContext } from '@/context/weekday';
 
 type Props = {
   assignmentToId: string;
@@ -49,23 +50,34 @@ export function DialogTransferRoute({
   isEntireRoute = false
 }: Props) {
   const { user } = useUserContext();
+  const { selectedWeekday } = useWeekdayContext();
+
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
     resolver: zodResolver(transferAssignmentsSchema),
     defaultValues: {
       assignmentToId: assignmentToId,
-      weekday: format(new Date(), 'EEEE').toUpperCase(),
+      weekday: selectedWeekday,
       paidByService: assignment?.paidByService || undefined,
       startOn: undefined,
       endAfter: undefined,
       onlyAt: undefined,
-      type: 'once'
+      type: 'once',
+      isEntireRoute
     }
   });
 
   const userSelectedAsTechnician = useMemo(
-    () => user?.id === form.watch('assignmentToId'),
-    [form.watch('assignmentToId')]
+    () => assignmentToId === form.watch('assignmentToId'),
+    [form.watch('assignmentToId'), assignmentToId]
   );
+
+  useEffect(() => {
+    if (userSelectedAsTechnician) {
+      form.setValue('paidByService', 0);
+    } else {
+      form.setValue('paidByService', assignment?.paidByService || undefined);
+    }
+  }, [form.watch('assignmentToId'), assignmentToId]);
 
   const shouldTransferOnce = form.watch('type') === 'once';
 
@@ -91,15 +103,11 @@ export function DialogTransferRoute({
   const isPending = isPendingOnce || isPendingPermanently;
 
   const buildPayload = () => {
-    const {
-      assignmentToId,
-      onlyAt,
-      weekday,
-      paidByService: paidByServiceUnformatted
-    } = form.getValues();
-    const paidByServiceValue = parseInt(
-      paidByServiceUnformatted?.replaceAll(/\D/g, '')
-    );
+    const { assignmentToId, onlyAt, weekday, paidByService } = form.getValues();
+    const paidByServiceValue =
+      typeof paidByService === 'string'
+        ? parseInt(paidByService?.replaceAll(/\D/g, ''))
+        : paidByService;
 
     let payload = {};
 
@@ -120,8 +128,8 @@ export function DialogTransferRoute({
       };
     }
 
-    if (isEntireRoute) {
-      delete payload['paidByService'];
+    if (userSelectedAsTechnician) {
+      delete payload.paidByService;
     }
 
     return payload;
@@ -145,50 +153,57 @@ export function DialogTransferRoute({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-[580px] h-[540px]">
+      <DialogContent className="max-w-[580px]">
         <DialogTitle>Transfer Route</DialogTitle>
         {isPending ? (
           <LoadingSpinner />
         ) : (
           <Form {...form}>
             <form className="gap-4 flex flex-col">
-              {/* -mb-4 pra remover o gap-4. Não coloquei a Label dentro do componente pois não quero aplicar sempre */}
-              <Label className="-mb-4">Technician</Label>
-              <TechnicianSelect
-                onChange={(technicianId) =>
-                  form.setValue('assignmentToId', technicianId)
-                }
-              />
-              {/* quando for transferir rota inteira, não preciso informar paidByService, ele pega de cada assignment */}
-              {!isEntireRoute && (
-                <InputField
-                  disabled={userSelectedAsTechnician}
-                  name="paidByService"
-                  form={form}
-                  placeholder="0.00$"
-                  label="Paid by Service"
-                  type="currencyValue"
-                />
-              )}
-              <WeekdaySelect
-                onChange={(weekday) => form.setValue('weekday', weekday)}
-              />
+              <div className="flex gap-4">
+                <div className="basis-full">
+                  {/* -mb-4 pra remover o gap-4. Não coloquei a Label dentro do componente pois não quero aplicar sempre */}
+                  <Label className="-mb-4">Technician</Label>
+                  <TechnicianSelect
+                    onChange={(technicianId) =>
+                      form.setValue('assignmentToId', technicianId)
+                    }
+                  />
+                </div>
+                {/* quando for transferir rota inteira, não preciso informar paidByService, ele pega de cada assignment */}
+                {!userSelectedAsTechnician && (
+                  <InputField
+                    name="paidByService"
+                    form={form}
+                    placeholder="0.00$"
+                    label="Paid by Service"
+                    type="currencyValue"
+                  />
+                )}
+                <div className="basis-full">
+                  <WeekdaySelect
+                    value={form.watch('weekday')}
+                    onChange={(weekday) => form.setValue('weekday', weekday)}
+                  />
+                </div>
+              </div>
+
               <OptionsOnceOrPermanently form={form} />
               <div className="mt-1">
                 {shouldTransferOnce ? (
-                  <DatePickerField
+                  <CalendarField
                     form={form}
                     name="onlyAt"
                     placeholder="Only at"
                   />
                 ) : (
                   <div className="flex">
-                    <DatePickerField
+                    <CalendarField
                       form={form}
                       name="startOn"
                       placeholder="Start on"
                     />
-                    <DatePickerField
+                    <CalendarField
                       form={form}
                       name="endAfter"
                       placeholder="End after"

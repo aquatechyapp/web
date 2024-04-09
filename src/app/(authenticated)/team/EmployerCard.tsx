@@ -4,6 +4,7 @@ import { clientAxios } from '@/services/clientAxios';
 import { ModalAcceptInvite } from './ModalAcceptInvite';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/app/_components/ui/use-toast';
+import DropdownMenuWorkRelation from './DropdownMenuWorkRelation';
 
 type Props = {
   email: string;
@@ -46,7 +47,8 @@ export function EmployerCard({
   });
 
   return (
-    <div className="inline-flex w-56 flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4">
+    <div className="relative inline-flex w-56 flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4">
+      <DropdownMenuWorkRelation workRelationId={workRelationId} />
       <div className="flex h-[138px] flex-col items-center justify-start gap-4 self-stretch">
         <img
           className="h-20 w-20 rounded-[100px]"

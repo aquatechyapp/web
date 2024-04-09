@@ -27,6 +27,7 @@ import { DialogNewAssignment } from './dialog-new-assignment';
 import { DialogTransferRoute } from './dialog-transfer-route';
 import { useState } from 'react';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
+import { paidByServiceSchema } from '@/schemas/assignments';
 
 export type Weekdays =
   | 'Sunday'
@@ -197,9 +198,6 @@ const newAssignmentSchema = z
     poolId: z.string(),
     client: z.string(),
     frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
-    // paidByService must be a number, here we are checking if has value in input,
-    //  but in dialog-new-assignment we are transforming it to a Number
-    paidByService: z.string(),
     weekday: z.string(
       z.enum([
         'SUNDAY',
@@ -212,7 +210,8 @@ const newAssignmentSchema = z
       ])
     )
   })
-  .and(dateSchema);
+  .and(dateSchema)
+  .and(paidByServiceSchema);
 
 const weekdays: Weekdays[] = [
   'Sunday',

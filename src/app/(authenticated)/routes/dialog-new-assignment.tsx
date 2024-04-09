@@ -46,10 +46,9 @@ export function DialogNewAssignment({ form }: Props) {
         frequency: form.watch('frequency'),
         startOn: form.watch('startOn'),
         endAfter: form.watch('endAfter'),
-        paidByService: form
-          .watch('paidByService')
-          .toString()
-          .replaceAll(/\D/g, '')
+        paidByService: parseInt(
+          form.watch('paidByService').replaceAll(/\D/g, '')
+        )
       });
       // preciso guardar o assignmentToId selecionado antes de dar reset, se não vai bugar ao criar 2 assignments seguidos
       // em um technician que não é o user logado

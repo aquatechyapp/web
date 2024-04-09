@@ -13,7 +13,10 @@ export const columns: ColumnDef<Service>[] = [
     header: 'Date',
     cell: (props) => (
       <span>
-        {format(new Date(props.row.original.createdAt), 'MMMM, dd, yyyy')}
+        {format(
+          new Date(props.row.original.createdAt),
+          "iiii, MMMM do 'at' h:mm aaaa"
+        )}
       </span>
     )
   },

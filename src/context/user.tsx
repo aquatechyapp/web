@@ -25,7 +25,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['user'],
+    queryKey: ['user', userId],
     queryFn: async () => {
       if (pathname === '/login' || pathname === '/signup') {
         queryClient.cancelQueries({ queryKey: ['user'] });
