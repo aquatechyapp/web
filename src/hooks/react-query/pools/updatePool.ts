@@ -12,7 +12,7 @@ export const useUpdatePool = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ data, poolId }) =>
-      await clientAxios.patch('/pools', { data, poolId }),
+      await clientAxios.patch('/pools', { ...data, poolId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pools'] });
       toast({
