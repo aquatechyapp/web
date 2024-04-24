@@ -5,9 +5,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/app/_components/ui/select';
-import { useTechniciansContext } from '@/context/technicians';
-import { WorkRelation } from '@/interfaces/User';
+} from '../../../components/ui/select';
+import { useTechniciansContext } from '../../../context/technicians';
+import { WorkRelation } from '../../../interfaces/User';
 
 type Props = {
   onChange: (value: string) => void;

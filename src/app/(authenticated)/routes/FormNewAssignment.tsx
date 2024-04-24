@@ -1,13 +1,13 @@
-import SelectField from '@/app/_components/SelectField';
-import { Form } from '@/app/_components/ui/form';
+import SelectField from '@/components/SelectField';
+import { Form } from '@/components/ui/form';
 import { useQuery } from '@tanstack/react-query';
-import { buildSelectOptions } from '@/utils';
 import { Frequencies } from '@/constants';
-import { clientAxios } from '@/services/clientAxios';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
-import InputField from '@/app/_components/InputField';
-import CalendarField from '@/app/_components/CalendarField';
-import { Separator } from '@/app/_components/ui/separator';
+import { clientAxios } from '@/lib/clientAxios';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import InputField from '@/components/InputField';
+import CalendarField from '@/components/CalendarField';
+import { Separator } from '@/components/ui/separator';
+import { buildSelectOptions } from '@/utils/formUtils';
 
 export const FormNewAssignment = ({ form }) => {
   const { data, isLoading, isError } = useQuery({

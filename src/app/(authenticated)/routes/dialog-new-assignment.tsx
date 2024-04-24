@@ -3,12 +3,12 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger
-} from '@/app/_components/ui/dialog';
+} from '@/components/ui/dialog';
 import { FormNewAssignment } from './FormNewAssignment';
-import { Button } from '@/app/_components/ui/button';
+import { Button } from '@/components/ui/button';
 import { useCreateAssignment } from '@/hooks/react-query/assignments/createAssignment';
 import { isEmpty } from '@/utils';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useState } from 'react';
 
 type Props = {

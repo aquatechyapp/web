@@ -1,14 +1,15 @@
 'use client';
 
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
-import { Separator } from '@/app/_components/ui/separator';
+import { Assignment } from '@/interfaces/Assignments';
+import { LoadingSpinner } from '../../../components/LoadingSpinner';
+import { Separator } from '../../../components/ui/separator';
 import {
   GoogleMap,
   useLoadScript,
   Marker,
   MarkerClusterer,
   DirectionsRenderer,
-  OverlayView
+  Libraries
 } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
 
@@ -21,13 +22,11 @@ const center = {
   lng: -81.379234
 };
 
-type LatLngLiteral = google.maps.LatLngLiteral;
-type DirectionsResult = google.maps.DirectionsResult;
-type MapOptions = google.maps.MapOptions;
+type DirectionsResult = google.maps.DirectionsResult | null;
 
-const libraries = ['places'];
+const libraries: Libraries = ['places'];
 
-const Map = ({ assignments, selectedWeekday }) => {
+const Map = ({ assignments }: { assignments: Assignment[] }) => {
   const [directions, setDirections] = useState<DirectionsResult>();
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
@@ -68,11 +67,11 @@ const Map = ({ assignments, selectedWeekday }) => {
           setDirections(result);
 
           const totalDuration = result.routes[0].legs.reduce(
-            (acc, leg) => acc + leg.duration.value,
+            (acc, leg) => acc + (leg.duration?.value ?? 0),
             0
           );
           const totalDistance = result.routes[0].legs.reduce(
-            (acc, leg) => acc + leg.distance.value,
+            (acc, leg) => acc + (leg.distance?.value ?? 0),
             0
           );
           setDuration(
@@ -118,22 +117,24 @@ const Map = ({ assignments, selectedWeekday }) => {
           />
         )}
         <MarkerClusterer>
-          {(clusterer) => {
-            return assignments.map((assignment) => (
-              <Marker
-                label={{
-                  text: assignment.order.toString(),
-                  color: 'white'
-                }}
-                key={assignment.id}
-                position={{
-                  lat: assignment.pool.coords.lat,
-                  lng: assignment.pool.coords.lng
-                }}
-                clusterer={clusterer}
-              />
-            ));
-          }}
+          {(clusterer) => (
+            <div>
+              {assignments.map((assignment) => (
+                <Marker
+                  label={{
+                    text: assignment.order.toString(),
+                    color: 'white'
+                  }}
+                  key={assignment.id}
+                  position={{
+                    lat: assignment.pool.coords.lat,
+                    lng: assignment.pool.coords.lng
+                  }}
+                  clusterer={clusterer}
+                />
+              ))}
+            </div>
+          )}
         </MarkerClusterer>
       </GoogleMap>
     </>

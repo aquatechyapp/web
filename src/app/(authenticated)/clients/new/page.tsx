@@ -1,27 +1,27 @@
 'use client';
 
-import { Button } from '@/app/_components/ui/button';
-import { Form } from '@/app/_components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import InputField from '@/app/_components/InputField';
-import StateAndCitySelect from '../../../_components/StateAndCitySelect';
+import InputField from '@/components/InputField';
+import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { clientSchema } from '@/schemas/client';
 import { poolSchema } from '@/schemas/pool';
-import { createFormData } from '@/utils';
-import SelectField from '@/app/_components/SelectField';
+import SelectField from '@/components/SelectField';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
-import DatePickerField from '@/app/_components/DatePickerField';
-import { clientAxios } from '@/services/clientAxios';
+import DatePickerField from '@/components/DatePickerField';
+import { clientAxios } from '@/lib/clientAxios';
 import { useRouter } from 'next/navigation';
-import { InputFile } from '@/app/_components/InputFile';
+import { InputFile } from '@/components/InputFile';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/app/_components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { useUserContext } from '@/context/user';
 import { useEffect, useMemo } from 'react';
 import { dateSchema } from '@/schemas/date';
 import { paidByServiceSchema } from '@/schemas/assignments';
+import { createFormData } from '@/utils/formUtils';
 
 export default function Page() {
   const { user } = useUserContext();

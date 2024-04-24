@@ -1,11 +1,7 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle
-} from '@/app/_components/ui/dialog';
-import { Button } from '@/app/_components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { isEmpty } from '@/utils';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import TechnicianSelect from './TechnicianSelect';
 import {
   useTransferOnceRoute,
@@ -15,7 +11,6 @@ import { transferAssignmentsSchema } from '@/schemas/assignments';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { format } from 'date-fns';
 import WeekdaySelect from './weekday-select';
 import {
   Form,
@@ -24,14 +19,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '@/app/_components/ui/form';
-import { RadioGroup, RadioGroupItem } from '@/app/_components/ui/radio-group';
-import { Label } from '@/app/_components/ui/label';
+} from '@/components/ui/form';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { Assignment } from '@/interfaces/Assignments';
-import InputField from '@/app/_components/InputField';
-import { useUserContext } from '@/context/user';
+import InputField from '@/components/InputField';
 import { useEffect, useMemo } from 'react';
-import CalendarField from '@/app/_components/CalendarField';
+import CalendarField from '@/components/CalendarField';
 import { useWeekdayContext } from '@/context/weekday';
 
 type Props = {
@@ -49,7 +43,6 @@ export function DialogTransferRoute({
   assignment,
   isEntireRoute = false
 }: Props) {
-  const { user } = useUserContext();
   const { selectedWeekday } = useWeekdayContext();
 
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({

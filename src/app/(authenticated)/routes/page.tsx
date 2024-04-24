@@ -1,33 +1,33 @@
 'use client';
 import { format } from 'date-fns';
 import TechnicianSelect from './TechnicianSelect';
-import { Button } from '@/app/_components/ui/button';
+import { Button } from '../../../components/ui/button';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { dateSchema } from '@/schemas/date';
-import { Form } from '@/app/_components/ui/form';
+import { dateSchema } from '../../../schemas/date';
+import { Form } from '../../../components/ui/form';
 import { AssignmentsList } from './AssignmentsList';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger
-} from '@/app/_components/ui/tabs';
+} from '../../../components/ui/tabs';
 import Map from './Map';
 
 import { arrayMove } from '@dnd-kit/sortable';
-import { useTechniciansContext } from '@/context/technicians';
-import { useAssignmentsContext } from '@/context/assignments';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
-import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
-import { Assignment } from '@/interfaces/Assignments';
-import { useWeekdayContext } from '@/context/weekday';
+import { useTechniciansContext } from '../../../context/technicians';
+import { useAssignmentsContext } from '../../../context/assignments';
+import { LoadingSpinner } from '../../../components/LoadingSpinner';
+import { useUpdateAssignments } from '../../../hooks/react-query/assignments/updateAssignments';
+import { Assignment } from '../../../interfaces/Assignments';
+import { useWeekdayContext } from '../../../context/weekday';
 import { DialogNewAssignment } from './dialog-new-assignment';
 import { DialogTransferRoute } from './dialog-transfer-route';
 import { useState } from 'react';
-import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { paidByServiceSchema } from '@/schemas/assignments';
+import useWindowDimensions from '../../../hooks/useWindowDimensions';
+import { paidByServiceSchema } from '../../../schemas/assignments';
 
 export type Weekdays =
   | 'Sunday'

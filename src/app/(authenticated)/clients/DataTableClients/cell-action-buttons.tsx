@@ -1,19 +1,14 @@
 'use client';
 
-import { Button } from '@/app/_components/ui/button';
-import { useToast } from '@/app/_components/ui/use-toast';
-import { clientAxios } from '@/services/clientAxios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { FaRegTrashAlt } from 'react-icons/fa';
-import { IoEyeOutline } from 'react-icons/io5';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger
-} from '@/app/_components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDeleteOutline } from 'react-icons/md';
 import {
@@ -22,8 +17,8 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger
-} from '@/app/_components/ui/dialog';
-import React, { useEffect, useState } from 'react';
+} from '@/components/ui/dialog';
+import React, { useState } from 'react';
 import { useDeleteClient } from '@/hooks/react-query/clients/deleteClient';
 import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
 import { ModalAddPool } from './modal-add-pool';

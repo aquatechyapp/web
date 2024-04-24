@@ -1,11 +1,11 @@
-import { Button } from '@/app/_components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
   DialogTrigger
-} from '@/app/_components/ui/dialog';
+} from '@/components/ui/dialog';
 import { useDeleteAssignment } from '@/hooks/react-query/assignments/useDeleteAssignment';
 import { Assignment } from '@/interfaces/Assignments';
 

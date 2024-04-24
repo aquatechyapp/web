@@ -1,5 +1,4 @@
-import { Button } from '@/app/_components/ui/button';
-import { Dialog, DialogTrigger } from '@/app/_components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import {
   DndContext,
   DragOverlay,
@@ -26,7 +25,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '@/app/_components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { useUserContext } from '@/context/user';
 import { Assignment } from '@/interfaces/Assignments';

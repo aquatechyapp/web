@@ -1,40 +1,25 @@
-import { Pool } from '@/interfaces/Assignments';
+import { Pool } from '../interfaces/Assignments';
 
-export function createFormData(data: Record<string, string>) {
-  const formData = new FormData();
-  for (const key in data) {
-    switch (key) {
-      case 'firstName' || 'lastName':
-        formData.append('clientName', `${data.firstName} ${data.lastName}`);
-        break;
-      case 'photo':
-        data[key].forEach((photo) => formData.append(key, photo.file));
-        break;
-      default:
-        formData.append(key, data[key]);
-        break;
-    }
-  }
-  return formData;
+// função para colocar ponto antes dos dois últimos dígitos
+// Ex.: 123 => 1.23
+// Ex.: 123456 => 1234.56
+export function insertDot(number: number) {
+  const str = number.toString();
+  const result = str.slice(0, -2) + '.' + str.slice(-2);
+  return parseFloat(result);
 }
 
 export function calculateTotalMonthlyOfAllPools(pools: Pool[]) {
-  return pools.reduce((acc, pool) => acc + pool.montlyPayment, 0);
+  return insertDot(
+    pools.reduce(
+      (acc, pool) => acc + parseInt(pool.montlyPayment.replaceAll(/\D/g, '')),
+      0
+    )
+  );
 }
 
 export function calculateTotalAssignmentsOfAllPools(pools: Pool[]) {
   return pools.reduce((acc, pool) => acc + pool.services.length, 0);
-}
-
-export function buildSelectOptions(
-  data: any[],
-  { id, name, value }: { id: string; name: string; value: string }
-) {
-  return data.map((item) => ({
-    id: item[id],
-    name: item[name],
-    value: item[value]
-  }));
 }
 
 export const isEmpty = (val) =>

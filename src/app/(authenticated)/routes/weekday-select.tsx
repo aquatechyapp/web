@@ -1,4 +1,4 @@
-import { Label } from '@/app/_components/ui/label';
+import { Label } from '../../../components/ui/label';
 import {
   Select,
   SelectContent,
@@ -6,9 +6,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/app/_components/ui/select';
-import { Weekdays } from '@/constants';
-import { WeekdaysSelect } from '@/interfaces/Weekday';
+} from '../../../components/ui/select';
+import { Weekdays } from '../../../constants';
+import { WeekdaysSelect } from '../../../interfaces/Weekday';
 
 type Props = {
   onChange: (value: string) => void;

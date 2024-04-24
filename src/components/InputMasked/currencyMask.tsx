@@ -1,0 +1,16 @@
+import { MaskitoOptions, maskitoInitialCalibrationPlugin } from '@maskito/core';
+import { maskitoNumberOptionsGenerator } from '@maskito/kit';
+
+const { plugins, ...numberOptions } = maskitoNumberOptionsGenerator({
+  decimalZeroPadding: true,
+  precision: 2,
+  decimalSeparator: ',',
+  thousandSeparator: '.',
+  min: 0,
+  prefix: '$'
+});
+
+export default {
+  ...numberOptions,
+  plugins: [...plugins, maskitoInitialCalibrationPlugin()]
+} as MaskitoOptions;

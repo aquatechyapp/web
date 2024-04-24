@@ -6,8 +6,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getFilteredRowModel,
-  createColumnHelper
+  getFilteredRowModel
 } from '@tanstack/react-table';
 
 import {
@@ -17,12 +16,12 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '@/app/_components/ui/table';
+} from '@/components/ui/table';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Input } from '@/app/_components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/app/_components/ui/tabs';
-import { Button } from '@/app/_components/ui/button';
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PlusIcon } from '@radix-ui/react-icons';
 
@@ -36,7 +35,7 @@ export function DataTableClients<TData, TValue>({
   data
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [filter, setFilter] = useState('all');
+
   const table = useReactTable({
     data,
     columns,
@@ -119,7 +118,7 @@ export function DataTableClients<TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row, b) => (
+            table.getRowModel().rows.map((row) => (
               <TableRow
                 className="cursor-pointer"
                 key={row.id}

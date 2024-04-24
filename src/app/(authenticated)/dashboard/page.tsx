@@ -7,18 +7,19 @@ import InfoItem from './_components/InfoItem';
 import { format } from 'date-fns';
 import { useUserContext } from '@/context/user';
 import useGetClients from '@/hooks/react-query/clients/getClients';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useAssignmentsContext } from '@/context/assignments';
 import { isEmpty } from '@/utils';
+import { Client } from '@/interfaces/Client';
 
 export default function Page() {
   const { user } = useUserContext();
-  const { allAssignments, assignments } = useAssignmentsContext();
-  const { data: clients, isLoading, isSuccess } = useGetClients();
+  const { allAssignments } = useAssignmentsContext();
+  const { data: clients, isLoading } = useGetClients();
 
   if (isLoading) return <LoadingSpinner />;
 
-  const poolsByCityAsCompany = clients.reduce((acc, client) => {
+  const poolsByCityAsCompany = clients.reduce((acc, client: Client) => {
     client.pools.forEach((pool) => {
       if (acc[pool.city]) {
         acc[pool.city] += 1;

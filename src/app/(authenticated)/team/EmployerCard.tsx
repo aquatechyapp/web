@@ -1,9 +1,9 @@
-import { Button } from '@/app/_components/ui/button';
-import { Separator } from '@/app/_components/ui/separator';
-import { clientAxios } from '@/services/clientAxios';
+import { Button } from '../../../components/ui/button';
+import { Separator } from '../../../components/ui/separator';
+import { clientAxios } from '../../../lib/clientAxios';
 import { ModalAcceptInvite } from './ModalAcceptInvite';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/app/_components/ui/use-toast';
+import { useToast } from '../../../components/ui/use-toast';
 import DropdownMenuWorkRelation from './DropdownMenuWorkRelation';
 
 type Props = {

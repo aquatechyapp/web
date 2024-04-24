@@ -1,7 +1,7 @@
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
-import { User } from '@/interfaces/User';
-import { clientAxios } from '@/services/clientAxios';
-import { isEmpty } from '@/utils';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { User } from '../interfaces/User';
+import { clientAxios } from '../lib/clientAxios';
+import { isEmpty } from '../utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { usePathname, useRouter } from 'next/navigation';

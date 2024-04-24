@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/app/_components/ui/button';
+import { Button } from '../../../components/ui/button';
 import { PlusIcon } from '@radix-ui/react-icons';
 import { SubcontractorCard } from './SubcontractorCard';
 import { EmployerCard } from './EmployerCard';
-import { useUserContext } from '@/context/user';
+import { useUserContext } from '../../../context/user';
 
 export default function Page() {
   const { user } = useUserContext();

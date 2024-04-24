@@ -2,7 +2,7 @@ import { useState } from 'react';
 import BasicInformation from './PoolInfo';
 import { DataTableServices } from './DataTableServices';
 import { columns } from './DataTableServices/columns';
-import { Separator } from '@/app/_components/ui/separator';
+import { Separator } from '@/components/ui/separator';
 
 function PoolCard({ form, pool, services }) {
   const [tab, setTab] = useState<'pool_info' | 'services'>('pool_info');

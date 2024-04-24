@@ -1,5 +1,5 @@
-import RouteIcon from '@/app/_components/ui/route-icon';
-import TeamIcon from '@/app/_components/ui/team-icon';
+import RouteIcon from '@/components/ui/route-icon';
+import TeamIcon from '@/components/ui/team-icon';
 import Link from 'next/link';
 import { IoAddSharp } from 'react-icons/io5';
 

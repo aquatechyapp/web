@@ -1,17 +1,17 @@
-import InputField from '@/app/_components/InputField';
-import { InputFile } from '@/app/_components/InputFile';
-import SelectField from '@/app/_components/SelectField';
-import StateAndCitySelect from '@/app/_components/StateAndCitySelect';
-import { Button } from '@/app/_components/ui/button';
+import InputField from '../../../../components/InputField';
+import { InputFile } from '../../../../components/InputFile';
+import SelectField from '../../../../components/SelectField';
+import StateAndCitySelect from '../../../../components/StateAndCitySelect';
+import { Button } from '../../../../components/ui/button';
 import {
   DialogContent,
   DialogTitle,
   DialogTrigger
-} from '@/app/_components/ui/dialog';
-import { Form } from '@/app/_components/ui/form';
-import { PoolTypes } from '@/constants';
-import { poolSchema } from '@/schemas/pool';
-import { isEmpty } from '@/utils';
+} from '../../../../components/ui/dialog';
+import { Form } from '../../../../components/ui/form';
+import { PoolTypes } from '../../../../constants';
+import { poolSchema } from '../../../../schemas/pool';
+import { isEmpty } from '../../../../utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';

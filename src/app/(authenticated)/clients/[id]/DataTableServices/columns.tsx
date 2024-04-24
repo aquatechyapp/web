@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { Button } from '@/app/_components/ui/button';
+import { Button } from '@/components/ui/button';
 import { zipImages } from '@/lib/js-zip';
 import CellDeleteService from './cell-delete-service';
 import { Service } from '@/interfaces/Service';

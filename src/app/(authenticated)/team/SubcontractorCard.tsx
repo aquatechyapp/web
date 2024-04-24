@@ -1,4 +1,4 @@
-import { Separator } from '@/app/_components/ui/separator';
+import { Separator } from '../../../components/ui/separator';
 import DropdownMenuWorkRelation from './DropdownMenuWorkRelation';
 
 type Props = {

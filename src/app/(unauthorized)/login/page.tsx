@@ -1,20 +1,19 @@
 'use client';
 
-import { Form } from '@/app/_components/ui/form';
+import { Form } from '../../../components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import InputField from '../../_components/InputField';
-import { Button } from '@/app/_components/ui/button';
+import InputField from '../../../components/InputField';
+import { Button } from '../../../components/ui/button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { clientAxios } from '@/services/clientAxios';
+import { clientAxios } from '../../../lib/clientAxios';
 import Cookies from 'js-cookie';
-import useLocalStorage from '@/hooks/useLocalStorage';
 import { useMutation } from '@tanstack/react-query';
-import { useToast } from '@/app/_components/ui/use-toast';
-import { useUserContext } from '@/context/user';
+import { useToast } from '../../../components/ui/use-toast';
+import { useUserContext } from '../../../context/user';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email' }),
@@ -27,7 +26,6 @@ export default function Page() {
   const { push } = useRouter();
   const { toast } = useToast();
   const { setUser } = useUserContext();
-  const [_, setUserId] = useLocalStorage('userId', '');
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: '', password: '' }
@@ -35,8 +33,10 @@ export default function Page() {
 
   const { mutate: handleSubmit, isPending } = useMutation({
     mutationFn: async (data) => await clientAxios.post('/sessions', data),
-    onSuccess: ({ data }) => {
+    onSuccess: async ({ data }) => {
       Cookies.set('accessToken', data.accessToken);
+      // Usado pois ao fazer login e dar push('/dashboard') o token não é encontrado ainda
+      await new Promise((resolve) => setTimeout(resolve, 100));
       Cookies.set('userId', data.user.id);
       setUser({
         ...data.user,

@@ -1,19 +1,13 @@
-import InputField from '@/app/_components/InputField';
-import { InputFile } from '@/app/_components/InputFile';
-import SelectField from '@/app/_components/SelectField';
-import StateAndCitySelect from '@/app/_components/StateAndCitySelect';
-import { Button } from '@/app/_components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/app/_components/ui/dialog';
+import InputField from '@/components/InputField';
+import { InputFile } from '@/components/InputFile';
+import SelectField from '@/components/SelectField';
+import StateAndCitySelect from '@/components/StateAndCitySelect';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { PoolTypes } from '@/constants';
 import { MdOutlineEdit } from 'react-icons/md';
 
-export function DialogEditPool({ form, handleSubmit }) {
+export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }) {
   const isDirty = form.formState.isDirty;
 
   return (
@@ -21,9 +15,9 @@ export function DialogEditPool({ form, handleSubmit }) {
       <DialogTrigger>
         <MdOutlineEdit className="cursor-pointer" />
       </DialogTrigger>
-      <DialogContent className="max-w-[1200px] h-[90%]">
+      <DialogContent className="max-w-[1200px]">
         <form
-          className="flex flex-col"
+          className="flex flex-col gap-4"
           onSubmit={form.handleSubmit(handleSubmit)}
         >
           {/* <DialogHeader>
@@ -58,7 +52,7 @@ export function DialogEditPool({ form, handleSubmit }) {
             />
           </div>
 
-          <div className="Form inline-flex items-start justify-start gap-4 self-stretch h-full">
+          <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
             <div className="w-[40%] h-44">
               <InputField
                 className="h-full"
@@ -78,7 +72,9 @@ export function DialogEditPool({ form, handleSubmit }) {
               />
             </div>
           </div>
-          {isDirty && <Button type="submit">Save</Button>}
+          {(isDirty || monthlyPaymentChanged) && (
+            <Button type="submit">Save</Button>
+          )}
         </form>
       </DialogContent>
     </Dialog>

@@ -1,6 +1,6 @@
 'use client';
 
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import ShowClient from './ShowClient';
 import useGetClient from '@/hooks/react-query/clients/getClient';
 

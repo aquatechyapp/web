@@ -13,14 +13,10 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { clientSchema } from '@/schemas/client';
 import { poolSchema } from '@/schemas/pool';
-import { Button } from '@/app/_components/ui/button';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage
-} from '@/app/_components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDeactivateClient } from '@/hooks/react-query/clients/deactivateClient';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 const additionalSchemas = z.object({
   weekday: z.enum(
@@ -191,7 +187,12 @@ export default function ShowClient({ client }) {
                       Monthly payment
                     </div>
                     <div className="self-stretch text-[28px] font-semibold tracking-tight text-neutral-800">
-                      {calculateTotalMonthlyOfAllPools(client.pools)}
+                      {calculateTotalMonthlyOfAllPools(
+                        client.pools
+                      ).toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD'
+                      })}
                     </div>
                   </div>
                   <div className="CircleIconBagde flex h-10 w-10 items-center justify-center gap-2 rounded-[100px] bg-gradient-to-b from-orange-500 to-yellow-400 p-2">

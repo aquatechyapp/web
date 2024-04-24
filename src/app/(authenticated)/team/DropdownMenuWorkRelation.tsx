@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/app/_components/ui/button';
+import { Button } from '../../../components/ui/button';
 
 import {
   DropdownMenu,
@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger
-} from '@/app/_components/ui/dropdown-menu';
+} from '../../../components/ui/dropdown-menu';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDeleteOutline } from 'react-icons/md';
 import {
@@ -17,10 +17,10 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger
-} from '@/app/_components/ui/dialog';
+} from '../../../components/ui/dialog';
 import React from 'react';
-import { useDeleteRelation } from '@/hooks/react-query/work-for-relations/useDeleteRelation';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import { useDeleteRelation } from '../../../hooks/react-query/work-for-relations/useDeleteRelation';
+import { LoadingSpinner } from '../../../components/LoadingSpinner';
 
 type Props = {
   workRelationId: string;

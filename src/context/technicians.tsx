@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useUserContext } from './user';
-import { isEmpty } from '@/utils';
-import { WorkRelation } from '@/interfaces/User';
+import { isEmpty } from '../utils';
+import { WorkRelation } from '../interfaces/User';
 
 type TechniciansContextType = {
   assignmentToId: string;

@@ -1,7 +1,7 @@
-import { useToast } from '@/app/_components/ui/use-toast';
-import { useAssignmentsContext } from '@/context/assignments';
-import { Assignment } from '@/interfaces/Assignments';
-import { clientAxios } from '@/services/clientAxios';
+import { useToast } from '../../../components/ui/use-toast';
+import { useAssignmentsContext } from '../../../context/assignments';
+import { Assignment } from '../../../interfaces/Assignments';
+import { clientAxios } from '../../../lib/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TransferOnceObject = {

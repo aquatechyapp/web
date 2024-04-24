@@ -1,12 +1,12 @@
-import InputField from '@/app/_components/InputField';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
-import StateAndCitySelect from '@/app/_components/StateAndCitySelect';
-import { Button } from '@/app/_components/ui/button';
-import { Form } from '@/app/_components/ui/form';
+import { filterChangedFormFields } from '@/utils/formUtils';
+import InputField from '@/components/InputField';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import StateAndCitySelect from '@/components/StateAndCitySelect';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
 import { clientSchema } from '@/schemas/client';
 import { poolSchema } from '@/schemas/pool';
-import { filterChangedFormFields } from '@/utils/getDirtyFields';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 

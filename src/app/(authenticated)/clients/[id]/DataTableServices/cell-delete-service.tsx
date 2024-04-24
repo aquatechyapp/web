@@ -1,26 +1,16 @@
 'use client';
 
-import { Button } from '@/app/_components/ui/button';
-import { useToast } from '@/app/_components/ui/use-toast';
-import { clientAxios } from '@/services/clientAxios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import { IoEyeOutline } from 'react-icons/io5';
 
-import { BsThreeDotsVertical } from 'react-icons/bs';
-import { MdDeleteOutline } from 'react-icons/md';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
   DialogTrigger
-} from '@/app/_components/ui/dialog';
-import React, { useEffect, useState } from 'react';
-import { useDeleteClient } from '@/hooks/react-query/clients/deleteClient';
-import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
-import { ModalAddPool } from './modal-add-pool';
+} from '@/components/ui/dialog';
+import React, { useState } from 'react';
 import { useDeleteService } from '@/hooks/react-query/pools/deleteService';
 
 const ModalDeleteService = ({ handleDelete }) => {

@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useTechniciansContext } from './technicians';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { clientAxios } from '@/services/clientAxios';
+import { clientAxios } from '../lib/clientAxios';
 import { useWeekdayContext } from './weekday';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 import Cookies from 'js-cookie';
-import { Assignment } from '@/interfaces/Assignments';
+import { Assignment } from '../interfaces/Assignments';
 
 type AssignmentsContextType = {
   assignments: {

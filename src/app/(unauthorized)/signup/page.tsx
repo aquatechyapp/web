@@ -3,15 +3,15 @@
 import Link from 'next/link';
 
 import { useForm } from 'react-hook-form';
-import { Form } from '@/app/_components/ui/form';
+import { Form } from '../../../components/ui/form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import InputField from '../../_components/InputField';
-import { Button } from '@/app/_components/ui/button';
-import { useToast } from '@/app/_components/ui/use-toast';
+import InputField from '../../../components/InputField';
+import { Button } from '../../../components/ui/button';
+import { useToast } from '../../../components/ui/use-toast';
 import { useRouter } from 'next/navigation';
-import StateAndCitySelect from '../../_components/StateAndCitySelect';
-import { clientAxios } from '@/services/clientAxios';
+import StateAndCitySelect from '../../../components/StateAndCitySelect';
+import { clientAxios } from '../../../lib/clientAxios';
 import { useMutation } from '@tanstack/react-query';
 
 const formSchema = z

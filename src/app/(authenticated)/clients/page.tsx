@@ -2,7 +2,7 @@
 
 import { columns } from './DataTableClients/columns';
 import { DataTableClients } from './DataTableClients';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 
 export default function Page() {

@@ -1,4 +1,4 @@
-import SwimmingPool from '@/app/_assets/_images/swimming-pool.png';
+import SwimmingPool from '@/assets/images/swimming-pool.png';
 import Image from 'next/image';
 
 export default function Layout({ children }: { children: React.ReactNode }) {

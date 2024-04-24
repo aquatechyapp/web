@@ -38,7 +38,7 @@ export type Pool = {
   montlyPayment: string;
   name: string;
   notes: string;
-  poolType: string;
+  poolType: 'Chlorine' | 'Salt' | 'Salt' | 'Other' | undefined;
   state: string;
   updatedAt: string;
   userOwnerId: string;

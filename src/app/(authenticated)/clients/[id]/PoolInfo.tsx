@@ -1,28 +1,27 @@
-import InputField from '@/app/_components/InputField';
-import SelectField from '@/app/_components/SelectField';
-import StateAndCitySelect from '@/app/_components/StateAndCitySelect';
-import { Button } from '@/app/_components/ui/button';
-import { Form } from '@/app/_components/ui/form';
-import { Input } from '@/app/_components/ui/input';
-import { Textarea } from '@/app/_components/ui/textarea';
+import InputField from '@/components/InputField';
+import SelectField from '@/components/SelectField';
+import StateAndCitySelect from '@/components/StateAndCitySelect';
+import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
 import { poolSchema } from '@/schemas/pool';
 import { useForm } from 'react-hook-form';
-import { MdDeleteOutline, MdOutlineEdit } from 'react-icons/md';
+import { MdDeleteOutline } from 'react-icons/md';
 import * as z from 'zod';
 import { DialogEditPool } from './DialogEditPool';
-import { InputFile } from '@/app/_components/InputFile';
+import { InputFile } from '@/components/InputFile';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
-import { LoadingSpinner } from '@/app/_components/LoadingSpinner';
-import { filterChangedFormFields } from '@/utils/getDirtyFields';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Pool } from '@/interfaces/Assignments';
+import { filterChangedFormFields } from '@/utils/formUtils';
 
 const additionalFieldsSchema = z.object({
-  notes: z.string().nullable()
+  notes: z.string().nullable(),
+  montlyPayment: z.string().nullable()
 });
 
 const poolAndAdditionalFieldsSchema = poolSchema.and(additionalFieldsSchema);
 
-export default function PoolInfo({ pool }) {
+export default function PoolInfo({ pool }: { pool: Pool }) {
   const { mutate, isPending } = useUpdatePool();
   const form = useForm<z.infer<typeof poolAndAdditionalFieldsSchema>>({
     defaultValues: {
@@ -32,19 +31,28 @@ export default function PoolInfo({ pool }) {
       montlyPayment: pool.montlyPayment || '',
       lockerCode: pool.lockerCode || '',
       enterSide: pool.enterSide || '',
-      poolType: pool.poolType || '',
+      poolType: pool.poolType || undefined,
       notes: pool.notes || '',
       photos: pool.photos || []
     }
   });
 
-  const handleSubmit = (data) => {
+  const monthlyPaymentChanged =
+    form.watch('montlyPayment') !== pool.montlyPayment;
+
+  const handleSubmit = () => {
     if (Object.keys(form.formState.errors).length) return;
+    let data = {
+      ...filterChangedFormFields(form.getValues(), form.formState.dirtyFields)
+    };
+    if (monthlyPaymentChanged) {
+      data = {
+        ...data,
+        montlyPayment: form.watch('montlyPayment')
+      };
+    }
     mutate({
-      data: filterChangedFormFields(
-        form.getValues(),
-        form.formState.dirtyFields
-      ),
+      data,
       poolId: pool.id
     });
   };
@@ -56,7 +64,13 @@ export default function PoolInfo({ pool }) {
       <div className="h-5 w-full flex text-sm justify-between font-medium leading-tight tracking-tight text-zinc-500">
         Basic information
         <div className="flex gap-4 text-lg">
-          <DialogEditPool form={form} handleSubmit={handleSubmit} />
+          <DialogEditPool
+            monthlyPaymentChanged={
+              form.watch('montlyPayment') !== pool.montlyPayment
+            }
+            form={form}
+            handleSubmit={handleSubmit}
+          />
           <MdDeleteOutline className="cursor-pointer" />
         </div>
       </div>
@@ -104,7 +118,7 @@ export default function PoolInfo({ pool }) {
           disabled
         />
       </div>
-      <div className="Form inline-flex items-start justify-start gap-4 self-stretch h-full">
+      <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
         <div className="w-[40%] h-44">
           <InputField
             className="h-full"

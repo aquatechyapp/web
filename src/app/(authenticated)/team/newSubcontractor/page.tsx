@@ -1,12 +1,12 @@
 'use client';
 
-import InputField from '@/app/_components/InputField';
-import SelectField from '@/app/_components/SelectField';
-import { Button } from '@/app/_components/ui/button';
-import { Form } from '@/app/_components/ui/form';
-import { useToast } from '@/app/_components/ui/use-toast';
-import { useUserContext } from '@/context/user';
-import { clientAxios } from '@/services/clientAxios';
+import InputField from '../../../../components/InputField';
+import SelectField from '../../../../components/SelectField';
+import { Button } from '../../../../components/ui/button';
+import { Form } from '../../../../components/ui/form';
+import { useToast } from '../../../../components/ui/use-toast';
+import { useUserContext } from '../../../../context/user';
+import { clientAxios } from '../../../../lib/clientAxios';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -53,7 +53,7 @@ export default function Page() {
     mutationFn: async (data) =>
       clientAxios.post('/workrelations', {
         ...data,
-        paymentValue: data.paymentValue * 100
+        paymentValue: data.paymentValue
       }),
     onSuccess: (res) => {
       setUser((user) => ({

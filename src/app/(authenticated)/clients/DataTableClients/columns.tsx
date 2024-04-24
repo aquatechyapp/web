@@ -1,10 +1,10 @@
 'use client';
 
-import { Client } from '@/constants/interfaces';
 import { ColumnDef } from '@tanstack/react-table';
 import NamePhoto from './cell-name-photo';
 import Phones from './cell-phone';
 import ActionButtons from './cell-action-buttons';
+import { Client } from '@/interfaces/Client';
 
 export const columns: ColumnDef<Client>[] = [
   {
