@@ -17,6 +17,7 @@ type Props = {
 
 export function DialogDeleteAssignment({ assignment, open, setOpen }: Props) {
   const { mutate } = useDeleteAssignment();
+  if (!assignment) return null;
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
@@ -27,22 +28,17 @@ export function DialogDeleteAssignment({ assignment, open, setOpen }: Props) {
         <div className="flex justify-around">
           <DialogTrigger>
             <Button
+              variant="destructive"
               onClick={() => {
                 mutate(assignment.id);
                 setOpen(false);
               }}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
             >
-              Accept
+              Delete
             </Button>
           </DialogTrigger>
           <DialogTrigger>
-            <Button
-              onClick={() => setOpen(false)}
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full"
-            >
-              Cancel
-            </Button>
+            <Button onClick={() => setOpen(false)}>Cancel</Button>
           </DialogTrigger>
         </div>
       </DialogContent>

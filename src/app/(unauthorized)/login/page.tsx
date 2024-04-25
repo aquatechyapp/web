@@ -69,21 +69,21 @@ export default function Page() {
   return (
     <div className="inline-flex w-[448px] flex-col items-start justify-start gap-[18px] rounded-lg bg-white px-6 py-8">
       <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
-        <div className="font-['General Sans'] shrink grow basis-0 self-stretch text-center text-2xl font-semibold leading-normal text-gray-600">
+        <div className="shrink grow basis-0 self-stretch text-center text-2xl font-semibold leading-normal text-gray-600">
           Aquatechy
         </div>
       </div>
       <div className="relative h-[50px] w-[400px]">
-        <div className="font-['Public Sans']  left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
+        <div className="left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
           Login
         </div>
         <div className=" left-0 top-[30px] h-5 w-[400px]">
-          <span className="font-['Public Sans'] text-sm font-medium leading-tight tracking-tight text-zinc-500">
+          <span className="text-sm font-medium leading-tight tracking-tight text-zinc-500">
             Don't you have an account?{' '}
           </span>
           <Link
             href="/signup"
-            className="font-['Public Sans'] text-sm font-bold leading-tight tracking-tight text-zinc-500"
+            className="text-sm font-bold leading-tight tracking-tight text-zinc-500"
           >
             Signup
           </Link>

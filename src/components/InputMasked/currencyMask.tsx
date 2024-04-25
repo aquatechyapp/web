@@ -4,8 +4,7 @@ import { maskitoNumberOptionsGenerator } from '@maskito/kit';
 const { plugins, ...numberOptions } = maskitoNumberOptionsGenerator({
   decimalZeroPadding: true,
   precision: 2,
-  decimalSeparator: ',',
-  thousandSeparator: '.',
+  decimalSeparator: '.',
   min: 0,
   prefix: '$'
 });

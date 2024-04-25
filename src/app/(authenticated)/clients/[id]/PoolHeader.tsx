@@ -22,20 +22,20 @@ function PoolCard({ form, pool, services }) {
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
             <div
-              className={`font-['Public Sans'] text-sm font-semibold leading-tight tracking-tight hover:cursor-pointer ${tab === 'pool_info' ? 'border-m border-neutral-800 text-neutral-800' : 'text-gray-500'}`}
+              className={`text-sm font-semibold leading-tight tracking-tight hover:cursor-pointer ${tab === 'pool_info' ? 'border-m border-neutral-800 text-neutral-800' : 'text-gray-500'}`}
             >
               Information
             </div>
             {tab === 'pool_info' && (
-              <div className="Rectangle2 h-0.5 self-stretch bg-neutral-800" />
+              <div className="h-0.5 self-stretch bg-neutral-800" />
             )}
           </div>
           <div
             onClick={() => handleTabChange('services')}
-            className="RegularTab inline-flex flex-col items-start justify-start gap-2.5"
+            className="inline-flex flex-col items-start justify-start gap-2.5"
           >
             <div
-              className={`font-['Public Sans'] text-sm font-medium leading-tight tracking-tight hover:cursor-pointer ${tab === 'services' ? 'text-neutral-800' : 'text-gray-500'}`}
+              className={`text-sm font-medium leading-tight tracking-tight hover:cursor-pointer ${tab === 'services' ? 'text-neutral-800' : 'text-gray-500'}`}
             >
               Services
             </div>

@@ -83,14 +83,14 @@ export default function ShowClient({ client }) {
                 <div className="self-stretch text-center text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
                   {client.name}
                 </div>
-                <div className="BillingAddress font-['Public Sans'] text-sm font-medium leading-tight tracking-tight text-gray-500">
+                <div className="text-sm font-medium leading-tight tracking-tight text-gray-500">
                   {client.address}
                 </div>
               </div>
             </div>
-            <div className="Details flex flex-col items-center justify-start gap-[18px]">
+            <div className="flex flex-col items-center justify-start gap-[18px]">
               <div className="inline-flex w-[312px] items-start justify-start gap-2">
-                <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
+                <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
                     Email
                   </div>
@@ -98,14 +98,14 @@ export default function ShowClient({ client }) {
                     {client.email1}
                   </div>
                 </div>
-                <div className="Action flex items-center justify-center gap-2">
-                  <div className="Icon flex h-[18px] w-[18px] items-center justify-center gap-2 p-2">
-                    <div className="FiSrCopy relative h-4 w-4" />
+                <div className=" flex items-center justify-center gap-2">
+                  <div className=" flex h-[18px] w-[18px] items-center justify-center gap-2 p-2">
+                    <div className=" relative h-4 w-4" />
                   </div>
                 </div>
               </div>
               <div className="inline-flex w-[312px] items-start justify-start gap-2">
-                <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
+                <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
                     Phone Number
                   </div>
@@ -113,9 +113,9 @@ export default function ShowClient({ client }) {
                     {client.phone1}
                   </div>
                 </div>
-                <div className="Action flex items-center justify-center gap-2">
-                  <div className="Icon flex h-[18px] w-[18px] items-center justify-center gap-2 p-2">
-                    <div className="FiSrCopy relative h-4 w-4" />
+                <div className=" flex items-center justify-center gap-2">
+                  <div className=" flex h-[18px] w-[18px] items-center justify-center gap-2 p-2">
+                    <div className=" relative h-4 w-4" />
                   </div>
                 </div>
               </div>
@@ -134,7 +134,7 @@ export default function ShowClient({ client }) {
                 </div>
               </div>
               <div className="inline-flex w-[312px] items-start justify-start gap-2">
-                <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
+                <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="self-stretch text-sm font-medium leading-tight tracking-tight text-gray-500">
                     Last Service
                   </div>
@@ -187,12 +187,7 @@ export default function ShowClient({ client }) {
                       Monthly payment
                     </div>
                     <div className="self-stretch text-[28px] font-semibold tracking-tight text-neutral-800">
-                      {calculateTotalMonthlyOfAllPools(
-                        client.pools
-                      ).toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD'
-                      })}
+                      ${calculateTotalMonthlyOfAllPools(client.pools)}
                     </div>
                   </div>
                   <div className="CircleIconBagde flex h-10 w-10 items-center justify-center gap-2 rounded-[100px] bg-gradient-to-b from-orange-500 to-yellow-400 p-2">
@@ -222,7 +217,7 @@ export default function ShowClient({ client }) {
                 className="RegularTab inline-flex flex-col items-start justify-start gap-2.5"
               >
                 <div
-                  className={`font-['Public Sans'] text-sm font-semibold leading-tight tracking-tight hover:cursor-pointer ${tab === 'client_info' ? 'text-neutral-800' : 'text-gray-500'}`}
+                  className={`text-sm font-semibold leading-tight tracking-tight hover:cursor-pointer ${tab === 'client_info' ? 'text-neutral-800' : 'text-gray-500'}`}
                 >
                   Basic information
                 </div>
@@ -235,7 +230,7 @@ export default function ShowClient({ client }) {
                 className="RegularTab inline-flex flex-col items-start justify-start gap-2.5"
               >
                 <div
-                  className={`font-['Public Sans'] text-sm font-medium leading-tight tracking-tight hover:cursor-pointer ${tab === 'pools' ? 'text-neutral-800' : 'text-gray-500'}`}
+                  className={`text-sm font-medium leading-tight tracking-tight hover:cursor-pointer ${tab === 'pools' ? 'text-neutral-800' : 'text-gray-500'}`}
                 >
                   Pools
                 </div>

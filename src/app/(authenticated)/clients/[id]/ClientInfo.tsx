@@ -75,10 +75,10 @@ export default function ClientInfo({ client }) {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col items-start justify-start gap-2 self-stretch bg-white p-6"
       >
-        <div className="BasicInformation font-['Public Sans'] h-5 w-[213.40px] text-sm font-medium leading-tight tracking-tight text-zinc-500">
+        <div className="h-5 w-[213.40px] text-sm font-medium leading-tight tracking-tight text-zinc-500">
           Basic information
         </div>
-        <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
+        <div className="inline-flex items-start justify-start gap-4 self-stretch">
           <InputField
             form={form}
             name="address"

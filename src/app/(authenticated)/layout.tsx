@@ -9,12 +9,13 @@ import { UserProvider } from '@/context/user';
 import { TechniciansProvider } from '@/context/technicians';
 import { WeekdayProvider } from '@/context/weekday';
 import { AssignmentsProvider } from '@/context/assignments';
+import { Colors } from '@/constants/colors';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid h-screen w-full grid-cols-6">
       <SideMenuNav />
-      <div className="col-span-5 bg-[#FAFAFA]">
+      <div className="col-span-5 bg-gray-50">
         <TopBarMenu />
         <main>
           <Suspense fallback={<LoadingSpinner />}>
@@ -30,7 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Suspense>
           <ProgressBar
             height="4px"
-            color="#3182ce"
+            color={Colors.blue[500]}
             options={{ showSpinner: false }}
             shallowRouting
           />

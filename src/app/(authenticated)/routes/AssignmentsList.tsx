@@ -31,6 +31,7 @@ import { useUserContext } from '@/context/user';
 import { Assignment } from '@/interfaces/Assignments';
 import { DialogTransferRoute } from './dialog-transfer-route';
 import { DialogDeleteAssignment } from './dialog-delete-assignment';
+import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 
 export function AssignmentsList({ handleDragEnd }) {
   const { user } = useUserContext();
@@ -38,6 +39,7 @@ export function AssignmentsList({ handleDragEnd }) {
   const { assignmentToId } = useTechniciansContext();
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [openDialogTransfer, setOpenDialogTransfer] = useState(false);
+  const [assignment, setAssignment] = useState<Assignment>(null);
 
   const shouldPermitChangeOrder = assignmentToId !== user?.id;
 
@@ -90,6 +92,7 @@ export function AssignmentsList({ handleDragEnd }) {
               <DropdownMenuContent>
                 <DropdownMenuItem
                   onClick={() => {
+                    setAssignment(assignment);
                     setAssignmentToTransfer([assignment]);
                     setOpenDialogTransfer(true);
                   }}
@@ -98,25 +101,29 @@ export function AssignmentsList({ handleDragEnd }) {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-red-500"
-                  onClick={() => setOpenDialogDelete(true)}
+                  onClick={() => {
+                    setAssignment(assignment);
+                    setOpenDialogDelete(true);
+                  }}
                 >
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <DialogDeleteAssignment
-              open={openDialogDelete}
-              setOpen={setOpenDialogDelete}
-              assignment={assignment}
-            />
-            <DialogTransferRoute
-              open={openDialogTransfer}
-              setOpen={setOpenDialogTransfer}
-              assignmentToId={assignmentToId}
-              assignment={assignment}
-            />
           </div>
         ))}
+        <DialogDeleteAssignment
+          open={openDialogDelete}
+          setOpen={setOpenDialogDelete}
+          assignment={assignment}
+        />
+
+        <DialogTransferRoute
+          open={openDialogTransfer}
+          setOpen={setOpenDialogTransfer}
+          assignmentToId={assignmentToId}
+          assignment={assignment}
+        />
       </SortableContext>
       <DragOverlay className="w-full">
         {active !== null ? (

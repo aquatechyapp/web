@@ -1,8 +1,8 @@
 'use client';
 
 import { Assignment } from '@/interfaces/Assignments';
-import { LoadingSpinner } from '../../../components/LoadingSpinner';
-import { Separator } from '../../../components/ui/separator';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Separator } from '@/components/ui/separator';
 import {
   GoogleMap,
   useLoadScript,
@@ -95,7 +95,7 @@ const Map = ({ assignments }: { assignments: Assignment[] }) => {
   }
 
   return (
-    <>
+    <div className="h-full">
       <div className="absolute z-10 bg-white shadow-lg right-24 px-2 rounded-sm mt-2.5">
         <h3 className="py-1">Distance: {distance}</h3>
         <Separator />
@@ -137,7 +137,7 @@ const Map = ({ assignments }: { assignments: Assignment[] }) => {
           )}
         </MarkerClusterer>
       </GoogleMap>
-    </>
+    </div>
   );
 };
 

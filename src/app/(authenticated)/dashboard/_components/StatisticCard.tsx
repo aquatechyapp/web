@@ -52,12 +52,12 @@ export default function StatisticCard({ type, value }: Props) {
           <div className="flex h-6 w-6 items-center justify-center gap-2">
             <Icon />
           </div>
-          <div className="font-['Public Sans'] shrink grow basis-0 text-base font-medium leading-normal tracking-tight text-zinc-500">
+          <div className="shrink grow basis-0 text-base font-medium leading-normal tracking-tight text-zinc-500">
             {types[type].title}
             <span className="text-xs">{types[type]?.subtitle || ''}</span>
           </div>
         </div>
-        <div className="font-['Public Sans'] self-stretch text-[32px] font-semibold tracking-tight text-neutral-800">
+        <div className="self-stretch text-[32px] font-semibold tracking-tight text-neutral-800">
           {types[type].prefix}
           {value}
         </div>

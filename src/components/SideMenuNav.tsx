@@ -5,15 +5,15 @@ import SideMenuNavLink from './SideMenuNavLink';
 
 export default function SideMenuNav() {
   return (
-    <aside className="col-span-1  bg-black">
-      <div className="inline-flex h-[100%] w-full flex-col items-start justify-start gap-4 bg-black shadow-inner">
+    <aside className="col-span-1  bg-gray-900">
+      <div className="inline-flex h-[100%] w-full flex-col items-start justify-start gap-4 bg-gray-900 shadow-inner">
         <div className="flex h-[72px] flex-col items-center justify-start gap-2.5 self-stretch px-6 pb-7 pt-6">
           <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
             <div className="shrink grow basis-0 self-stretch text-center">
-              <span className="font-['General Sans'] text-xl font-semibold leading-tight text-white">
+              <span className="text-xl font-semibold leading-tight text-white">
                 Aquatechy
               </span>
-              <span className="font-['General Sans'] text-xl font-semibold leading-tight text-indigo-600">
+              <span className="text-xl font-semibold leading-tight text-blue-500">
                 .
               </span>
             </div>

@@ -1,3 +1,4 @@
+import { Assignment } from '@/interfaces/Assignments';
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,7 +7,8 @@ export const useUpdateAssignments = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data) => await clientAxios.patch('/assignments', data),
+    mutationFn: async (data: Assignment[]) =>
+      await clientAxios.patch('/assignments', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       toast({

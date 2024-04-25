@@ -80,7 +80,7 @@ export default function Page() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
-          <div className="font-['Public Sans'] h-5 text-sm font-medium leading-tight tracking-tight text-zinc-500">
+          <div className="h-5 text-sm font-medium leading-tight tracking-tight text-zinc-500">
             Basic information
           </div>
           <div className="inline-flex self-stretch gap-4 justify-start">

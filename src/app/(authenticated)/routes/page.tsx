@@ -1,33 +1,28 @@
 'use client';
 import { format } from 'date-fns';
 import TechnicianSelect from './TechnicianSelect';
-import { Button } from '../../../components/ui/button';
+import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { dateSchema } from '../../../schemas/date';
-import { Form } from '../../../components/ui/form';
+import { dateSchema } from '@/schemas/date';
+import { Form } from '@/components/ui/form';
 import { AssignmentsList } from './AssignmentsList';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from '../../../components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Map from './Map';
 
 import { arrayMove } from '@dnd-kit/sortable';
-import { useTechniciansContext } from '../../../context/technicians';
-import { useAssignmentsContext } from '../../../context/assignments';
-import { LoadingSpinner } from '../../../components/LoadingSpinner';
-import { useUpdateAssignments } from '../../../hooks/react-query/assignments/updateAssignments';
-import { Assignment } from '../../../interfaces/Assignments';
-import { useWeekdayContext } from '../../../context/weekday';
+import { useTechniciansContext } from '@/context/technicians';
+import { useAssignmentsContext } from '@/context/assignments';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
+import { Assignment } from '@/interfaces/Assignments';
+import { useWeekdayContext } from '@/context/weekday';
 import { DialogNewAssignment } from './dialog-new-assignment';
 import { DialogTransferRoute } from './dialog-transfer-route';
 import { useState } from 'react';
-import useWindowDimensions from '../../../hooks/useWindowDimensions';
-import { paidByServiceSchema } from '../../../schemas/assignments';
+import useWindowDimensions from '@/hooks/useWindowDimensions';
+import { paidByServiceSchema } from '@/schemas/assignments';
 
 export type Weekdays =
   | 'Sunday'
@@ -181,11 +176,8 @@ export default function Page() {
             </div>
           </Tabs>
         </div>
-        <div className="w-[50%]">
-          <Map
-            assignments={assignments.current}
-            selectedWeekday={selectedWeekday}
-          />
+        <div className="w-[50%] h-fit">
+          <Map assignments={assignments.current} />
         </div>
       </div>
     </div>

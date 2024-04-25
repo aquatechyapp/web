@@ -38,8 +38,8 @@ export default function ActionButton({ type }: Props) {
       className={`flex shrink grow basis-0 items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-gradient-to-b p-5 ${types[type].color}`}
     >
       <Icon color="white" />
-      <div className="TitleNumbers inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
-        <div className="Text font-['Public Sans'] self-stretch text-lg font-bold tracking-tight text-white">
+      <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
+        <div className="self-stretch text-lg font-bold tracking-tight text-white">
           {types[type].title}
         </div>
       </div>
