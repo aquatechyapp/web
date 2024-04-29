@@ -1,31 +1,28 @@
-import { useToast } from '../../../components/ui/use-toast';
-import { clientAxios } from '../../../lib/clientAxios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { usePathname, useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/use-toast';
+import { clientAxios } from '@/lib/clientAxios';
+import { useMutation } from '@tanstack/react-query';
+import { usePathname } from 'next/navigation';
 
 export const useUpdateClient = () => {
-  const queryClient = useQueryClient();
-  const { push } = useRouter();
   const { toast } = useToast();
   const pathname = usePathname();
   const clientId = pathname.split('/')[2];
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) =>
-      // await clientAxios.patch('/clients', { data, clientId: pathname }),
       await clientAxios.patch('/clients', { ...data, clientId }),
-    onSuccess: (data) => {
-      // queryClient.invalidateQueries({ queryKey: ['clients'] });
+    onSuccess: () => {
       toast({
         variant: 'default',
         title: 'Client updated successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         variant: 'default',
         title: 'Error updating client',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     }
   });

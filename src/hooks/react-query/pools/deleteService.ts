@@ -1,12 +1,18 @@
-import { useToast } from '../../../components/ui/use-toast';
-import { clientAxios } from '../../../lib/clientAxios';
+import { useToast } from '@/components/ui/use-toast';
+import { clientAxios } from '@/lib/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteService = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
-    mutationFn: async ({ serviceId, assignmentId }) =>
+    mutationFn: async ({
+      serviceId,
+      assignmentId
+    }: {
+      serviceId: string;
+      assignmentId: string;
+    }) =>
       await clientAxios.delete('/services', {
         data: { serviceId, assignmentId }
       }),
@@ -15,14 +21,14 @@ export const useDeleteService = () => {
       toast({
         variant: 'default',
         title: 'Deleted service successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         variant: 'default',
         title: 'Error deleting service',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     }
   });

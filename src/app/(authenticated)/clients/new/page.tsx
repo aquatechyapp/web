@@ -44,7 +44,7 @@ export default function Page() {
         className: 'bg-green-500 text-white'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         variant: 'destructive',
         title: 'Error adding client',
@@ -79,7 +79,7 @@ export default function Page() {
       phone1: '',
       lockerCode: '',
       montlyPayment: undefined,
-      poolNotes: undefined,
+      poolNotes: '',
       poolAddress: '',
       poolCity: '',
       enterSide: '',
@@ -87,7 +87,7 @@ export default function Page() {
       firstName: '',
       lastName: '',
       clientAddress: '',
-      clientNotes: undefined,
+      clientNotes: '',
       clientZip: '',
       poolState: '',
       poolZip: '',
@@ -126,8 +126,8 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="inline-flex flex-col items-start justify-start gap-4 bg-white p-6 w-full">
-          <div className="h-5 text-sm font-medium leading-tight tracking-tight text-zinc-500">
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
+          <div className="h-5 text-sm font-medium   text-gray-500">
             Basic information
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
@@ -154,7 +154,7 @@ export default function Page() {
               type="zip"
             />
           </div>
-          <div className="flex items-center w-full text-sm font-medium text-zinc-500 mt-4 whitespace-nowrap">
+          <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
             <span className="mr-2">Contact information</span>
           </div>
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
@@ -178,7 +178,7 @@ export default function Page() {
             placeholder="Type clients notes here..."
             type="textArea"
           />
-          <div className="flex items-center w-full text-sm font-medium text-zinc-500 mt-2 whitespace-nowrap">
+          <div className="mt-2 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
             <span className="mr-2">Service information</span>
           </div>
           <div className="inline-flex items-start justify-start gap-2 self-stretch">
@@ -244,11 +244,11 @@ export default function Page() {
                 type="textArea"
               />
             </div>
-            <div className="h-44 w-full inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch mt-8">
+            <div className="mt-8 inline-flex h-44 w-full shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
               <InputFile handleChange={handleImagesChange} />
             </div>
           </div>
-          <div className="flex items-center w-full text-sm font-medium text-zinc-500 mt-4 whitespace-nowrap">
+          <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
             <span className="mr-2">Assignment information</span>
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
@@ -328,11 +328,8 @@ const additionalSchemas = z.object({
   assignmentToId: z.string().min(1),
   photo: z.array(z.any()),
   customerCode: z.string().nullable(),
-  montlyPayment: z.preprocess(
-    (val) => parseInt(val?.toString().replaceAll(/\D/g, '')),
-    // tudo isso pra lidar com o caso de opcional, pois se o user não digita nada, o valor é undefined | NaN
-    z.union([z.number().int().positive().min(1), z.nan()]).optional()
-  )
+  montlyPayment: z.string().nullable(),
+  company: z.string().nullable()
 });
 
 const poolAndClientSchema = clientSchema

@@ -73,9 +73,9 @@ export default function ClientInfo({ client }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col items-start justify-start gap-2 self-stretch bg-white p-6"
+        className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50 p-6"
       >
-        <div className="h-5 w-[213.40px] text-sm font-medium leading-tight tracking-tight text-zinc-500">
+        <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">
           Basic information
         </div>
         <div className="inline-flex items-start justify-start gap-4 self-stretch">
@@ -92,7 +92,7 @@ export default function ClientInfo({ client }) {
             type="zip"
           />
         </div>
-        <div className="mt-4 h-5 text-sm font-medium leading-tight tracking-tight text-zinc-500">
+        <div className="mt-4 h-5 text-sm font-medium   text-gray-500">
           Contact information
         </div>
         <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
@@ -118,7 +118,7 @@ export default function ClientInfo({ client }) {
           name="clientNotes"
           type="textArea"
         />
-        {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium leading-tight tracking-tight text-zinc-500">
+        {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium   text-gray-500">
           Notes about client (customer won't see that)
         </div>
         <Textarea

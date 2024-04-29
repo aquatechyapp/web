@@ -1,17 +1,13 @@
-import { useToast } from '../../../components/ui/use-toast';
-import { clientAxios } from '../../../lib/clientAxios';
+import { useToast } from '@/components/ui/use-toast';
+import { clientAxios } from '@/lib/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { usePathname, useRouter } from 'next/navigation';
 
 export const useUpdatePool = () => {
   const queryClient = useQueryClient();
-  const { push } = useRouter();
   const { toast } = useToast();
-  const pathname = usePathname();
-  const poolId = pathname.split('/')[2];
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async ({ data, poolId }) =>
+    mutationFn: async ({ data, poolId }: { data: any, poolId: string }) =>
       await clientAxios.patch('/pools', { ...data, poolId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pools'] });
@@ -19,14 +15,14 @@ export const useUpdatePool = () => {
       toast({
         variant: 'default',
         title: 'Pool updated successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         variant: 'default',
         title: 'Error updating pool',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     }
   });

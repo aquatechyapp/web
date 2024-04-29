@@ -100,14 +100,14 @@ export default function Page() {
 
   return (
     <div>
-      <div className="inline-flex h-[100%] w-full items-start justify-start gap-3 bg-white p-2.5 shadow-inner">
+      <div className="inline-flex h-[100%] w-full items-start justify-start gap-3 bg-gray-50 p-2.5 shadow-inner">
         <div className="w-[50%]">
           <Tabs
             onValueChange={(weekday) => handleChangeWeekday(weekday)}
             defaultValue={format(new Date(), 'EEEE').toUpperCase()}
             value={selectedWeekday}
           >
-            <div className="inline-flex w-full flex-col items-center justify-start gap-3.5 rounded-lg border border-zinc-200 bg-white py-2">
+            <div className="inline-flex w-full flex-col items-center justify-start gap-3.5 rounded-lg border border-gray-200 bg-gray-50 py-2">
               <Form {...form}>
                 <form className="w-full px-2">
                   <TabsList className="w-full">

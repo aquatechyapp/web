@@ -22,7 +22,7 @@ export default function Page() {
       </div>
       <div className="grid grid-cols-2">
         <div className="flex flex-col gap-6 self-stretch">
-          <div className="text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
+          <div className="text-xl font-semibold leading-[30px]  text-gray-800">
             Subcontractors
           </div>
           {!user?.subcontractors || user?.subcontractors?.length === 0 ? (
@@ -47,7 +47,7 @@ export default function Page() {
           )}
         </div>
         <div className="flex flex-col gap-6 self-stretch">
-          <div className="text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
+          <div className="text-xl font-semibold leading-[30px]  text-gray-800">
             Employers
           </div>
           {!user?.subcontractors || user?.employers?.length === 0 ? (

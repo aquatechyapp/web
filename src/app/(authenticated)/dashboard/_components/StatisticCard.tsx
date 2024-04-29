@@ -2,8 +2,7 @@ import { CiMoneyBill } from 'react-icons/ci';
 import { FaCartArrowDown } from 'react-icons/fa';
 import { IoMdPersonAdd } from 'react-icons/io';
 import { TfiMoney } from 'react-icons/tfi';
-import { RiMoneyDollarCircleFill } from "react-icons/ri";
-
+import { RiMoneyDollarCircleFill } from 'react-icons/ri';
 
 const types = {
   incomeCompany: {
@@ -60,8 +59,10 @@ export default function StatisticCard({ type, value }: Props) {
           <div className="flex h-6 w-6 items-center justify-center gap-2">
             <Icon color={types[type].colorIcon} size={25} />
           </div>
-          <div className="shrink grow basis-0 text-base font-medium leading-normal 
-          tracking-tight text-zinc-600">
+          <div
+            className="shrink grow basis-0 text-base font-medium leading-normal
+          tracking-tight text-zinc-600"
+          >
             {types[type].title}
             <span className="text-xs">{types[type]?.subtitle || ''}</span>
           </div>
@@ -71,14 +72,13 @@ export default function StatisticCard({ type, value }: Props) {
           {displayValue}
         </div>
         <div className="flex h-2 flex-col items-start justify-start gap-1 self-stretch">
-        <div className="flex h-2 flex-col items-start justify-start gap-2 self-stretch rounded-[100px] bg-gray-100 pr-28">
-          <div
-            className={`h-2 w-[90%] rounded-[100px] bg-gradient-to-r ${types[type].color}`}
-          />
+          <div className="flex h-2 flex-col items-start justify-start gap-2 self-stretch rounded-[100px] bg-gray-100 pr-28">
+            <div
+              className={`h-2 w-[90%] rounded-[100px] bg-gradient-to-r ${types[type].color}`}
+            />
+          </div>
         </div>
       </div>
-      </div>
-      
     </div>
   );
 }

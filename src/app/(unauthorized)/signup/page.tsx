@@ -65,7 +65,7 @@ export default function Page() {
         variant: 'default',
         title: 'Internal error',
         description: 'Please try again later',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     }
   });
@@ -98,7 +98,7 @@ export default function Page() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] rounded-lg bg-white px-6 py-8"
+        className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8"
       >
         <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
           <div className="shrink grow basis-0 self-stretch text-center text-2xl font-semibold leading-normal text-gray-600">
@@ -106,16 +106,16 @@ export default function Page() {
           </div>
         </div>
         <div className="relative h-[50px] w-[400px]">
-          <div className="absolute left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
+          <div className="absolute left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px]  text-gray-800">
             Signup
           </div>
           <div className="absolute left-0 top-[30px] h-5 w-[400px]">
-            <span className="text-sm font-medium leading-tight tracking-tight text-zinc-500">
+            <span className="text-sm font-medium   text-gray-500">
               Already have an account?{' '}
             </span>
             <Link
               href="/login"
-              className="text-sm font-bold leading-tight tracking-tight text-zinc-500"
+              className="text-sm font-bold   text-gray-500"
             >
               Login
             </Link>

@@ -173,21 +173,3 @@ export default function InputField({
     />
   );
 }
-
-// {name === 'phone' ? (
-//   <Input
-//     type="tel"
-//     placeholder={placeholder}
-//     {...field}
-//     ref={inputRef}
-//     onInput={(e) => {
-//       form.setValue('phone', e.target.value);
-//     }}
-//   />
-// ) : (
-//   <Input
-//     type={name === 'confirmPassword' ? 'password' : name}
-//     placeholder={placeholder}
-//     {...field}
-//   />
-// )}

@@ -1,3 +1,5 @@
+import { Service } from './Service';
+
 export type Assignment = {
   id: string;
   assignmentOwnerId: string;
@@ -45,6 +47,7 @@ export type Pool = {
   zip: string;
   photos: string[];
   coords: Coords;
+  services: Service[];
 };
 
 export type Coords = {

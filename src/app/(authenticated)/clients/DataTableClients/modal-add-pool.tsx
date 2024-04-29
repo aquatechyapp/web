@@ -1,17 +1,17 @@
-import InputField from '../../../../components/InputField';
-import { InputFile } from '../../../../components/InputFile';
-import SelectField from '../../../../components/SelectField';
-import StateAndCitySelect from '../../../../components/StateAndCitySelect';
-import { Button } from '../../../../components/ui/button';
+import InputField from '@/components/InputField';
+import { InputFile } from '@/components/InputFile';
+import SelectField from '@/components/SelectField';
+import StateAndCitySelect from '@/components/StateAndCitySelect';
+import { Button } from '@/components/ui/button';
 import {
   DialogContent,
   DialogTitle,
   DialogTrigger
-} from '../../../../components/ui/dialog';
-import { Form } from '../../../../components/ui/form';
-import { PoolTypes } from '../../../../constants';
-import { poolSchema } from '../../../../schemas/pool';
-import { isEmpty } from '../../../../utils';
+} from '@/components/ui/dialog';
+import { Form } from '@/components/ui/form';
+import { PoolTypes } from '@/constants';
+import { poolSchema } from '@/schemas/pool';
+import { isEmpty } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -67,11 +67,7 @@ const createPoolSchema = poolSchema
         })
         .trim()
         .min(1, { message: 'Address must be at least 1 character.' }),
-      montlyPayment: z.preprocess(
-        (val) => parseInt(val?.toString().replaceAll(/\D/g, '')),
-        // tudo isso pra lidar com o caso de opcional, pois se o user não digita nada, o valor é undefined | NaN
-        z.union([z.number().int().positive().min(1), z.nan()]).optional()
-      )
+      montlyPayment: z.string().nullable()
     })
   );
 
@@ -126,82 +122,91 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
   }
 
   return (
-    <DialogContent className="max-w-[1200px] h-[660px]">
-      <DialogTitle>Create Pool</DialogTitle>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="grid gap-4">
-          <div className="flex gap-4 -mt-2">
-            <InputField
-              form={form}
-              name="address"
-              label="Address"
-              placeholder="Pool Address"
-            />
-            <StateAndCitySelect form={form} stateName="state" cityName="city" />
-            <InputField
-              form={form}
-              name="zip"
-              label="Zip"
-              placeholder="Pool zip"
-              type="zip"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-4">
+    <>
+      <DialogContent className="h-[660px] max-w-[1200px]">
+        <DialogTitle>Create Pool</DialogTitle>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="grid gap-4"
+          >
+            <div className="-mt-2 flex gap-4">
               <InputField
                 form={form}
-                name="enterSide"
-                label="Enter side"
-                placeholder="Enter side"
+                name="address"
+                label="Address"
+                placeholder="Pool Address"
+              />
+              <StateAndCitySelect
+                form={form}
+                stateName="state"
+                cityName="city"
               />
               <InputField
                 form={form}
-                name="lockerCode"
-                label="Locker code"
-                placeholder="Locker code"
+                name="zip"
+                label="Zip"
+                placeholder="Pool zip"
+                type="zip"
               />
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-4">
+                <InputField
+                  form={form}
+                  name="enterSide"
+                  label="Enter side"
+                  placeholder="Enter side"
+                />
+                <InputField
+                  form={form}
+                  name="lockerCode"
+                  label="Locker code"
+                  placeholder="Locker code"
+                />
+              </div>
+
+              <div className="grid gap-4">
+                <InputField
+                  form={form}
+                  name="montlyPayment"
+                  label="Montly payment"
+                  placeholder="Montly payment"
+                  type="currencyValue"
+                />
+                <SelectField
+                  name="poolType"
+                  placeholder="Chemical type"
+                  form={form}
+                  data={PoolTypes}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <InputField
+                className="h-40"
+                type="textArea"
                 form={form}
-                name="montlyPayment"
-                label="Montly payment"
-                placeholder="Montly payment"
-                type="currencyValue"
+                name="notes"
+                label="Pool notes"
+                placeholder="Pool notes"
               />
-              <SelectField
-                name="poolType"
-                placeholder="Chemical type"
-                form={form}
-                data={PoolTypes}
-              />
+              <div className="mt-8 h-40">
+                <InputFile handleChange={handleImagesChange} />
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <InputField
-              className="h-40"
-              type="textArea"
-              form={form}
-              name="notes"
-              label="Pool notes"
-              placeholder="Pool notes"
-            />
-            <div className="mt-8 h-40">
-              <InputFile handleChange={handleImagesChange} />
+            <div className="m-auto flex w-[50%] justify-around">
+              <Button onClick={() => setOpen(false)} variant={'outline'}>
+                Cancel
+              </Button>
+              <Button variant={'default'} color="green" type="submit">
+                Create
+              </Button>
             </div>
-          </div>
-          <div className="flex justify-around w-[50%] m-auto">
-            <Button onClick={() => setOpen(false)} variant={'outline'}>
-              Cancel
-            </Button>
-            <Button variant={'default'} color="green" type="submit">
-              Create
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </DialogContent>
+          </form>
+        </Form>
+      </DialogContent>
+    </>
   );
 }

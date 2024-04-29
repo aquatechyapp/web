@@ -61,7 +61,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
 
   return (
     <Form {...form}>
-      <div className="h-5 w-full flex text-sm justify-between font-medium leading-tight tracking-tight text-zinc-500">
+      <div className="h-5 w-full flex text-sm justify-between font-medium   text-gray-500">
         Basic information
         <div className="flex gap-4 text-lg">
           <DialogEditPool

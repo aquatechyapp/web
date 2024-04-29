@@ -1,4 +1,4 @@
-import { clientAxios } from '../../../lib/clientAxios';
+import { clientAxios } from '@/lib/clientAxios';
 import { useQuery } from '@tanstack/react-query';
 
 export default function useGetClients() {

@@ -62,12 +62,12 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="mt-6 text-xl font-semibold leading-[30px] tracking-tight text-neutral-800">
+        <div className="mt-6 text-xl font-semibold leading-[30px]  text-gray-800">
           My account
         </div>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
-          <div className="h-5  text-sm font-medium leading-tight tracking-tight text-zinc-500">
-            Basic information
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
+          <div className="h-5  text-sm font-medium   text-gray-500">
+            Basic Information
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <InputField form={form} name="firstName" placeholder="First name" />
@@ -79,7 +79,7 @@ export default function Page() {
             <StateAndCitySelect form={form} cityName="city" stateName="state" />
             <InputField form={form} name={'zip'} placeholder="Zip code" />
           </div>
-          <div className="h-5 w-[213.40px] text-sm font-medium leading-tight tracking-tight text-zinc-500">
+          <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">
             Contact information
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">

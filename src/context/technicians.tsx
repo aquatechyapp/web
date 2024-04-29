@@ -24,10 +24,10 @@ export const TechniciansProvider = ({
 }) => {
   const { user } = useUserContext();
   const [assignmentToId, setAssignmentToId] = useState(user?.id || '');
-  const [technicians, setTechnicians] = useState([]);
+  const [technicians, setTechnicians] = useState<WorkRelation[]>([]);
 
   useEffect(() => {
-    if (isEmpty(user)) return;
+    if (!user || isEmpty(user)) return;
 
     setAssignmentToId(user.id);
     setTechnicians([
