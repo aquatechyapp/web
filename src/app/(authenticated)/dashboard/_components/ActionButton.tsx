@@ -1,8 +1,8 @@
+import Link from 'next/link';
+import { IoMdAddCircleOutline } from 'react-icons/io';
+
 import RouteIcon from '@/components/ui/route-icon';
 import TeamIcon from '@/components/ui/team-icon';
-import Link from 'next/link';
-import { IoAddSharp } from 'react-icons/io5';
-import { IoMdAddCircleOutline } from 'react-icons/io';
 
 const types = {
   add_client: {
@@ -41,9 +41,7 @@ export default function ActionButton({ type }: Props) {
     >
       <Icon color="white" size={25} />
       <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
-        <div className="self-stretch text-lg font-bold  text-gray-50">
-          {types[type].title}
-        </div>
+        <div className="self-stretch text-lg font-bold  text-gray-50">{types[type].title}</div>
       </div>
     </Link>
   );
