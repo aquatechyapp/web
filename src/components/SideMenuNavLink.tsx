@@ -6,9 +6,10 @@ type Props = {
   Icon: React.ElementType;
   text: string;
   href: string;
+  submenu: string;
 };
 
-export default function SideMenuNavLink({ Icon, text, href }: Props) {
+export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
   let pathname = usePathname();
   pathname = pathname.split('/')[1];
 
@@ -26,25 +27,28 @@ export default function SideMenuNavLink({ Icon, text, href }: Props) {
             width={24}
           />
         </div>
-        {text !== 'Clients' ? <div className="w-full  text-base font-medium leading-none text-slate-50">
+        {!submenu ? <div className="w-full  text-base font-medium leading-none text-slate-50">
           {text}
         </div>
           :
+
           <Accordion type="single" collapsible>
             <AccordionItem value="item-1">
               <AccordionTrigger className="w-full  text-base font-medium leading-none text-slate-50">
-                Clients
+                {text}
               </AccordionTrigger>
-              <Link  href={href}>
-              <AccordionContent className="w-full text-ls font-medium leading-none text-gray-500">
-                Clients
-              </AccordionContent>
-              </Link>
-              <AccordionContent className="w-full text-ls font-medium leading-none text-gray-500">
-               Add client
-              </AccordionContent>
+
+
+              {Object.entries(submenu).map(([key, subItem]) => (
+                    <Link key={key} href={subItem.href}>
+                      <AccordionContent className="w-full text-ls font-medium leading-none text-gray-500">
+                        {subItem.text}
+                      </AccordionContent>
+                    </Link>
+              ))}
             </AccordionItem>
           </Accordion>
+
         }
       </div>
     </Link>

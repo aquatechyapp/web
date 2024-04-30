@@ -94,6 +94,16 @@ export const routes = [
   },
   {
     text: 'Clients',
+    submenu: {
+      clients: {
+        text: 'Clients',
+        href: '/clients',
+      },
+      AddClients: {
+        text: 'AddClients',
+        href: '/addClients',
+      }
+    },
     href: '/clients',
     icon: ClientIcon
   },
