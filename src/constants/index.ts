@@ -100,7 +100,7 @@ export const routes = [
         href: '/clients',
       },
       AddClients: {
-        text: 'AddClients',
+        text: 'Add Clients',
         href: '/addClients',
       }
     },
