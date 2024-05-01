@@ -99,12 +99,12 @@ export const routes = [
         text: 'Clients',
         href: '/clients',
       },
-      AddClients: {
+      addClients: {
         text: 'Add Clients',
         href: '/addClients',
       }
     },
-    href: '/clients',
+    href: '',
     icon: ClientIcon
   },
   {

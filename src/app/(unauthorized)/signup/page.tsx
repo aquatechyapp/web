@@ -153,7 +153,7 @@ export default function Page() {
           />
         </div>
         <Button disabled={isPending} type="submit" className="w-full">
-          Submit
+          Signup
         </Button>
       </form>
     </Form>

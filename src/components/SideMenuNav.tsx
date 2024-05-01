@@ -23,7 +23,7 @@ export default function SideMenuNav() {
                 href={route.href}
                 Icon={route.icon}
                 text={route.text}
-                submenu={route.submenu as any}
+                submenu={route.submenu}
               />
             );
           })}
