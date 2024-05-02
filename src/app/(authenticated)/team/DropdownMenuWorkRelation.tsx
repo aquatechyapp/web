@@ -53,7 +53,7 @@ export default function DropdownMenuWorkRelation({ workRelationId }: Props) {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent>
-            <ModalEdit>
+            <ModalEdit workRelationId={workRelationId}>
               <div
                 className="text-gray-700 flex items-center w-full p-1 hover:bg-blue-50 rounded">
                 Edit
