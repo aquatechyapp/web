@@ -10,10 +10,7 @@ import { Dialog } from '@/components/ui/dialog';
 import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
 import { useDeactivateClient } from '@/hooks/react-query/clients/deactivateClient';
 import { Client } from '@/interfaces/Client';
-import {
-  calculateTotalAssignmentsOfAllPools,
-  calculateTotalMonthlyOfAllPools
-} from '@/utils';
+import { calculateTotalAssignmentsOfAllPools, calculateTotalMonthlyOfAllPools } from '@/utils';
 
 import { ModalAddPool } from '../DataTableClients/modal-add-pool';
 import ClientInfo from './ClientInfo';
@@ -44,32 +41,21 @@ export default function ShowClient({ client }: Props) {
 
             <div className="PhotoName flex h-[206px] flex-col items-center justify-start gap-3 self-stretch">
               <Avatar className="h-[140px] w-[140px]">
-                <AvatarImage
-                  src={
-                    client.pools[0].photos[0] ||
-                    'https://via.placeholder.com/140x140'
-                  }
-                />
+                <AvatarImage src={client.pools[0].photos[0] || 'https://via.placeholder.com/140x140'} />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div className="NameStatus flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
                 <div className="self-stretch text-center text-xl font-semibold leading-[30px]  text-gray-800">
                   {client.name}
                 </div>
-                <div className="text-sm font-medium   text-gray-500">
-                  {client.address}
-                </div>
+                <div className="text-sm font-medium   text-gray-500">{client.address}</div>
               </div>
             </div>
             <div className="flex flex-col items-center justify-start gap-[18px]">
               <div className="inline-flex w-[312px] items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium   text-gray-500">
-                    Email
-                  </div>
-                  <div className="self-stretch text-sm font-medium   text-gray-800">
-                    {client.email1}
-                  </div>
+                  <div className="self-stretch text-sm font-medium   text-gray-500">Email</div>
+                  <div className="self-stretch text-sm font-medium   text-gray-800">{client.email1}</div>
                 </div>
                 <div className=" flex items-center justify-center gap-2">
                   <div className=" flex h-[18px] w-[18px] items-center justify-center gap-2 p-2">
@@ -79,12 +65,8 @@ export default function ShowClient({ client }: Props) {
               </div>
               <div className="inline-flex w-[312px] items-start justify-start gap-2">
                 <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium   text-gray-500">
-                    Phone Number
-                  </div>
-                  <div className="self-stretch text-sm font-medium   text-gray-800">
-                    {client.phone1}
-                  </div>
+                  <div className="self-stretch text-sm font-medium   text-gray-500">Phone Number</div>
+                  <div className="self-stretch text-sm font-medium   text-gray-800">{client.phone1}</div>
                 </div>
                 <div className=" flex items-center justify-center gap-2">
                   <div className=" flex h-[18px] w-[18px] items-center justify-center gap-2 p-2">
@@ -94,9 +76,7 @@ export default function ShowClient({ client }: Props) {
               </div>
               <div className="inline-flex w-[312px] items-start justify-start gap-2">
                 <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium   text-gray-500">
-                    Locations
-                  </div>
+                  <div className="self-stretch text-sm font-medium   text-gray-500">Locations</div>
                   <div className="self-stretch text-sm font-medium   text-gray-800">
                     {client.pools.length > 0
                       ? client.pools.length === 1
@@ -108,24 +88,17 @@ export default function ShowClient({ client }: Props) {
               </div>
               <div className="inline-flex w-[312px] items-start justify-start gap-2">
                 <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium   text-gray-500">
-                    Last Service
-                  </div>
+                  <div className="self-stretch text-sm font-medium   text-gray-500">Last Service</div>
                   <div className="self-stretch text-sm font-medium   text-gray-800">
                     {client.lastServiceDate != undefined
-                      ? format(
-                          new Date(client.lastServiceDate),
-                          'MMMM, dd, yyyy'
-                        )
+                      ? format(new Date(client.lastServiceDate), 'MMMM, dd, yyyy')
                       : 'No Services'}
                   </div>
                 </div>
               </div>
               <div className="inline-flex w-[312px] items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className=" text-sm font-medium   text-gray-500">
-                    Joined
-                  </div>
+                  <div className=" text-sm font-medium   text-gray-500">Joined</div>
                   <div className=" text-sm font-medium   text-gray-800">
                     {format(new Date(client.createdAt), 'MMMM, dd, yyyy')}
                   </div>
@@ -142,27 +115,14 @@ export default function ShowClient({ client }: Props) {
                 </Button>
               </div>
               <div className="flex w-full justify-center gap-2">
-                <Button
-                  className="w-full"
-                  onClick={() => deactivateClient(client.id)}
-                  variant={'destructive'}
-                >
+                <Button className="w-full" onClick={() => deactivateClient(client.id)} variant={'destructive'}>
                   Deactivate Client
                 </Button>
-                <Button
-                  onClick={() => setOpen(true)}
-                  className="w-full"
-                  variant={'outline'}
-                >
+                <Button onClick={() => setOpen(true)} className="w-full" variant={'outline'}>
                   Add pool
                 </Button>
                 <Dialog open={open} onOpenChange={setOpen}>
-                  <ModalAddPool
-                    handleAddPool={mutateAddPool}
-                    clientOwnerId={client.id}
-                    open={open}
-                    setOpen={setOpen}
-                  />
+                  <ModalAddPool handleAddPool={mutateAddPool} clientOwnerId={client.id} open={open} setOpen={setOpen} />
                 </Dialog>
               </div>
             </div>
@@ -189,9 +149,7 @@ export default function ShowClient({ client }: Props) {
               <div className="RightBadgeStatisticCard inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
                 <div className="TitleNumbers inline-flex items-start justify-start gap-4 self-stretch">
                   <div className="TitleNumbers inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
-                    <div className="self-stretch text-base font-medium leading-normal  text-gray-500">
-                      Services
-                    </div>
+                    <div className="self-stretch text-base font-medium leading-normal  text-gray-500">Services</div>
                     <div className="self-stretch text-[28px] font-semibold  text-gray-800">
                       {calculateTotalAssignmentsOfAllPools(client.pools)}
                     </div>
@@ -212,29 +170,16 @@ export default function ShowClient({ client }: Props) {
                 >
                   Basic Information
                 </div>
-                {tab === 'client_info' && (
-                  <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />
-                )}
+                {tab === 'client_info' && <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />}
               </div>
-              <div
-                onClick={() => setTab('pools')}
-                className="inline-flex flex-col items-start justify-start gap-2.5"
-              >
-                <div
-                  className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'pools' && selectedTabStyles}`}
-                >
+              <div onClick={() => setTab('pools')} className="inline-flex flex-col items-start justify-start gap-2.5">
+                <div className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'pools' && selectedTabStyles}`}>
                   Pools
                 </div>
-                {tab === 'pools' && (
-                  <div className="h-0.5 self-stretch bg-gray-800" />
-                )}
+                {tab === 'pools' && <div className="h-0.5 self-stretch bg-gray-800" />}
               </div>
             </div>
-            {tab === 'client_info' ? (
-              <ClientInfo client={client} />
-            ) : (
-              <PoolHeader pools={client.pools} />
-            )}
+            {tab === 'client_info' ? <ClientInfo client={client} /> : <PoolHeader pools={client.pools} />}
           </div>
         </div>
       </div>

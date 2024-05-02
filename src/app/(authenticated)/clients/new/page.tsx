@@ -43,6 +43,7 @@ export default function Page() {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       push('/clients');
       toast({
+        variant: 'destructive',
         title: 'Client added successfully',
         className: 'bg-green-500 text-white'
       });
@@ -131,55 +132,27 @@ export default function Page() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
-          <div className="h-5 text-sm font-medium   text-gray-500">
-            Basic information
-          </div>
+          <div className="h-5 text-sm font-medium   text-gray-500">Basic information</div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <InputField form={form} name="firstName" placeholder="First name" />
             <InputField form={form} name="lastName" placeholder="Last name" />
-            <InputField
-              form={form}
-              name="clientCompany"
-              placeholder="Company"
-            />
-            <InputField
-              form={form}
-              name="customerCode"
-              placeholder="Customer code"
-            />
+            <InputField form={form} name="clientCompany" placeholder="Company" />
+            <InputField form={form} name="customerCode" placeholder="Customer code" />
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <div className="min-w-fit">
-              <InputField
-                form={form}
-                name="clientAddress"
-                placeholder="Billing address"
-              />
+              <InputField form={form} name="clientAddress" placeholder="Billing address" />
             </div>
             <StateAndCitySelect form={form} />
-            <InputField
-              form={form}
-              name="clientZip"
-              placeholder="Zip code"
-              type="zip"
-            />
+            <InputField form={form} name="clientZip" placeholder="Zip code" type="zip" />
           </div>
           <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
             <span className="mr-2">Contact information</span>
           </div>
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-            <InputField
-              type="phone"
-              form={form}
-              name="phone1"
-              placeholder="Mobile phone"
-            />
+            <InputField type="phone" form={form} name="phone1" placeholder="Mobile phone" />
             <InputField form={form} name="email1" placeholder="E-mail" />
-            <InputField
-              form={form}
-              name="invoiceEmail"
-              placeholder="Invoice e-mail"
-            />
+            <InputField form={form} name="invoiceEmail" placeholder="Invoice e-mail" />
           </div>
           <div className="flex w-full items-center gap-4">
             <div className="w-[50%]">
@@ -208,48 +181,20 @@ export default function Page() {
             />
           </div>
           <div className="inline-flex items-start justify-start gap-2 self-stretch">
-            <InputField
-              form={form}
-              name="animalDanger"
-              type="checkbox"
-              placeholder="It must take care with animals?"
-            />
+            <InputField form={form} name="animalDanger" type="checkbox" placeholder="It must take care with animals?" />
           </div>
           {!form.watch('sameBillingAddress') && (
             <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-              <InputField
-                form={form}
-                name="poolAddress"
-                placeholder="Billing address"
-              />
-              <StateAndCitySelect
-                form={form}
-                stateName="poolState"
-                cityName="poolCity"
-              />
-              <InputField
-                form={form}
-                name="poolZip"
-                placeholder="Zip code"
-                type="zip"
-              />
+              <InputField form={form} name="poolAddress" placeholder="Billing address" />
+              <StateAndCitySelect form={form} stateName="poolState" cityName="poolCity" />
+              <InputField form={form} name="poolZip" placeholder="Zip code" type="zip" />
             </div>
           )}
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-            <InputField
-              form={form}
-              name="montlyPayment"
-              placeholder="Monthly payment by client"
-              type="currencyValue"
-            />
+            <InputField form={form} name="montlyPayment" placeholder="Monthly payment by client" type="currencyValue" />
             <InputField form={form} name="lockerCode" placeholder="Gate code" />
             <InputField form={form} name="enterSide" placeholder="Enter side" />
-            <SelectField
-              name="poolType"
-              placeholder="Chemical type"
-              form={form}
-              data={PoolTypes}
-            />
+            <SelectField name="poolType" placeholder="Chemical type" form={form} data={PoolTypes} />
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
@@ -284,30 +229,12 @@ export default function Page() {
               label="Paid by Service"
               type="currencyValue"
             />
-            <SelectField
-              name="weekday"
-              placeholder="Weekday"
-              form={form}
-              data={Weekdays}
-            />
-            <SelectField
-              name="frequency"
-              placeholder="Frequency"
-              form={form}
-              data={Frequencies}
-            />
+            <SelectField name="weekday" placeholder="Weekday" form={form} data={Weekdays} />
+            <SelectField name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
           </div>
           <div className="inline-flex items-start justify-start gap-4">
-            <DatePickerField
-              form={form}
-              name="startOn"
-              placeholder="Start on"
-            />
-            <DatePickerField
-              form={form}
-              name="endAfter"
-              placeholder="End after"
-            />
+            <DatePickerField form={form} name="startOn" placeholder="Start on" />
+            <DatePickerField form={form} name="endAfter" placeholder="End after" />
           </div>
           <Button disabled={isPending} type="submit" className="w-full">
             {isPending ? (
@@ -326,21 +253,10 @@ export default function Page() {
 }
 
 const additionalSchemas = z.object({
-  weekday: z.enum(
-    [
-      'SUNDAY',
-      'MONDAY',
-      'TUESDAY',
-      'WEDNESDAY',
-      'THURSDAY',
-      'FRIDAY',
-      'SATURDAY'
-    ],
-    {
-      required_error: 'Weekday is required.',
-      invalid_type_error: 'Weekday is required.'
-    }
-  ),
+  weekday: z.enum(['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'], {
+    required_error: 'Weekday is required.',
+    invalid_type_error: 'Weekday is required.'
+  }),
   frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
   sameBillingAddress: z.boolean(),
   assignmentToId: z.string().min(1),
