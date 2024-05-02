@@ -13,7 +13,9 @@ export function calculateTotalMonthlyOfAllPools(pools: Pool[]) {
   return insertDot(
     pools.reduce(
       (acc, pool) =>
-        acc + parseInt(pool.montlyPayment.toString().replaceAll(/\D/g, '')),
+        acc + pool.montlyPayment
+          ? parseInt(pool.montlyPayment.toString().replaceAll(/\D/g, ''))
+          : 0,
       0
     )
   );
