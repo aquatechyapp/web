@@ -69,11 +69,12 @@ export function ModalEdit({ children, workRelationId }: any) {
       });
     },
     onSuccess: (res) => {
-      // setUser((user) => ({
-      //   ...user,
-      //   subcontractors: [...user.subcontractors, res.data]
-      // }));
-      // push('/team');
+      console.log(res.data)
+      setUser((user) => ({
+        ...user,
+        subcontractors: [res.data]
+      }));
+      push('/team');
       toast({
         variant: 'default',
         title: 'Technician added successfully',
