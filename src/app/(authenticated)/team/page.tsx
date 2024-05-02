@@ -36,7 +36,7 @@ export default function Page() {
           </Button>
         </Link>
         <Input
-          placeholder="Filter contractor..."
+          placeholder="Filter by name..."
           value={searchTerm}
           onChange={event => setSearchTerm(event.target.value)}
           className="max-w-sm ml-4"
@@ -61,20 +61,21 @@ export default function Page() {
                   workRelationId={subcontractor.id}
                 />
               ))}
-            </div>
-          )}
-          {filteredEmployers && (
-            <div className="flex gap-2">
-              {filteredEmployers.map(employee => (
-                <EmployerCard
-                  key={employee.company.email}
-                  name={`${employee.company.firstName} ${employee.company.lastName}`}
-                  phone={employee.company.phone}
-                  email={employee.company.email}
-                  status={employee.status}
-                  workRelationId={employee.id}
-                />
-              ))}
+              {filteredEmployers && (
+                <div className="flex gap-2">
+                  {filteredEmployers.map(employee => (
+                    <EmployerCard
+                      key={employee.company.email}
+                      name={`${employee.company.firstName} ${employee.company.lastName}`}
+                      phone={employee.company.phone}
+                      email={employee.company.email}
+                      status={employee.status}
+                      workRelationId={employee.id}
+                    />
+                  ))}
+                </div>
+              )}
+
             </div>
           )}
         </div>

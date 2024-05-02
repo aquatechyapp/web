@@ -47,18 +47,33 @@ const paymentType = [
 ];
 
 export function ModalEdit({ children, workRelationId }: any) {
-  const { setUser } = useUserContext();
+  const { setUser, user} = useUserContext();
   const { push } = useRouter();
   const { toast } = useToast();
+
+  const selectedWorkRelation = user?.subcontractors.find(
+    (subcontractor: any) => subcontractor.id === workRelationId
+  );
+  
+  let selectedPaymentTypeName = undefined;
+  if (selectedWorkRelation?.paymentType) {
+    const selectedPaymentType = paymentType.find(type => type.value === selectedWorkRelation.paymentType);
+    if (selectedPaymentType) {
+      selectedPaymentTypeName = selectedPaymentType.name;
+    }
+  }
+  
+  console.log(selectedPaymentTypeName);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       workRelationId: workRelationId,
-      paymentValue: undefined,
-      paymentType: ''
+      paymentValue: selectedWorkRelation?.paymentValue || '',
+      paymentType: selectedPaymentTypeName || '',
     }
   });
+  
 
   const { mutate: handleSubmit } = useMutation({
     mutationFn: async (data) => {
@@ -103,13 +118,14 @@ export function ModalEdit({ children, workRelationId }: any) {
         <DialogDescription>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)}>
-              <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white">
+              <div className="inline-flex w-full flex-col items-start justify-start gap-8 bg-white">
                 <div className="self-stretch justify-start">
                   <SelectField
                     data={paymentType}
                     form={form}
                     name="paymentType"
-                    placeholder="Payment Type"
+                    label="Payment Type"
+                    placeholder={selectedPaymentTypeName}
                   />
                   <div className='h-[10px]' />
                   <InputField
