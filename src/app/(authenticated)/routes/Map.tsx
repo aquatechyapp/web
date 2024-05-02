@@ -1,19 +1,19 @@
 'use client';
 
-import { Assignment } from '@/interfaces/Assignments';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-
-import { Separator } from '@/components/ui/separator';
 import {
+  DirectionsRenderer,
   GoogleMap,
-  useLoadScript,
+  Libraries,
   Marker,
   MarkerClusterer,
-  DirectionsRenderer,
-  Libraries
+  useLoadScript
 } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
+
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Separator } from '@/components/ui/separator';
 import { Colors } from '@/constants/colors';
+import { Assignment } from '@/interfaces/Assignments';
 
 const mapContainerStyle = {
   width: '100%',
@@ -49,9 +49,7 @@ const Map = ({ assignments }: { assignments: Assignment[] }) => {
     const service = new google.maps.DirectionsService();
     // create a waypoints constant that not contain the origin and destination and get only assignments.pool.coords
     const waypoints = assignments
-      .filter(
-        (assignment, index) => index !== 0 && index !== assignments.length - 1
-      )
+      .filter((assignment, index) => index !== 0 && index !== assignments.length - 1)
       .map((assignment) => {
         return {
           location: assignment.pool.coords
@@ -68,14 +66,8 @@ const Map = ({ assignments }: { assignments: Assignment[] }) => {
         if (status === 'OK' && result) {
           setDirections(result);
 
-          const totalDuration = result.routes[0].legs.reduce(
-            (acc, leg) => acc + (leg.duration?.value ?? 0),
-            0
-          );
-          const totalDistance = result.routes[0].legs.reduce(
-            (acc, leg) => acc + (leg.distance?.value ?? 0),
-            0
-          );
+          const totalDuration = result.routes[0].legs.reduce((acc, leg) => acc + (leg.duration?.value ?? 0), 0);
+          const totalDistance = result.routes[0].legs.reduce((acc, leg) => acc + (leg.distance?.value ?? 0), 0);
           setDuration(
             (totalDuration / 60).toLocaleString('pt-br', {
               style: 'decimal',
@@ -98,7 +90,7 @@ const Map = ({ assignments }: { assignments: Assignment[] }) => {
 
   return (
     <div className="h-full">
-      <div className="absolute z-10 bg-gray-50 shadow-lg right-24 px-2 rounded-sm mt-2.5">
+      <div className="absolute right-24 z-10 mt-2.5 rounded-sm bg-gray-50 px-2 shadow-lg">
         <h3 className="py-1">Distance: {distance}</h3>
         <Separator />
         <h3 className="py-1">Duration: {duration}</h3>

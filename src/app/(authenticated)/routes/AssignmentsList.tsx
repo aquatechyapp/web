@@ -1,10 +1,9 @@
-import { Button } from '@/components/ui/button';
 import {
+  closestCenter,
   DndContext,
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
-  closestCenter,
   useSensor,
   useSensors
 } from '@dnd-kit/core';
@@ -17,20 +16,23 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import Image from 'next/image';
 import { useState } from 'react';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDragIndicator } from 'react-icons/md';
-import { useAssignmentsContext } from '@/context/assignments';
-import { useTechniciansContext } from '@/context/technicians';
+
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { BsThreeDotsVertical } from 'react-icons/bs';
+import { useAssignmentsContext } from '@/context/assignments';
+import { useTechniciansContext } from '@/context/technicians';
 import { useUserContext } from '@/context/user';
 import { Assignment } from '@/interfaces/Assignments';
-import { DialogTransferRoute } from './dialog-transfer-route';
+
 import { DialogDeleteAssignment } from './dialog-delete-assignment';
+import { DialogTransferRoute } from './dialog-transfer-route';
 
 export function AssignmentsList({ handleDragEnd }) {
   const { user } = useUserContext();
@@ -56,7 +58,7 @@ export function AssignmentsList({ handleDragEnd }) {
 
   if (assignments.current.length === 0) {
     return (
-      <div className="w-full flex justify-center">
+      <div className="flex w-full justify-center">
         <span>No assignments found for this weekday</span>
       </div>
     );
@@ -111,11 +113,7 @@ export function AssignmentsList({ handleDragEnd }) {
             </DropdownMenu>
           </div>
         ))}
-        <DialogDeleteAssignment
-          open={openDialogDelete}
-          setOpen={setOpenDialogDelete}
-          assignment={assignment}
-        />
+        <DialogDeleteAssignment open={openDialogDelete} setOpen={setOpenDialogDelete} assignment={assignment} />
 
         <DialogTransferRoute
           open={openDialogTransfer}
@@ -146,19 +144,13 @@ type AssignmentItemProps = {
   shouldPermitChangeOrder: boolean;
 };
 
-export function AssignmentItem({
-  id,
-  assignment,
-  shouldPermitChangeOrder
-}: AssignmentItemProps) {
+export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: AssignmentItemProps) {
   const address = `${assignment.pool.address} ${assignment.pool.city} ${assignment.pool.state} ${assignment.pool.zip}`;
 
   const name = assignment.pool.name;
 
-  const photo =
-    assignment.pool.photos[0] || 'https://via.placeholder.com/44x44';
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
+  const photo = assignment.pool.photos[0] || 'https://via.placeholder.com/44x44';
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -166,7 +158,7 @@ export function AssignmentItem({
   };
   return (
     <div
-      className="inline-flex items-center justify-start self-stretch border-b border-gray-100 w-full"
+      className="inline-flex w-full items-center justify-start self-stretch border-b border-gray-100"
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -175,25 +167,15 @@ export function AssignmentItem({
       <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 bg-gray-50 px-1 py-2">
         <div className="flex items-center justify-start gap-2">
           {!shouldPermitChangeOrder && <MdDragIndicator />}
-          <Image
-            width={11}
-            height={11}
-            alt="location photo"
-            className="h-11 w-11 rounded-lg"
-            src={photo}
-          />
+          <Image width={11} height={11} alt="location photo" className="h-11 w-11 rounded-lg" src={photo} />
           <div className="inline-flex flex-col items-start justify-center gap-1">
             <div className="text-sm font-medium   text-gray-800">{name}</div>
-            <div className="text-xs font-normal leading-[18px]  text-gray-500">
-              {address}
-            </div>
+            <div className="text-xs font-normal leading-[18px]  text-gray-500">{address}</div>
           </div>
         </div>
       </div>
       <div className="flex h-8 w-8 items-center justify-center gap-1 rounded-lg border border-gray-100 ">
-        <div className="shrink grow basis-0 text-center text-sm font-semibold   text-gray-800">
-          {assignment.order}
-        </div>
+        <div className="shrink grow basis-0 text-center text-sm font-semibold   text-gray-800">{assignment.order}</div>
       </div>
     </div>
   );
