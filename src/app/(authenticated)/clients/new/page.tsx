@@ -1,27 +1,30 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import InputField from '@/components/InputField';
-import StateAndCitySelect from '@/components/StateAndCitySelect';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { clientSchema } from '@/schemas/client';
-import { poolSchema } from '@/schemas/pool';
-import SelectField from '@/components/SelectField';
-import { Frequencies, PoolTypes, Weekdays } from '@/constants';
+
 import DatePickerField from '@/components/DatePickerField';
-import { clientAxios } from '@/lib/clientAxios';
-import { useRouter } from 'next/navigation';
+import InputField from '@/components/InputField';
 import { InputFile } from '@/components/InputFile';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import SelectField from '@/components/SelectField';
+import StateAndCitySelect from '@/components/StateAndCitySelect';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
+import { Frequencies, PoolTypes, Weekdays } from '@/constants';
 import { useUserContext } from '@/context/user';
-import { useEffect, useMemo } from 'react';
-import { dateSchema } from '@/schemas/date';
+import { clientAxios } from '@/lib/clientAxios';
 import { paidByServiceSchema } from '@/schemas/assignments';
+import { clientSchema } from '@/schemas/client';
+import { dateSchema } from '@/schemas/date';
+import { poolSchema } from '@/schemas/pool';
 import { createFormData } from '@/utils/formUtils';
+
+import { OptionsClientType } from './OptionsClientType';
 
 export default function Page() {
   const { user } = useUserContext();
@@ -96,7 +99,8 @@ export default function Page() {
       clientState: '',
       customerCode: '',
       paidByService: undefined,
-      company: ''
+      clientCompany: '',
+      clientType: 'Commercial'
     }
   });
 
@@ -133,19 +137,25 @@ export default function Page() {
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <InputField form={form} name="firstName" placeholder="First name" />
             <InputField form={form} name="lastName" placeholder="Last name" />
-            <InputField form={form} name="company" placeholder="Company" />
+            <InputField
+              form={form}
+              name="clientCompany"
+              placeholder="Company"
+            />
             <InputField
               form={form}
               name="customerCode"
               placeholder="Customer code"
             />
           </div>
-          <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-            <InputField
-              form={form}
-              name="clientAddress"
-              placeholder="Billing address"
-            />
+          <div className="inline-flex items-start justify-start gap-4 self-stretch">
+            <div className="min-w-fit">
+              <InputField
+                form={form}
+                name="clientAddress"
+                placeholder="Billing address"
+              />
+            </div>
             <StateAndCitySelect form={form} />
             <InputField
               form={form}
@@ -171,13 +181,21 @@ export default function Page() {
               placeholder="Invoice e-mail"
             />
           </div>
-          <InputField
-            label="Notes about client (customer won't see that)"
-            name="clientNotes"
-            form={form}
-            placeholder="Type clients notes here..."
-            type="textArea"
-          />
+          <div className="flex w-full items-center gap-4">
+            <div className="w-[50%]">
+              <InputField
+                label="Notes about client (customer won't see that)"
+                name="clientNotes"
+                form={form}
+                placeholder="Type clients notes here..."
+                type="textArea"
+              />
+            </div>
+            <div className="-mt-10">
+              <OptionsClientType form={form} />
+            </div>
+          </div>
+
           <div className="mt-2 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
             <span className="mr-2">Service information</span>
           </div>
@@ -329,7 +347,8 @@ const additionalSchemas = z.object({
   photo: z.array(z.any()),
   customerCode: z.string().nullable(),
   montlyPayment: z.string().nullable(),
-  company: z.string().nullable()
+  clientCompany: z.string().nullable(),
+  clientType: z.enum(['Commercial', 'Residential'])
 });
 
 const poolAndClientSchema = clientSchema
