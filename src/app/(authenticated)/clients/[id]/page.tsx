@@ -1,8 +1,9 @@
 'use client';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import ShowClient from './ShowClient';
 import useGetClient from '@/hooks/react-query/clients/getClient';
+
+import ShowClient from './ShowClient';
 
 type Props = {
   params: {

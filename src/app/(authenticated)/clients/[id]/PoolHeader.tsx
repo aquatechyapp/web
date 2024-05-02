@@ -1,10 +1,19 @@
 import { useState } from 'react';
-import BasicInformation from './PoolInfo';
+
+import { Separator } from '@/components/ui/separator';
+import { Pool } from '@/interfaces/Assignments';
+import { Service } from '@/interfaces/Service';
+
 import { DataTableServices } from './DataTableServices';
 import { columns } from './DataTableServices/columns';
-import { Separator } from '@/components/ui/separator';
+import BasicInformation from './PoolInfo';
 
-function PoolCard({ form, pool, services }) {
+type Props = {
+  services: Service[];
+  pool: Pool;
+};
+
+function PoolCard({ pool, services }: Props) {
   const [tab, setTab] = useState<'pool_info' | 'services'>('pool_info');
 
   const handleTabChange = (tab: 'pool_info' | 'services') => {
@@ -49,7 +58,7 @@ function PoolCard({ form, pool, services }) {
         </div>
       </div>
       {tab === 'pool_info' ? (
-        <BasicInformation form={form} pool={pool} />
+        <BasicInformation pool={pool} />
       ) : (
         <DataTableServices data={services} columns={columns} />
       )}
@@ -57,13 +66,8 @@ function PoolCard({ form, pool, services }) {
   );
 }
 
-export default function PoolHeader({ form, pools }) {
+export default function PoolHeader({ pools }: { pools: Pool[] }) {
   return pools.map((pool) => (
-    <PoolCard
-      form={form}
-      key={pool.id}
-      services={pool.services || []}
-      pool={pool}
-    />
+    <PoolCard key={pool.id} services={pool.services || []} pool={pool} />
   ));
 }

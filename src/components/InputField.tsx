@@ -1,14 +1,15 @@
+import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
+
+import { InputMasked } from './InputMasked';
+import { Checkbox } from './ui/checkbox';
 import { FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Input } from './ui/input';
-
-import { Textarea } from './ui/textarea';
-import { Checkbox } from './ui/checkbox';
-import { DropdownMenuCheckboxes } from './ui/multiple-select';
 import { Label } from './ui/label';
-import { InputMasked } from './InputMasked';
+import { DropdownMenuCheckboxes } from './ui/multiple-select';
+import { Textarea } from './ui/textarea';
 
 type Props = {
-  form: any;
+  form: UseFormReturn;
   name: string;
   placeholder?: string;
   type?:
@@ -23,7 +24,7 @@ type Props = {
     | 'zip'
     | 'percentValue'
     | 'currencyValue';
-  props?: any;
+  props?: React.HTMLProps<HTMLInputElement>;
   label?: string;
 };
 
@@ -37,7 +38,7 @@ export default function InputField({
 }: Props) {
   const types = {
     zip: {
-      component: (field) => (
+      component: (field: ControllerRenderProps) => (
         <Input
           placeholder={placeholder}
           type="tel"
@@ -50,13 +51,12 @@ export default function InputField({
       )
     },
     phone: {
-      component: (field) => {
+      component: (field: ControllerRenderProps) => {
         return (
           <InputMasked
             mask="phone"
             field={field}
-            placeholder={placeholder}
-            name={name}
+            placeholder={placeholder || ''}
             form={form}
             {...field}
             {...props}
@@ -65,7 +65,7 @@ export default function InputField({
       }
     },
     password: {
-      component: (field) => (
+      component: (field: ControllerRenderProps) => (
         <Input
           type="password"
           placeholder={placeholder}
@@ -77,7 +77,7 @@ export default function InputField({
       )
     },
     default: {
-      component: (field) => (
+      component: (field: ControllerRenderProps) => (
         <Input
           type="text"
           placeholder={placeholder}
@@ -90,9 +90,8 @@ export default function InputField({
       )
     },
     textArea: {
-      component: (field) => (
+      component: (field: ControllerRenderProps) => (
         <Textarea
-          type="text"
           placeholder={placeholder}
           {...props}
           {...field}
@@ -103,7 +102,7 @@ export default function InputField({
       )
     },
     checkbox: {
-      component: (field) => (
+      component: (field: ControllerRenderProps) => (
         <div className="inline-flex items-start justify-start gap-2 self-stretch">
           <Checkbox
             {...field}
@@ -113,7 +112,7 @@ export default function InputField({
           />
           <Label
             htmlFor={name}
-            className="text-sm font-medium font-semibold leading-none text-gray-400"
+            className="text-sm font-semibold leading-none text-gray-400"
           >
             {placeholder}
           </Label>
@@ -121,19 +120,18 @@ export default function InputField({
       )
     },
     weekdays: {
-      component: (field) => (
+      component: (field: ControllerRenderProps) => (
         <DropdownMenuCheckboxes
           onChange={(weekdays) => field.onChange(weekdays)}
         />
       )
     },
     percentValue: {
-      component: (field) => (
+      component: (field: ControllerRenderProps) => (
         <InputMasked
           mask={type}
           field={field}
-          placeholder={placeholder}
-          name={name}
+          placeholder={placeholder || ''}
           form={form}
           {...field}
           {...props}
@@ -141,12 +139,11 @@ export default function InputField({
       )
     },
     currencyValue: {
-      component: (field) => (
+      component: (field: ControllerRenderProps) => (
         <InputMasked
           mask={type}
           field={field}
-          placeholder={placeholder}
-          name={name}
+          placeholder={placeholder || ''}
           form={form}
           {...field}
           {...props}
@@ -161,7 +158,7 @@ export default function InputField({
       name={name}
       render={({ field }) => {
         return (
-          <FormItem className="w-full h-full">
+          <FormItem className="h-full w-full">
             {!['checkbox'].includes(type) && (
               <Label>{label || placeholder}</Label>
             )}

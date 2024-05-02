@@ -1,71 +1,34 @@
 'use client';
 
-import { useState } from 'react';
-import ClientInfo from './ClientInfo';
-import PoolHeader from './PoolHeader';
 import { format } from 'date-fns';
+import { useState } from 'react';
+
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Dialog } from '@/components/ui/dialog';
+import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
+import { useDeactivateClient } from '@/hooks/react-query/clients/deactivateClient';
+import { Client } from '@/interfaces/Client';
 import {
   calculateTotalAssignmentsOfAllPools,
   calculateTotalMonthlyOfAllPools
 } from '@/utils';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { clientSchema } from '@/schemas/client';
-import { poolSchema } from '@/schemas/pool';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useDeactivateClient } from '@/hooks/react-query/clients/deactivateClient';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { Client } from '@/interfaces/Client';
+
 import { ModalAddPool } from '../DataTableClients/modal-add-pool';
-import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
-import { Dialog } from '@/components/ui/dialog';
+import ClientInfo from './ClientInfo';
+import PoolHeader from './PoolHeader';
 
-const additionalSchemas = z.object({
-  weekday: z.enum(
-    [
-      'SUNDAY',
-      'MONDAY',
-      'TUESDAY',
-      'WEDNESDAY',
-      'THURSDAY',
-      'FRIDAY',
-      'SATURDAY'
-    ],
-    {
-      required_error: 'Weekday is required.',
-      invalid_type_error: 'Weekday is required.'
-    }
-  ),
-  frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
-  sameBillingAddress: z.boolean(),
-  startOn: z.coerce.date(),
-  endAfter: z.coerce.date(),
-  assignmentToId: z.string(),
-  clientNotes: z.string().nullable()
-});
+type Props = {
+  client: Client;
+};
 
-const poolAndClientSchema = clientSchema.and(poolSchema).and(additionalSchemas);
-
-export default function ShowClient({ client }: { client: Client }) {
+export default function ShowClient({ client }: Props) {
   const [open, setOpen] = useState(false);
 
   const { mutate: mutateAddPool } = useAddPoolToClient();
   const [tab, setTab] = useState<'client_info' | 'pools'>('client_info');
-  const form = useForm<z.infer<typeof poolAndClientSchema>>({
-    resolver: zodResolver(poolAndClientSchema),
-    defaultValues: {
-      clientCity: client.city || '',
-      clientState: client.state || '',
-      clientZip: client.zip || '',
-      email1: client.email1 || '',
-      phone1: client.phone1 || '',
-      clientNotes: client.notes || undefined,
-      clientAddress: client.address || '',
-      clientName: client.name || ''
-    }
-  });
+
   const { mutate: deactivateClient, isPending } = useDeactivateClient();
 
   if (isPending) return <LoadingSpinner />;
@@ -270,7 +233,7 @@ export default function ShowClient({ client }: { client: Client }) {
             {tab === 'client_info' ? (
               <ClientInfo client={client} />
             ) : (
-              <PoolHeader form={form} pools={client.pools} />
+              <PoolHeader pools={client.pools} />
             )}
           </div>
         </div>
