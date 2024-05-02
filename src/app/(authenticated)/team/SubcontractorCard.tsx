@@ -38,7 +38,7 @@ export function SubcontractorCard({
       {status === 'Inactive' && (
         // <ModalAcceptInvite handleSubmit={handleAcceptWorkRelation}>
         <div className="bg-orange-500 text-white text-sm py-1 px-2 rounded-full opacity-50">
-          Not Active
+          Pending Acceptance
         </div>
         // </ModalAcceptInvite>
       )}
