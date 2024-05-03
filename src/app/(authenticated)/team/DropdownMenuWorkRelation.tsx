@@ -26,15 +26,9 @@ type Props = {
 
 export default function DropdownMenuWorkRelation({ workRelationId }: Props) {
   const { isPending, mutate } = useDeleteRelation();
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleDelete = () => {
     mutate({ workRelationId });
-  };
-
-  const handleEdit = () => {
-    setIsEditModalOpen(true); // Define o estado como true para abrir o modal de edição
-    console.log('Edit action triggered for work relation ID:', workRelationId);
   };
 
   if (isPending) return <LoadingSpinner />;

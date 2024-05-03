@@ -140,7 +140,9 @@ export function ModalEdit({ children, workRelationId }: any) {
                     }
                   />
                 </div>
+                <DialogTrigger asChild>
                 <Button className='w-full' type="submit">Save</Button>
+                </DialogTrigger>
               </div>
             </form>
           </Form>
