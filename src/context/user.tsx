@@ -1,11 +1,12 @@
-import { LoadingSpinner } from '../components/LoadingSpinner';
-import { User } from '../interfaces/User';
-import { clientAxios } from '../lib/clientAxios';
-import { isEmpty } from '../utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { usePathname, useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, useState } from 'react';
+
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { User } from '../interfaces/User';
+import { clientAxios } from '../lib/clientAxios';
+import { isEmpty } from '../utils';
 
 type UserContextType = {
   user: User | undefined;
@@ -59,11 +60,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   if (isLoading) return <LoadingSpinner />;
   if (isError) return push('/login');
 
-  return (
-    <UserContext.Provider value={{ user, setUser }}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 };
 
 export const useUserContext = () => useContext(UserContext);

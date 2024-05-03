@@ -178,8 +178,8 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
         <div className="flex items-center justify-start gap-2">
           {!shouldPermitChangeOrder && <MdDragIndicator />}
           <Image width={11} height={11} alt="location photo" className="h-11 w-11 rounded-lg" src={photo} />
-          <div className="inline-flex flex-col items-start justify-center gap-1">
-            <div className="text-sm font-medium   text-gray-800">{name}</div>
+          <div className="inline-flex flex-col items-start  justify-center gap-1">
+            <div className="text-ellipsis text-nowrap text-sm font-medium">{name}</div>
             {isOnlyAt ? (
               <div className="text-xs text-red-500">{startsOn}</div>
             ) : (

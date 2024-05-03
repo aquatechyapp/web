@@ -29,10 +29,11 @@ import TechnicianSelect from './TechnicianSelect';
 
 export default function Page() {
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
+
   const { assignmentToId, setAssignmentToId } = useTechniciansContext();
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayContext();
-  const { width } = useWindowDimensions();
+  const { width = 0 } = useWindowDimensions();
   const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } = useUpdateAssignments();
 
   const form = useForm<z.infer<typeof newAssignmentSchema>>({
@@ -47,6 +48,8 @@ export default function Page() {
       endAfter: undefined
     }
   });
+
+  const mdScreen = width < 900;
 
   function getDifference(array1: Assignment[], array2: Assignment[]): boolean {
     return JSON.stringify(array1) !== JSON.stringify(array2);
@@ -85,8 +88,10 @@ export default function Page() {
 
   return (
     <div>
-      <div className="inline-flex h-[100%] w-full items-start justify-start gap-3 bg-gray-50 p-2.5 shadow-inner">
-        <div className="w-[50%]">
+      <div
+        className={`flex h-[100%] w-full items-start justify-start gap-3 bg-gray-50 p-2.5 shadow-inner ${mdScreen ? 'flex-col' : ''}`}
+      >
+        <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
           <Tabs
             onValueChange={(weekday) => handleChangeWeekday(weekday as WeekdaysUppercase)}
             defaultValue={format(new Date(), 'EEEE').toUpperCase()}
@@ -103,7 +108,7 @@ export default function Page() {
                     ))}
                   </TabsList>
                   <TechnicianSelect onChange={handleChangeTechnician} />
-                  <div className="mt-2 flex gap-2">
+                  <div className="mt-2 flex flex-col  gap-2 sm:flex-row">
                     <DialogNewAssignment form={form} />
                     {assignments.current.length > 0 && (
                       <Button
@@ -153,7 +158,7 @@ export default function Page() {
             </div>
           </Tabs>
         </div>
-        <div className="h-fit w-[50%]">
+        <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
           <Map assignments={assignments.current} />
         </div>
       </div>

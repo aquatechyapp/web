@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useUserContext } from './user';
-import { isEmpty } from '../utils';
+
 import { WorkRelation } from '../interfaces/User';
+import { isEmpty } from '../utils';
+import { useUserContext } from './user';
 
 type TechniciansContextType = {
   assignmentToId: string;
@@ -17,11 +18,7 @@ const TechniciansContext = createContext<TechniciansContextType>({
   setTechnicians: () => {}
 });
 
-export const TechniciansProvider = ({
-  children
-}: {
-  children: React.ReactNode;
-}) => {
+export const TechniciansProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUserContext();
   const [assignmentToId, setAssignmentToId] = useState(user?.id || '');
   const [technicians, setTechnicians] = useState<WorkRelation[]>([]);
@@ -43,9 +40,7 @@ export const TechniciansProvider = ({
   }, [user]);
 
   return (
-    <TechniciansContext.Provider
-      value={{ technicians, setTechnicians, assignmentToId, setAssignmentToId }}
-    >
+    <TechniciansContext.Provider value={{ technicians, setTechnicians, assignmentToId, setAssignmentToId }}>
       {children}
     </TechniciansContext.Provider>
   );
