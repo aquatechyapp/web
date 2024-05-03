@@ -1,18 +1,11 @@
-import { createContext, useContext, useState } from 'react';
 import { format } from 'date-fns';
+import { createContext, useContext, useState } from 'react';
 
-type Weekdays =
-  | 'SUNDAY'
-  | 'MONDAY'
-  | 'TUESDAY'
-  | 'WEDNESDAY'
-  | 'THURSDAY'
-  | 'FRIDAY'
-  | 'SATURDAY';
+import { WeekdaysUppercase } from '@/interfaces/Weekday';
 
 type WeekdayContextType = {
-  selectedWeekday: Weekdays | '';
-  setSelectedWeekday: (weekday: Weekdays) => void;
+  selectedWeekday: WeekdaysUppercase | '';
+  setSelectedWeekday: (weekday: WeekdaysUppercase) => void;
 };
 
 const WeekdayContext = createContext<WeekdayContextType>({
@@ -20,14 +13,8 @@ const WeekdayContext = createContext<WeekdayContextType>({
   setSelectedWeekday: () => {}
 });
 
-export const WeekdayProvider = ({
-  children
-}: {
-  children: React.ReactNode;
-}) => {
-  const [selectedWeekday, setSelectedWeekday] = useState(
-    format(new Date(), 'EEEE').toUpperCase() as Weekdays
-  );
+export const WeekdayProvider = ({ children }: { children: React.ReactNode }) => {
+  const [selectedWeekday, setSelectedWeekday] = useState(format(new Date(), 'EEEE').toUpperCase() as WeekdaysUppercase);
 
   return (
     <WeekdayContext.Provider

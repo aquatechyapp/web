@@ -1,37 +1,31 @@
 'use client';
+import { DragEndEvent } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import TechnicianSelect from './TechnicianSelect';
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { dateSchema } from '@/schemas/date';
-import { Form } from '@/components/ui/form';
-import { AssignmentsList } from './AssignmentsList';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Map from './Map';
 
-import { arrayMove } from '@dnd-kit/sortable';
-import { useTechniciansContext } from '@/context/technicians';
-import { useAssignmentsContext } from '@/context/assignments';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
-import { Assignment } from '@/interfaces/Assignments';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAssignmentsContext } from '@/context/assignments';
+import { useTechniciansContext } from '@/context/technicians';
 import { useWeekdayContext } from '@/context/weekday';
+import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
+import useWindowDimensions from '@/hooks/useWindowDimensions';
+import { Assignment } from '@/interfaces/Assignments';
+import { Weekdays, WeekdaysUppercase } from '@/interfaces/Weekday';
+import { paidByServiceSchema } from '@/schemas/assignments';
+import { dateSchema } from '@/schemas/date';
+
+import { AssignmentsList } from './AssignmentsList';
 import { DialogNewAssignment } from './dialog-new-assignment';
 import { DialogTransferRoute } from './dialog-transfer-route';
-import { useState } from 'react';
-import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { paidByServiceSchema } from '@/schemas/assignments';
-
-export type Weekdays =
-  | 'Sunday'
-  | 'Monday'
-  | 'Tuesday'
-  | 'Wednesday'
-  | 'Thursday'
-  | 'Friday'
-  | 'Saturday';
+import Map from './Map';
+import TechnicianSelect from './TechnicianSelect';
 
 export default function Page() {
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
@@ -39,8 +33,7 @@ export default function Page() {
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayContext();
   const { width } = useWindowDimensions();
-  const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } =
-    useUpdateAssignments();
+  const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } = useUpdateAssignments();
 
   const form = useForm<z.infer<typeof newAssignmentSchema>>({
     resolver: zodResolver(newAssignmentSchema),
@@ -59,23 +52,15 @@ export default function Page() {
     return JSON.stringify(array1) !== JSON.stringify(array2);
   }
 
-  function handleDragEnd(event, setActive) {
+  function handleDragEnd(event: DragEndEvent, setActive: React.Dispatch<number | null>) {
     const { active, over } = event;
     setActive(null);
     if (!active || !over) return;
     if (active.id !== over.id) {
-      const oldIndex = assignments.current.findIndex(
-        (item) => item.id === active.id
-      );
-      const newIndex = assignments.current.findIndex(
-        (item) => item.id === over.id
-      );
+      const oldIndex = assignments.current.findIndex((item) => item.id === active.id);
+      const newIndex = assignments.current.findIndex((item) => item.id === over.id);
 
-      const changedOrderProperty = arrayMove(
-        assignments.current,
-        oldIndex,
-        newIndex
-      ).map((assignment, index) => {
+      const changedOrderProperty = arrayMove(assignments.current, oldIndex, newIndex).map((assignment, index) => {
         return { ...assignment, order: index + 1 };
       });
 
@@ -86,7 +71,7 @@ export default function Page() {
     }
   }
 
-  function handleChangeWeekday(weekday: string) {
+  function handleChangeWeekday(weekday: WeekdaysUppercase) {
     form.setValue('weekday', weekday);
     setSelectedWeekday(weekday);
   }
@@ -103,7 +88,7 @@ export default function Page() {
       <div className="inline-flex h-[100%] w-full items-start justify-start gap-3 bg-gray-50 p-2.5 shadow-inner">
         <div className="w-[50%]">
           <Tabs
-            onValueChange={(weekday) => handleChangeWeekday(weekday)}
+            onValueChange={(weekday) => handleChangeWeekday(weekday as WeekdaysUppercase)}
             defaultValue={format(new Date(), 'EEEE').toUpperCase()}
             value={selectedWeekday}
           >
@@ -112,21 +97,13 @@ export default function Page() {
                 <form className="w-full px-2">
                   <TabsList className="w-full">
                     {weekdays.map((weekday, index) => (
-                      <TabsTrigger
-                        className="flex-1"
-                        key={weekday}
-                        value={weekday.toUpperCase()}
-                      >
-                        {width
-                          ? width < 1440
-                            ? weekdaysShort[index]
-                            : weekday
-                          : weekday}
+                      <TabsTrigger className="flex-1" key={weekday} value={weekday.toUpperCase()}>
+                        {width ? (width < 1440 ? weekdaysShort[index] : weekday) : weekday}
                       </TabsTrigger>
                     ))}
                   </TabsList>
                   <TechnicianSelect onChange={handleChangeTechnician} />
-                  <div className="flex gap-2 mt-2">
+                  <div className="mt-2 flex gap-2">
                     <DialogNewAssignment form={form} />
                     {assignments.current.length > 0 && (
                       <Button
@@ -157,7 +134,7 @@ export default function Page() {
                           })
                         )
                       }
-                      className="w-full mt-2 bg-green-500 hover:bg-green-700"
+                      className="mt-2 w-full bg-green-500 hover:bg-green-700"
                     >
                       Save
                     </Button>
@@ -167,7 +144,7 @@ export default function Page() {
 
               <TabsContent value={selectedWeekday} className="w-full">
                 {/* O filtro dos assignments precisa ser feito dentro de AssignmentsList, por causa
-                do componente TabsContent. Esse componente de Tabs se baseia no value para exibir 
+                do componente TabsContent. Esse componente de Tabs se baseia no value para exibir
                 seus childrens (AssignmentsList). Como na aba tabs o value se baseia somente no weekday,
                 quando eu altero o Technician, ele só vai atualizar o render quando mudar de Weekday
                 A solução foi enviar todos os assignments e fazer o .filter lá dentro */}
@@ -176,7 +153,7 @@ export default function Page() {
             </div>
           </Tabs>
         </div>
-        <div className="w-[50%] h-fit">
+        <div className="h-fit w-[50%]">
           <Map assignments={assignments.current} />
         </div>
       </div>
@@ -190,29 +167,11 @@ const newAssignmentSchema = z
     poolId: z.string(),
     client: z.string(),
     frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
-    weekday: z.string(
-      z.enum([
-        'SUNDAY',
-        'MONDAY',
-        'TUESDAY',
-        'WEDNESDAY',
-        'THURSDAY',
-        'FRIDAY',
-        'SATURDAY'
-      ])
-    )
+    weekday: z.string(z.enum(['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY']))
   })
   .and(dateSchema)
   .and(paidByServiceSchema);
 
-const weekdays: Weekdays[] = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday'
-];
+const weekdays: Weekdays[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const weekdaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
