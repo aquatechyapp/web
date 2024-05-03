@@ -1,7 +1,9 @@
 import {
   closestCenter,
   DndContext,
+  DragEndEvent,
   DragOverlay,
+  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -14,6 +16,7 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { format } from 'date-fns';
 import Image from 'next/image';
 import { useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
@@ -34,17 +37,21 @@ import { Assignment } from '@/interfaces/Assignments';
 import { DialogDeleteAssignment } from './dialog-delete-assignment';
 import { DialogTransferRoute } from './dialog-transfer-route';
 
-export function AssignmentsList({ handleDragEnd }) {
+type Props = {
+  handleDragEnd: (event: DragEndEvent, setActive: React.Dispatch<number | null>) => void;
+};
+
+export function AssignmentsList({ handleDragEnd }: Props) {
   const { user } = useUserContext();
   const { assignments, setAssignmentToTransfer } = useAssignmentsContext();
   const { assignmentToId } = useTechniciansContext();
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [openDialogTransfer, setOpenDialogTransfer] = useState(false);
-  const [assignment, setAssignment] = useState<Assignment>(null);
+  const [assignment, setAssignment] = useState<Assignment>();
 
   const shouldPermitChangeOrder = assignmentToId !== user?.id;
 
-  const [active, setActive] = useState(null);
+  const [active, setActive] = useState<number | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -52,8 +59,8 @@ export function AssignmentsList({ handleDragEnd }) {
     })
   );
 
-  function handleDragStart(event) {
-    setActive(event.active.data.current.sortable.index);
+  function handleDragStart(event: DragStartEvent) {
+    setActive(event.active.data.current?.sortable.index);
   }
 
   if (assignments.current.length === 0) {
@@ -68,7 +75,7 @@ export function AssignmentsList({ handleDragEnd }) {
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
-      onDragEnd={(e) => handleDragEnd(e, setActive)}
+      onDragEnd={(e: DragEndEvent) => handleDragEnd(e, setActive)}
       onDragStart={handleDragStart}
     >
       <SortableContext
@@ -145,12 +152,15 @@ type AssignmentItemProps = {
 };
 
 export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: AssignmentItemProps) {
-  const address = `${assignment.pool.address} ${assignment.pool.city} ${assignment.pool.state} ${assignment.pool.zip}`;
-
   const name = assignment.pool.name;
 
   const photo = assignment.pool.photos[0] || 'https://via.placeholder.com/44x44';
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+
+  const startsOn = format(new Date(assignment.startOn), 'LLL, do, Y');
+  const endsAfter = format(new Date(assignment.endAfter), 'LLL, do, Y');
+
+  const isOnlyAt = startsOn === endsAfter;
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -158,7 +168,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
   };
   return (
     <div
-      className="inline-flex w-full items-center justify-start self-stretch border-b border-gray-100"
+      className="inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 px-1"
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -170,7 +180,13 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
           <Image width={11} height={11} alt="location photo" className="h-11 w-11 rounded-lg" src={photo} />
           <div className="inline-flex flex-col items-start justify-center gap-1">
             <div className="text-sm font-medium   text-gray-800">{name}</div>
-            <div className="text-xs font-normal leading-[18px]  text-gray-500">{address}</div>
+            {isOnlyAt ? (
+              <div className="text-xs text-red-500">{startsOn}</div>
+            ) : (
+              <div className="text-xs text-gray-500">
+                {startsOn} - {endsAfter}
+              </div>
+            )}
           </div>
         </div>
       </div>
