@@ -17,7 +17,9 @@ import { Assignment } from '@/interfaces/Assignments';
 
 const mapContainerStyle = {
   width: '100%',
-  height: '100vh'
+  height: '100vh',
+  overflow: 'hidden',
+  borderRadius: '8px'
 };
 const center = {
   lat: 28.538336,
