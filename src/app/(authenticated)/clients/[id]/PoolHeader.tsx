@@ -1,20 +1,32 @@
 import { useState } from 'react';
-import BasicInformation from './PoolInfo';
+
+import { Separator } from '@/components/ui/separator';
+import { Pool } from '@/interfaces/Assignments';
+import { Service } from '@/interfaces/Service';
+
 import { DataTableServices } from './DataTableServices';
 import { columns } from './DataTableServices/columns';
-import { Separator } from '@/components/ui/separator';
+import BasicInformation from './PoolInfo';
 
-function PoolCard({ form, pool, services }) {
+type Props = {
+  services: Service[];
+  pool: Pool;
+};
+
+function PoolCard({ pool, services }: Props) {
   const [tab, setTab] = useState<'pool_info' | 'services'>('pool_info');
 
   const handleTabChange = (tab: 'pool_info' | 'services') => {
     setTab(tab);
   };
 
+  const selectedTabStyles =
+    'text-gray-800 font-semibold border-m border-gray-800';
+
   return (
-    <div className="Form inline-flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-white p-6">
+    <div className="Form inline-flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-gray-50 p-6">
       <div className="inline-flex w-full items-end justify-center gap-4">
-        <div className="inline-flex w-full items-start justify-start gap-4 self-stretch border-b border-zinc-200">
+        <div className="inline-flex w-full items-start justify-start gap-4 self-stretch border-b border-gray-200">
           <div className="border-none text-sm font-medium">{pool.name}</div>
           <Separator orientation="vertical" />
           <div
@@ -22,12 +34,12 @@ function PoolCard({ form, pool, services }) {
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
             <div
-              className={`text-sm font-semibold leading-tight tracking-tight hover:cursor-pointer ${tab === 'pool_info' ? 'border-m border-neutral-800 text-neutral-800' : 'text-gray-500'}`}
+              className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'pool_info' && selectedTabStyles}`}
             >
               Information
             </div>
             {tab === 'pool_info' && (
-              <div className="h-0.5 self-stretch bg-neutral-800" />
+              <div className="h-0.5 self-stretch bg-gray-800" />
             )}
           </div>
           <div
@@ -35,18 +47,18 @@ function PoolCard({ form, pool, services }) {
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
             <div
-              className={`text-sm font-medium leading-tight tracking-tight hover:cursor-pointer ${tab === 'services' ? 'text-neutral-800' : 'text-gray-500'}`}
+              className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'services' && selectedTabStyles}`}
             >
               Services
             </div>
             {tab === 'services' && (
-              <div className="Rectangle2 h-0.5 self-stretch bg-neutral-800" />
+              <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />
             )}
           </div>
         </div>
       </div>
       {tab === 'pool_info' ? (
-        <BasicInformation form={form} pool={pool} />
+        <BasicInformation pool={pool} />
       ) : (
         <DataTableServices data={services} columns={columns} />
       )}
@@ -54,13 +66,8 @@ function PoolCard({ form, pool, services }) {
   );
 }
 
-export default function PoolHeader({ form, pools }) {
+export default function PoolHeader({ pools }: { pools: Pool[] }) {
   return pools.map((pool) => (
-    <PoolCard
-      form={form}
-      key={pool.id}
-      services={pool.services || []}
-      pool={pool}
-    />
+    <PoolCard key={pool.id} services={pool.services || []} pool={pool} />
   ));
 }

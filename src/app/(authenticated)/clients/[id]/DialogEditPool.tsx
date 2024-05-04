@@ -53,16 +53,16 @@ export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }) {
           </div>
 
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-            <div className="w-[40%] h-44">
+            <div className="h-44 w-[40%]">
               <InputField
                 className="h-full"
                 type="textArea"
                 form={form}
-                name="locationNotes"
+                name="notes"
                 placeholder="Location notes..."
               />
             </div>
-            <div className="Form flex mt-8 h-44 w-[60%] shrink grow basis-0 items-start justify-between gap-1">
+            <div className="Form mt-8 flex h-44 w-[60%] shrink grow basis-0 items-start justify-between gap-1">
               <InputFile
                 handleChange={() => {}}
                 defaultPhotos={form.watch('photos').map((photo) => ({

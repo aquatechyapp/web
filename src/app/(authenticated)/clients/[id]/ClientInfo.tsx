@@ -1,41 +1,18 @@
-import { filterChangedFormFields } from '@/utils/formUtils';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
-import { clientSchema } from '@/schemas/client';
-import { poolSchema } from '@/schemas/pool';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { Client } from '@/interfaces/Client';
+import { filterChangedFormFields } from '@/utils/formUtils';
 
-const additionalSchemas = z.object({
-  weekday: z.enum(
-    [
-      'SUNDAY',
-      'MONDAY',
-      'TUESDAY',
-      'WEDNESDAY',
-      'THURSDAY',
-      'FRIDAY',
-      'SATURDAY'
-    ],
-    {
-      required_error: 'Weekday is required.',
-      invalid_type_error: 'Weekday is required.'
-    }
-  ),
-  frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
-  sameBillingAddress: z.boolean(),
-  startOn: z.coerce.date(),
-  endAfter: z.coerce.date(),
-  assignmentToId: z.string()
-});
+import { OptionsClientType } from '../new/OptionsClientType';
 
-const poolAndClientSchema = clientSchema.and(poolSchema).and(additionalSchemas);
-
-export default function ClientInfo({ client }) {
+export default function ClientInfo({ client }: { client: Client }) {
   const { mutate, isPending } = useUpdateClient();
   // const form = useForm<z.infer<typeof poolAndClientSchema>>({
   const form = useForm({
@@ -47,7 +24,9 @@ export default function ClientInfo({ client }) {
       email1: client.email1 || '',
       phone1: client.phone1 || '',
       notes: client.notes || undefined,
-      address: client.address || ''
+      address: client.address || '',
+      company: client.company || '',
+      type: client.clientType || 'Residential'
     }
   });
 
@@ -55,7 +34,7 @@ export default function ClientInfo({ client }) {
 
   if (isPending) return <LoadingSpinner />;
 
-  const handleSubmit = async (data) => {
+  const handleSubmit = async () => {
     let dirtyFields = filterChangedFormFields(
       form.getValues(),
       form.formState.dirtyFields
@@ -73,9 +52,9 @@ export default function ClientInfo({ client }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col items-start justify-start gap-2 self-stretch bg-white p-6"
+        className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50 p-6"
       >
-        <div className="h-5 w-[213.40px] text-sm font-medium leading-tight tracking-tight text-zinc-500">
+        <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">
           Basic information
         </div>
         <div className="inline-flex items-start justify-start gap-4 self-stretch">
@@ -85,14 +64,18 @@ export default function ClientInfo({ client }) {
             placeholder="Billing address"
           />
           <StateAndCitySelect form={form} cityName="city" stateName="state" />
+        </div>
+        <div className="flex gap-4">
           <InputField
             form={form}
             name="zip"
             placeholder="Zip code"
             type="zip"
           />
+          <InputField form={form} name="company" placeholder="Company" />
+          <OptionsClientType form={form} />
         </div>
-        <div className="mt-4 h-5 text-sm font-medium leading-tight tracking-tight text-zinc-500">
+        <div className="mt-4 h-5 text-sm font-medium   text-gray-500">
           Contact information
         </div>
         <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
@@ -118,7 +101,7 @@ export default function ClientInfo({ client }) {
           name="clientNotes"
           type="textArea"
         />
-        {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium leading-tight tracking-tight text-zinc-500">
+        {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium   text-gray-500">
           Notes about client (customer won't see that)
         </div>
         <Textarea

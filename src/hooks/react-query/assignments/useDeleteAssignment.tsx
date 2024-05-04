@@ -1,5 +1,5 @@
-import { useToast } from '../../../components/ui/use-toast';
-import { clientAxios } from '../../../lib/clientAxios';
+import { useToast } from '@/components/ui/use-toast';
+import { clientAxios } from '@/lib/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteAssignment = () => {
@@ -11,13 +11,13 @@ export const useDeleteAssignment = () => {
     onSuccess: () => {
       toast({
         title: 'Assignment deleted successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     },
     onError: () => {
       toast({
         title: 'Error deleting assignment',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     },
     onSettled: () => {

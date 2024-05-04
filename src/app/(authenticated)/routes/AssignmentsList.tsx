@@ -31,7 +31,6 @@ import { useUserContext } from '@/context/user';
 import { Assignment } from '@/interfaces/Assignments';
 import { DialogTransferRoute } from './dialog-transfer-route';
 import { DialogDeleteAssignment } from './dialog-delete-assignment';
-import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 
 export function AssignmentsList({ handleDragEnd }) {
   const { user } = useUserContext();
@@ -173,7 +172,7 @@ export function AssignmentItem({
       {...attributes}
       {...listeners}
     >
-      <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 bg-white px-1 py-2">
+      <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 bg-gray-50 px-1 py-2">
         <div className="flex items-center justify-start gap-2">
           {!shouldPermitChangeOrder && <MdDragIndicator />}
           <Image
@@ -184,17 +183,15 @@ export function AssignmentItem({
             src={photo}
           />
           <div className="inline-flex flex-col items-start justify-center gap-1">
-            <div className="text-sm font-medium leading-tight tracking-tight text-neutral-800">
-              {name}
-            </div>
-            <div className="text-xs font-normal leading-[18px] tracking-tight text-gray-500">
+            <div className="text-sm font-medium   text-gray-800">{name}</div>
+            <div className="text-xs font-normal leading-[18px]  text-gray-500">
               {address}
             </div>
           </div>
         </div>
       </div>
       <div className="flex h-8 w-8 items-center justify-center gap-1 rounded-lg border border-gray-100 ">
-        <div className="shrink grow basis-0 text-center text-sm font-semibold leading-tight tracking-tight text-neutral-800">
+        <div className="shrink grow basis-0 text-center text-sm font-semibold   text-gray-800">
           {assignment.order}
         </div>
       </div>

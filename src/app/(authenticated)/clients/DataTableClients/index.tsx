@@ -90,7 +90,9 @@ export function DataTableClients<TData, TValue>({
             }
           >
             <TabsList defaultValue="all">
-              <TabsTrigger value="all">All clients</TabsTrigger>
+              <TabsTrigger className="text-nowrap" value="all">
+                All clients
+              </TabsTrigger>
               <TabsTrigger value="active">Active</TabsTrigger>
               <TabsTrigger value="inactive">inactive</TabsTrigger>
             </TabsList>

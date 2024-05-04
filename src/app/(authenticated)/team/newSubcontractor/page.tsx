@@ -64,14 +64,14 @@ export default function Page() {
       toast({
         variant: 'default',
         title: 'Technician added successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     },
     onError: (error) => {
       toast({
         variant: 'default',
         title: 'Error adding technician',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     }
   });
@@ -79,8 +79,8 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
-          <div className="h-5 text-sm font-medium leading-tight tracking-tight text-zinc-500">
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
+          <div className="h-5 text-sm font-medium   text-gray-500">
             Basic information
           </div>
           <div className="inline-flex self-stretch gap-4 justify-start">

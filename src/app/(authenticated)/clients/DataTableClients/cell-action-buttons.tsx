@@ -81,7 +81,7 @@ export default function ActionButtons({ ...props }) {
               <DropdownMenuItem
                 onClick={() => setModalType('ModalDeleteClient')}
               >
-                <div className="text-red-500  flex items-center w-full">
+                <div className="flex  w-full items-center text-red-500">
                   Delete
                   <DropdownMenuShortcut>
                     <MdDeleteOutline size={14} />
