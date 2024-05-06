@@ -29,7 +29,12 @@ const schema = z.object({
   paymentType: z.string().min(1)
 });
 
-export function ModalEdit({ children, workRelationId }: string) {
+type PropsEdit = {
+  children: React.ReactNode;
+  workRelationId: string
+}
+
+export function ModalEdit({ children, workRelationId }: PropsEdit) {
   const {user} = useUserContext();
   const {handleSubmit} = useEditRelation();
 
