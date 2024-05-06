@@ -55,7 +55,7 @@ export function ModalEdit({ children, workRelationId }: PropsEdit) {
     defaultValues: {
       workRelationId: workRelationId,
       paymentValue: selectedWorkRelation?.paymentValue || '',
-      paymentType: selectedPaymentTypeName || '',
+      paymentType: selectedWorkRelation?.paymentType,
     }
   });
 

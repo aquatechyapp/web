@@ -12,6 +12,7 @@ export const useEditRelation = () => {
 
   const { mutate: handleSubmit } = useMutation({
     mutationFn: async (data) => {
+      console.log(data)
       return clientAxios.patch('/workrelations/update', {
         ...data,
         paymentValue: data.paymentValue,
