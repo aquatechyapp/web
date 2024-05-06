@@ -92,7 +92,7 @@ export function ModalEdit({ children, workRelationId }: any) {
       push('/team');
       toast({
         variant: 'default',
-        title: 'Technician added successfully',
+        title: 'Information updated with success.',
         className: 'bg-green-500 text-white'
       });
     },
