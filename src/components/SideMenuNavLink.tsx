@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 type Props = {
@@ -7,11 +8,11 @@ type Props = {
   text: string;
   href: string;
   submenu?: {
-    [key: string]:{
+    [key: string]: {
       text: string;
       href: string;
-    }
-  }
+    };
+  };
 };
 
 export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
@@ -20,7 +21,7 @@ export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
 
   const isActive = href === '/' + pathname;
 
-  const handleClick = (href: any) => {
+  const handleClick = (href: string) => {
     window.location.href = href;
   };
 
@@ -28,54 +29,40 @@ export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
     <Link
       href={href}
       passHref
-      className={`flex w-full px-2 items-start justify-start hover:bg-gray-800 text-gray-300 hover:text-blue-500
+      className={`flex w-full items-start justify-start px-2 text-gray-300 hover:bg-gray-800 hover:text-blue-500
       ${isActive && 'border-r-4 border-blue-500 bg-gray-800 '} `}
     >
-      <div className="flex items-center w-full"
-      >
-        {!submenu ?
+      <div className="flex w-full items-center">
+        {!submenu ? (
           <>
-            <div className="mr-4 py-4" >
-              <Icon
-                height={24}
-                width={24}
-              />
+            <div className="mr-4 py-4">
+              <Icon height={24} width={24} />
             </div>
-            <div className="w-full text-base font-medium leading-none text-slate-50" >
-              {text}
-            </div>
+            <div className="w-full text-base font-medium leading-none text-slate-50">{text}</div>
           </>
-          :
+        ) : (
           <Accordion collapsible type="single" className="w-[100%] ">
             <AccordionItem value="item-1" style={{ borderBottom: 'none' }}>
-              <AccordionTrigger style={{ textDecoration: 'none' }}
-                className="w-full  text-base font-medium leading-none text-slate-50 text-gray-300 hover:text-blue-500">
-                <div className="flex justify-start items-start w-[20%]">
-                  <Icon
-                    className={`mr-4`}
-                    height={24}
-                    width={24}
-                  />
+              <AccordionTrigger
+                style={{ textDecoration: 'none' }}
+                className="w-full  text-base font-medium leading-none text-slate-50 hover:text-blue-500"
+              >
+                <div className="flex w-[20%] items-start justify-start">
+                  <Icon className={`mr-4`} height={24} width={24} />
                 </div>
-                <div className="flex justify-start items-start w-full text-slate-50">
-                  {text}
-                </div>
+                <div className="flex w-full items-start justify-start text-slate-50">{text}</div>
               </AccordionTrigger>
               {Object.entries(submenu).map(([key, subItem]) => (
                 <span key={key} onClick={() => handleClick(subItem.href)}>
                   <AccordionContent className="text-ls font-medium leading-none text-gray-500">
-                    <div className="flex justify-start items-start w-[50%] ml-10">
-                      {subItem.text}
-                    </div>
+                    <div className="ml-10 flex w-[50%] items-start justify-start">{subItem.text}</div>
                   </AccordionContent>
                 </span>
               ))}
             </AccordionItem>
           </Accordion>
-        }
+        )}
       </div>
-
     </Link>
-
   );
 }
