@@ -20,6 +20,7 @@
     "@maskito/phone": "^2.2.0",
     "@maskito/react": "^2.0.2",
     "@mui/material": "^5.15.5",
+    "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
