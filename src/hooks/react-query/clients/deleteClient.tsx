@@ -1,5 +1,5 @@
-import { useToast } from '../../../components/ui/use-toast';
-import { clientAxios } from '../../../lib/clientAxios';
+import { useToast } from '@/components/ui/use-toast';
+import { clientAxios } from '@/lib/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteClient = () => {
@@ -12,18 +12,17 @@ export const useDeleteClient = () => {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
-      // push('/clients');
       toast({
         variant: 'default',
         title: 'Client deleted successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         variant: 'default',
         title: 'Error deleting client',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     }
   });

@@ -1,18 +1,20 @@
+import { useForm } from 'react-hook-form';
+import { MdDeleteOutline } from 'react-icons/md';
+import * as z from 'zod';
+
 import InputField from '@/components/InputField';
+import { InputFile } from '@/components/InputFile';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
-import { poolSchema } from '@/schemas/pool';
-import { useForm } from 'react-hook-form';
-import { MdDeleteOutline } from 'react-icons/md';
-import * as z from 'zod';
-import { DialogEditPool } from './DialogEditPool';
-import { InputFile } from '@/components/InputFile';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Pool } from '@/interfaces/Assignments';
+import { poolSchema } from '@/schemas/pool';
 import { filterChangedFormFields } from '@/utils/formUtils';
+
+import { DialogEditPool } from './DialogEditPool';
 
 const additionalFieldsSchema = z.object({
   notes: z.string().nullable(),
@@ -61,7 +63,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
 
   return (
     <Form {...form}>
-      <div className="h-5 w-full flex text-sm justify-between font-medium leading-tight tracking-tight text-zinc-500">
+      <div className="flex h-5 w-full justify-between text-sm font-medium   text-gray-500">
         Basic information
         <div className="flex gap-4 text-lg">
           <DialogEditPool
@@ -119,7 +121,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
         />
       </div>
       <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-        <div className="w-[40%] h-44">
+        <div className="h-44 w-[40%]">
           <InputField
             className="h-full"
             type="textArea"
@@ -130,7 +132,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
           />
         </div>
 
-        <div className="Form flex mt-8 h-44 w-[60%] shrink grow basis-0 items-start justify-between gap-1">
+        <div className="Form mt-8 flex h-44 w-[60%] shrink grow basis-0 items-start justify-between gap-1">
           <InputFile
             handleChange={() => {}}
             defaultPhotos={form.watch('photos').map((photo) => ({

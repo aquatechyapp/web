@@ -208,19 +208,14 @@ export function DialogTransferRoute({
           </Form>
         )}
         <div className="flex justify-around">
-          <Button
-            onClick={transferRoute}
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
-          >
-            Accept
-          </Button>
+          <Button onClick={transferRoute}>Accept</Button>
 
           <Button
+            variant="outline"
             onClick={() => {
               setOpen(false);
               form.reset();
             }}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full"
           >
             Cancel
           </Button>

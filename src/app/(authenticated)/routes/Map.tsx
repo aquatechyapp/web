@@ -2,6 +2,7 @@
 
 import { Assignment } from '@/interfaces/Assignments';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+
 import { Separator } from '@/components/ui/separator';
 import {
   GoogleMap,
@@ -12,6 +13,7 @@ import {
   Libraries
 } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
+import { Colors } from '@/constants/colors';
 
 const mapContainerStyle = {
   width: '100%',
@@ -96,7 +98,7 @@ const Map = ({ assignments }: { assignments: Assignment[] }) => {
 
   return (
     <div className="h-full">
-      <div className="absolute z-10 bg-white shadow-lg right-24 px-2 rounded-sm mt-2.5">
+      <div className="absolute z-10 bg-gray-50 shadow-lg right-24 px-2 rounded-sm mt-2.5">
         <h3 className="py-1">Distance: {distance}</h3>
         <Separator />
         <h3 className="py-1">Duration: {duration}</h3>
@@ -110,7 +112,7 @@ const Map = ({ assignments }: { assignments: Assignment[] }) => {
               suppressMarkers: true,
               polylineOptions: {
                 zIndex: 50,
-                strokeColor: '#1976D2',
+                strokeColor: Colors.blue[500],
                 strokeWeight: 5
               }
             }}
@@ -123,7 +125,7 @@ const Map = ({ assignments }: { assignments: Assignment[] }) => {
                 <Marker
                   label={{
                     text: assignment.order.toString(),
-                    color: 'white'
+                    color: Colors.gray[50]
                   }}
                   key={assignment.id}
                   position={{

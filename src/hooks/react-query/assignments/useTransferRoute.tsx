@@ -1,7 +1,7 @@
-import { useToast } from '../../../components/ui/use-toast';
-import { useAssignmentsContext } from '../../../context/assignments';
-import { Assignment } from '../../../interfaces/Assignments';
-import { clientAxios } from '../../../lib/clientAxios';
+import { useToast } from '@/components/ui/use-toast';
+import { useAssignmentsContext } from '@/context/assignments';
+import { Assignment } from '@/interfaces/Assignments';
+import { clientAxios } from '@/lib/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TransferOnceObject = {
@@ -54,14 +54,14 @@ export const useTransferOnceRoute = (isSelected = false) => {
     onError: () => {
       toast({
         title: 'Error creating assignment',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       toast({
         title: 'Assignment created successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     }
   });
@@ -92,14 +92,14 @@ export const useTransferPermanentlyRoute = (isSelected = false) => {
     onError: () => {
       toast({
         title: 'Error creating assignment',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       toast({
         title: 'Assignment created successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     }
   });

@@ -15,7 +15,7 @@ export default function TopBarMenu() {
     router.push('/login');
   };
   return (
-    <div className="inline-flex h-20 w-full items-center justify-between bg-white px-9 py-5 shadow-inner">
+    <div className="inline-flex h-20 w-full items-center justify-between bg-gray-50 px-9 py-5 shadow-inner">
       <div className="flex items-center justify-start gap-6">
         <div className="flex items-center justify-start gap-6">
           <DropdownTop />
@@ -26,14 +26,14 @@ export default function TopBarMenu() {
           href="/account"
           className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 p-3"
         >
-          <div className="font-['General Sans'] text-center text-sm font-medium leading-[14px] text-white">
+          <div className="font-['General Sans'] text-center text-sm font-medium leading-[14px] text-gray-50">
             My account
           </div>
         </Link> */}
-        {/* <div className="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white p-3">
+        {/* <div className="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
           <MdNotificationsNone />
         </div>
-        <div className="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white p-3">
+        <div className="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
           <IoIosSearch />
         </div> */}
         <AccountDropdownMenu handleLogout={handleLogout} />

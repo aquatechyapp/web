@@ -12,7 +12,10 @@ export function insertDot(number: number) {
 export function calculateTotalMonthlyOfAllPools(pools: Pool[]) {
   return insertDot(
     pools.reduce(
-      (acc, pool) => acc + parseInt(pool.montlyPayment.replaceAll(/\D/g, '')),
+      (acc, pool) =>
+        acc + pool.montlyPayment
+          ? parseInt(pool.montlyPayment.toString().replaceAll(/\D/g, ''))
+          : 0,
       0
     )
   );
@@ -22,5 +25,6 @@ export function calculateTotalAssignmentsOfAllPools(pools: Pool[]) {
   return pools.reduce((acc, pool) => acc + pool.services.length, 0);
 }
 
-export const isEmpty = (val) =>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isEmpty = (val: any) =>
   val == null || !(Object.keys(val) || val).length;

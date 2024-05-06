@@ -11,7 +11,8 @@ export function buildSelectOptions(
   }));
 }
 
-export function createFormData(data: Record<string, string>) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function createFormData(data: Record<string, any>) {
   const formData = new FormData();
   for (const key in data) {
     switch (key) {
@@ -19,7 +20,9 @@ export function createFormData(data: Record<string, string>) {
         formData.append('clientName', `${data.firstName} ${data.lastName}`);
         break;
       case 'photo':
-        data[key].forEach((photo) => formData.append(key, photo.file));
+        data[key].forEach((photo: { file: string | Blob }) =>
+          formData.append(key, photo.file)
+        );
         break;
       default:
         formData.append(key, data[key]);

@@ -18,14 +18,14 @@ export const useAddPoolToClient = () => {
       toast({
         variant: 'default',
         title: 'Pool created successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     },
     onError: (error) => {
       toast({
         variant: 'default',
         title: 'Error creating pool',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     }
   });

@@ -6,7 +6,7 @@ export const useDeleteRelation = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
-    mutationFn: async ({ workRelationId }) =>
+    mutationFn: async ({ workRelationId }: { workRelationId: string }) =>
       await clientAxios.delete('/workrelations', {
         data: { workRelationId }
       }),
@@ -15,14 +15,14 @@ export const useDeleteRelation = () => {
       toast({
         variant: 'default',
         title: 'Deleted relation successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         variant: 'default',
         title: 'Error deleting relation',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     }
   });

@@ -12,14 +12,14 @@ export const useUpdateUser = () => {
       toast({
         variant: 'default',
         title: 'User updated successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     },
     onError: () => {
       toast({
         variant: 'default',
         title: 'Error updating user',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     }
   });

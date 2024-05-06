@@ -13,7 +13,7 @@ export const useCreateAssignment = () => {
     onError: () => {
       toast({
         title: 'Error creating assignment',
-        className: 'bg-red-500 text-white'
+        className: 'bg-red-500 text-gray-50'
       });
     },
 
@@ -21,7 +21,7 @@ export const useCreateAssignment = () => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       toast({
         title: 'Assignment created successfully',
-        className: 'bg-green-500 text-white'
+        className: 'bg-green-500 text-gray-50'
       });
     }
   });

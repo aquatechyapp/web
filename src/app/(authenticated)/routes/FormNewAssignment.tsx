@@ -26,8 +26,8 @@ export const FormNewAssignment = ({ form }) => {
 
   return (
     <Form {...form}>
-      <form className="w-[90%] flex flex-col">
-        <div className="flex gap-4 flex-col">
+      <form className="flex w-[90%] flex-col">
+        <div className="flex flex-col gap-4">
           <div className="flex gap-4 ">
             <SelectField
               data={buildSelectOptions(
@@ -76,7 +76,7 @@ export const FormNewAssignment = ({ form }) => {
             />
           </div>
 
-          <div className="flex gap-8 mt-4">
+          <div className="mt-4 flex gap-8">
             <CalendarField form={form} name="startOn" placeholder="Start on" />
             <Separator orientation="vertical" className="h-72" />
             <CalendarField

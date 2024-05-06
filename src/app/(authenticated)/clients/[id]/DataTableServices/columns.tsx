@@ -11,21 +11,21 @@ export const columns: ColumnDef<Service>[] = [
   {
     accessorKey: 'createdAt',
     header: 'Date',
-    cell: (props) => (
-      <span>
-        {format(
-          new Date(props.row.original.createdAt),
-          "iiii, MMMM do 'at' h:mm aaaa"
-        )}
-      </span>
-    )
+    cell: (props) => {
+      const formattedDate = format(
+        new Date(props.row.original.createdAt),
+        "iiii, MMMM do 'at' h:mm aaaa"
+      );
+      return <span className="text-nowrap">{formattedDate}</span>;
+    }
   },
   {
     header: 'Chemicals read',
     cell: (props) => {
-      const { ph, chlorine, salt, alkalinity, cyanAcid } = props.row.original;
+      const { ph, chlorine, salt, alkalinity, cyanAcid, calcium } =
+        props.row.original;
       return (
-        <div>
+        <div className="text-nowrap">
           <div>
             <span>
               PH {ph} - Chlorine {chlorine}
@@ -36,7 +36,9 @@ export const columns: ColumnDef<Service>[] = [
               Salt {salt} - Alkalinity {alkalinity}
             </span>
           </div>
-          <span>Cyan Acid {cyanAcid}</span>
+          <span>
+            Cyan Acid {cyanAcid} - Calcium {calcium}
+          </span>
         </div>
       );
     }
@@ -49,24 +51,26 @@ export const columns: ColumnDef<Service>[] = [
         chlorineSpent,
         shockSpent,
         tabletSpent,
-        phosphateSpent
+        phosphateSpent,
+        acidSpent
       } = props.row.original as Service;
+
       return (
-        <div>
+        <div className="text-nowrap">
           <div>
-            <span>Chlorine {chlorineSpent}</span>
+            <span>
+              Chlorine {chlorineSpent} - Salt {saltSpent}
+            </span>
           </div>
           <div>
-            <span>Salt {saltSpent}</span>
+            <span>
+              Shock {shockSpent} - Tablet {tabletSpent}
+            </span>
           </div>
           <div>
-            <span>Shock {shockSpent}</span>
-          </div>
-          <div>
-            <span>Tablet {tabletSpent}</span>
-          </div>
-          <div>
-            <span>Phosphate {phosphateSpent}</span>
+            <span>
+              Phosphate {phosphateSpent} - Acid {acidSpent}
+            </span>
           </div>
         </div>
       );
@@ -93,11 +97,12 @@ export const columns: ColumnDef<Service>[] = [
           Download photos
         </Button>
       ) : (
-        'No photos'
+        <Button variant={'link'} disabled>
+          No photos
+        </Button>
       )
   },
   {
-    header: 'Actions',
     id: 'actions',
     cell: (props) => <CellDeleteService {...props} />
   }

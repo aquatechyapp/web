@@ -1,9 +1,11 @@
 import { useMaskito } from '@maskito/react';
+import React from 'react';
+import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
+
 import { Input } from '../ui/input';
 import currencyMask from './currencyMask';
 import percentMask from './percentMask';
 import phoneMask from './phoneMask';
-import React from 'react';
 
 const masks = {
   currencyValue: currencyMask,
@@ -12,10 +14,10 @@ const masks = {
 };
 
 type Props = {
-  field: any;
+  field: ControllerRenderProps;
   placeholder: string;
   name: string;
-  form: any;
+  form: UseFormReturn;
   mask: 'currencyValue' | 'percentValue' | 'phone';
 };
 

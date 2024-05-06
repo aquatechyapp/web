@@ -1,12 +1,10 @@
-// {
-//   "extends": "next/core-web-vitals"
-// }
 {
   "root": true,
   "plugins": [
     "@typescript-eslint/eslint-plugin",
     "prettier",
-    "@tanstack/eslint-plugin-query"
+    "@tanstack/eslint-plugin-query",
+    "simple-import-sort"
   ],
   "parser": "@typescript-eslint/parser",
   "extends": [
@@ -16,8 +14,15 @@
     "prettier",
     "plugin:react-hooks/recommended"
   ],
+  "ignorePatterns": [".vercel", ".next", "node_modules", "out", "build"],
   "rules": {
+    "simple-import-sort/imports": "error",
     "no-console": 1,       // Means warning
     "prettier/prettier": 2 // Means error
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
   }
 }
