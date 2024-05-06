@@ -124,3 +124,17 @@ export const routes = [
     icon: AvatarIcon
   }
 ];
+
+export const paymentType = [
+  {
+    key: 'valueFixedByPool',
+    value: 'valueFixedByPool',
+    name: 'Fixed value by pool'
+  },
+  {
+    key: 'percentageFixedByPool',
+    value: 'percentageFixedByPool',
+    name: '% fixed by pool'
+  },
+  { key: 'customized', value: 'customized', name: 'Custom' }
+];
