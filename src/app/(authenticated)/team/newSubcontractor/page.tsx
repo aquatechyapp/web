@@ -1,5 +1,6 @@
 'use client';
 
+import { paymentType } from '@/constants';
 import InputField from '../../../../components/InputField';
 import SelectField from '../../../../components/SelectField';
 import { Button } from '../../../../components/ui/button';
@@ -22,25 +23,11 @@ const schema = z.object({
   paymentType: z.string().min(1)
 });
 
-const paymentType = [
-  {
-    key: 'valueFixedByPool',
-    value: 'valueFixedByPool',
-    name: 'Fixed value by pool'
-  },
-  {
-    key: 'percentageFixedByPool',
-    value: 'percentageFixedByPool',
-    name: '% fixed by pool'
-  },
-  { key: 'customized', value: 'customized', name: 'Custom' }
-];
-
 export default function Page() {
   const { setUser } = useUserContext();
   const { push } = useRouter();
   const { toast } = useToast();
-  
+
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
