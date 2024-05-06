@@ -1,8 +1,9 @@
+import { AvatarIcon } from '@radix-ui/react-icons';
+
 import ClientIcon from '@/components/ui/client-icon';
 import RouteIcon from '@/components/ui/route-icon';
 import TabIcon from '@/components/ui/tab-icon';
 import TeamIcon from '@/components/ui/team-icon';
-import { AvatarIcon } from '@radix-ui/react-icons';
 
 export const ACCESS_TOKEN_COOKIE_NAME = 'accessToken';
 export const USER_COOKIE_NAME = 'user';
@@ -94,7 +95,17 @@ export const routes = [
   },
   {
     text: 'Clients',
-    href: '/clients',
+    submenu: {
+      clients: {
+        text: 'Clients',
+        href: '/clients'
+      },
+      addClients: {
+        text: 'Add Clients',
+        href: '/clients/new'
+      }
+    },
+    href: '',
     icon: ClientIcon
   },
   {
