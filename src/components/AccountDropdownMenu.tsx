@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { Avatar, AvatarImage } from './ui/avatar';
 import {
   DropdownMenu,
@@ -6,7 +8,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from './ui/dropdown-menu';
-import Link from 'next/link';
 
 type Props = {
   handleLogout: () => void;

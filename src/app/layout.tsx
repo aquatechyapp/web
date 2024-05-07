@@ -1,8 +1,11 @@
-import type { Metadata } from 'next';
 import './globals.css';
-import { Toaster } from '../components/ui/toaster';
-import { ReactQueryProviderComponent } from '@/providers/ReactQueryProviderComponent';
+
+import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+
+import { ReactQueryProviderComponent } from '@/providers/ReactQueryProviderComponent';
+
+import { Toaster } from '../components/ui/toaster';
 
 const generalSans = localFont({
   src: [
@@ -34,12 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link
-          rel="icon"
-          href="/icon?<generated>"
-          type="image/<generated>"
-          sizes="<generated>"
-        />
+        <link rel="icon" href="/icon?<generated>" type="image/<generated>" sizes="<generated>" />
       </head>
       <body className={generalSans.className}>
         <ReactQueryProviderComponent>{children}</ReactQueryProviderComponent>

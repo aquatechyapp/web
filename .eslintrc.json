@@ -23,8 +23,13 @@
   ],
   "rules": {
     "simple-import-sort/imports": "error",
-    "no-console": 1, // Means warning
-    "prettier/prettier": 2 // Means error
+    "no-console": 1,       // Means warning
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
   },
   "settings": {
     "import/resolver": {

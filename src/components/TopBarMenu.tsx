@@ -1,8 +1,10 @@
-import { DropdownTop } from './DropdownTop';
-import { AccountDropdownMenu } from './AccountDropdownMenu';
-import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 import { useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+
+import { AccountDropdownMenu } from './AccountDropdownMenu';
+import { DropdownTop } from './DropdownTop';
+import { MobileSideMenu } from './SideMenuNav';
 
 export default function TopBarMenu() {
   const router = useRouter();
@@ -15,13 +17,16 @@ export default function TopBarMenu() {
     router.push('/login');
   };
   return (
-    <div className="inline-flex h-20 w-full items-center justify-between bg-gray-50 px-9 py-5 shadow-inner">
+    <div className="inline-flex h-16 w-full items-center bg-gray-800 px-9 shadow-inner lg:bg-gray-50">
+      <div className="lg:hidden">
+        <MobileSideMenu />
+      </div>
       <div className="flex items-center justify-start gap-6">
-        <div className="flex items-center justify-start gap-6">
+        <div className="flex hidden items-center justify-start gap-6 lg:inline">
           <DropdownTop />
         </div>
       </div>
-      <div className="flex items-start justify-start gap-2">
+      <div className="ml-auto flex items-start justify-end gap-2">
         {/* <Link
           href="/account"
           className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 p-3"
