@@ -7,22 +7,30 @@ import { useUserContext } from '@/context/user';
 export const useEditRelation = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { setUser, user} = useUserContext();
+  const { setUser, user } = useUserContext();
   const { push } = useRouter();
 
   const { mutate: handleSubmit } = useMutation({
     mutationFn: async (data) => {
-      console.log(data)
       return clientAxios.patch('/workrelations/update', {
         ...data,
         paymentValue: data.paymentValue,
       });
     },
     onSuccess: (res) => {
+      // Mescla os dados do card editado com os dados existentes do usuário
+      const updatedSubcontractors = user.subcontractors.map((subcontractor) => {
+        if (subcontractor.id === res.data.id) {
+          return res.data; // Substitui os dados do card editado
+        }
+        return subcontractor; // Mantém os outros cards inalterados
+      });
+
       setUser((user) => ({
         ...user,
-        subcontractors: [res.data]
+        subcontractors: updatedSubcontractors
       }));
+
       push('/team');
       toast({
         variant: 'default',
@@ -38,5 +46,6 @@ export const useEditRelation = () => {
       });
     }
   });
+
   return { handleSubmit };
 };

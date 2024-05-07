@@ -35,8 +35,8 @@ type PropsEdit = {
 }
 
 export function ModalEdit({ children, workRelationId }: PropsEdit) {
-  const {user} = useUserContext();
-  const {handleSubmit} = useEditRelation();
+  const { user } = useUserContext();
+  const { handleSubmit } = useEditRelation();
 
   const selectedWorkRelation = user?.subcontractors.find(
     (subcontractor: any) => subcontractor.id === workRelationId
@@ -95,7 +95,7 @@ export function ModalEdit({ children, workRelationId }: PropsEdit) {
                   />
                 </div>
                 <DialogTrigger asChild>
-                <Button className='w-full' type="submit">Save</Button>
+                  <Button className='w-full' type="submit">Save</Button>
                 </DialogTrigger>
               </div>
             </form>
