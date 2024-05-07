@@ -23,7 +23,7 @@ export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
 
   const isActive = href === '/' + pathname;
 
-  const isActiveSubMenu = submenu ? Object.values(submenu).some(item => item.href === '/' + pathname) : false;
+  const isActiveSubMenu = submenu ? Object.values(submenu).some((item) => item.href === '/' + pathname) : false;
 
   const handleClick = (href: string) => {
     window.location.href = href;
@@ -50,18 +50,17 @@ export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
             <AccordionItem value="item-1" style={{ borderBottom: 'none' }}>
               <AccordionTrigger
                 style={{ textDecoration: 'none' }}
-                className={`w-full  text-base font-medium leading-none text-slate-50
+                className={`w-full  text-base font-medium leading-none text-slate-50 hover:text-blue-500
                 ${isActiveSubMenu && 'text-blue-500'}`}
               >
-                <div className='flex w-[20%] items-start justify-start hover:text-blue-500'>
+                <div className="flex w-[20%] items-start justify-start hover:text-blue-500">
                   <Icon height={24} width={24} className={`mr-4`} />
                 </div>
                 <div className="flex w-full items-start justify-start text-slate-50">{text}</div>
               </AccordionTrigger>
               {Object.entries(submenu).map(([key, subItem]) => (
                 <span key={key} onClick={() => handleClick(subItem.href)}>
-                  <AccordionContent
-                    className="text-ls font-medium hover:font-semibold leading-none text-gray-500 hover:text-gray-400">
+                  <AccordionContent className="text-ls font-medium leading-none text-gray-500 hover:font-semibold hover:text-gray-400">
                     <div className="ml-10 flex w-[50%] items-start justify-start">{subItem.text}</div>
                   </AccordionContent>
                 </span>
