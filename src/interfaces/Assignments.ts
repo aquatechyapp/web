@@ -37,7 +37,7 @@ export type Pool = {
   enterSide: string;
   isActive: boolean;
   lockerCode: string;
-  montlyPayment: string;
+  monthlyPayment: string;
   name: string;
   notes: string;
   poolType: 'Chlorine' | 'Salt' | 'Salt' | 'Other' | undefined;

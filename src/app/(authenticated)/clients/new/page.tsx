@@ -82,7 +82,7 @@ export default function Page() {
       animalDanger: false,
       phone1: '',
       lockerCode: '',
-      montlyPayment: undefined,
+      monthlyPayment: undefined,
       poolNotes: '',
       poolAddress: '',
       poolCity: '',
@@ -191,7 +191,12 @@ export default function Page() {
             </div>
           )}
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-            <InputField form={form} name="montlyPayment" placeholder="Monthly payment by client" type="currencyValue" />
+            <InputField
+              form={form}
+              name="monthlyPayment"
+              placeholder="Monthly payment by client"
+              type="currencyValue"
+            />
             <InputField form={form} name="lockerCode" placeholder="Gate code" />
             <InputField form={form} name="enterSide" placeholder="Enter side" />
             <SelectField name="poolType" placeholder="Chemical type" form={form} data={PoolTypes} />
@@ -262,7 +267,7 @@ const additionalSchemas = z.object({
   assignmentToId: z.string().min(1),
   photo: z.array(z.any()),
   customerCode: z.string().nullable(),
-  montlyPayment: z.string().nullable(),
+  monthlyPayment: z.string().nullable(),
   clientCompany: z.string().nullable(),
   clientType: z.enum(['Commercial', 'Residential'])
 });

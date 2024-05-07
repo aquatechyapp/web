@@ -18,7 +18,7 @@ import { DialogEditPool } from './DialogEditPool';
 
 const additionalFieldsSchema = z.object({
   notes: z.string().nullable(),
-  montlyPayment: z.string().nullable()
+  monthlyPayment: z.string().nullable()
 });
 
 const poolAndAdditionalFieldsSchema = poolSchema.and(additionalFieldsSchema);
@@ -30,7 +30,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
       poolAddress: pool.address || '',
       poolCity: pool.city || '',
       poolState: pool.state || '',
-      montlyPayment: pool.montlyPayment || '',
+      monthlyPayment: pool.monthlyPayment || '',
       lockerCode: pool.lockerCode || '',
       enterSide: pool.enterSide || '',
       poolType: pool.poolType || undefined,
@@ -40,7 +40,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
   });
 
   const monthlyPaymentChanged =
-    form.watch('montlyPayment') !== pool.montlyPayment;
+    form.watch('monthlyPayment') !== pool.monthlyPayment;
 
   const handleSubmit = () => {
     if (Object.keys(form.formState.errors).length) return;
@@ -50,7 +50,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
     if (monthlyPaymentChanged) {
       data = {
         ...data,
-        montlyPayment: form.watch('montlyPayment')
+        monthlyPayment: form.watch('monthlyPayment')
       };
     }
     mutate({
@@ -68,7 +68,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
         <div className="flex gap-4 text-lg">
           <DialogEditPool
             monthlyPaymentChanged={
-              form.watch('montlyPayment') !== pool.montlyPayment
+              form.watch('monthlyPayment') !== pool.monthlyPayment
             }
             form={form}
             handleSubmit={handleSubmit}
@@ -93,7 +93,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
       </div>
       <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
         <InputField
-          name="montlyPayment"
+          name="monthlyPayment"
           form={form}
           placeholder="Monthly payment"
           type="currencyValue"
