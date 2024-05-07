@@ -1,43 +1,65 @@
 'use client';
 
+import { PlusIcon } from '@radix-ui/react-icons';
 import {
   ColumnDef,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  useReactTable,
-  getFilteredRowModel
+  getFilteredRowModel,
+  useReactTable
 } from '@tanstack/react-table';
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { PlusIcon } from '@radix-ui/react-icons';
+import React from 'react';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+interface ClientData {
+  id: string;
+  name: string;
+  address: string;
+  // outras propriedades do cliente
 }
 
-export function DataTableClients<TData, TValue>({
-  columns,
-  data
-}: DataTableProps<TData, TValue>) {
+interface DataTableProps {
+  columns: ColumnDef<ClientData, keyof ClientData>[];
+  data: ClientData[];
+}
+
+export function DataTableClients<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  const toggleSortOrder = (columnId: string) => {
+    if (sortColumn === columnId) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(columnId);
+      setSortOrder('asc');
+    }
+  };
+
+  const sortedData = React.useMemo(() => {
+    if (!sortColumn) return data;
+
+    return [...data].sort((a, b) => {
+      const aValue = a[sortColumn];
+      const bValue = b[sortColumn];
+
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [data, sortColumn, sortOrder]);
 
   const table = useReactTable({
-    data,
+    data: sortedData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -67,7 +89,7 @@ export function DataTableClients<TData, TValue>({
 
   return (
     <div className="rounded-md border">
-      <div className="flex items-center py-4 w-full justify-between px-2">
+      <div className="flex w-full items-center justify-between px-2 py-4">
         <div className="flex w-full">
           <Button>
             <PlusIcon className="mr-2" />
@@ -76,19 +98,12 @@ export function DataTableClients<TData, TValue>({
           <Input
             placeholder="Filter clients..."
             value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('name')?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm ml-4"
+            onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
+            className="ml-4 max-w-sm"
           />
         </div>
         <div>
-          <Tabs
-            defaultValue="all"
-            onValueChange={(value) =>
-              table.getColumn('deactivatedAt')?.setFilterValue(value)
-            }
-          >
+          <Tabs defaultValue="all" onValueChange={(value) => table.getColumn('deactivatedAt')?.setFilterValue(value)}>
             <TabsList defaultValue="all">
               <TabsTrigger className="text-nowrap" value="all">
                 All clients
@@ -104,14 +119,13 @@ export function DataTableClients<TData, TValue>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
+                const isSortable = header.column.columnDef.header;
                 return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                  <TableHead key={header.id} onClick={() => isSortable && toggleSortOrder(header.column.id)}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {isSortable && (
+                      <span>{sortColumn === header.column.id && (sortOrder === 'asc' ? ' ↓' : ' ↑')}</span>
+                    )}
                   </TableHead>
                 );
               })}
@@ -132,9 +146,7 @@ export function DataTableClients<TData, TValue>({
                     // click na linha para enviar para view do client, mas não
                     // se aplica nas
                     onClick={
-                      [2, 3].includes(cell.column.getIndex())
-                        ? () => {}
-                        : () => push(`/clients/${row.original.id}`)
+                      [2, 3].includes(cell.column.getIndex()) ? () => {} : () => push(`/clients/${row.original.id}`)
                     }
                     key={cell.id}
                   >
