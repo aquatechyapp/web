@@ -15,7 +15,7 @@ import TopBarMenu from '../../components/TopBarMenu';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid h-screen w-full lg:grid-cols-6">
+    <div className="h-screen w-full lg:grid lg:grid-cols-6">
       <div className="hidden h-full lg:inline">
         <SideMenu />
       </div>
@@ -23,7 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <TopBarMenu />
         <main>
           <Suspense fallback={<LoadingSpinner />}>
-            <div className="px-4 py-1">
+            <div className="px-2 py-1 sm:px-4">
               <UserProvider>
                 <TechniciansProvider>
                   <WeekdayProvider>

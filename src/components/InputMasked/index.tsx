@@ -33,9 +33,9 @@ export const InputMasked = ({ field, placeholder, name, form, mask, ...props }: 
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    let value = e.target.value;
+    let value: string | number = e.target.value;
     if (mask === 'currencyValue') {
-      value = onlyNumbers(value).toString();
+      value = onlyNumbers(value);
     }
     form.setValue(name, value);
   }
