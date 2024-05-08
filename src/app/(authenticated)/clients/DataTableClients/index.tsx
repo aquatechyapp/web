@@ -27,7 +27,12 @@ import { useUserContext } from '@/context/user';
 interface ClientData {
   id: string;
   name: string;
-  address: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zipcode: string;
+  };
   // outras propriedades do cliente
 }
 
@@ -40,7 +45,7 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const { user } = useUserContext();
+
   const { push } = useRouter();
 
   const toggleSortOrder = (columnId: string) => {
@@ -108,17 +113,25 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
 
   const formCity = useForm({
     defaultValues: {
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      company: user?.company || '',
-      phone: user?.phone || '',
-      email: user?.email || '',
-      address: user?.address || '',
-      zip: user?.zip || '',
-      state: user?.state || '',
-      city: user?.city || ''
+      city: 'all' // Valor padrão para a cidade
     }
   });
+
+  const formType = useForm({
+    defaultValues: {
+      type: 'all' // Valor padrão para a cidade
+    }
+  });
+
+  // Obtendo uma lista de cidades únicas dos dados dos clientes
+  const cities = Array.from(new Set(sortedData.map((client) => client.city)));
+  // Definindo opções para o SelectField da cidade
+  const citySelectOptions = cities.map((city) => ({ value: city, name: city }));
+
+  const types = Array.from(new Set(sortedData.map((client) => client.type)));
+  const typesSelectOptions = types.map((type) => ({ value: type, name: type }));
+
+  console.log('sortedData', sortedData);
 
   return (
     <div className="rounded-md border">
@@ -146,6 +159,22 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
                 label="Filter"
                 placeholder="Filter"
                 onValueChange={(value) => table.getColumn('deactivatedAt')?.setFilterValue(value)}
+              />
+              <SelectField
+                form={formCity}
+                name="City"
+                data={citySelectOptions}
+                label="City"
+                placeholder="City"
+                onValueChange={(value) => table.getColumn('city')?.setFilterValue(value)}
+              />
+              <SelectField
+                form={formType}
+                name="Type"
+                data={typesSelectOptions}
+                label="Type"
+                placeholder="Type"
+                onValueChange={(value) => table.getColumn('type')?.setFilterValue(value)}
               />
             </form>
           </Form>
@@ -179,16 +208,18 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
                 // onClick={() => push(`/clients/${row.original.id}`)}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    // click na linha para enviar para view do client, mas não
-                    // se aplica nas
-                    onClick={
-                      [2, 3].includes(cell.column.getIndex()) ? () => {} : () => push(`/clients/${row.original.id}`)
-                    }
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+                  <React.Fragment key={cell.id}>
+                    <TableCell
+                      // click na linha para enviar para view do client, mas não
+                      // se aplica nas
+                      onClick={
+                        [2, 3].includes(cell.column.getIndex()) ? () => {} : () => push(`/clients/${row.original.id}`)
+                      }
+                      key={cell.id}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  </React.Fragment>
                 ))}
               </TableRow>
             ))
