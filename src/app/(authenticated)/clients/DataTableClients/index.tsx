@@ -13,11 +13,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import React from 'react';
+import { useForm } from 'react-hook-form';
 
+import SelectField from '@/components/SelectField';
+import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useUserContext } from '@/context/user';
 
 interface ClientData {
   id: string;
@@ -35,6 +40,8 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const { user } = useUserContext();
+  const { push } = useRouter();
 
   const toggleSortOrder = (columnId: string) => {
     if (sortColumn === columnId) {
@@ -85,7 +92,33 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
     }
   });
 
-  const { push } = useRouter();
+  // Defina as opções para o SelectField
+  const selectOptions = [
+    { value: 'all', name: 'All clients' },
+    { value: 'active', name: 'Active' },
+    { value: 'inactive', name: 'Inactive' }
+  ];
+
+  // Use o useForm para gerenciar o estado dos campos do formulário
+  const form = useForm({
+    defaultValues: {
+      filter: 'all'
+    }
+  });
+
+  const formCity = useForm({
+    defaultValues: {
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      company: user?.company || '',
+      phone: user?.phone || '',
+      email: user?.email || '',
+      address: user?.address || '',
+      zip: user?.zip || '',
+      state: user?.state || '',
+      city: user?.city || ''
+    }
+  });
 
   return (
     <div className="rounded-md border">
@@ -103,15 +136,19 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
           />
         </div>
         <div>
-          <Tabs defaultValue="all" onValueChange={(value) => table.getColumn('deactivatedAt')?.setFilterValue(value)}>
-            <TabsList defaultValue="all">
-              <TabsTrigger className="text-nowrap" value="all">
-                All clients
-              </TabsTrigger>
-              <TabsTrigger value="active">Active</TabsTrigger>
-              <TabsTrigger value="inactive">inactive</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <Form {...form}>
+            <form>
+              {/* <StateAndCitySelect form={formCity} cityName="city" stateName="state" /> */}
+              <SelectField
+                form={form}
+                name="filter"
+                data={selectOptions}
+                label="Filter"
+                placeholder="Filter"
+                onValueChange={(value) => table.getColumn('deactivatedAt')?.setFilterValue(value)}
+              />
+            </form>
+          </Form>
         </div>
       </div>
       <Table>

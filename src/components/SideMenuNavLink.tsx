@@ -34,7 +34,6 @@ export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
       href={href}
       passHref
       className={`flex w-full items-start justify-start px-2 text-gray-300 hover:bg-gray-800
-      hover:text-blue-500
       ${isActive && 'border-r-4 border-blue-500 bg-gray-800 '} `}
     >
       <div className="flex w-full items-center">
@@ -50,10 +49,10 @@ export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
             <AccordionItem value="item-1" style={{ borderBottom: 'none' }}>
               <AccordionTrigger
                 style={{ textDecoration: 'none' }}
-                className={`w-full  text-base font-medium leading-none text-slate-50 hover:text-blue-500
+                className={`w-full  text-base font-medium leading-none text-slate-50
                 ${isActiveSubMenu && 'text-blue-500'}`}
               >
-                <div className="flex w-[20%] items-start justify-start hover:text-blue-500">
+                <div className="flex w-[20%] items-start justify-start">
                   <Icon height={24} width={24} className={`mr-4`} />
                 </div>
                 <div className="flex w-full items-start justify-start text-slate-50">{text}</div>
