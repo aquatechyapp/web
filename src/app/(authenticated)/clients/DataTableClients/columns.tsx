@@ -16,8 +16,8 @@ export const columns: ColumnDef<Client>[] = [
   },
   {
     accessorKey: 'type',
-    header: ''
-    // cell: (props) => <NamePhoto {...props} />
+    header: '',
+    cell: ''
   },
   {
     accessorKey: 'phone1' || 'phone2',
@@ -30,7 +30,7 @@ export const columns: ColumnDef<Client>[] = [
     cell: (props) => {
       return (
         <div className="">
-          {props.row.original.city}, {props.row.original.address},{props.row.original.zip}, {props.row.original.state}
+          {props.row.original.city}, {props.row.original.address}, {props.row.original.state},{props.row.original.zip},
         </div>
       );
     }

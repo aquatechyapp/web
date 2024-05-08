@@ -16,13 +16,10 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import SelectField from '@/components/SelectField';
-import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useUserContext } from '@/context/user';
 
 interface ClientData {
   id: string;
@@ -131,8 +128,6 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
   const types = Array.from(new Set(sortedData.map((client) => client.type)));
   const typesSelectOptions = types.map((type) => ({ value: type, name: type }));
 
-  console.log('sortedData', sortedData);
-
   return (
     <div className="rounded-md border">
       <div className="flex w-full items-center justify-between px-2 py-4">
@@ -148,23 +143,20 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
             className="ml-4 max-w-sm"
           />
         </div>
-        <div>
+        <div className="flex w-full">
           <Form {...form}>
-            <form>
-              {/* <StateAndCitySelect form={formCity} cityName="city" stateName="state" /> */}
+            <form className="mb-2 flex w-full gap-4">
               <SelectField
                 form={form}
-                name="filter"
+                name="Filter"
                 data={selectOptions}
-                label="Filter"
-                placeholder="Filter"
+                placeholder="Status"
                 onValueChange={(value) => table.getColumn('deactivatedAt')?.setFilterValue(value)}
               />
               <SelectField
                 form={formCity}
                 name="City"
                 data={citySelectOptions}
-                label="City"
                 placeholder="City"
                 onValueChange={(value) => table.getColumn('city')?.setFilterValue(value)}
               />
@@ -172,7 +164,6 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
                 form={formType}
                 name="Type"
                 data={typesSelectOptions}
-                label="Type"
                 placeholder="Type"
                 onValueChange={(value) => table.getColumn('type')?.setFilterValue(value)}
               />
