@@ -26,7 +26,7 @@ export default function ClientInfo({ client }: { client: Client }) {
       notes: client.notes || undefined,
       address: client.address || '',
       company: client.company || '',
-      type: client.clientType || 'Residential'
+      type: client.type || 'Residential'
     }
   });
 
@@ -35,10 +35,7 @@ export default function ClientInfo({ client }: { client: Client }) {
   if (isPending) return <LoadingSpinner />;
 
   const handleSubmit = async () => {
-    let dirtyFields = filterChangedFormFields(
-      form.getValues(),
-      form.formState.dirtyFields
-    );
+    let dirtyFields = filterChangedFormFields(form.getValues(), form.formState.dirtyFields);
     if (phoneChanged) {
       dirtyFields = {
         ...dirtyFields,
@@ -54,37 +51,19 @@ export default function ClientInfo({ client }: { client: Client }) {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50 p-6"
       >
-        <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">
-          Basic information
-        </div>
+        <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">Basic information</div>
         <div className="inline-flex items-start justify-start gap-4 self-stretch">
-          <InputField
-            form={form}
-            name="address"
-            placeholder="Billing address"
-          />
+          <InputField form={form} name="address" placeholder="Billing address" />
           <StateAndCitySelect form={form} cityName="city" stateName="state" />
         </div>
         <div className="flex gap-4">
-          <InputField
-            form={form}
-            name="zip"
-            placeholder="Zip code"
-            type="zip"
-          />
+          <InputField form={form} name="zip" placeholder="Zip code" type="zip" />
           <InputField form={form} name="company" placeholder="Company" />
-          <OptionsClientType form={form} />
+          <OptionsClientType form={form} name="type" />
         </div>
-        <div className="mt-4 h-5 text-sm font-medium   text-gray-500">
-          Contact information
-        </div>
+        <div className="mt-4 h-5 text-sm font-medium   text-gray-500">Contact information</div>
         <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-          <InputField
-            type="phone"
-            form={form}
-            name="phone1"
-            placeholder="Mobile phone"
-          />
+          <InputField type="phone" form={form} name="phone1" placeholder="Mobile phone" />
           {/* <InputField
             name="phone2"
             type="phone"
@@ -95,12 +74,7 @@ export default function ClientInfo({ client }: { client: Client }) {
 
           {/* <InputField form={form} name="email2" placeholder="Invoice e-mail" /> */}
         </div>
-        <InputField
-          form={form}
-          placeholder="Type client notes here..."
-          name="clientNotes"
-          type="textArea"
-        />
+        <InputField form={form} placeholder="Type client notes here..." name="clientNotes" type="textArea" />
         {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium   text-gray-500">
           Notes about client (customer won't see that)
         </div>

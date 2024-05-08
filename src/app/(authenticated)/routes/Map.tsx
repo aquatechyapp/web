@@ -92,7 +92,7 @@ const Map = ({ assignments }: { assignments: Assignment[] }) => {
 
   return (
     <div className="h-full">
-      <div className="absolute right-24 z-10 mt-2.5 rounded-sm bg-gray-50 px-2 shadow-lg">
+      <div className="absolute z-10 ml-2.5 mt-16 rounded-sm bg-gray-50 px-2 shadow-lg sm:right-24 sm:mt-2.5">
         <h3 className="py-1">Distance: {distance}</h3>
         <Separator />
         <h3 className="py-1">Duration: {duration}</h3>

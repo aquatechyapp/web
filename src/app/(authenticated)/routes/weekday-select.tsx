@@ -22,7 +22,7 @@ export default function WeekdaySelect({ onChange, value }: Props) {
       <Label>Weekday</Label>
       <Select onValueChange={onChange} value={value}>
         <SelectTrigger className="mt-2">
-          <SelectValue placeholder="Technician..." />
+          <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>

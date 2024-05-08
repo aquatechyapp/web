@@ -20,7 +20,7 @@ export interface Client {
   zip: string;
   pools: Pool[];
   lastServiceDate: string;
-  clientType: 'Residential' | 'Commercial';
+  type: 'Residential' | 'Commercial';
 }
 
 export interface Coords {
