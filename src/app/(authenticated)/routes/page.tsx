@@ -87,80 +87,84 @@ export default function Page() {
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
   return (
-    <div>
-      <div
-        className={`flex h-[100%] w-full items-start justify-start gap-3 bg-gray-50 p-2.5 shadow-inner ${mdScreen ? 'flex-col' : ''}`}
-      >
-        <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
-          <Tabs
-            onValueChange={(weekday) => handleChangeWeekday(weekday as WeekdaysUppercase)}
-            defaultValue={format(new Date(), 'EEEE').toUpperCase()}
-            value={selectedWeekday}
-          >
-            <div className="inline-flex w-full flex-col items-center justify-start gap-3.5 rounded-lg border border-gray-200 bg-gray-50 py-2">
-              <Form {...form}>
-                <form className="w-full px-2">
-                  <TabsList className="w-full">
-                    {weekdays.map((weekday, index) => (
-                      <TabsTrigger className="flex-1" key={weekday} value={weekday.toUpperCase()}>
-                        {width ? (width < 1440 ? weekdaysShort[index] : weekday) : weekday}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                  <TechnicianSelect onChange={handleChangeTechnician} />
-                  <div className="mt-2 flex flex-col  gap-2 sm:flex-row">
-                    <DialogNewAssignment form={form} />
-                    {assignments.current.length > 0 && (
-                      <Button
-                        type="button"
-                        className="w-full"
-                        variant={'secondary'}
-                        onClick={() => setOpenTransferDialog(true)}
-                      >
-                        Transfer Route
-                      </Button>
-                    )}
-                    <DialogTransferRoute
-                      open={openTransferDialog}
-                      setOpen={setOpenTransferDialog}
-                      assignmentToId={assignmentToId}
-                      isEntireRoute={true}
-                    />
-                  </div>
-                  {getDifference(assignments.initial, assignments.current) && (
+    <div
+      className={`flex h-[100%] w-full items-start justify-start gap-3 bg-gray-50 px-0 shadow-inner md:p-2.5 ${mdScreen ? 'flex-col' : ''}`}
+    >
+      <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
+        <Tabs
+          onValueChange={(weekday) => handleChangeWeekday(weekday as WeekdaysUppercase)}
+          defaultValue={format(new Date(), 'EEEE').toUpperCase()}
+          value={selectedWeekday}
+        >
+          <div className="inline-flex w-full flex-col items-center justify-start gap-3.5 rounded-lg border border-gray-200 bg-gray-50 py-2">
+            <Form {...form}>
+              <form className="w-full px-2">
+                <TabsList className="w-full">
+                  {weekdays.map((weekday, index) => (
+                    <TabsTrigger className="flex-1" key={weekday} value={weekday.toUpperCase()}>
+                      {width
+                        ? width < 1440
+                          ? width < 768
+                            ? weekdaysLetter[index]
+                            : weekdaysShort[index]
+                          : weekday
+                        : weekday}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                <TechnicianSelect onChange={handleChangeTechnician} />
+                <div className="mt-2 flex flex-col  gap-2 sm:flex-row">
+                  <DialogNewAssignment form={form} />
+                  {assignments.current.length > 0 && (
                     <Button
-                      onClick={() =>
-                        updateAssignments(
-                          assignments.current.map((assignment) => {
-                            return {
-                              assignmentId: assignment.id,
-                              ...assignment
-                            };
-                          })
-                        )
-                      }
-                      className="mt-2 w-full bg-green-500 hover:bg-green-700"
+                      type="button"
+                      className="w-full"
+                      variant={'secondary'}
+                      onClick={() => setOpenTransferDialog(true)}
                     >
-                      Save
+                      Transfer Route
                     </Button>
                   )}
-                </form>
-              </Form>
+                  <DialogTransferRoute
+                    open={openTransferDialog}
+                    setOpen={setOpenTransferDialog}
+                    assignmentToId={assignmentToId}
+                    isEntireRoute={true}
+                  />
+                </div>
+                {getDifference(assignments.initial, assignments.current) && (
+                  <Button
+                    onClick={() =>
+                      updateAssignments(
+                        assignments.current.map((assignment) => {
+                          return {
+                            assignmentId: assignment.id,
+                            ...assignment
+                          };
+                        })
+                      )
+                    }
+                    className="mt-2 w-full bg-green-500 hover:bg-green-700"
+                  >
+                    Save
+                  </Button>
+                )}
+              </form>
+            </Form>
 
-              <TabsContent value={selectedWeekday} className="w-full">
-                {/* O filtro dos assignments precisa ser feito dentro de AssignmentsList, por causa
+            <TabsContent value={selectedWeekday} className="w-full">
+              {/* O filtro dos assignments precisa ser feito dentro de AssignmentsList, por causa
                 do componente TabsContent. Esse componente de Tabs se baseia no value para exibir
                 seus childrens (AssignmentsList). Como na aba tabs o value se baseia somente no weekday,
                 quando eu altero o Technician, ele só vai atualizar o render quando mudar de Weekday
                 A solução foi enviar todos os assignments e fazer o .filter lá dentro */}
-                <AssignmentsList handleDragEnd={handleDragEnd} />
-              </TabsContent>
-            </div>
-          </Tabs>
-        </div>
-        <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
-          <Map assignments={assignments.current} />
-        </div>
+              <AssignmentsList handleDragEnd={handleDragEnd} />
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
+      <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
+        <Map assignments={assignments.current} />
       </div>
     </div>
   );
@@ -180,3 +184,4 @@ const newAssignmentSchema = z
 const weekdays: Weekdays[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const weekdaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const weekdaysLetter = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];

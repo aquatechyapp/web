@@ -67,7 +67,7 @@ const createPoolSchema = poolSchema
         })
         .trim()
         .min(1, { message: 'Address must be at least 1 character.' }),
-      montlyPayment: z.string().nullable()
+      monthlyPayment: z.string().nullable()
     })
   );
 
@@ -81,7 +81,7 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
       city: '',
       enterSide: '',
       lockerCode: '',
-      montlyPayment: undefined,
+      monthlyPayment: undefined,
       notes: undefined,
       poolType: undefined,
       state: '',
@@ -170,9 +170,9 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
               <div className="grid gap-4">
                 <InputField
                   form={form}
-                  name="montlyPayment"
-                  label="Montly payment"
-                  placeholder="Montly payment"
+                  name="monthlyPayment"
+                  label="Monthly payment"
+                  placeholder="Monthly payment"
                   type="currencyValue"
                 />
                 <SelectField

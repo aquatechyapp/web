@@ -1,32 +1,24 @@
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { isEmpty } from '@/utils';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import TechnicianSelect from './TechnicianSelect';
-import {
-  useTransferOnceRoute,
-  useTransferPermanentlyRoute
-} from '@/hooks/react-query/assignments/useTransferRoute';
-import { transferAssignmentsSchema } from '@/schemas/assignments';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import WeekdaySelect from './weekday-select';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Assignment } from '@/interfaces/Assignments';
-import InputField from '@/components/InputField';
-import { useEffect, useMemo } from 'react';
+
 import CalendarField from '@/components/CalendarField';
+import InputField from '@/components/InputField';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useWeekdayContext } from '@/context/weekday';
+import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
+import { Assignment } from '@/interfaces/Assignments';
+import { transferAssignmentsSchema } from '@/schemas/assignments';
+import { isEmpty } from '@/utils';
+
+import TechnicianSelect from './TechnicianSelect';
+import WeekdaySelect from './weekday-select';
 
 type Props = {
   assignmentToId: string;
@@ -36,13 +28,7 @@ type Props = {
   isEntireRoute?: boolean;
 };
 
-export function DialogTransferRoute({
-  assignmentToId,
-  open,
-  setOpen,
-  assignment,
-  isEntireRoute = false
-}: Props) {
+export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment, isEntireRoute = false }: Props) {
   const { selectedWeekday } = useWeekdayContext();
 
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
@@ -88,19 +74,15 @@ export function DialogTransferRoute({
     return false;
   };
 
-  const { mutate: transferOnce, isPending: isPendingOnce } =
-    useTransferOnceRoute(assignment);
-  const { mutate: transferPermanently, isPending: isPendingPermanently } =
-    useTransferPermanentlyRoute(assignment);
+  const { mutate: transferOnce, isPending: isPendingOnce } = useTransferOnceRoute(assignment);
+  const { mutate: transferPermanently, isPending: isPendingPermanently } = useTransferPermanentlyRoute(assignment);
 
   const isPending = isPendingOnce || isPendingPermanently;
 
   const buildPayload = () => {
     const { assignmentToId, onlyAt, weekday, paidByService } = form.getValues();
     const paidByServiceValue =
-      typeof paidByService === 'string'
-        ? parseInt(paidByService?.replaceAll(/\D/g, ''))
-        : paidByService;
+      typeof paidByService === 'string' ? parseInt(paidByService?.replaceAll(/\D/g, '')) : paidByService;
 
     let payload = {};
 
@@ -152,16 +134,12 @@ export function DialogTransferRoute({
           <LoadingSpinner />
         ) : (
           <Form {...form}>
-            <form className="gap-4 flex flex-col">
+            <form className="flex flex-col gap-4">
               <div className="flex gap-4">
                 <div className="basis-full">
                   {/* -mb-4 pra remover o gap-4. Não coloquei a Label dentro do componente pois não quero aplicar sempre */}
                   <Label className="-mb-4">Technician</Label>
-                  <TechnicianSelect
-                    onChange={(technicianId) =>
-                      form.setValue('assignmentToId', technicianId)
-                    }
-                  />
+                  <TechnicianSelect onChange={(technicianId) => form.setValue('assignmentToId', technicianId)} />
                 </div>
                 {/* quando for transferir rota inteira, não preciso informar paidByService, ele pega de cada assignment */}
                 {!userSelectedAsTechnician && (
@@ -184,23 +162,11 @@ export function DialogTransferRoute({
               <OptionsOnceOrPermanently form={form} />
               <div className="mt-1">
                 {shouldTransferOnce ? (
-                  <CalendarField
-                    form={form}
-                    name="onlyAt"
-                    placeholder="Only at"
-                  />
+                  <CalendarField form={form} name="onlyAt" placeholder="Only at" />
                 ) : (
                   <div className="flex">
-                    <CalendarField
-                      form={form}
-                      name="startOn"
-                      placeholder="Start on"
-                    />
-                    <CalendarField
-                      form={form}
-                      name="endAfter"
-                      placeholder="End after"
-                    />
+                    <CalendarField form={form} name="startOn" placeholder="Start on" />
+                    <CalendarField form={form} name="endAfter" placeholder="End after" />
                   </div>
                 )}
               </div>
@@ -235,11 +201,7 @@ const OptionsOnceOrPermanently = ({ form }) => {
           <FormItem className="space-y-3">
             <FormLabel>Choose between transfer...</FormLabel>
             <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                className="flex space-y-1"
-              >
+              <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-y-1">
                 <FormItem className="flex items-center space-x-3 space-y-0">
                   <FormControl>
                     <RadioGroupItem value="once" />

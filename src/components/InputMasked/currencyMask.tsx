@@ -1,4 +1,4 @@
-import { MaskitoOptions, maskitoInitialCalibrationPlugin } from '@maskito/core';
+import { maskitoInitialCalibrationPlugin, MaskitoOptions } from '@maskito/core';
 import { maskitoNumberOptionsGenerator } from '@maskito/kit';
 
 const { plugins, ...numberOptions } = maskitoNumberOptionsGenerator({

@@ -9,7 +9,8 @@ import { DropdownMenuCheckboxes } from './ui/multiple-select';
 import { Textarea } from './ui/textarea';
 
 type Props = {
-  form: UseFormReturn;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<any>;
   name: string;
   placeholder?: string;
   type?:
@@ -28,14 +29,7 @@ type Props = {
   label?: string;
 };
 
-export default function InputField({
-  form,
-  name,
-  placeholder,
-  type = 'default',
-  label,
-  ...props
-}: Props) {
+export default function InputField({ form, name, placeholder, type = 'default', label, ...props }: Props) {
   const types = {
     zip: {
       component: (field: ControllerRenderProps) => (
@@ -53,14 +47,7 @@ export default function InputField({
     phone: {
       component: (field: ControllerRenderProps) => {
         return (
-          <InputMasked
-            mask="phone"
-            field={field}
-            placeholder={placeholder || ''}
-            form={form}
-            {...field}
-            {...props}
-          />
+          <InputMasked mask="phone" field={field} placeholder={placeholder || ''} form={form} {...field} {...props} />
         );
       }
     },
@@ -104,16 +91,8 @@ export default function InputField({
     checkbox: {
       component: (field: ControllerRenderProps) => (
         <div className="inline-flex items-start justify-start gap-2 self-stretch">
-          <Checkbox
-            {...field}
-            {...props}
-            id={name}
-            onCheckedChange={() => field.onChange(!field.value)}
-          />
-          <Label
-            htmlFor={name}
-            className="text-sm font-semibold leading-none text-gray-400"
-          >
+          <Checkbox {...field} {...props} id={name} onCheckedChange={() => field.onChange(!field.value)} />
+          <Label htmlFor={name} className="text-sm font-semibold leading-none text-gray-400">
             {placeholder}
           </Label>
         </div>
@@ -121,33 +100,17 @@ export default function InputField({
     },
     weekdays: {
       component: (field: ControllerRenderProps) => (
-        <DropdownMenuCheckboxes
-          onChange={(weekdays) => field.onChange(weekdays)}
-        />
+        <DropdownMenuCheckboxes onChange={(weekdays) => field.onChange(weekdays)} />
       )
     },
     percentValue: {
       component: (field: ControllerRenderProps) => (
-        <InputMasked
-          mask={type}
-          field={field}
-          placeholder={placeholder || ''}
-          form={form}
-          {...field}
-          {...props}
-        />
+        <InputMasked mask={type} field={field} placeholder={placeholder || ''} form={form} {...field} {...props} />
       )
     },
     currencyValue: {
       component: (field: ControllerRenderProps) => (
-        <InputMasked
-          mask={type}
-          field={field}
-          placeholder={placeholder || ''}
-          form={form}
-          {...field}
-          {...props}
-        />
+        <InputMasked mask={type} field={field} placeholder={placeholder || ''} form={form} {...field} {...props} />
       )
     }
   };
@@ -159,9 +122,7 @@ export default function InputField({
       render={({ field }) => {
         return (
           <FormItem className="h-full w-full">
-            {!['checkbox'].includes(type) && (
-              <Label>{label || placeholder}</Label>
-            )}
+            {!['checkbox'].includes(type) && <Label>{label || placeholder}</Label>}
             <FormControl>{types[type].component(field)}</FormControl>
             <FormMessage />
           </FormItem>
