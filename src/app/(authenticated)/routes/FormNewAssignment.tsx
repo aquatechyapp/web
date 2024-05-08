@@ -1,12 +1,14 @@
+import { useQuery } from '@tanstack/react-query';
+
+import CalendarField from '@/components/CalendarField';
+import InputField from '@/components/InputField';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
-import { useQuery } from '@tanstack/react-query';
-import { Frequencies } from '@/constants';
-import { clientAxios } from '@/lib/clientAxios';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import InputField from '@/components/InputField';
-import CalendarField from '@/components/CalendarField';
 import { Separator } from '@/components/ui/separator';
+import { Frequencies } from '@/constants';
+import { Client } from '@/interfaces/Client';
+import { clientAxios } from '@/lib/clientAxios';
 import { buildSelectOptions } from '@/utils/formUtils';
 
 export const FormNewAssignment = ({ form }) => {
@@ -31,9 +33,9 @@ export const FormNewAssignment = ({ form }) => {
           <div className="flex gap-4 ">
             <SelectField
               data={buildSelectOptions(
-                data.filter((client) => client.pools.length > 0),
+                data.filter((client: Client) => client.pools.length > 0),
                 {
-                  id: 'id',
+                  key: 'id',
                   name: 'name',
                   value: 'id'
                 }
@@ -47,9 +49,9 @@ export const FormNewAssignment = ({ form }) => {
               <SelectField
                 data={buildSelectOptions(
                   // Procura a piscina somente quando seleciona o cliente
-                  data?.find((c) => c.id === clientId)?.pools,
+                  data?.find((c: Client) => c.id === clientId)?.pools,
                   {
-                    id: 'id',
+                    key: 'id',
                     name: 'name',
                     value: 'id'
                   }
@@ -61,12 +63,7 @@ export const FormNewAssignment = ({ form }) => {
             )}
           </div>
           <div className="flex gap-4">
-            <SelectField
-              name="frequency"
-              placeholder="Frequency"
-              form={form}
-              data={Frequencies}
-            />
+            <SelectField name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
             <InputField
               name="paidByService"
               form={form}
@@ -79,11 +76,7 @@ export const FormNewAssignment = ({ form }) => {
           <div className="mt-4 flex gap-8">
             <CalendarField form={form} name="startOn" placeholder="Start on" />
             <Separator orientation="vertical" className="h-72" />
-            <CalendarField
-              form={form}
-              name="endAfter"
-              placeholder="End after"
-            />
+            <CalendarField form={form} name="endAfter" placeholder="End after" />
           </div>
         </div>
       </form>

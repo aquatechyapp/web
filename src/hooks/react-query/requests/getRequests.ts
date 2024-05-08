@@ -2,11 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 
 import { clientAxios } from '@/lib/clientAxios';
 
-export default function useGetClients() {
+export default function useGetRequests() {
   const { data, isLoading, isSuccess } = useQuery({
-    queryKey: ['clients'],
+    queryKey: ['requests'],
     queryFn: async () => {
-      const response = await clientAxios('/clients');
+      const response = await clientAxios('/requests');
       return response.data;
     },
     staleTime: Infinity

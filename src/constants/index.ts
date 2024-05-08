@@ -1,12 +1,10 @@
 import { AvatarIcon } from '@radix-ui/react-icons';
+import { PiCheckSquareOffsetBold } from 'react-icons/pi';
 
 import ClientIcon from '@/components/ui/client-icon';
 import RouteIcon from '@/components/ui/route-icon';
 import TabIcon from '@/components/ui/tab-icon';
 import TeamIcon from '@/components/ui/team-icon';
-
-export const ACCESS_TOKEN_COOKIE_NAME = 'accessToken';
-export const USER_COOKIE_NAME = 'user';
 
 export const Frequencies = [
   {
@@ -122,6 +120,11 @@ export const routes = [
     text: 'My Account',
     href: '/account',
     icon: AvatarIcon
+  },
+  {
+    text: 'Requests',
+    href: '/requests',
+    icon: PiCheckSquareOffsetBold
   }
 ];
 
@@ -137,4 +140,100 @@ export const paymentType = [
     name: '% fixed by pool'
   },
   { key: 'customized', value: 'customized', name: 'Custom' }
+];
+
+export const RequestStatus = [
+  {
+    value: 'Pending',
+    name: 'Pending',
+    key: 'Pending'
+  },
+  {
+    value: 'Processing',
+    name: 'Processing',
+    key: 'Processing'
+  },
+  {
+    value: 'Done',
+    name: 'Done',
+    key: 'Done'
+  }
+];
+
+export const Categories = [
+  {
+    value: 'equipmentMalfunctions',
+    name: 'Equipment Malfunctions',
+    key: 'EquipmentMalfunctions'
+  },
+  {
+    value: 'waterChemistryImbalance',
+    name: 'Water Chemistry Imbalance',
+    key: 'WaterChemistryImbalance'
+  },
+  {
+    value: 'algaeGrowth',
+    name: 'Algae Growth',
+    key: 'AlgaeGrowth'
+  },
+  {
+    value: 'debrisAccumulation',
+    name: 'Debris Accumulation',
+    key: 'DebrisAccumulation'
+  },
+  {
+    value: 'cloggedDrainsandSkimmers',
+    name: 'Clogged Drains and Skimmers',
+    key: 'CloggedDrainsandSkimmers'
+  },
+  {
+    value: 'leaks',
+    name: 'Leaks',
+    key: 'Leaks'
+  },
+  {
+    value: 'equipmentMaintenance',
+    name: 'Equipment Maintenance',
+    key: 'EquipmentMaintenance'
+  },
+  {
+    value: 'waterClarityIssues',
+    name: 'Water Clarity Issues',
+    key: 'WaterClarityIssues'
+  },
+  {
+    value: 'surfaceStains',
+    name: 'Surface Stains',
+    key: 'SurfaceStains'
+  },
+  {
+    value: 'crackedorDamagedTiles',
+    name: 'Cracked or Damaged Tiles',
+    key: 'CrackedorDamagedTiles'
+  },
+  {
+    value: 'pumpPrimingProblems',
+    name: 'Pump Priming Problems',
+    key: 'PumpPrimingProblems'
+  },
+  {
+    value: 'equipmentCompatibility',
+    name: 'Equipment Compatibility',
+    key: 'EquipmentCompatibility'
+  },
+  {
+    value: 'safetyConcerns',
+    name: 'Safety Concerns',
+    key: 'SafetyConcerns'
+  },
+  {
+    value: 'waterLoss',
+    name: 'Water Loss',
+    key: 'WaterLoss'
+  },
+  {
+    value: 'customerCommunication',
+    name: 'Customer Communication',
+    key: 'CustomerCommunication'
+  }
 ];
