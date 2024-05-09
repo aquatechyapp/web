@@ -13,7 +13,7 @@ import SideMenuNavLink from './SideMenuNavLink';
 export function MobileSideMenu() {
   const [open, setOpen] = useState(false);
   return (
-    <Sheet open={open}>
+    <Sheet open={open} onOpenChange={setOpen}>
       <RiMenu2Fill onClick={() => setOpen(true)} size={32} className="cursor-pointer text-gray-50" />
       <SheetContent side="left" className="w-[253px] bg-gray-900 p-0">
         <aside className="col-span-1  h-full bg-gray-900">
@@ -24,8 +24,15 @@ export function MobileSideMenu() {
             <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
               {routes.map((route) => {
                 return (
-                  <div key={route.href} className="w-full" onClick={() => setOpen(false)}>
-                    <SideMenuNavLink href={route.href} Icon={route.icon} text={route.text} submenu={route.submenu} />
+                  <div key={route.href} className="w-full">
+                    <SideMenuNavLink
+                      href={route.href}
+                      Icon={route.icon}
+                      text={route.text}
+                      submenu={route.submenu}
+                      // fechar menu mobile lateral, tentei usar o SheetTrigger mas não funcionou
+                      setOpen={setOpen}
+                    />
                   </div>
                 );
               })}

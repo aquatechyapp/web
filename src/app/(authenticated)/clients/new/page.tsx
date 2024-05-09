@@ -267,7 +267,7 @@ const additionalSchemas = z.object({
   assignmentToId: z.string().min(1),
   photo: z.array(z.any()),
   customerCode: z.string().nullable(),
-  monthlyPayment: z.string().nullable(),
+  monthlyPayment: z.number().nullable(),
   clientCompany: z.string().nullable(),
   clientType: z.enum(['Commercial', 'Residential'])
 });
