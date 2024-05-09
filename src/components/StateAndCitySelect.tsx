@@ -1,5 +1,6 @@
 import { City, ICity, State } from 'country-state-city';
 import { useEffect, useState } from 'react';
+
 import SelectField from './SelectField';
 
 type Props = {
@@ -32,10 +33,11 @@ export default function StateAndCitySelect({
   }, [state]);
 
   return (
-    <div className="inline-flex items-start justify-start gap-4 self-stretch w-full">
+    <div className="inline-flex w-full items-start justify-start gap-4 self-stretch">
       <SelectField
         form={form}
         name={stateName}
+        label={stateName}
         value={state}
         placeholder="State"
         data={states.map((state) => {
@@ -50,6 +52,7 @@ export default function StateAndCitySelect({
       <SelectField
         // disabled={!state || cities.length === 0}
         form={form}
+        label={cityName}
         name={cityName}
         value={city}
         placeholder={'City'}
