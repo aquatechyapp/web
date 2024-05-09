@@ -11,17 +11,17 @@ import BasicInformation from './PoolInfo';
 type Props = {
   services: Service[];
   pool: Pool;
+  clientId: string;
 };
 
-function PoolCard({ pool, services }: Props) {
+function PoolCard({ pool, services, clientId }: Props) {
   const [tab, setTab] = useState<'pool_info' | 'services'>('pool_info');
 
   const handleTabChange = (tab: 'pool_info' | 'services') => {
     setTab(tab);
   };
 
-  const selectedTabStyles =
-    'text-gray-800 font-semibold border-m border-gray-800';
+  const selectedTabStyles = 'text-gray-800 font-semibold border-m border-gray-800';
 
   return (
     <div className="Form inline-flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-gray-50 p-6">
@@ -33,32 +33,24 @@ function PoolCard({ pool, services }: Props) {
             onClick={() => handleTabChange('pool_info')}
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
-            <div
-              className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'pool_info' && selectedTabStyles}`}
-            >
+            <div className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'pool_info' && selectedTabStyles}`}>
               Information
             </div>
-            {tab === 'pool_info' && (
-              <div className="h-0.5 self-stretch bg-gray-800" />
-            )}
+            {tab === 'pool_info' && <div className="h-0.5 self-stretch bg-gray-800" />}
           </div>
           <div
             onClick={() => handleTabChange('services')}
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
-            <div
-              className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'services' && selectedTabStyles}`}
-            >
+            <div className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'services' && selectedTabStyles}`}>
               Services
             </div>
-            {tab === 'services' && (
-              <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />
-            )}
+            {tab === 'services' && <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />}
           </div>
         </div>
       </div>
       {tab === 'pool_info' ? (
-        <BasicInformation pool={pool} />
+        <BasicInformation clientId={clientId} pool={pool} />
       ) : (
         <DataTableServices data={services} columns={columns} />
       )}
@@ -66,8 +58,6 @@ function PoolCard({ pool, services }: Props) {
   );
 }
 
-export default function PoolHeader({ pools }: { pools: Pool[] }) {
-  return pools.map((pool) => (
-    <PoolCard key={pool.id} services={pool.services || []} pool={pool} />
-  ));
+export default function PoolHeader({ pools, clientId }: { pools: Pool[]; clientId: string }) {
+  return pools.map((pool) => <PoolCard clientId={clientId} key={pool.id} services={pool.services || []} pool={pool} />);
 }
