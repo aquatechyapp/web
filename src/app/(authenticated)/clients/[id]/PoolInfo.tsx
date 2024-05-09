@@ -39,8 +39,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
     }
   });
 
-  const monthlyPaymentChanged =
-    form.watch('monthlyPayment') !== pool.monthlyPayment;
+  const monthlyPaymentChanged = form.watch('monthlyPayment') !== pool.monthlyPayment;
 
   const handleSubmit = () => {
     if (Object.keys(form.formState.errors).length) return;
@@ -66,51 +65,19 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
       <div className="flex h-5 w-full justify-between text-sm font-medium   text-gray-500">
         Basic information
         <div className="flex gap-4 text-lg">
-          <DialogEditPool
-            monthlyPaymentChanged={
-              form.watch('monthlyPayment') !== pool.monthlyPayment
-            }
-            form={form}
-            handleSubmit={handleSubmit}
-          />
+          <DialogEditPool monthlyPaymentChanged={monthlyPaymentChanged} form={form} handleSubmit={handleSubmit} />
           <MdDeleteOutline className="cursor-pointer" />
         </div>
       </div>
       <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-        <InputField
-          disabled
-          form={form}
-          name="poolAddress"
-          placeholder="Address"
-        />
-        <StateAndCitySelect
-          disabled
-          form={form}
-          cityName="poolCity"
-          stateName="poolState"
-        />
+        <InputField disabled form={form} name="poolAddress" placeholder="Address" />
+        <StateAndCitySelect disabled form={form} cityName="poolCity" stateName="poolState" />
         {/* <InputField form={form} placeholder="Number" /> */}
       </div>
       <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-        <InputField
-          name="monthlyPayment"
-          form={form}
-          placeholder="Monthly payment"
-          type="currencyValue"
-          disabled
-        />
-        <InputField
-          name="lockerCode"
-          form={form}
-          placeholder="Gate code"
-          disabled
-        />
-        <InputField
-          name="enterSide"
-          form={form}
-          placeholder="Enter side"
-          disabled
-        />
+        <InputField name="monthlyPayment" form={form} placeholder="Monthly payment" type="currencyValue" disabled />
+        <InputField name="lockerCode" form={form} placeholder="Gate code" disabled />
+        <InputField name="enterSide" form={form} placeholder="Enter side" disabled />
         <SelectField
           value={form.watch('poolType')}
           name="poolType"
