@@ -225,6 +225,7 @@ export default function Page() {
               disabled={subContractors.length === 0}
               name="assignmentToId"
               placeholder="Technician"
+              label="Technician"
               form={form}
               data={subContractors?.length > 0 ? subContractors : []}
             />
@@ -235,8 +236,8 @@ export default function Page() {
               label="Paid by Service"
               type="currencyValue"
             />
-            <SelectField name="weekday" placeholder="Weekday" form={form} data={Weekdays} />
-            <SelectField name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
+            <SelectField name="weekday" placeholder="Weekday" label="Weekday" form={form} data={Weekdays} />
+            <SelectField name="frequency" placeholder="Frequency" label="Frequency" form={form} data={Frequencies} />
           </div>
           <div className="inline-flex items-start justify-start gap-4">
             <DatePickerField form={form} name="startOn" placeholder="Start on" />

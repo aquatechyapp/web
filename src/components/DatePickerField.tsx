@@ -7,23 +7,19 @@ type Props = {
   form: any;
   name: string;
   placeholder: string;
+  label: string;
   restrictOnlySelectedDay?: boolean;
 };
 
-export default function DatePickerField({
-  form,
-  name,
-  placeholder,
-  restrictOnlySelectedDay = false
-}: Props) {
+export default function DatePickerField({ form, name, placeholder, label, restrictOnlySelectedDay = false }: Props) {
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => {
         return (
-          <FormItem className="w-full flex flex-col">
-            <Label>{placeholder}</Label>
+          <FormItem className="flex w-full flex-col">
+            <Label>{label}</Label>
             <FormControl>
               <DatePicker
                 placeholder={placeholder}
