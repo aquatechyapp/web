@@ -1,12 +1,13 @@
+import { useQuery } from '@tanstack/react-query';
+
+import CalendarField from '@/components/CalendarField';
+import InputField from '@/components/InputField';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
-import { useQuery } from '@tanstack/react-query';
+import { Separator } from '@/components/ui/separator';
 import { Frequencies } from '@/constants';
 import { clientAxios } from '@/lib/clientAxios';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import InputField from '@/components/InputField';
-import CalendarField from '@/components/CalendarField';
-import { Separator } from '@/components/ui/separator';
 import { buildSelectOptions } from '@/utils/formUtils';
 
 export const FormNewAssignment = ({ form }) => {
@@ -61,12 +62,7 @@ export const FormNewAssignment = ({ form }) => {
             )}
           </div>
           <div className="flex gap-4">
-            <SelectField
-              name="frequency"
-              placeholder="Frequency"
-              form={form}
-              data={Frequencies}
-            />
+            <SelectField name="frequency" placeholder="Frequency" label="Frequency" form={form} data={Frequencies} />
             <InputField
               name="paidByService"
               form={form}
@@ -79,11 +75,7 @@ export const FormNewAssignment = ({ form }) => {
           <div className="mt-4 flex gap-8">
             <CalendarField form={form} name="startOn" placeholder="Start on" />
             <Separator orientation="vertical" className="h-72" />
-            <CalendarField
-              form={form}
-              name="endAfter"
-              placeholder="End after"
-            />
+            <CalendarField form={form} name="endAfter" placeholder="End after" />
           </div>
         </div>
       </form>

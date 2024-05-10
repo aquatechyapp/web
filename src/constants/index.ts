@@ -103,6 +103,10 @@ export const routes = [
       addClients: {
         text: 'Add Clients',
         href: '/clients/new'
+      },
+      broadcast: {
+        text: 'Broadcast',
+        href: '/broadcast'
       }
     },
     href: '',
