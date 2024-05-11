@@ -141,10 +141,10 @@ export default function Page() {
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <div className="min-w-fit">
-              <InputField form={form} name="clientAddress" placeholder="Billing address" />
+              <InputField form={form} name="clientAddress" placeholder="Billing address" label="Billing address" />
             </div>
             <StateAndCitySelect form={form} />
-            <InputField form={form} name="clientZip" placeholder="Zip code" type="zip" />
+            <InputField form={form} name="clientZip" label="Zip code" placeholder="Zip code" type="zip" />
           </div>
           <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
             <span className="mr-2">Contact information</span>
@@ -185,9 +185,9 @@ export default function Page() {
           </div>
           {!form.watch('sameBillingAddress') && (
             <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-              <InputField form={form} name="poolAddress" placeholder="Billing address" />
+              <InputField form={form} name="poolAddress" placeholder="Billing address" label="Billing address" />
               <StateAndCitySelect form={form} stateName="poolState" cityName="poolCity" />
-              <InputField form={form} name="poolZip" placeholder="Zip code" type="zip" />
+              <InputField form={form} name="poolZip" label="Zip code" placeholder="Zip code" type="zip" />
             </div>
           )}
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
@@ -224,6 +224,7 @@ export default function Page() {
               disabled={subContractors.length === 0}
               name="assignmentToId"
               placeholder="Technician"
+              label="Technician"
               form={form}
               data={subContractors?.length > 0 ? subContractors : []}
             />
@@ -234,12 +235,12 @@ export default function Page() {
               label="Paid by Service"
               type="currencyValue"
             />
-            <SelectField name="weekday" placeholder="Weekday" form={form} data={Weekdays} />
-            <SelectField name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
+            <SelectField label="Weekday" name="weekday" placeholder="Weekday" form={form} data={Weekdays} />
+            <SelectField label="Frequency" name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
           </div>
           <div className="inline-flex items-start justify-start gap-4">
-            <DatePickerField form={form} name="startOn" placeholder="Start on" />
-            <DatePickerField form={form} name="endAfter" placeholder="End after" />
+            <DatePickerField form={form} name="startOn" label="Start on" placeholder="Start on" />
+            <DatePickerField form={form} name="endAfter" label="End after" placeholder="End after" />
           </div>
           <Button disabled={isPending} type="submit" className="w-full">
             {isPending ? (
