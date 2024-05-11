@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form';
-import { MdDeleteOutline } from 'react-icons/md';
 import * as z from 'zod';
 
 import InputField from '@/components/InputField';
@@ -9,12 +8,14 @@ import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
+import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 import { Pool } from '@/interfaces/Assignments';
 import { poolSchema } from '@/schemas/pool';
 import { filterChangedFormFields } from '@/utils/formUtils';
 
 import { DialogEditPool } from './DialogEditPool';
+import { ModalDeletePool } from './ModalDeletePool';
 
 const additionalFieldsSchema = z.object({
   notes: z.string().nullable(),
@@ -23,8 +24,10 @@ const additionalFieldsSchema = z.object({
 
 const poolAndAdditionalFieldsSchema = poolSchema.and(additionalFieldsSchema);
 
-export default function PoolInfo({ pool }: { pool: Pool }) {
-  const { mutate, isPending } = useUpdatePool();
+export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: string }) {
+  const { mutate, isPending: isPendingUpdatePool } = useUpdatePool();
+  const { mutate: deletePool, isPending: isPendingDeletePool } = useDeletePool(['clients', clientId], pool.id);
+  const isPending = isPendingUpdatePool || isPendingDeletePool;
   const form = useForm<z.infer<typeof poolAndAdditionalFieldsSchema>>({
     defaultValues: {
       poolAddress: pool.address || '',
@@ -39,8 +42,7 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
     }
   });
 
-  const monthlyPaymentChanged =
-    form.watch('monthlyPayment') !== pool.monthlyPayment;
+  const monthlyPaymentChanged = form.watch('monthlyPayment') !== pool.monthlyPayment;
 
   const handleSubmit = () => {
     if (Object.keys(form.formState.errors).length) return;
@@ -66,51 +68,19 @@ export default function PoolInfo({ pool }: { pool: Pool }) {
       <div className="flex h-5 w-full justify-between text-sm font-medium   text-gray-500">
         Basic information
         <div className="flex gap-4 text-lg">
-          <DialogEditPool
-            monthlyPaymentChanged={
-              form.watch('monthlyPayment') !== pool.monthlyPayment
-            }
-            form={form}
-            handleSubmit={handleSubmit}
-          />
-          <MdDeleteOutline className="cursor-pointer" />
+          <DialogEditPool monthlyPaymentChanged={monthlyPaymentChanged} form={form} handleSubmit={handleSubmit} />
+          <ModalDeletePool deletePool={() => deletePool()} />
         </div>
       </div>
       <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-        <InputField
-          disabled
-          form={form}
-          name="poolAddress"
-          placeholder="Address"
-        />
-        <StateAndCitySelect
-          disabled
-          form={form}
-          cityName="poolCity"
-          stateName="poolState"
-        />
+        <InputField disabled form={form} name="poolAddress" placeholder="Address" />
+        <StateAndCitySelect disabled form={form} cityName="poolCity" stateName="poolState" />
         {/* <InputField form={form} placeholder="Number" /> */}
       </div>
       <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-        <InputField
-          name="monthlyPayment"
-          form={form}
-          placeholder="Monthly payment"
-          type="currencyValue"
-          disabled
-        />
-        <InputField
-          name="lockerCode"
-          form={form}
-          placeholder="Gate code"
-          disabled
-        />
-        <InputField
-          name="enterSide"
-          form={form}
-          placeholder="Enter side"
-          disabled
-        />
+        <InputField name="monthlyPayment" form={form} placeholder="Monthly payment" type="currencyValue" disabled />
+        <InputField name="lockerCode" form={form} placeholder="Gate code" disabled />
+        <InputField name="enterSide" form={form} placeholder="Enter side" disabled />
         <SelectField
           value={form.watch('poolType')}
           name="poolType"

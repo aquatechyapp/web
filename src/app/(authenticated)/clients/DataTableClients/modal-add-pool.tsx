@@ -1,21 +1,18 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+
 import InputField from '@/components/InputField';
 import { InputFile } from '@/components/InputFile';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
-import {
-  DialogContent,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
+import { DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
 import { poolSchema } from '@/schemas/pool';
 import { isEmpty } from '@/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 
 const createPoolSchema = poolSchema
   .omit({
@@ -67,7 +64,7 @@ const createPoolSchema = poolSchema
         })
         .trim()
         .min(1, { message: 'Address must be at least 1 character.' }),
-      monthlyPayment: z.string().nullable()
+      monthlyPayment: z.number().nullable()
     })
   );
 
@@ -126,45 +123,17 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
       <DialogContent className="h-[660px] max-w-[1200px]">
         <DialogTitle>Create Pool</DialogTitle>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="grid gap-4"
-          >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="grid gap-4">
             <div className="-mt-2 flex gap-4">
-              <InputField
-                form={form}
-                name="address"
-                label="Address"
-                placeholder="Pool Address"
-              />
-              <StateAndCitySelect
-                form={form}
-                stateName="state"
-                cityName="city"
-              />
-              <InputField
-                form={form}
-                name="zip"
-                label="Zip"
-                placeholder="Pool zip"
-                type="zip"
-              />
+              <InputField form={form} name="address" label="Address" placeholder="Pool Address" />
+              <StateAndCitySelect form={form} stateName="state" cityName="city" />
+              <InputField form={form} name="zip" label="Zip" placeholder="Pool zip" type="zip" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-4">
-                <InputField
-                  form={form}
-                  name="enterSide"
-                  label="Enter side"
-                  placeholder="Enter side"
-                />
-                <InputField
-                  form={form}
-                  name="lockerCode"
-                  label="Locker code"
-                  placeholder="Locker code"
-                />
+                <InputField form={form} name="enterSide" label="Enter side" placeholder="Enter side" />
+                <InputField form={form} name="lockerCode" label="Locker code" placeholder="Locker code" />
               </div>
 
               <div className="grid gap-4">
@@ -175,12 +144,7 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
                   placeholder="Monthly payment"
                   type="currencyValue"
                 />
-                <SelectField
-                  name="poolType"
-                  placeholder="Chemical type"
-                  form={form}
-                  data={PoolTypes}
-                />
+                <SelectField name="poolType" placeholder="Chemical type" form={form} data={PoolTypes} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
