@@ -134,6 +134,7 @@ export default function Page() {
                 </div>
                 {getDifference(assignments.initial, assignments.current) && (
                   <Button
+                    type="button"
                     onClick={() =>
                       updateAssignments(
                         assignments.current.map((assignment) => {
