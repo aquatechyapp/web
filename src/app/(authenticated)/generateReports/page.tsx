@@ -55,70 +55,56 @@ export default function Page() {
 
       // Manipulando a resposta
       // console.log('Resposta do backend:', response.data);
+      // console.log(formData);
       setPdfData(response.data);
     } catch (error) {
       console.error('Erro ao enviar solicitação:', error);
     }
   };
-
-  // const openPdfInNewTab = () => {
-  //   if (typeof pdfData === 'string') {
-  //     const byteCharacters = atob(pdfData);
-  //     const byteNumbers = new Array(byteCharacters.length);
-  //     for (let i = 0; i < byteCharacters.length; i++) {
-  //       byteNumbers[i] = byteCharacters.charCodeAt(i);
-  //     }
-  //     const byteArray = new Uint8Array(byteNumbers);
-  //     const blob = new Blob([byteArray], { type: 'application/pdf' });
-  //     const blobUrl = URL.createObjectURL(blob);
-  //     window.open(blobUrl, '_blank');
-  //   } else {
-  //     console.error('pdfData não está em formato base64 válido:', pdfData);
-  //   }
-  // };
+  // console.log(pdfData);
 
   return (
-    <>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="text-black-500 text-xl font-semibold">Generate service and payment reports</div>
-          <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
-            <div className="h-5 text-sm font-medium   text-gray-500">
-              Select who you want to generate a report from and select an interval.
-            </div>
-            <div className="inline-flex justify-start gap-4 self-stretch">
-              <SelectField
-                disabled={subContractors.length === 0}
-                name="assignmentToId"
-                placeholder="Technician"
-                form={form}
-                data={subContractors?.length > 0 ? subContractors : []}
-              />
-              <div className="inline-flex items-start justify-start gap-4">
-                <DatePickerField form={form} name="fromDate" placeholder="From date:" />
-                <DatePickerField form={form} name="toDate" placeholder="To date:" />
-              </div>
-            </div>
-            <Button className="w-full" type="submit">
-              Generate report
-            </Button>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <div className="text-black-500 text-xl font-semibold">Generate service and payment reports</div>
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
+          <div className="h-5 text-sm font-medium   text-gray-500">
+            Select who you want to generate a report from and select an interval.
           </div>
-        </form>
-
-        {pdfData && (
-          <div>
-            <PDFDownloadLink document={<QuixotePdf pdfData={pdfData} />} fileName="report.pdf">
-              {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
-            </PDFDownloadLink>
+          <div className="inline-flex justify-start gap-4 self-stretch">
+            <SelectField
+              disabled={subContractors.length === 0}
+              name="assignmentToId"
+              placeholder="Technician"
+              form={form}
+              data={subContractors?.length > 0 ? subContractors : []}
+            />
+            <div className="inline-flex items-start justify-start gap-4">
+              <DatePickerField form={form} name="fromDate" placeholder="From date:" />
+              <DatePickerField form={form} name="toDate" placeholder="To date:" />
+            </div>
           </div>
-        )}
-      </Form>
+          <Button className="w-full" type="submit">
+            Generate report
+          </Button>
+        </div>
+      </form>
 
       {pdfData && (
-        <PDFViewer className="flex w-full">
-          <QuixotePdf pdfData={pdfData} />
-        </PDFViewer>
+        <div>
+          <PDFDownloadLink document={<QuixotePdf pdfData={pdfData} />} fileName="report.pdf">
+            {({ blob, url, loading, error }) =>
+              loading ? (
+                'Loading document...'
+              ) : (
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                  Open PDF
+                </a>
+              )
+            }
+          </PDFDownloadLink>
+        </div>
       )}
-    </>
+    </Form>
   );
 }

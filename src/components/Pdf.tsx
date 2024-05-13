@@ -1,36 +1,71 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { format } from 'date-fns';
 import React from 'react';
 
 export const QuixotePdf = ({ pdfData }: any) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
-        <Text style={styles.title}>Service Report</Text>
-        <Text style={styles.subtitle}>Technician: {pdfData.Technician}</Text>
-        <Text style={styles.subtitle}>From: {pdfData.From}</Text>
-        <Text style={styles.subtitle}>To: {pdfData.To}</Text>
-        <Text style={styles.subtitle}>Total Services Made: {pdfData.TotalServicesMade}</Text>
-        <View style={styles.serviceList}>
-          {pdfData &&
-            pdfData.ServicesByWeekday &&
-            pdfData.ServicesByWeekday.map((services, index) => (
-              <View key={index} style={styles.serviceDay}>
-                <Text style={styles.dayTitle}>{getWeekdayName(index)}</Text>
+      <View style={styles.containerTitle}>
+        <Image src="../../public/icon.png" style={styles.logo} />
+        <Text style={styles.title}>REPORT OF SERVICES AND PAYMENTS</Text>
+      </View>
+
+      <View style={styles.container}>
+        <View style={styles.subsContainer}>
+          <Text style={styles.subtitle}>
+            Technician: <Text>{pdfData.Technician}</Text>
+          </Text>
+          <Text style={styles.subtitle}>From: {pdfData.From}</Text>
+          <Text style={styles.subtitle}>To: {pdfData.To}</Text>
+        </View>
+
+        <View style={styles.subsContainer}>
+          <Text style={styles.subtitle}>Total services made</Text>
+          <Text style={styles.subtitle}>{pdfData.TotalServicesMade}</Text>
+          <Text style={styles.subtitle}>Total to be paid</Text>
+          <Text style={styles.subtitle}>US$0.00</Text>
+        </View>
+      </View>
+
+      {/* Seção direita com informações sobre os serviços */}
+      <View style={styles.rightSection}>
+        <Text style={styles.rightTitle}>Services Information</Text>
+        {/* Mapeie os dados e crie uma tabela para cada dia da semana */}
+        {pdfData &&
+          pdfData.ServicesByWeekday &&
+          pdfData.ServicesByWeekday.map((services, index) => (
+            <View key={index} style={styles.dayContainer}>
+              <Text style={styles.dayTitle}>{getWeekdayName(index)}</Text>
+              <Text style={styles.dayTitle}>({services.length})</Text>
+              {/* Adicione a tabela aqui */}
+              <View style={styles.table}>
+                {/* Cabeçalho da tabela */}
+                <View style={styles.row}>
+                  <Text style={styles.headerCell}>Pool</Text>
+                  <Text style={styles.headerCell}>Date</Text>
+                  <Text style={styles.headerCell}>Chemicals Spent</Text>
+                  <Text style={styles.headerCell}>Paid</Text>
+                </View>
+                {/* Preencha as células da tabela com os dados do serviço */}
                 {services && services.length > 0 ? (
-                  services.map((service) => (
-                    <View key={service.id} style={styles.serviceItem}>
-                      <Text>Service ID: {service.id}</Text>
-                      <Text>Done by: {service.doneByUser.name}</Text>
-                      <Text>Acid Spent: {service.acidSpent}</Text>
-                      <Text>Alkalinity: {service.alkalinity}</Text>
+                  services.map((service, serviceIndex) => (
+                    <View key={serviceIndex} style={styles.row}>
+                      <Text style={styles.cell}>{service.pool.name}</Text>
+                      <Text style={styles.cell}>
+                        {format(new Date(service.createdAt), "iiii, MMMM do 'at' h:mm aaaa")}
+                      </Text>
+                      <Text style={styles.cell}>{service.chemicalsSpent}</Text>
+                      <Text style={styles.cell}>US$0.00</Text>
                     </View>
                   ))
                 ) : (
-                  <Text style={styles.noServices}>No services made</Text>
+                  <View style={styles.row}>
+                    <Text style={styles.cell}>No services made</Text>
+                  </View>
                 )}
               </View>
-            ))}
-        </View>
+            </View>
+          ))}
       </View>
     </Page>
   </Document>
@@ -45,42 +80,75 @@ const getWeekdayName = (index) => {
 // Estilos para o PDF
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     backgroundColor: '#ffffff',
-    padding: 20,
-    width: '100%',
-    height: '100%'
+    padding: 20
   },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1
+  containerTitle: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  container: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  leftSection: {
+    width: '100%'
+  },
+  rightSection: {
+    width: '100%'
+  },
+  logo: {
+    width: 100,
+    height: 100
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10
+    fontSize: 20,
+    fontFamily: 'Helvetica-Bold',
+    marginVertical: 10,
+    color: 'black'
   },
   subtitle: {
     fontSize: 16,
-    marginBottom: 5
+    marginBottom: 5,
+    fontFamily: 'Helvetica-Bold'
   },
-  serviceList: {
+  rightTitle: {
+    fontSize: 15,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 10
+  },
+  dayContainer: {
     marginTop: 20
   },
-  serviceDay: {
-    marginBottom: 15
-  },
   dayTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5
+    fontSize: 15,
+    fontFamily: 'Helvetica-Bold'
   },
-  noServices: {
-    fontStyle: 'italic'
+  table: {
+    width: '100%',
+    borderTopWidth: 2,
+    borderTopColor: '#4040F2'
   },
-  serviceItem: {
-    marginLeft: 10,
-    marginTop: 5
+  headerCell: {
+    color: 'black',
+    padding: 5,
+    fontFamily: 'Helvetica-Bold',
+    flex: 1,
+    fontSize: 15
+  },
+  row: {
+    flexDirection: 'row',
+    width: '100%'
+  },
+  cell: {
+    padding: 5,
+    flex: 1,
+    fontSize: 13,
+    fontFamily: 'Helvetica-Bold'
   }
 });
