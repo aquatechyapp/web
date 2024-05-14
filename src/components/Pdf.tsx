@@ -1,171 +1,236 @@
-import { Document, Font, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { format } from 'date-fns';
-import React from 'react';
+import jsPDF from 'jspdf';
+import React, { useRef } from 'react';
+import generatePDF from 'react-to-pdf';
 
-export const QuixotePdf = ({ pdfData }: any) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.containerTitle}>
-        <Image src="../../public/logotransparente.jpg" style={styles.logo} />
-        <Text style={styles.title}>REPORT OF SERVICES AND PAYMENTS</Text>
-      </View>
+export const QuixotePdf = ({ pdfData }) => {
+  const targetRef = useRef<HTMLDivElement>(null); // Specify the correct type for targetRef
 
-      <View style={styles.container}>
-        <View style={styles.subContainerStart}>
-          <Text style={styles.subtitle}>
-            Technician: <Text style={{ fontSize: 12 }}>{pdfData.Technician}</Text>
-          </Text>
-          <Text style={styles.subtitle}>
-            From: <Text style={{ fontSize: 12 }}>{pdfData.From}</Text>
-          </Text>
-          <Text style={styles.subtitle}>
-            To: <Text style={{ fontSize: 12 }}>{pdfData.To}</Text>
-          </Text>
-        </View>
+  // const handleClick = async () => {
+  //   try {
+  //     // Gerar o PDF
+  //     const pdf = new jsPDF();
+  //     await generatePDF(targetRef.current, { pdf });
 
-        <View style={styles.subsContainerEnd}>
-          <Text style={{ fontSize: 12 }}>Total services made</Text>
-          <Text style={{ fontSize: 20 }}>{pdfData.TotalServicesMade} services</Text>
-          <Text style={{ fontSize: 12 }}>Total to be paid</Text>
-          <Text style={{ fontSize: 20 }}>US$0.00</Text>
-        </View>
-      </View>
+  //     // Converter o jsPDF para Blob
+  //     const blob = pdf.output('blob');
 
-      {/* Seção direita com informações sobre os serviços */}
-      <View style={styles.rightSection}>
+  //     // Verificar se o blob foi gerado corretamente
+  //     if (!blob) {
+  //       console.error('Erro: Blob não foi gerado.');
+  //       return;
+  //     }
+
+  //     // Converter o blob para uma URL temporária
+  //     const url = window.URL.createObjectURL(blob);
+
+  //     // Criar um link de download
+  //     const a = document.createElement('a');
+  //     a.href = url;
+  //     a.download = 'page.pdf';
+
+  //     // Simular um clique no link para iniciar o download
+  //     a.click();
+
+  //     // Liberar a URL temporária
+  //     window.URL.revokeObjectURL(url);
+  //   } catch (error) {
+  //     console.error('Erro ao gerar o PDF:', error);
+  //   }
+  // };
+
+  // Função para obter o nome do dia da semana
+
+  const handleClick = () => {
+    generatePDF(targetRef, { filename: 'page.pdf' });
+  };
+
+  const getWeekdayName = (index: number) => {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return daysOfWeek[index];
+  };
+
+  const calculateChemicalMetrics = (chemicalSpentArray: number[]) => {
+    const total = chemicalSpentArray.reduce((acc, curr) => acc + curr, 0);
+    const mean = total / chemicalSpentArray.length;
+    const sortedArray = [...chemicalSpentArray].sort((a, b) => a - b);
+    const median =
+      sortedArray.length % 2 === 0
+        ? (sortedArray[sortedArray.length / 2 - 1] + sortedArray[sortedArray.length / 2]) / 2
+        : sortedArray[Math.floor(sortedArray.length / 2)];
+    return { total, mean, median };
+  };
+
+  const calculateChemicalMetricsForDay = (services: any[]) => {
+    if (services.length === 0) {
+      return {
+        chlorineMetrics: { total: 0, mean: 0, median: 0 },
+        tabletMetrics: { total: 0, mean: 0, median: 0 },
+        phosphateMetrics: { total: 0, mean: 0, median: 0 },
+        cyanAcidMetrics: { total: 0, mean: 0, median: 0 }
+      };
+    }
+
+    const flattenAndReplaceNaN = (arr: any[]) => arr.flatMap((val) => (typeof val === 'number' ? val : 0));
+
+    const chlorineSpentArray = flattenAndReplaceNaN(services.map((day) => day.map((service) => service.chlorineSpent)));
+    const tabletSpentArray = flattenAndReplaceNaN(services.map((day) => day.map((service) => service.tabletSpent)));
+    const phosphateSpentArray = flattenAndReplaceNaN(
+      services.map((day) => day.map((service) => service.phosphateSpent))
+    );
+    const cyanAcidArray = flattenAndReplaceNaN(services.map((day) => day.map((service) => service.cyanAcid)));
+
+    const chlorineMetrics = calculateChemicalMetrics(chlorineSpentArray);
+    const tabletMetrics = calculateChemicalMetrics(tabletSpentArray);
+    const phosphateMetrics = calculateChemicalMetrics(phosphateSpentArray);
+    const cyanAcidMetrics = calculateChemicalMetrics(cyanAcidArray);
+
+    return { chlorineMetrics, tabletMetrics, phosphateMetrics, cyanAcidMetrics };
+  };
+
+  return (
+    <div className="p-8">
+      <button onClick={handleClick} className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+        Download PDF
+      </button>
+      <div ref={targetRef} className="mt-8 border p-6">
+        {/* Conteúdo a ser incluído no PDF */}
+        <div className="flex items-center justify-between">
+          <img src="https://aquatechybeta.s3.amazonaws.com/signinlogo.png" className="mr-4 h-12 w-12" alt="Logo" />
+          <h1 className="text-2xl font-bold">REPORT OF SERVICES AND PAYMENTS</h1>
+          <span />
+        </div>
+
+        <div className="mt-8 flex items-center justify-between gap-8">
+          {/* Use grid for two-column layout */}
+          {/* Left Section */}
+          <div className="flex-inline text-center">
+            <div className="flex items-center">
+              <p className="text-xl font-bold">From company:</p>
+              <p className="ml-1 text-center  text-sm">Aquatechy Corp.</p>
+            </div>
+            <div className="flex items-center">
+              <p className="text-xl font-bold">Technician:</p>
+              <p className="ml-1 text-center text-sm">{pdfData.Technician}</p>
+            </div>
+            <div className="flex items-center">
+              <p className="text-xl font-bold">From:</p>
+              <p className="ml-1 text-center text-sm">{pdfData.From}</p>
+            </div>
+            <div className="flex items-center">
+              <p className="text-xl font-bold">To:</p>
+              <p className="ml-1 text-center text-sm">{pdfData.To}</p>
+            </div>
+          </div>
+          {/* Right Section */}
+          <div className="flex-inline text-right">
+            <div>
+              <p className="text-lg font-semibold ">Total services made</p>
+              <p className="ml-1 text-4xl font-bold">{pdfData.TotalServicesMade} services</p>
+            </div>
+            <div>
+              <p className="text-lg font-semibold">Total to be paid</p>
+              <p className="ml-1 text-3xl font-bold">US${pdfData.TotalToBePaid}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Services By Weekday Section */}
         {pdfData &&
           pdfData.ServicesByWeekday &&
           pdfData.ServicesByWeekday.map((services, index) => (
-            <View key={index} style={styles.dayContainer}>
-              {services && services.length > 0 ? (
-                <View>
-                  <View style={styles.row}>
-                    <Text style={styles.dayTitle}>{getWeekdayName(index)}</Text>
-                    <Text style={{ fontSize: 12, marginRight: 5 }}>({services.length} services)</Text>
-                  </View>
-                  <View style={styles.table}>
-                    <View style={styles.row}>
-                      <Text style={[styles.headerCell, { flex: 2, textAlign: 'flex-start' }]}>Pool</Text>
-                      <Text style={[styles.headerCell, { flex: 2, textAlign: 'center' }]}>Date</Text>
-                      <Text style={[styles.headerCell, { flex: 3, textAlign: 'center' }]}>Chemicals Spent</Text>
-                      <Text style={[styles.headerCell, { flex: 1, textAlign: 'right' }]}>Paid</Text>
-                    </View>
-
-                    {services.map((service, serviceIndex) => (
-                      <View key={serviceIndex} style={styles.row}>
-                        <Text style={[styles.cell, { flex: 2, textAlign: 'flex-start' }]}>{service.pool.name}</Text>
-                        <Text style={[styles.cell, { flex: 2, textAlign: 'center' }]}>
-                          {format(new Date(service.createdAt), "iiii, MMMM do 'at' h:mm aaaa")}
-                        </Text>
-                        <Text style={[styles.cell, { flex: 3, textAlign: 'center' }]}>
-                          {service.acidSpent} - {service.chlorineSpent} - {service.saltSpent} - {'\n'}
-                          {service.tabletSpent} - {service.shockSpent} - {service.phosphateSpent}
-                        </Text>
-                        <Text style={[styles.cell, { flex: 1, textAlign: 'right' }]}>US$0.00</Text>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-              ) : null}
-            </View>
+            <div key={index} className="mt-8">
+              {services && services.length > 0 && (
+                <div>
+                  <div className="flex justify-start">
+                    <h2 className="text-xl font-semibold">{getWeekdayName(index)}</h2>
+                    <p className="ml-1 ">({services.length} services)</p>
+                  </div>
+                  <table className="mt-4 w-full border-t-2 border-[#5c5cf4]">
+                    <thead>
+                      <tr>
+                        <th className="py-2  text-left text-xl">Pool</th>
+                        <th className="px-4  py-2 text-xl">Date</th>
+                        <th className="px-4  py-2 text-xl">Chemicals Spent</th>
+                        <th className="py-2  text-right text-xl">Paid</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {services.map((service, serviceIndex) => (
+                        <tr key={serviceIndex} className="mt-4 w-full border-b">
+                          <td className=" py-2 text-left">{service.pool.name}</td>
+                          <td className=" px-4 py-2 text-center">
+                            {format(new Date(service.createdAt), "EEEE, MMMM do 'at' h:mm aaaa")}
+                          </td>
+                          <td className=" px-4 py-2 text-center">
+                            {services.chlorineSpent} - {services.phosphateSpent} - {services.saltSpent} -{'\n'}
+                            {services.shockSpent} - {services.tabletSpent} - {services.acidSpent}
+                          </td>
+                          {/* so tirar os zeros */}
+                          <td className=" py-2 text-right">US${service.paid ? service.paid : '0.00'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           ))}
-      </View>
-    </Page>
-  </Document>
-);
+        <div className="mt-4 w-full border-b-2 border-slate-500 py-1 text-start">
+          <h2 className="text-xl font-bold">Chemicals Spent</h2>
+        </div>
 
-// Font.register({
-//   family: 'GeneralSans',
-//   src: '/public/fonts/GeneralSans-Bold.woff2'
-// });
+        <div className="flex-inline mt-6">
+          <div className="flex items-center">
+            <p className="text-xl font-bold">Chlorine Liquid:</p>
+            <p className="ml-1 text-lg">
+              {
+                calculateChemicalMetricsForDay(
+                  pdfData.ServicesByWeekday.map((day) => day.map((service) => service.chlorineSpent))
+                ).chlorineMetrics.total
+              }{' '}
+              gallons.
+            </p>
+          </div>
+          <div className="flex items-center">
+            <p className="text-xl font-bold">Tablets:</p>
+            <p className="ml-1 text-lg">
+              {
+                calculateChemicalMetricsForDay(
+                  pdfData.ServicesByWeekday.map((day) => day.map((service) => service.tabletSpent))
+                ).tabletMetrics.total
+              }{' '}
+              tablets.
+            </p>
+          </div>
+          <div className="flex items-center">
+            <p className="text-xl font-bold">Phosphate Remover:</p>
+            <p className="ml-1 text-lg">
+              {
+                calculateChemicalMetricsForDay(
+                  pdfData.ServicesByWeekday.map((day) => day.map((service) => service.phosphateSpent))
+                ).phosphateMetrics.total
+              }{' '}
+              units.
+            </p>
+          </div>
+          <div className="flex items-center">
+            <p className="text-xl font-bold">Muriatic Acid:</p>
+            <p className="ml-1 text-lg">
+              {
+                calculateChemicalMetricsForDay(
+                  pdfData.ServicesByWeekday.map((day) => day.map((service) => service.cyanAcid))
+                ).cyanAcidMetrics.total
+              }{' '}
+              units.
+            </p>
+          </div>
+        </div>
 
-// Função para obter o nome do dia da semana
-const getWeekdayName = (index) => {
-  const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  return weekdays[index];
+        <div className="mt-8 flex justify-center">
+          <img src="https://aquatechybeta.s3.amazonaws.com/signinlogo.png" className="h-12" alt="Aquatechy Logo" />
+        </div>
+      </div>
+    </div>
+  );
 };
-
-// Estilos para o PDF
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: 'column',
-    backgroundColor: '#ffffff',
-    padding: 10
-  },
-  containerTitle: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  subContainerStart: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'flex-start'
-  },
-  subsContainerEnd: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'flex-end'
-  },
-  container: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  rightSection: {
-    width: '100%'
-  },
-  logo: {
-    width: 100,
-    height: 100
-  },
-  title: {
-    fontSize: 20,
-    color: 'black'
-    // fontFamily: 'GeneralSans-Bold'
-  },
-  subtitle: {
-    fontSize: 15,
-    marginBottom: 5
-  },
-  rightTitle: {
-    fontSize: 15,
-    marginBottom: 10
-  },
-  dayContainer: {
-    marginTop: 20
-  },
-  dayTitle: {
-    fontSize: 15,
-    color: 'black'
-  },
-  table: {
-    width: '100%',
-    borderTopWidth: 2,
-    borderTopColor: '#4040F2',
-    paddingVertical: 2
-  },
-  headerCell: {
-    width: '100%',
-    color: 'black',
-    alignItems: 'center',
-    fontSize: 15,
-    marginVertical: 5,
-    flex: 1
-  },
-  row: {
-    flexDirection: 'row',
-    width: '100%'
-  },
-  cell: {
-    width: '100%',
-    fontSize: 11,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'gray',
-    paddingVertical: 5,
-    flex: 1
-  }
-});

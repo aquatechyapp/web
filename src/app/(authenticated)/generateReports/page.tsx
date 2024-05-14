@@ -90,7 +90,8 @@ export default function Page() {
         </div>
       </form>
 
-      {pdfData && (
+      {pdfData && <QuixotePdf pdfData={pdfData} />}
+      {/* {pdfData && (
         <Button>
           <PDFDownloadLink document={<QuixotePdf pdfData={pdfData} />} fileName="report.pdf">
             {({ blob, url, loading, error }) =>
@@ -104,7 +105,7 @@ export default function Page() {
             }
           </PDFDownloadLink>
         </Button>
-      )}
+      )} */}
     </Form>
   );
 }
