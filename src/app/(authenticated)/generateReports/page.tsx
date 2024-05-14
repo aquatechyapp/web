@@ -61,7 +61,7 @@ export default function Page() {
       console.error('Erro ao enviar solicitação:', error);
     }
   };
-  // console.log(pdfData);
+  console.log(pdfData);
 
   return (
     <Form {...form}>
@@ -91,7 +91,7 @@ export default function Page() {
       </form>
 
       {pdfData && (
-        <div>
+        <Button>
           <PDFDownloadLink document={<QuixotePdf pdfData={pdfData} />} fileName="report.pdf">
             {({ blob, url, loading, error }) =>
               loading ? (
@@ -103,7 +103,7 @@ export default function Page() {
               )
             }
           </PDFDownloadLink>
-        </div>
+        </Button>
       )}
     </Form>
   );
