@@ -45,22 +45,23 @@ export const QuixotePdf = ({ pdfData }: any) => (
                   </View>
                   <View style={styles.table}>
                     <View style={styles.row}>
-                      <Text style={styles.headerCell}>Pool</Text>
-                      <Text style={styles.headerCell}>Date</Text>
-                      <Text style={styles.headerCell}>Chemicals Spent</Text>
-                      <Text style={styles.headerCell}>Paid</Text>
+                      <Text style={[styles.headerCell, { flex: 2, textAlign: 'flex-start' }]}>Pool</Text>
+                      <Text style={[styles.headerCell, { flex: 2, textAlign: 'center' }]}>Date</Text>
+                      <Text style={[styles.headerCell, { flex: 3, textAlign: 'center' }]}>Chemicals Spent</Text>
+                      <Text style={[styles.headerCell, { flex: 1, textAlign: 'right' }]}>Paid</Text>
                     </View>
+
                     {services.map((service, serviceIndex) => (
                       <View key={serviceIndex} style={styles.row}>
-                        <Text style={[styles.cell, { alignItems: 'flex-start' }]}>{service.pool.name}</Text>
-                        <Text style={styles.cell}>
+                        <Text style={[styles.cell, { flex: 2, textAlign: 'flex-start' }]}>{service.pool.name}</Text>
+                        <Text style={[styles.cell, { flex: 2, textAlign: 'center' }]}>
                           {format(new Date(service.createdAt), "iiii, MMMM do 'at' h:mm aaaa")}
                         </Text>
-                        <Text style={styles.cell}>
-                          {service.acidSpent} - {service.chlorineSpent} - {service.saltSpent}- {service.tabletSpent} -{' '}
-                          {service.shockSpent} - {service.phosphateSpent}
+                        <Text style={[styles.cell, { flex: 3, textAlign: 'center' }]}>
+                          {service.acidSpent} - {service.chlorineSpent} - {service.saltSpent} - {'\n'}
+                          {service.tabletSpent} - {service.shockSpent} - {service.phosphateSpent}
                         </Text>
-                        <Text style={[styles.cell, { alignItems: 'flex-end' }]}>US$0.00</Text>
+                        <Text style={[styles.cell, { flex: 1, textAlign: 'right' }]}>US$0.00</Text>
                       </View>
                     ))}
                   </View>
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    padding: 20
+    padding: 10
   },
   containerTitle: {
     width: '100%',
@@ -122,7 +123,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    marginVertical: 10,
     color: 'black'
     // fontFamily: 'GeneralSans-Bold'
   },
@@ -144,14 +144,16 @@ const styles = StyleSheet.create({
   table: {
     width: '100%',
     borderTopWidth: 2,
-    borderTopColor: '#4040F2'
+    borderTopColor: '#4040F2',
+    paddingVertical: 2
   },
   headerCell: {
     width: '100%',
     color: 'black',
-    flex: 1,
+    alignItems: 'center',
     fontSize: 15,
-    marginVertical: 5
+    marginVertical: 5,
+    flex: 1
   },
   row: {
     flexDirection: 'row',
@@ -159,11 +161,11 @@ const styles = StyleSheet.create({
   },
   cell: {
     width: '100%',
-    flex: 1,
-    fontSize: 12,
+    fontSize: 11,
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: 'gray',
-    marginVertical: 5
+    paddingVertical: 5,
+    flex: 1
   }
 });
