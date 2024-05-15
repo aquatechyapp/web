@@ -1,14 +1,14 @@
 'use client';
 
-import * as React from 'react';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
+import * as React from 'react';
 
+import { useWeekdayContext } from '../../context/weekday';
 import { cn } from '../../lib/utils';
 import { Button } from './button';
 import { Calendar } from './calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
-import { useWeekdayContext } from '../../context/weekday';
 
 type Props = {
   placeholder: string;
@@ -16,11 +16,7 @@ type Props = {
   restrictOnlySelectedDay?: boolean;
 };
 
-export function DatePicker({
-  placeholder,
-  onChange,
-  restrictOnlySelectedDay = false
-}: Props) {
+export function DatePicker({ placeholder, onChange, restrictOnlySelectedDay = false }: Props) {
   const [date, setDate] = React.useState<Date>();
   const { selectedWeekday } = useWeekdayContext();
 
@@ -54,9 +50,9 @@ export function DatePicker({
   disabledWeekdays.splice(selectedWeekdayIndex, 1);
 
   React.useEffect(() => {
-    if (date) {
-      onChange(date);
-    }
+    // if (date) {
+    onChange(date);
+    // }
   }, [date]);
 
   return (
@@ -64,10 +60,7 @@ export function DatePicker({
       <PopoverTrigger asChild>
         <Button
           variant={'outline'}
-          className={cn(
-            'w-[240px] justify-start text-left font-normal',
-            !date && 'text-muted-foreground'
-          )}
+          className={cn('w-[240px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? format(date, 'PPP') : <span>{placeholder}</span>}
