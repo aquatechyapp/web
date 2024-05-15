@@ -123,10 +123,16 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
   // Obtendo uma lista de cidades únicas dos dados dos clientes
   const cities = Array.from(new Set(sortedData.map((client) => client.city)));
   // Definindo opções para o SelectField da cidade
-  const citySelectOptions = cities.map((city) => ({ value: city, name: city }));
+  const citySelectOptions = [
+    { value: null, name: 'All cities' },
+    ...cities.map((city) => ({ value: city, name: city }))
+  ];
 
   const types = Array.from(new Set(sortedData.map((client) => client.type)));
-  const typesSelectOptions = types.map((type) => ({ value: type, name: type }));
+  const typesSelectOptions = [
+    { value: null, name: 'All types' },
+    ...types.map((type) => ({ value: type, name: type }))
+  ];
 
   return (
     <div className="rounded-md border">

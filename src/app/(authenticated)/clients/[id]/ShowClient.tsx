@@ -179,7 +179,11 @@ export default function ShowClient({ client }: Props) {
                 {tab === 'pools' && <div className="h-0.5 self-stretch bg-gray-800" />}
               </div>
             </div>
-            {tab === 'client_info' ? <ClientInfo client={client} /> : <PoolHeader pools={client.pools} />}
+            {tab === 'client_info' ? (
+              <ClientInfo client={client} />
+            ) : (
+              <PoolHeader pools={client.pools} clientId={client.id} />
+            )}
           </div>
         </div>
       </div>

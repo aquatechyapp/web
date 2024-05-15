@@ -7,6 +7,10 @@ import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
 import { Frequencies } from '@/constants';
+<<<<<<< HEAD
+=======
+import { Client } from '@/interfaces/Client';
+>>>>>>> 94744e783b5c2167c9e332c32c64aa9e17967ea8
 import { clientAxios } from '@/lib/clientAxios';
 import { buildSelectOptions } from '@/utils/formUtils';
 
@@ -32,9 +36,9 @@ export const FormNewAssignment = ({ form }) => {
           <div className="flex gap-4 ">
             <SelectField
               data={buildSelectOptions(
-                data.filter((client) => client.pools.length > 0),
+                data.filter((client: Client) => client.pools.length > 0),
                 {
-                  id: 'id',
+                  key: 'id',
                   name: 'name',
                   value: 'id'
                 }
@@ -48,9 +52,9 @@ export const FormNewAssignment = ({ form }) => {
               <SelectField
                 data={buildSelectOptions(
                   // Procura a piscina somente quando seleciona o cliente
-                  data?.find((c) => c.id === clientId)?.pools,
+                  data?.find((c: Client) => c.id === clientId)?.pools,
                   {
-                    id: 'id',
+                    key: 'id',
                     name: 'name',
                     value: 'id'
                   }
@@ -62,7 +66,11 @@ export const FormNewAssignment = ({ form }) => {
             )}
           </div>
           <div className="flex gap-4">
+<<<<<<< HEAD
             <SelectField name="frequency" placeholder="Frequency" label="Frequency" form={form} data={Frequencies} />
+=======
+            <SelectField name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
+>>>>>>> 94744e783b5c2167c9e332c32c64aa9e17967ea8
             <InputField
               name="paidByService"
               form={form}

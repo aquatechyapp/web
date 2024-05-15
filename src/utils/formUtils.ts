@@ -1,11 +1,17 @@
 import { FieldValues } from 'react-hook-form';
 
-export function buildSelectOptions(data: any[], { id, name, value }: { id: string; name: string; value: string }) {
-  return data.map((item) => ({
-    id: item[id],
-    name: item[name],
-    value: item[value]
-  }));
+export function buildSelectOptions(data: any[], { key, name, value }: { key: string; name: string; value: string }) {
+  const options = data.map((item) => {
+    return {
+      key: item[key],
+      name: item[name],
+      value: item[value]
+    };
+  });
+  // filter out duplicates
+  return options.filter((item, index, currentArr) => {
+    return index === currentArr.findIndex((t) => t.key === item.key);
+  });
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,6 +19,9 @@ export function createFormData(data: Record<string, any>) {
   const formData = new FormData();
   for (const key in data) {
     switch (key) {
+      case 'createdBy':
+        formData.append(key, JSON.stringify(data[key]));
+        break;
       case 'firstName' || 'lastName':
         formData.append('clientName', `${data.firstName} ${data.lastName}`);
         break;

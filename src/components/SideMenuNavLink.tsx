@@ -15,9 +15,10 @@ type Props = {
     };
   };
   isActive: boolean;
+  setOpen?: (open: boolean) => void;
 };
 
-export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
+export default function SideMenuNavLink({ Icon, text, href, submenu, setOpen }: Props) {
   let pathname = usePathname();
   pathname = pathname.split('/')[1];
 
@@ -26,6 +27,10 @@ export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
   const isActiveSubMenu = submenu ? Object.values(submenu).some((item) => item.href === '/' + pathname) : false;
 
   const handleClick = (href: string) => {
+    // fechar menu mobile lateral
+    if (setOpen) {
+      setOpen(false);
+    }
     window.location.href = href;
   };
 
@@ -38,12 +43,12 @@ export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
     >
       <div className="flex w-full items-center">
         {!submenu ? (
-          <>
+          <div className="flex w-full items-center" onClick={() => setOpen && setOpen(false)}>
             <div className="mr-4 py-4">
-              <Icon height={24} width={24} className={`${isActive && 'text-blue-500'}`} />
+              <Icon height={24} width={24} size={22} className={`${isActive && 'text-blue-500'}`} />
             </div>
             <div className="w-full text-base font-medium leading-none text-slate-50">{text}</div>
-          </>
+          </div>
         ) : (
           <Accordion collapsible type="single" className="w-[100%]">
             <AccordionItem value="item-1" style={{ borderBottom: 'none' }}>

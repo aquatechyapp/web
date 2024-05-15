@@ -1,6 +1,8 @@
 'use client';
 
-import { filterChangedFormFields } from '@/utils/formUtils';
+import { useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
@@ -9,8 +11,7 @@ import { Form } from '@/components/ui/form';
 import { useUserContext } from '@/context/user';
 import { useUpdateUser } from '@/hooks/react-query/user/updateUser';
 import { isEmpty } from '@/utils';
-import { useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { filterChangedFormFields } from '@/utils/formUtils';
 
 export default function Page() {
   const { user } = useUserContext();
@@ -30,26 +31,17 @@ export default function Page() {
     }
   });
 
-  const phoneIsDirty = useMemo(
-    () => form.watch('phone') !== user?.phone,
-    [form.watch('phone'), user?.phone]
-  );
+  const phoneIsDirty = useMemo(() => form.watch('phone') !== user?.phone, [form.watch('phone'), user?.phone]);
 
   const isDirty = useMemo(
-    () =>
-      !isEmpty(
-        filterChangedFormFields(form.getValues(), form.formState.dirtyFields)
-      ) || phoneIsDirty,
+    () => !isEmpty(filterChangedFormFields(form.getValues(), form.formState.dirtyFields)) || phoneIsDirty,
     [form.getValues()]
   );
 
   if (isPending) return <LoadingSpinner />;
 
   function handleSubmit(data) {
-    let dirtyFields = filterChangedFormFields(
-      form.getValues(),
-      form.formState.dirtyFields
-    );
+    let dirtyFields = filterChangedFormFields(form.getValues(), form.formState.dirtyFields);
     if (phoneIsDirty) {
       dirtyFields = {
         ...dirtyFields,
@@ -62,13 +54,9 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="mt-6 text-xl font-semibold leading-[30px]  text-gray-800">
-          My account
-        </div>
+        <div className="mt-6 text-xl font-semibold leading-[30px]  text-gray-800">My account</div>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
-          <div className="h-5  text-sm font-medium   text-gray-500">
-            Basic Information
-          </div>
+          <div className="h-5  text-sm font-medium   text-gray-500">Basic Information</div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <InputField form={form} name="firstName" placeholder="First name" />
             <InputField form={form} name="lastName" placeholder="Last name" />
@@ -76,19 +64,12 @@ export default function Page() {
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <InputField form={form} name={'address'} placeholder="Address" />
-            <StateAndCitySelect form={form} cityName="city" stateName="state" />
+            <StateAndCitySelect form={form} cityName="City" stateName="State" />
             <InputField form={form} name={'zip'} placeholder="Zip code" />
           </div>
-          <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">
-            Contact information
-          </div>
+          <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">Contact information</div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
-            <InputField
-              form={form}
-              name="phone"
-              placeholder="Mobile phone"
-              type="phone"
-            />
+            <InputField form={form} name="phone" placeholder="Mobile phone" type="phone" />
             <InputField form={form} name="email" placeholder="E-mail" />
           </div>
           {isDirty && (
