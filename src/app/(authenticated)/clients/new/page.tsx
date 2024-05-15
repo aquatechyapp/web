@@ -158,7 +158,7 @@ export default function Page() {
             <div className="w-[50%]">
               <InputField
                 label="Notes about client (customer won't see that)"
-                name="Notes"
+                name="clientNotes"
                 form={form}
                 placeholder="Type clients notes here..."
                 type="textArea"
