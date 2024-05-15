@@ -30,7 +30,6 @@ type Props = {
 
 export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment, isEntireRoute = false }: Props) {
   const { selectedWeekday } = useWeekdayContext();
-
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
     resolver: zodResolver(transferAssignmentsSchema),
     defaultValues: {
@@ -54,7 +53,7 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
     if (userSelectedAsTechnician) {
       form.setValue('paidByService', 0);
     } else {
-      form.setValue('paidByService', assignment?.paidByService || undefined);
+      form.setValue('paidByService', assignment.paidByService);
     }
   }, [form.watch('assignmentToId'), assignmentToId]);
 
