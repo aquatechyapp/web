@@ -134,10 +134,10 @@ export default function Page() {
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
           <div className="h-5 text-sm font-medium   text-gray-500">Basic information</div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
-            <InputField form={form} name="firstName" placeholder="First name" />
-            <InputField form={form} name="lastName" placeholder="Last name" />
-            <InputField form={form} name="clientCompany" placeholder="Company" />
-            <InputField form={form} name="customerCode" placeholder="Customer code" />
+            <InputField form={form} name="firstName" placeholder="First name" label="First name" />
+            <InputField form={form} name="lastName" placeholder="Last name" label="Last name" />
+            <InputField form={form} name="clientCompany" placeholder="Company" label="Company" />
+            <InputField form={form} name="customerCode" placeholder="Customer code" label="Customer code" />
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <div className="min-w-fit">
@@ -150,15 +150,15 @@ export default function Page() {
             <span className="mr-2">Contact information</span>
           </div>
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-            <InputField type="phone" form={form} name="phone1" placeholder="Mobile phone" />
-            <InputField form={form} name="email1" placeholder="E-mail" />
-            <InputField form={form} name="invoiceEmail" placeholder="Invoice e-mail" />
+            <InputField type="phone" form={form} name="phone1" placeholder="Mobile phone" label="Mobile phone" />
+            <InputField form={form} name="email1" placeholder="E-mail" label="E-mail" />
+            <InputField form={form} name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
           </div>
           <div className="flex w-full items-center gap-4">
             <div className="w-[50%]">
               <InputField
                 label="Notes about client (customer won't see that)"
-                name="clientNotes"
+                name="Notes"
                 form={form}
                 placeholder="Type clients notes here..."
                 type="textArea"
@@ -196,10 +196,17 @@ export default function Page() {
               name="monthlyPayment"
               placeholder="Monthly payment by client"
               type="currencyValue"
+              label="Monthly payment by client"
             />
-            <InputField form={form} name="lockerCode" placeholder="Gate code" />
-            <InputField form={form} name="enterSide" placeholder="Enter side" />
-            <SelectField name="poolType" placeholder="Chemical type" form={form} data={PoolTypes} />
+            <InputField form={form} name="lockerCode" placeholder="Gate code" label="Gate code" />
+            <InputField form={form} name="enterSide" placeholder="Enter side" label="Enter side" />
+            <SelectField
+              name="poolType"
+              label="Chemical type"
+              placeholder="Chemical type"
+              form={form}
+              data={PoolTypes}
+            />
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">

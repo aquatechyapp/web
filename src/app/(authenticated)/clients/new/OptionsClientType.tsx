@@ -8,7 +8,7 @@ type Props = {
   name: string;
 };
 
-export const OptionsClientType = ({ form, name = 'clientType' }: Props) => {
+export const OptionsClientType = ({ form, name = 'Type' }: Props) => {
   return (
     <FormField
       control={form.control}
