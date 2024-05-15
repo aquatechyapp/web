@@ -25,7 +25,7 @@ export default function Page() {
   const types = Array.from(new Set(clientsData?.map((client) => client.type) ?? []));
   const typesSelectOptions = types.map((type) => ({ value: type, name: type }));
 
-  // console.log(clientsData);
+  console.log(clientsData);
   const [timeValue, setTimeValue] = useState(null);
 
   const handleTimeChange = (newValue) => {
