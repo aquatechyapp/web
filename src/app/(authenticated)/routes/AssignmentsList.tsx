@@ -32,6 +32,7 @@ import {
 import { useAssignmentsContext } from '@/context/assignments';
 import { useTechniciansContext } from '@/context/technicians';
 import { useUserContext } from '@/context/user';
+import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { Assignment } from '@/interfaces/Assignments';
 
 import { DialogDeleteAssignment } from './dialog-delete-assignment';
@@ -48,8 +49,9 @@ export function AssignmentsList({ handleDragEnd }: Props) {
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [openDialogTransfer, setOpenDialogTransfer] = useState(false);
   const [assignment, setAssignment] = useState<Assignment>();
+  const { width = 0 } = useWindowDimensions();
 
-  const shouldPermitChangeOrder = assignmentToId !== user?.id;
+  const shouldPermitChangeOrder = assignmentToId !== user?.id || width < 900;
 
   const [active, setActive] = useState<number | null>(null);
   const sensors = useSensors(
@@ -176,7 +178,11 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
     >
       <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 bg-gray-50 px-1 py-2">
         <div className="flex items-center justify-start gap-2">
-          {!shouldPermitChangeOrder && <MdDragIndicator />}
+          {!shouldPermitChangeOrder && (
+            <div className="min-w-4">
+              <MdDragIndicator size={16} />
+            </div>
+          )}
           <Image width={11} height={11} alt="location photo" className="h-11 w-11 rounded-lg" src={photo} />
           <div className="inline-flex flex-col items-start  justify-center gap-1">
             <div className="text-ellipsis text-nowrap text-sm font-medium">{name}</div>

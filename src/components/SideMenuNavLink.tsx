@@ -45,7 +45,7 @@ export default function SideMenuNavLink({ Icon, text, href, submenu, setOpen }: 
         {!submenu ? (
           <div className="flex w-full items-center" onClick={() => setOpen && setOpen(false)}>
             <div className="mr-4 py-4">
-              <Icon height={24} width={24} className={`${isActive && 'text-blue-500'}`} />
+              <Icon height={24} width={24} size={22} className={`${isActive && 'text-blue-500'}`} />
             </div>
             <div className="w-full text-base font-medium leading-none text-slate-50">{text}</div>
           </div>

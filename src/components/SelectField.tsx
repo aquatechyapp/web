@@ -1,17 +1,20 @@
+import { SelectProps } from '@radix-ui/react-select';
+import { UseFormReturn } from 'react-hook-form';
+
 import { FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 type Props = {
   data: { key: string; value: string; name: string }[];
-  props?: any;
-  form: any;
+  // props for select html
+  form: UseFormReturn<any>;
   name: string;
   placeholder: string;
   label?: string;
 };
 
-export default function SelectField({ data, form, name, placeholder, label, ...props }: Props) {
+export default function SelectField({ data, form, name, placeholder, label, ...props }: Props & SelectProps) {
   return (
     <FormField
       control={form.control}
@@ -21,7 +24,7 @@ export default function SelectField({ data, form, name, placeholder, label, ...p
           <FormItem className="w-full">
             <Label>{label}</Label>
             <FormControl>
-              <Select onValueChange={field.onChange} {...props}>
+              <Select defaultValue={form.watch(name)} onValueChange={field.onChange} {...props}>
                 <SelectTrigger className={`${!form.getValues(name) && 'text-slate-500'}`}>
                   <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
