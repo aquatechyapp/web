@@ -118,7 +118,17 @@ export const routes = [
   },
   {
     text: 'My Account',
-    href: '/account',
+    submenu: {
+      myAccount: {
+        text: 'My Account',
+        href: '/account'
+      },
+      generateReports: {
+        text: 'Generate Reports',
+        href: '/generateReports'
+      }
+    },
+    href: '',
     icon: AvatarIcon
   },
   {
