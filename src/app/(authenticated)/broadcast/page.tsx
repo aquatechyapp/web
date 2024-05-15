@@ -14,29 +14,57 @@ import useGetClients from '@/hooks/react-query/clients/getClients';
 
 export default function Page() {
   const { data: clientsData } = useGetClients();
+  const [timeValue, setTimeValue] = useState(null);
 
   const form = useForm({
     defaultValues: {
       Citys: '',
-      type: ''
+      type: '',
+      contacts: [] // Inicializa os contatos como um array vazio
     }
   });
 
   const types = Array.from(new Set(clientsData?.map((client) => client.type) ?? []));
   const typesSelectOptions = types.map((type) => ({ value: type, name: type }));
 
-  console.log(clientsData);
-  const [timeValue, setTimeValue] = useState(null);
+  // const commercialClients = clientsData.filter((client) => client.type === 'Commercial');
+
+  // // Criar lista de objetos {name, email} dos clientes comerciais
+  // const commercialContacts = commercialClients.map((client) => ({
+  //   name: client.name,
+  //   email: client.email1
+  // }));
+
+  // console.log('Lista de contatos dos clientes comerciais:', commercialContacts);
 
   const handleTimeChange = (newValue) => {
     setTimeValue(newValue); // Atualiza o estado com o novo valor do campo de tempo
   };
 
   const handleSubmit = (formData) => {
+    const filteredClients = clientsData.filter((client) => client.type === formData.type);
+
+    // Atualizar os contatos do formulário com os clientes filtrados
+    const commercialContacts = filteredClients.map((client) => ({
+      name: client.name,
+      email: client.email1
+    }));
+
     // Adicione o valor do campo de tempo aos dados do formulário
     const formDataWithTime = { ...formData, hours: timeValue };
-    console.log('Dados do formulário:', formDataWithTime);
-    // Agora você pode enviar formDataWithTime para a API
+
+    // Obtenha os contatos do formData
+    const contacts = formData.contacts || [];
+
+    // Combine os dados do formulário com os dados dos clientes selecionados
+    const formDataToSend = {
+      ...formDataWithTime,
+      // Use os contatos existentes se houver, caso contrário, use os selecionados
+      contacts: contacts.length > 0 ? contacts : commercialContacts.map(({ name, email }) => ({ name, email }))
+    };
+
+    console.log('Dados do formulário:', formDataToSend);
+    // Agora você pode enviar formDataToSend para a API
   };
 
   return (
