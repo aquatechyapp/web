@@ -5,16 +5,17 @@ import { useForm } from 'react-hook-form';
 
 import DatePickerField from '@/components/DatePickerField';
 import InputField from '@/components/InputField';
+import { MultiSelect } from '@/components/MultiSelect';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { TimeField } from '@/components/ui/time-field';
-import { paymentType } from '@/constants';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 
 export default function Page() {
   const { data: clientsData } = useGetClients();
   const [timeValue, setTimeValue] = useState(null);
+  const [selectedCities, setSelectedCities] = React.useState([]);
 
   const form = useForm({
     defaultValues: {
@@ -26,6 +27,9 @@ export default function Page() {
 
   const types = Array.from(new Set(clientsData?.map((client) => client.type) ?? []));
   const typesSelectOptions = types.map((type) => ({ value: type, name: type }));
+
+  const citys = Array.from(new Set(clientsData?.map((client) => client.city) ?? []));
+  const citysSelectOptions = citys.map((city) => ({ value: city, name: city, label: city }));
 
   // const commercialClients = clientsData.filter((client) => client.type === 'Commercial');
 
@@ -67,6 +71,12 @@ export default function Page() {
     // Agora você pode enviar formDataToSend para a API
   };
 
+  const handleCitySelectionChange = (selected) => {
+    setSelectedCities(selected);
+  };
+
+  console.log(clientsData);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -75,7 +85,12 @@ export default function Page() {
           <div className="h-5 text-sm font-medium text-gray-500">Address this message to (120 clients selected)</div>
           <div className="inline-flex justify-start gap-4 self-stretch">
             <SelectField data={typesSelectOptions} form={form} name="type" placeholder="Comercial/Residential" />
-            <SelectField data={paymentType} form={form} name="Citys" placeholder="City" />
+            <MultiSelect
+              // className="text-black-500"
+              options={citysSelectOptions}
+              selected={selectedCities}
+              onChange={handleCitySelectionChange}
+            />
           </div>
 
           <div className="inline-flex w-full justify-start gap-4 self-stretch">
