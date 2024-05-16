@@ -57,10 +57,10 @@ export default function SideMenuNavLink({ Icon, text, href, submenu, setOpen }: 
                 className={`w-full  text-base font-medium leading-none text-slate-50
                 ${isActiveSubMenu && 'text-blue-500'}`}
               >
-                <div className="flex w-[20%] items-start justify-start">
+                <div className="flex w-[25%] items-start justify-start">
                   <Icon height={24} width={24} className={`mr-4`} />
                 </div>
-                <div className="flex w-full items-start justify-start text-slate-50">{text}</div>
+                <div className="flex w-[100%] items-start justify-start text-slate-50">{text}</div>
               </AccordionTrigger>
               {Object.entries(submenu).map(([key, subItem]) => (
                 <span key={key} onClick={() => handleClick(subItem.href)}>

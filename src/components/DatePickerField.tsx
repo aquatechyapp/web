@@ -9,9 +9,10 @@ type Props = {
   placeholder: string;
   label: string;
   restrictOnlySelectedDay?: boolean;
+  label?: string;
 };
 
-export default function DatePickerField({ form, name, placeholder, label, restrictOnlySelectedDay = false }: Props) {
+export default function DatePickerField({ form, name, placeholder, restrictOnlySelectedDay = false, label }: Props) {
   return (
     <FormField
       control={form.control}
