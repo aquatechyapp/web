@@ -159,8 +159,8 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
   const photo = assignment.pool.photos[0] || 'https://via.placeholder.com/44x44';
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
-  const startsOn = format(new Date(assignment.startOn), 'LLL, do, Y');
-  const endsAfter = format(new Date(assignment.endAfter), 'LLL, do, Y');
+  const startsOn = format(new Date(assignment.startOn), 'LLL, do, y');
+  const endsAfter = format(new Date(assignment.endAfter), 'LLL, do, y');
 
   const isOnlyAt = startsOn === endsAfter;
 
@@ -170,13 +170,13 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
   };
   return (
     <div
-      className="inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 px-1"
+      className="inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 bg-gray-50 px-1"
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
     >
-      <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 bg-gray-50 px-1 py-2">
+      <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100  px-1 py-2">
         <div className="flex items-center justify-start gap-2">
           {!shouldPermitChangeOrder && (
             <div className="min-w-4">
@@ -185,7 +185,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
           )}
           <Image width={11} height={11} alt="location photo" className="h-11 w-11 rounded-lg" src={photo} />
           <div className="inline-flex flex-col items-start  justify-center gap-1">
-            <div className="text-ellipsis text-nowrap text-sm font-medium">{name}</div>
+            <div className="text-pretty text-sm font-medium">{name}</div>
             {isOnlyAt ? (
               <div className="text-xs text-red-500">{startsOn}</div>
             ) : (

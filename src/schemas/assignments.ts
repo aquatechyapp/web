@@ -1,11 +1,8 @@
-import { z } from 'zod';
 import { isBefore } from 'date-fns';
+import { z } from 'zod';
 
 export const paidByServiceSchema = z.object({
-  paidByService: z.preprocess((val) => {
-    if (!val) return val;
-    return parseInt(val?.toString().replaceAll(/\D/g, ''));
-  }, z.number())
+  paidByService: z.number()
 });
 
 export const transferAssignmentsSchema = z
@@ -16,26 +13,18 @@ export const transferAssignmentsSchema = z
     onlyAt: z.coerce.date().optional(),
     startOn: z.coerce.date().optional(),
     endAfter: z.coerce.date().optional(),
-    isEntireRoute: z.boolean()
+    isEntireRoute: z.boolean(),
+    paidByService: z.number()
   })
-  .and(paidByServiceSchema)
   .refine((data) => (data.type === 'once' ? data.onlyAt : true), {
     message: 'Is required',
     path: ['onlyAt']
   })
-  .refine(
-    (data) =>
-      data.type === 'once' ? true : isBefore(data.startOn, data.endAfter),
-    {
-      message: 'Must be before the end date',
-      path: ['startOn']
-    }
-  )
-  .refine(
-    (data) =>
-      data.type === 'once' ? true : isBefore(data.startOn, data.endAfter),
-    {
-      message: 'Must be after the start date',
-      path: ['endAfter']
-    }
-  );
+  .refine((data) => (data.type === 'once' ? true : isBefore(data.startOn, data.endAfter)), {
+    message: 'Must be before the end date',
+    path: ['startOn']
+  })
+  .refine((data) => (data.type === 'once' ? true : isBefore(data.startOn, data.endAfter)), {
+    message: 'Must be after the start date',
+    path: ['endAfter']
+  });

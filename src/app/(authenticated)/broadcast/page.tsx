@@ -75,7 +75,7 @@ export default function Page() {
         throw new Error('Failed to send email');
       }
 
-      console.log('Email sent successfully');
+      // console.log('Email sent successfully');
     } catch (error: any) {
       console.error('Error sending email:', error.message);
     }
