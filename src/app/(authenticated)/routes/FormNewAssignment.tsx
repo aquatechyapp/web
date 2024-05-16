@@ -7,10 +7,7 @@ import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
 import { Frequencies } from '@/constants';
-<<<<<<< HEAD
-=======
 import { Client } from '@/interfaces/Client';
->>>>>>> 94744e783b5c2167c9e332c32c64aa9e17967ea8
 import { clientAxios } from '@/lib/clientAxios';
 import { buildSelectOptions } from '@/utils/formUtils';
 
@@ -66,11 +63,7 @@ export const FormNewAssignment = ({ form }) => {
             )}
           </div>
           <div className="flex gap-4">
-<<<<<<< HEAD
             <SelectField name="frequency" placeholder="Frequency" label="Frequency" form={form} data={Frequencies} />
-=======
-            <SelectField name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
->>>>>>> 94744e783b5c2167c9e332c32c64aa9e17967ea8
             <InputField
               name="paidByService"
               form={form}
