@@ -113,15 +113,10 @@ export const routes = [
   },
   {
     text: 'My team',
-    href: '/team',
-    icon: TeamIcon
-  },
-  {
-    text: 'My Account',
     submenu: {
       myAccount: {
-        text: 'My Account',
-        href: '/account'
+        text: 'My team',
+        href: '/team'
       },
       generateReports: {
         text: 'Generate Reports',
@@ -129,6 +124,11 @@ export const routes = [
       }
     },
     href: '',
+    icon: TeamIcon
+  },
+  {
+    text: 'My Account',
+    href: '/account',
     icon: AvatarIcon
   },
   {

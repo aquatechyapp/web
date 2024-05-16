@@ -1,10 +1,10 @@
 import { format } from 'date-fns';
-import React, { useRef } from 'react';
-import generatePDF from 'react-to-pdf';
+import React, { useRef, useState } from 'react';
+import generatePDF, { Margin, Options } from 'react-to-pdf';
 
 export const QuixotePdf = ({ pdfData }) => {
   const targetRef = useRef<HTMLDivElement>(null);
-
+  const [loading, setLoading] = useState(false);
   const getWeekdayName = (index: number) => {
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     return daysOfWeek[index];
@@ -49,22 +49,33 @@ export const QuixotePdf = ({ pdfData }) => {
   };
 
   const openPdfInNewTab = async () => {
-    const pdf = await generatePDF(targetRef, { filename: 'report.pdf' });
+    try {
+      setLoading(true);
 
-    // Converter o PDF para um array de bytes
-    const pdfBytes = pdf.output('arraybuffer');
+      const options: Options = {
+        filename: 'report.pdf',
+        method: 'open', // Open PDF in new tab
+        page: {
+          format: 'a4', // A4 page format
+          margin: Margin.SMALL
+        },
+        overrides: {
+          pdf: {
+            compress: true
+          },
+          canvas: {
+            useCORS: true
+          }
+        }
+      };
 
-    // Criar um blob a partir dos bytes
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      // Generate PDF with options
+      await generatePDF(targetRef, options);
 
-    // Criar uma URL a partir do blob
-    const blobUrl = URL.createObjectURL(blob);
-
-    // Abrir uma nova aba com a URL do PDF
-    const newWindow = window.open(blobUrl, '_blank');
-
-    if (!newWindow) {
-      console.error('Failed to open PDF in new tab.');
+      setLoading(false);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      setLoading(false);
     }
   };
 
@@ -73,29 +84,26 @@ export const QuixotePdf = ({ pdfData }) => {
       <button
         className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
         onClick={openPdfInNewTab}
+        disabled={loading} // Desabilita o botão durante o carregamento
       >
-        Open PDF
+        {loading ? 'Generating PDF...' : 'Open PDF'}
       </button>
 
       <div
+        ref={targetRef}
         style={{
           position: 'absolute',
           left: '-9999px',
           top: '-9999px'
         }}
-        ref={targetRef}
-        className="mt-8 p-6 "
+        className="mt-8 p-8"
       >
-        {/* Conteúdo a ser incluído no PDF */}
         <div className="flex items-center justify-between">
           <img src="https://aquatechybeta.s3.amazonaws.com/signinlogo.png" className="h-20 w-20" alt="Logo" />
           <h1 className="text-2xl font-bold">REPORT OF SERVICES AND PAYMENTS</h1>
           <span />
         </div>
-
         <div className="mt-8 flex items-center justify-between gap-8">
-          {/* Use grid for two-column layout */}
-          {/* Left Section */}
           <div className="flex-inline justify-center">
             <div className="flex items-center">
               <p className=" text-xl font-bold">From company:</p>
@@ -114,20 +122,13 @@ export const QuixotePdf = ({ pdfData }) => {
               <p className="ml-1 text-lg">{pdfData.To}</p>
             </div>
           </div>
-
-          {/* Right Section */}
-          <div className="flex-inline text-right">
-            <div className="items-center justify-center">
-              <p className="text-lg font-semibold">Total services made</p>
-              <p className="text-4xl font-bold">{pdfData.TotalServicesMade} services</p>
-            </div>
-            <div className="my-1 items-center justify-center ">
-              <p className="text-lg font-semibold">Total to be paid</p>
-              <p className="text-4xl font-bold">US${pdfData.TotalToBePaid ? pdfData.TotalToBePaid : '0.00'}</p>
-            </div>
+          <div className="flex-inline items-center justify-center text-right">
+            <p className="h-5  text-lg font-semibold">Total services made</p>
+            <p className="h-10  text-4xl font-bold">{pdfData.TotalServicesMade} services</p>
+            <p className="mt-2 h-5 text-lg font-semibold">Total to be paid</p>
+            <p className="h-10  text-4xl font-bold">US${pdfData.TotalToBePaid ? pdfData.TotalToBePaid : '0.00'}</p>
           </div>
         </div>
-
         {/* Services By Weekday Section */}
         {pdfData &&
           pdfData.ServicesByWeekday &&
@@ -150,8 +151,8 @@ export const QuixotePdf = ({ pdfData }) => {
                     </thead>
                     <tbody>
                       {services.map((service, serviceIndex) => (
-                        <tr key={serviceIndex} className="mt-4 w-full border-b">
-                          <td onli className=" py-2 text-left">
+                        <tr key={serviceIndex} className="w-full border-b">
+                          <td onli className="py-2 text-left">
                             {service.pool.name}
                           </td>
                           <td className=" px-4 py-2 text-center">
@@ -161,8 +162,7 @@ export const QuixotePdf = ({ pdfData }) => {
                             {services.chlorineSpent} - {services.phosphateSpent} - {services.saltSpent} -{'\n'}
                             {services.shockSpent} - {services.tabletSpent} - {services.acidSpent}
                           </td>
-                          {/* so tirar os zeros */}
-                          <td className=" py-2 text-right">US${service.paid ? service.paid : '0'}</td>
+                          <td className=" py-2 text-right">US${service.paid ? service.paid : '0.00'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -171,11 +171,9 @@ export const QuixotePdf = ({ pdfData }) => {
               )}
             </div>
           ))}
-
         <div className="mt-8 w-full border-b-2 border-slate-500 py-2 text-start">
           <h2 className="text-xl font-bold">Chemicals Spent</h2>
         </div>
-
         <div className="flex-inline mt-6">
           <div className="flex items-center">
             <p className="text-xl font-bold">Chlorine Liquid:</p>
@@ -222,7 +220,6 @@ export const QuixotePdf = ({ pdfData }) => {
             </p>
           </div>
         </div>
-
         <div className="mt-8 flex justify-center">
           <img src="https://aquatechybeta.s3.amazonaws.com/signinlogo.png" className="h-12" alt="Aquatechy Logo" />
         </div>
