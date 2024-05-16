@@ -1,19 +1,13 @@
 'use client';
 
-import {
-  DirectionsRenderer,
-  GoogleMap,
-  Libraries,
-  Marker,
-  MarkerClusterer,
-  useLoadScript
-} from '@react-google-maps/api';
-import { useEffect, useState } from 'react';
+import { DirectionsRenderer, GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Separator } from '@/components/ui/separator';
 import { Colors } from '@/constants/colors';
 import { Assignment } from '@/interfaces/Assignments';
+
+type DirectionsResult = google.maps.DirectionsResult | null;
 
 const mapContainerStyle = {
   width: '100%',
@@ -26,62 +20,16 @@ const center = {
   lng: -81.379234
 };
 
-type DirectionsResult = google.maps.DirectionsResult | null;
+type Props = {
+  assignments: Assignment[];
+  directions: DirectionsResult | undefined;
+  distance: string;
+  duration: string;
+  isLoaded: boolean;
+  loadError: Error | undefined;
+};
 
-const libraries: Libraries = ['places'];
-
-const Map = ({ assignments }: { assignments: Assignment[] }) => {
-  const [directions, setDirections] = useState<DirectionsResult>();
-  const [distance, setDistance] = useState('');
-  const [duration, setDuration] = useState('');
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyDhW4IvM4Db-AmtZp9V2DuWN8XWHbcx-es',
-    // googleMapsApiKey: 'AIzaSyDhW4IvM4Db-AmtZp9V2DuWN8XWHbcx-es',
-    libraries
-  });
-
-  useEffect(() => {
-    if (assignments.length <= 0 || !isLoaded) {
-      setDirections(null);
-      return;
-    }
-    const origin = assignments[0].pool.coords;
-    const destination = assignments[assignments.length - 1].pool.coords;
-    const service = new google.maps.DirectionsService();
-    // create a waypoints constant that not contain the origin and destination and get only assignments.pool.coords
-    const waypoints = assignments
-      .filter((assignment, index) => index !== 0 && index !== assignments.length - 1)
-      .map((assignment) => {
-        return {
-          location: assignment.pool.coords
-        };
-      });
-    service.route(
-      {
-        origin,
-        destination,
-        travelMode: google.maps.TravelMode.DRIVING,
-        waypoints
-      },
-      (result, status) => {
-        if (status === 'OK' && result) {
-          setDirections(result);
-
-          const totalDuration = result.routes[0].legs.reduce((acc, leg) => acc + (leg.duration?.value ?? 0), 0);
-          const totalDistance = result.routes[0].legs.reduce((acc, leg) => acc + (leg.distance?.value ?? 0), 0);
-          setDuration(
-            (totalDuration / 60).toLocaleString('pt-br', {
-              style: 'decimal',
-              maximumSignificantDigits: 2
-            }) + ' min'
-          );
-          setDistance((totalDistance * 0.000621371).toFixed(1) + ' mi');
-        }
-      }
-    );
-  }, [assignments, isLoaded]);
-
+const Map = ({ assignments, directions, distance, duration, isLoaded, loadError }: Props) => {
   if (loadError) {
     return <div>Error loading maps</div>;
   }

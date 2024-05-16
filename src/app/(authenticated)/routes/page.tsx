@@ -15,6 +15,7 @@ import { useAssignmentsContext } from '@/context/assignments';
 import { useTechniciansContext } from '@/context/technicians';
 import { useWeekdayContext } from '@/context/weekday';
 import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
+import { useMapUtils } from '@/hooks/useMapUtils';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { Assignment } from '@/interfaces/Assignments';
 import { Weekdays, WeekdaysUppercase } from '@/interfaces/Weekday';
@@ -28,6 +29,7 @@ import Map from './Map';
 import TechnicianSelect from './TechnicianSelect';
 
 export default function Page() {
+  const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapUtils();
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
 
   const { assignmentToId, setAssignmentToId } = useTechniciansContext();
@@ -71,6 +73,7 @@ export default function Page() {
         ...assignments,
         current: changedOrderProperty
       });
+      getDirectionsFromGoogleMaps();
     }
   }
 
@@ -119,7 +122,7 @@ export default function Page() {
                     <Button
                       type="button"
                       className="w-full"
-                      variant={'secondary'}
+                      variant="secondary"
                       onClick={() => setOpenTransferDialog(true)}
                     >
                       Transfer Route
@@ -132,24 +135,36 @@ export default function Page() {
                     isEntireRoute={true}
                   />
                 </div>
-                {getDifference(assignments.initial, assignments.current) && (
-                  <Button
-                    type="button"
-                    onClick={() =>
-                      updateAssignments(
-                        assignments.current.map((assignment) => {
-                          return {
-                            assignmentId: assignment.id,
-                            ...assignment
-                          };
-                        })
-                      )
-                    }
-                    className="mt-2 w-full bg-green-500 hover:bg-green-700"
-                  >
-                    Save
-                  </Button>
-                )}
+                <div className="mt-2 flex flex-col  gap-2 sm:flex-row">
+                  {assignments.current.length > 0 && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="mt-2 w-full"
+                      onClick={() => getDirectionsFromGoogleMaps(true)}
+                    >
+                      Optimize Route
+                    </Button>
+                  )}
+                  {getDifference(assignments.initial, assignments.current) && (
+                    <Button
+                      type="button"
+                      onClick={() =>
+                        updateAssignments(
+                          assignments.current.map((assignment) => {
+                            return {
+                              assignmentId: assignment.id,
+                              ...assignment
+                            };
+                          })
+                        )
+                      }
+                      className="mt-2 w-full bg-green-500 hover:bg-green-700"
+                    >
+                      Save
+                    </Button>
+                  )}
+                </div>
               </form>
             </Form>
 
@@ -165,7 +180,14 @@ export default function Page() {
         </Tabs>
       </div>
       <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
-        <Map assignments={assignments.current} />
+        <Map
+          assignments={assignments.current}
+          directions={directions}
+          distance={distance}
+          duration={duration}
+          isLoaded={isLoaded}
+          loadError={loadError}
+        />
       </div>
     </div>
   );
