@@ -30,7 +30,7 @@ function MultiSelect({ options, selected, onChange, className, placeholder, ...p
   };
 
   return (
-    <div className="w-[100%]">
+    <div className="w-[100%] ">
       <Popover open={open} onOpenChange={setOpen} {...props}>
         <PopoverTrigger asChild>
           <Button
@@ -66,8 +66,8 @@ function MultiSelect({ options, selected, onChange, className, placeholder, ...p
             <ChevronsUpDown className="h-4 w-4 shrink-0 text-slate-500 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className=" p-0">
-          <Command className={className}>
+        <PopoverContent className="bg-black-300 p-0">
+          <Command className="">
             <CommandInput placeholder="Search ..." />
             <CommandEmpty>No item found.</CommandEmpty>
             <CommandGroup className="max-h-46 overflow-auto">

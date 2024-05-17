@@ -16,23 +16,29 @@ import { clientAxios } from '@/lib/clientAxios';
 export default function Page() {
   const { data: clientsData } = useGetClients();
   const [timeValue, setTimeValue] = useState(null);
-  const [selectedCities, setSelectedCities] = React.useState([]);
-  const [selected, setSelect] = React.useState([]);
+  const [selectedCities, setSelectedCities] = useState(['all']);
+  const [selected, setSelected] = useState(0);
 
   const form = useForm({
     defaultValues: {
       emailType: 'broadcast',
       message: '',
-      type: '',
+      type: 'all', // Inicializa como 'all' para 'All types'
       contacts: [] // Inicializa os contatos como um array vazio
     }
   });
 
   const types = Array.from(new Set(clientsData?.map((client) => client.type) ?? []));
-  const typesSelectOptions = types.map((type) => ({ value: type, name: type }));
+  const typesSelectOptions = [
+    { value: 'all', name: 'All types' },
+    ...types.map((type) => ({ value: type, name: type }))
+  ];
 
-  const citys = Array.from(new Set(clientsData?.map((client) => client.city) ?? []));
-  const citysSelectOptions = citys.map((city) => ({ value: city, name: city, label: city }));
+  const cities = Array.from(new Set(clientsData?.map((client) => client.city) ?? []));
+  const citiesSelectOptions = [
+    { value: 'all', name: 'All cities', label: 'All cities' },
+    ...cities.map((city) => ({ value: city, name: city, label: city }))
+  ];
 
   const handleTimeChange = (newValue) => {
     setTimeValue(newValue);
@@ -41,17 +47,21 @@ export default function Page() {
   const handleSubmit = async (formData) => {
     try {
       // Filtrar os clientes com base no tipo selecionado
-      const filteredClientsTypes = clientsData.filter((client) => client.type === formData.type);
+      let filteredClientsTypes = clientsData;
+      if (formData.type !== 'all') {
+        filteredClientsTypes = clientsData.filter((client) => client.type === formData.type);
+      }
 
-      // console.log('Clientes filtrados pelo tipo:', filteredClientsTypes);
       // Filtrar os clientes com base nas cidades selecionadas
-      const filteredClientsCitys = filteredClientsTypes.filter((client) => selectedCities.includes(client.city));
+      let filteredClientsCities = filteredClientsTypes;
+      if (!selectedCities.includes('all')) {
+        filteredClientsCities = filteredClientsTypes.filter((client) => selectedCities.includes(client.city));
+      }
 
-      // console.log('Clientes filtrados pelas cidades selecionadas:', filteredClientsCitys);
-      setSelect(filteredClientsCitys.length);
+      setSelected(filteredClientsCities.length);
 
       // Atualizar os contatos do formulário com os clientes filtrados
-      const contacts = filteredClientsCitys.map((client) => ({
+      const contacts = filteredClientsCities.map((client) => ({
         name: client.name,
         email: client.email1
       }));
@@ -66,23 +76,27 @@ export default function Page() {
         contacts: contacts.length > 0 ? contacts : []
       };
 
-      // console.log('Dados do formulário:', formDataToSend);
-
       // Enviar os dados para a API
       const response = await clientAxios.post('/sendemail', formDataToSend);
 
       if (response.status !== 200) {
         throw new Error('Failed to send email');
       }
+      console.log('formDataToSend', formDataToSend);
 
-      // console.log('Email sent successfully');
-    } catch (error: any) {
+      console.log('Email sent successfully');
+    } catch (error) {
       console.error('Error sending email:', error.message);
     }
   };
 
   const handleCitySelectionChange = (selected) => {
-    setSelectedCities(selected);
+    // Se "All cities" for selecionado, ignorar outras seleções
+    if (selected.includes('all')) {
+      setSelectedCities(['all']);
+    } else {
+      setSelectedCities(selected);
+    }
   };
 
   return (
@@ -94,12 +108,12 @@ export default function Page() {
             Address this message to ({selected} clients selected)
           </div>
           <div className="inline-flex justify-start gap-4 self-stretch">
-            <SelectField data={typesSelectOptions} form={form} name="type" placeholder="Comercial/Residential" />
+            <SelectField data={typesSelectOptions} form={form} name="type" placeholder="Commercial/Residential" />
             <MultiSelect
-              placeholder="Citys"
-              options={citysSelectOptions}
+              placeholder="Cities"
+              options={citiesSelectOptions}
               selected={selectedCities}
-              onChange={(text) => handleCitySelectionChange(text)}
+              onChange={handleCitySelectionChange}
             />
           </div>
 
