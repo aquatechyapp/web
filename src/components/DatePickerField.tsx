@@ -7,6 +7,7 @@ type Props = {
   form: any;
   name: string;
   placeholder: string;
+  label: string;
   restrictOnlySelectedDay?: boolean;
   label?: string;
 };

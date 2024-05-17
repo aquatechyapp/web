@@ -78,7 +78,7 @@ export default function Page() {
               form={form}
               data={subContractors?.length > 0 ? subContractors : []}
             />
-            <div className="inline-flex items-start justify-start gap-4">
+            <div className="inline-flex w-full items-start justify-start gap-4">
               <DatePickerField form={form} name="fromDate" placeholder="From date:" />
               <DatePickerField form={form} name="toDate" placeholder="To date:" />
             </div>

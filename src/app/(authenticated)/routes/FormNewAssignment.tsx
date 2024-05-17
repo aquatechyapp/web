@@ -63,7 +63,7 @@ export const FormNewAssignment = ({ form }) => {
             )}
           </div>
           <div className="flex gap-4">
-            <SelectField name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
+            <SelectField name="frequency" placeholder="Frequency" label="Frequency" form={form} data={Frequencies} />
             <InputField
               name="paidByService"
               form={form}

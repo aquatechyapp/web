@@ -91,11 +91,11 @@ export const QuixotePdf = ({ pdfData }) => {
 
       <div
         ref={targetRef}
-        // style={{
-        //   position: 'absolute',
-        //   left: '-9999px',
-        //   top: '-9999px'
-        // }}
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          top: '-9999px'
+        }}
         className="mt-8 p-8"
       >
         <div className="flex items-center justify-between">
