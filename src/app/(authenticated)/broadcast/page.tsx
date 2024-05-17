@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import DatePickerField from '@/components/DatePickerField';
@@ -9,72 +9,61 @@ import { MultiSelect } from '@/components/MultiSelect';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { TimeField } from '@/components/ui/time-field';
+import { useToast } from '@/components/ui/use-toast';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { clientAxios } from '@/lib/clientAxios';
 
 export default function Page() {
   const { data: clientsData } = useGetClients();
-  const [timeValue, setTimeValue] = useState(null);
-  const [selectedCities, setSelectedCities] = useState(['all']);
-  const [selected, setSelected] = useState(0);
+  const [selectedCities, setSelectedCities] = React.useState([]);
+  const [selected, setSelect] = React.useState([]);
+  const { toast } = useToast();
 
   const form = useForm({
     defaultValues: {
       emailType: 'broadcast',
       message: '',
-      type: 'all', // Inicializa como 'all' para 'All types'
+      type: 'All types',
+      sendAt: '',
       contacts: [] // Inicializa os contatos como um array vazio
     }
   });
 
-  const types = Array.from(new Set(clientsData?.map((client) => client.type) ?? []));
-  const typesSelectOptions = [
-    { value: 'all', name: 'All types' },
-    ...types.map((type) => ({ value: type, name: type }))
-  ];
+  const types = ['All types', ...Array.from(new Set(clientsData?.map((client) => client.type) ?? []))];
+  const typesSelectOptions = types.map((type) => ({ value: type, name: type }));
 
-  const cities = Array.from(new Set(clientsData?.map((client) => client.city) ?? []));
-  const citiesSelectOptions = [
-    { value: 'all', name: 'All cities', label: 'All cities' },
-    ...cities.map((city) => ({ value: city, name: city, label: city }))
-  ];
-
-  const handleTimeChange = (newValue) => {
-    setTimeValue(newValue);
-  };
+  const cities = ['All cities', ...Array.from(new Set(clientsData?.map((client) => client.city) ?? []))];
+  const citysSelectOptions = cities.map((city) => ({ value: city, name: city, label: city }));
 
   const handleSubmit = async (formData) => {
     try {
       // Filtrar os clientes com base no tipo selecionado
-      let filteredClientsTypes = clientsData;
-      if (formData.type !== 'all') {
-        filteredClientsTypes = clientsData.filter((client) => client.type === formData.type);
-      }
+      const filteredClientsTypes =
+        formData.type === 'All types' ? clientsData : clientsData.filter((client) => client.type === formData.type);
 
       // Filtrar os clientes com base nas cidades selecionadas
-      let filteredClientsCities = filteredClientsTypes;
-      if (!selectedCities.includes('all')) {
-        filteredClientsCities = filteredClientsTypes.filter((client) => selectedCities.includes(client.city));
-      }
+      const filteredClientsCitys = selectedCities.includes('All cities')
+        ? filteredClientsTypes
+        : filteredClientsTypes.filter((client) => selectedCities.includes(client.city));
 
-      setSelected(filteredClientsCities.length);
+      setSelect(filteredClientsCitys.length);
 
       // Atualizar os contatos do formulário com os clientes filtrados
-      const contacts = filteredClientsCities.map((client) => ({
+      const contacts = filteredClientsCitys.map((client) => ({
         name: client.name,
         email: client.email1
       }));
 
-      // Adicione o valor do campo de tempo aos dados do formulário
-      const formDataWithTime = { ...formData, hours: timeValue };
-
-      // Combine os dados do formulário com os dados dos clientes selecionados
+      // Combine os dados do formulário com os dados dos clientes selecionados e formate a data corretamente
+      const sendAt = new Date(`${formData.startOn.toISOString().split('T')[0]}T${formData.time}:00.000Z`).toISOString();
       const formDataToSend = {
-        ...formDataWithTime,
-        // Use os contatos existentes se houver, caso contrário, use os selecionados
+        emailType: formData.emailType,
+        message: formData.message,
+        sendAt: sendAt,
         contacts: contacts.length > 0 ? contacts : []
       };
+
+      console.log('formDataToSend', formDataToSend);
 
       // Enviar os dados para a API
       const response = await clientAxios.post('/sendemail', formDataToSend);
@@ -82,22 +71,33 @@ export default function Page() {
       if (response.status !== 200) {
         throw new Error('Failed to send email');
       }
-      console.log('formDataToSend', formDataToSend);
 
       console.log('Email sent successfully');
-    } catch (error) {
+      // Toast de sucesso
+      toast({
+        variant: 'default',
+        title: 'Email enviado com sucesso',
+        className: 'bg-green-500 text-white'
+      });
+    } catch (error: any) {
       console.error('Error sending email:', error.message);
+      // Toast de erro
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao enviar o email',
+        className: 'bg-red-500 text-white'
+      });
     }
   };
 
   const handleCitySelectionChange = (selected) => {
-    // Se "All cities" for selecionado, ignorar outras seleções
-    if (selected.includes('all')) {
-      setSelectedCities(['all']);
-    } else {
-      setSelectedCities(selected);
-    }
+    setSelectedCities(selected);
   };
+
+  const timeOptions = Array.from({ length: 24 }, (_, i) => ({
+    value: `${i.toString().padStart(2, '0')}:00`,
+    name: `${i.toString().padStart(2, '0')}:00`
+  }));
 
   return (
     <Form {...form}>
@@ -111,9 +111,9 @@ export default function Page() {
             <SelectField data={typesSelectOptions} form={form} name="type" placeholder="Commercial/Residential" />
             <MultiSelect
               placeholder="Cities"
-              options={citiesSelectOptions}
+              options={citysSelectOptions}
               selected={selectedCities}
-              onChange={handleCitySelectionChange}
+              onChange={(text) => handleCitySelectionChange(text)}
             />
           </div>
 
@@ -133,7 +133,7 @@ export default function Page() {
                 <DatePickerField label="When send this message?" form={form} name="startOn" placeholder="Send on" />
               </div>
               <div className="w-full pt-3">
-                <TimeField aria-label="Select time" value={timeValue} onChange={handleTimeChange} />
+                <SelectField label="Select time" data={timeOptions} form={form} name="time" placeholder="Select time" />
               </div>
             </div>
           </div>
