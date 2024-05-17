@@ -122,7 +122,7 @@ export default function InputField({ form, name, placeholder, type = 'default', 
       render={({ field }) => {
         return (
           <FormItem className="h-full w-full">
-            {!['checkbox'].includes(type) && <Label>{label}</Label>}
+            {!['checkbox'].includes(type) && <Label>{label || placeholder}</Label>}
             <FormControl>{types[type].component(field)}</FormControl>
             <FormMessage />
           </FormItem>

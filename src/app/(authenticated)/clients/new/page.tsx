@@ -24,8 +24,6 @@ import { dateSchema } from '@/schemas/date';
 import { poolSchema } from '@/schemas/pool';
 import { createFormData } from '@/utils/formUtils';
 
-import { OptionsClientType } from './OptionsClientType';
-
 export default function Page() {
   const { user } = useUserContext();
   const queryClient = useQueryClient();
@@ -102,7 +100,7 @@ export default function Page() {
       customerCode: '',
       paidByService: undefined,
       clientCompany: '',
-      clientType: 'Commercial'
+      clientType: 'Residential'
     }
   });
 
@@ -146,6 +144,25 @@ export default function Page() {
             </div>
             <StateAndCitySelect form={form} />
             <InputField form={form} name="clientZip" label="Zip code" placeholder="Zip code" type="zip" />
+            <SelectField
+              defaultValue="Residential"
+              placeholder="Client Type"
+              form={form}
+              name="type"
+              label="Type"
+              data={[
+                {
+                  key: 'Residential',
+                  name: 'Residential',
+                  value: 'Residential'
+                },
+                {
+                  key: 'Commercial',
+                  name: 'Commercial',
+                  value: 'Commercial'
+                }
+              ]}
+            />
           </div>
           <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
             <span className="mr-2">Contact information</span>
@@ -164,9 +181,6 @@ export default function Page() {
                 placeholder="Type clients notes here..."
                 type="textArea"
               />
-            </div>
-            <div className="-mt-10">
-              <OptionsClientType form={form} />
             </div>
           </div>
 

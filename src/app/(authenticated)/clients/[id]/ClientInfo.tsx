@@ -3,14 +3,13 @@ import { z } from 'zod';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
 import { Client } from '@/interfaces/Client';
 import { filterChangedFormFields } from '@/utils/formUtils';
-
-import { OptionsClientType } from '../new/OptionsClientType';
 
 export default function ClientInfo({ client }: { client: Client }) {
   const { mutate, isPending } = useUpdateClient();
@@ -59,7 +58,24 @@ export default function ClientInfo({ client }: { client: Client }) {
         <div className="flex gap-4">
           <InputField form={form} name="zip" placeholder="Zip code" type="zip" />
           <InputField form={form} name="company" placeholder="Company" />
-          <OptionsClientType form={form} name="type" />
+          <SelectField
+            placeholder="Client Type"
+            form={form}
+            name="type"
+            label="Type"
+            data={[
+              {
+                key: 'Residential',
+                name: 'Residential',
+                value: 'Residential'
+              },
+              {
+                key: 'Commercial',
+                name: 'Commercial',
+                value: 'Commercial'
+              }
+            ]}
+          />
         </div>
         <div className="mt-4 h-5 text-sm font-medium   text-gray-500">Contact information</div>
         <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
