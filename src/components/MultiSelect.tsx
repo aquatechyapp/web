@@ -66,7 +66,7 @@ function MultiSelect({ options, selected, onChange, className, placeholder, ...p
             <ChevronsUpDown className="h-4 w-4 shrink-0 text-slate-500 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="bg-black-300 p-0">
+        <PopoverContent align="start" className="p-0">
           <Command className="">
             <CommandInput placeholder="Search ..." />
             <CommandEmpty>No item found.</CommandEmpty>
