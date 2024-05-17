@@ -53,7 +53,7 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
     if (userSelectedAsTechnician) {
       form.setValue('paidByService', 0);
     } else {
-      form.setValue('paidByService', assignment.paidByService);
+      form.setValue('paidByService', assignment?.paidByService);
     }
   }, [form.watch('assignmentToId'), assignmentToId]);
 
@@ -114,9 +114,9 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
     if (isValid) {
       setOpen(false);
       if (shouldTransferOnce) {
-        transferOnce(buildPayload());
+        transferOnce(() => buildPayload());
       } else {
-        transferPermanently(buildPayload());
+        transferPermanently(() => buildPayload());
       }
       form.reset();
       return;

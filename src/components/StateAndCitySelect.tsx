@@ -11,7 +11,12 @@ type Props = {
 
 const states = State.getStatesOfCountry('US');
 
-export default function StateAndCitySelect({ form, stateName = 'State', cityName = 'City', ...props }: Props) {
+export default function StateAndCitySelect({
+  form,
+  stateName = 'clientState',
+  cityName = 'clientCity',
+  ...props
+}: Props) {
   const [cities, setCities] = useState<ICity[]>([]);
   const state = form.watch(stateName);
   const city = form.watch(cityName);
@@ -32,7 +37,7 @@ export default function StateAndCitySelect({ form, stateName = 'State', cityName
       <SelectField
         form={form}
         name={stateName}
-        label={stateName}
+        label="State"
         value={state}
         placeholder="State"
         data={states.map((state) => {
@@ -47,7 +52,7 @@ export default function StateAndCitySelect({ form, stateName = 'State', cityName
       <SelectField
         // disabled={!state || cities.length === 0}
         form={form}
-        label={cityName}
+        label="City"
         name={cityName}
         value={city}
         placeholder={'City'}

@@ -13,6 +13,7 @@ import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAssignmentsContext } from '@/context/assignments';
 import { useTechniciansContext } from '@/context/technicians';
+import { useUserContext } from '@/context/user';
 import { useWeekdayContext } from '@/context/weekday';
 import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
 import { useMapUtils } from '@/hooks/useMapUtils';
@@ -32,6 +33,7 @@ export default function Page() {
   const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapUtils();
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
 
+  const { user } = useUserContext();
   const { assignmentToId, setAssignmentToId } = useTechniciansContext();
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayContext();
@@ -136,7 +138,7 @@ export default function Page() {
                   />
                 </div>
                 <div className="mt-2 flex flex-col  gap-2 sm:flex-row">
-                  {assignments.current.length > 0 && (
+                  {assignments.current.length > 0 && assignmentToId === user?.id && (
                     <Button
                       type="button"
                       variant="secondary"
