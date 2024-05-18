@@ -1,18 +1,19 @@
 'use client';
 
-import Link from 'next/link';
-
-import { useForm } from 'react-hook-form';
-import { Form } from '../../../components/ui/form';
-import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import InputField from '../../../components/InputField';
-import { Button } from '../../../components/ui/button';
-import { useToast } from '../../../components/ui/use-toast';
-import { useRouter } from 'next/navigation';
-import StateAndCitySelect from '../../../components/StateAndCitySelect';
-import { clientAxios } from '../../../lib/clientAxios';
 import { useMutation } from '@tanstack/react-query';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+
+import InputField from '../../../components/InputField';
+import SelectField from '../../../components/SelectField';
+import StateAndCitySelect from '../../../components/StateAndCitySelect';
+import { Button } from '../../../components/ui/button';
+import { Form } from '../../../components/ui/form';
+import { useToast } from '../../../components/ui/use-toast';
+import { clientAxios } from '../../../lib/clientAxios';
 
 const formSchema = z
   .object({
@@ -25,15 +26,17 @@ const formSchema = z
       })
       .min(1, { message: 'Phone number is required.' }),
     email: z.string().email({ message: 'Invalid email' }),
-    password: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters long' }),
+    password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
     confirmPassword: z.string().min(8, { message: 'Password is required' }),
     address: z.string().min(2, { message: 'Address is required' }),
     zip: z.string().min(5, { message: 'Zip code is required' }),
     state: z.string().min(2, { message: 'State is required' }),
     city: z.string().min(2, { message: 'City is required' }),
-    company: z.string().optional()
+    company: z.string().optional(),
+    language: z.enum(['English', 'Portuguese', 'Spanish'], {
+      required_error: 'Language is required.',
+      invalid_type_error: "Language must be 'English', 'Portuguese' or 'Spanish'."
+    })
   })
   .refine(
     (data) => {
@@ -81,14 +84,16 @@ export default function Page() {
       confirmPassword: '',
       state: '',
       city: '',
-      company: ''
+      company: '',
+      language: ''
     }
   });
+
+  const languageSelectOptions = ['English', 'Portuguese', 'Spanish'].map((lang) => ({ value: lang, name: lang }));
 
   const handleSubmit = async (data) => {
     const formattedData = {
       ...data,
-      language: 'Portuguese',
       name: data.firstName + data.lastName
     };
     mutate(formattedData);
@@ -101,20 +106,15 @@ export default function Page() {
         className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8"
       >
         <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
-        <img src="./logoHor.png" alt="" className='w-[30%]' />
+          <img src="./logoHor.png" alt="" className="w-[30%]" />
         </div>
         <div className="relative h-[50px] w-[400px]">
           <div className="absolute left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px]  text-gray-800">
             Signup
           </div>
           <div className="absolute left-0 top-[30px] h-5 w-[400px]">
-            <span className="text-sm font-medium   text-gray-500">
-              Already have an account?{' '}
-            </span>
-            <Link
-              href="/login"
-              className="text-sm font-bold   text-gray-500"
-            >
+            <span className="text-sm font-medium   text-gray-500">Already have an account? </span>
+            <Link href="/login" className="text-sm font-bold   text-gray-500">
               Login
             </Link>
           </div>
@@ -126,11 +126,13 @@ export default function Page() {
         </div>
         <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
           <InputField form={form} name="email" placeholder="E-mail address" />
-          <InputField
+          <InputField form={form} name="phone" placeholder="Phone number" type="phone" />
+          <SelectField
+            data={languageSelectOptions}
             form={form}
-            name="phone"
-            placeholder="Phone number"
-            type="phone"
+            label="Language"
+            name="language"
+            placeholder="Language"
           />
         </div>
         <div className="inline-flex items-start justify-start gap-2 self-stretch ">
@@ -139,18 +141,8 @@ export default function Page() {
         </div>
         <StateAndCitySelect form={form} stateName="state" cityName="city" />
         <div className="inline-flex items-start justify-start gap-2 self-stretch ">
-          <InputField
-            form={form}
-            name="password"
-            placeholder="Password"
-            type="password"
-          />
-          <InputField
-            form={form}
-            name="confirmPassword"
-            placeholder="Confirm password"
-            type="password"
-          />
+          <InputField form={form} name="password" placeholder="Password" type="password" />
+          <InputField form={form} name="confirmPassword" placeholder="Confirm password" type="password" />
         </div>
         <Button disabled={isPending} type="submit" className="w-full">
           Signup
