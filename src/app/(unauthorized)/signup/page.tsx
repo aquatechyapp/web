@@ -3,7 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -11,6 +12,7 @@ import InputField from '../../../components/InputField';
 import SelectField from '../../../components/SelectField';
 import StateAndCitySelect from '../../../components/StateAndCitySelect';
 import { Button } from '../../../components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../../components/ui/dialog';
 import { Form } from '../../../components/ui/form';
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
@@ -51,19 +53,20 @@ const formSchema = z
 export default function Page() {
   const router = useRouter();
   const { toast } = useToast();
+  const [showModal, setShowModal] = useState(false);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: createUser, isLoading: isCreatingUser } = useMutation({
     mutationFn: async (data) => await clientAxios.post('/createuser', data),
-    onSuccess: ({ data }) => {
-      router.push('/login');
+    onSuccess: () => {
+      setShowModal(true);
       toast({
         variant: 'default',
         title: 'Success',
-        description: 'User created successfully',
+        description: 'User created successfully. Please check your email to confirm your account.',
         className: 'bg-green-500'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         variant: 'default',
         title: 'Internal error',
@@ -94,10 +97,34 @@ export default function Page() {
   const handleSubmit = async (data) => {
     const formattedData = {
       ...data,
-      name: data.firstName + data.lastName
+      name: data.firstName + ' ' + data.lastName
     };
-    mutate(formattedData);
+    createUser(formattedData);
   };
+
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
+  const [confirmationStatus, setConfirmationStatus] = useState(null);
+
+  useEffect(() => {
+    if (token) {
+      clientAxios
+        .post('/confirm-email', { token })
+        .then((response) => {
+          if (response.data.status === 'aprovado') {
+            localStorage.setItem('jwtToken', response.data.jwtToken);
+            router.push('/dashboard');
+            setConfirmationStatus('aprovado');
+          } else {
+            setConfirmationStatus('não aprovado');
+          }
+        })
+        .catch((error) => {
+          console.error('Erro na confirmação de email:', error);
+          setConfirmationStatus('não aprovado');
+        });
+    }
+  }, [token, router]);
 
   return (
     <Form {...form}>
@@ -109,12 +136,12 @@ export default function Page() {
           <img src="./logoHor.png" alt="" className="w-[30%]" />
         </div>
         <div className="relative h-[50px] w-[400px]">
-          <div className="absolute left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px]  text-gray-800">
+          <div className="absolute left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] text-gray-800">
             Signup
           </div>
           <div className="absolute left-0 top-[30px] h-5 w-[400px]">
-            <span className="text-sm font-medium   text-gray-500">Already have an account? </span>
-            <Link href="/login" className="text-sm font-bold   text-gray-500">
+            <span className="text-sm font-medium text-gray-500">Already have an account? </span>
+            <Link href="/login" className="text-sm font-bold text-gray-500">
               Login
             </Link>
           </div>
@@ -135,19 +162,28 @@ export default function Page() {
             placeholder="Language"
           />
         </div>
-        <div className="inline-flex items-start justify-start gap-2 self-stretch ">
+        <div className="inline-flex items-start justify-start gap-2 self-stretch">
           <InputField form={form} name="address" placeholder="Address" />
           <InputField form={form} name="zip" placeholder="Zip" />
         </div>
         <StateAndCitySelect form={form} stateName="state" cityName="city" />
-        <div className="inline-flex items-start justify-start gap-2 self-stretch ">
+        <div className="inline-flex items-start justify-start gap-2 self-stretch">
           <InputField form={form} name="password" placeholder="Password" type="password" />
           <InputField form={form} name="confirmPassword" placeholder="Confirm password" type="password" />
         </div>
-        <Button disabled={isPending} type="submit" className="w-full">
+        <Button disabled={isCreatingUser} type="submit" className="w-full">
           Signup
         </Button>
       </form>
+      {/* Modal de confirmação de email */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent>
+          <DialogTitle>Email Confirmation</DialogTitle>
+          <DialogDescription>
+            An email has been sent to you. Please check your email to activate your account.
+          </DialogDescription>
+        </DialogContent>
+      </Dialog>
     </Form>
   );
 }
