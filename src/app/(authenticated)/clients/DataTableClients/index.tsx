@@ -136,8 +136,8 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
 
   return (
     <div className="rounded-md border">
-      <div className="flex w-full items-center justify-between px-2 py-4">
-        <div className="flex w-full">
+      <div className="flex w-full flex-col items-center justify-between px-2 py-4 md:flex-row">
+        <div className="flex w-full text-nowrap">
           <Button>
             <PlusIcon className="mr-2" />
             <Link href={'/clients/new'}>New Client</Link>

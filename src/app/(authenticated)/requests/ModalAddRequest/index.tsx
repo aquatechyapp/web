@@ -111,7 +111,7 @@ export function ModalAddRequest({ request }: Props) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="min-h-[90%]">
+      <DialogContent className="max-h-screen">
         <Form {...form}>
           <form className="flex flex-col gap-4" onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
             <DialogTitle>{request ? `Request #${request.id}` : 'New Request'}</DialogTitle>
@@ -125,7 +125,7 @@ export function ModalAddRequest({ request }: Props) {
                     value: 'id'
                   }
                 )}
-                label="Clients"
+                label="Client"
                 placeholder={clients.length > 0 ? 'Client' : 'No clients available'}
                 form={form}
                 name="clientId"
@@ -144,6 +144,7 @@ export function ModalAddRequest({ request }: Props) {
                   )}
                   placeholder="Pool"
                   form={form}
+                  label="Pool"
                   name="poolId"
                   disabled={disabled}
                 />
@@ -179,7 +180,7 @@ export function ModalAddRequest({ request }: Props) {
               CopyToClipboardData.map((item) => (
                 <CopyToClipboard key={item.value} value={item.value} Icon={item.Icon} />
               ))}
-            {form.formState.isDirty && (
+            {(form.formState.isDirty || !request) && (
               <Button className="w-full" type="submit">
                 Save
               </Button>

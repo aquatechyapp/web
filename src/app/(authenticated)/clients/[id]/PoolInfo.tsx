@@ -72,12 +72,12 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
           <ModalDeletePool deletePool={() => deletePool()} />
         </div>
       </div>
-      <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
+      <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
         <InputField disabled form={form} name="poolAddress" placeholder="Address" />
         <StateAndCitySelect disabled form={form} cityName="poolCity" stateName="poolState" />
         {/* <InputField form={form} placeholder="Number" /> */}
       </div>
-      <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
+      <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
         <InputField name="monthlyPayment" form={form} placeholder="Monthly payment" type="currencyValue" disabled />
         <InputField name="lockerCode" form={form} placeholder="Gate code" disabled />
         <InputField name="enterSide" form={form} placeholder="Enter side" disabled />
@@ -90,8 +90,8 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
           disabled
         />
       </div>
-      <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-        <div className="h-44 w-[40%]">
+      <div className="Form flex flex-col items-start justify-start gap-4 self-stretch lg:flex-row">
+        <div className="h-44 w-full lg:w-[40%]">
           <InputField
             className="h-full"
             type="textArea"
@@ -102,7 +102,7 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
           />
         </div>
 
-        <div className="Form mt-8 flex h-44 w-[60%] shrink grow basis-0 items-start justify-between gap-1">
+        <div className="mt-8 flex h-44 w-full items-start justify-between gap-1 lg:w-[60%]">
           <InputFile
             handleChange={() => {}}
             defaultPhotos={form.watch('photos').map((photo) => ({

@@ -51,11 +51,11 @@ export default function ClientInfo({ client }: { client: Client }) {
         className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50 p-6"
       >
         <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">Basic information</div>
-        <div className="inline-flex items-start justify-start gap-4 self-stretch">
+        <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
           <InputField form={form} name="address" placeholder="Billing address" />
           <StateAndCitySelect form={form} cityName="city" stateName="state" />
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4 md:flex-nowrap">
           <InputField form={form} name="zip" placeholder="Zip code" type="zip" />
           <InputField form={form} name="company" placeholder="Company" />
           <SelectField
@@ -78,7 +78,7 @@ export default function ClientInfo({ client }: { client: Client }) {
           />
         </div>
         <div className="mt-4 h-5 text-sm font-medium   text-gray-500">Contact information</div>
-        <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
+        <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
           <InputField type="phone" form={form} name="phone1" placeholder="Mobile phone" />
           {/* <InputField
             name="phone2"
