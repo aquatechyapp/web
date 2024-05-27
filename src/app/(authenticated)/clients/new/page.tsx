@@ -17,6 +17,7 @@ import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
 import { useUserContext } from '@/context/user';
+import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
 import { paidByServiceSchema } from '@/schemas/assignments';
 import { clientSchema } from '@/schemas/client';
@@ -28,6 +29,8 @@ export default function Page() {
   const { user } = useUserContext();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { width } = useWindowDimensions();
+  const isMobile = width ? width < 640 : false;
 
   const { mutate: handleSubmit, isPending } = useMutation({
     mutationFn: async (data) =>
@@ -132,13 +135,13 @@ export default function Page() {
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
           <div className="h-5 text-sm font-medium   text-gray-500">Basic information</div>
-          <div className="inline-flex items-start justify-start gap-4 self-stretch">
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField form={form} name="firstName" placeholder="First name" label="First name" />
             <InputField form={form} name="lastName" placeholder="Last name" label="Last name" />
             <InputField form={form} name="clientCompany" placeholder="Company" label="Company" />
             <InputField form={form} name="customerCode" placeholder="Customer code" label="Customer code" />
           </div>
-          <div className="inline-flex items-start justify-start gap-4 self-stretch">
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <div className="min-w-fit">
               <InputField form={form} name="clientAddress" placeholder="Billing address" label="Billing address" />
             </div>
@@ -149,7 +152,7 @@ export default function Page() {
               placeholder="Client Type"
               form={form}
               name="type"
-              label="Type"
+              label="Client Type"
               data={[
                 {
                   key: 'Residential',
@@ -167,7 +170,7 @@ export default function Page() {
           <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
             <span className="mr-2">Contact information</span>
           </div>
-          <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField type="phone" form={form} name="phone1" placeholder="Mobile phone" label="Mobile phone" />
             <InputField form={form} name="email1" placeholder="E-mail" label="E-mail" />
             <InputField form={form} name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
@@ -175,7 +178,7 @@ export default function Page() {
           <div className="flex w-full items-center gap-4">
             <div className="w-[50%]">
               <InputField
-                label="Notes about client (customer won't see that)"
+                label={isMobile ? 'Notes about client' : "Notes about client (customer won't see that)"}
                 name="clientNotes"
                 form={form}
                 placeholder="Type clients notes here..."
@@ -199,13 +202,20 @@ export default function Page() {
             <InputField form={form} name="animalDanger" type="checkbox" placeholder="It must take care with animals?" />
           </div>
           {!form.watch('sameBillingAddress') && (
-            <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
+            <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
               <InputField form={form} name="poolAddress" placeholder="Billing address" label="Billing address" />
               <StateAndCitySelect form={form} stateName="poolState" cityName="poolCity" />
-              <InputField form={form} name="poolZip" label="Zip code" placeholder="Zip code" type="zip" />
+              <InputField
+                className="min-w-fit"
+                form={form}
+                name="poolZip"
+                label="Zip code"
+                placeholder="Zip code"
+                type="zip"
+              />
             </div>
           )}
-          <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField
               form={form}
               name="monthlyPayment"
@@ -223,14 +233,14 @@ export default function Page() {
               data={PoolTypes}
             />
           </div>
-          <div className="inline-flex items-start justify-start gap-4 self-stretch">
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
               <InputField
                 className="h-44"
                 name="poolNotes"
                 form={form}
                 placeholder="Location notes..."
-                label="Notes about location (customer won't see that)"
+                label={isMobile ? 'Notes about location' : "Notes about location (customer won't see that)"}
                 type="textArea"
               />
             </div>
@@ -241,7 +251,7 @@ export default function Page() {
           <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
             <span className="mr-2">Assignment information</span>
           </div>
-          <div className="inline-flex items-start justify-start gap-4 self-stretch">
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <SelectField
               disabled={subContractors.length === 0}
               name="assignmentToId"
@@ -260,7 +270,7 @@ export default function Page() {
             <SelectField label="Weekday" name="weekday" placeholder="Weekday" form={form} data={Weekdays} />
             <SelectField label="Frequency" name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
           </div>
-          <div className="inline-flex items-start justify-start gap-4">
+          <div className="inline-flex w-full items-start justify-start gap-4">
             <DatePickerField form={form} name="startOn" label="Start on" placeholder="Start on" />
             <DatePickerField form={form} name="endAfter" label="End after" placeholder="End after" />
           </div>

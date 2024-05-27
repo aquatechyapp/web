@@ -1,8 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { useToast } from '@/components/ui/use-toast';
 import { useAssignmentsContext } from '@/context/assignments';
 import { Assignment } from '@/interfaces/Assignments';
 import { clientAxios } from '@/lib/clientAxios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TransferOnceObject = {
   assignmentToId: string;
@@ -23,10 +24,7 @@ async function transferOnce(data: Partial<Assignment>[]) {
 }
 
 async function transferPermanently(data: Assignment[]) {
-  const response = await clientAxios.post(
-    '/assignments/transferpermanently',
-    data
-  );
+  const response = await clientAxios.post('/assignments/transferpermanently', data);
   return response.data;
 }
 
@@ -35,9 +33,7 @@ export const useTransferOnceRoute = (isSelected = false) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const assignmentsToTransfer = isSelected
-    ? assignmentToTransfer
-    : assignments.current;
+  const assignmentsToTransfer = isSelected ? assignmentToTransfer : assignments.current;
 
   const { mutate, isPending } = useMutation({
     mutationFn: (form: TransferOnceObject) => {
@@ -60,7 +56,7 @@ export const useTransferOnceRoute = (isSelected = false) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       toast({
-        title: 'Assignment created successfully',
+        title: 'Assignment transferred successfully',
         className: 'bg-green-500 text-gray-50'
       });
     }
@@ -72,9 +68,7 @@ export const useTransferPermanentlyRoute = (isSelected = false) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { assignments, assignmentToTransfer } = useAssignmentsContext();
-  const assignmentsToTransfer = isSelected
-    ? assignmentToTransfer
-    : assignments.current;
+  const assignmentsToTransfer = isSelected ? assignmentToTransfer : assignments.current;
 
   const { mutate, isPending } = useMutation({
     mutationFn: (form: TransferPermanentlyObject) => {
@@ -98,7 +92,7 @@ export const useTransferPermanentlyRoute = (isSelected = false) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       toast({
-        title: 'Assignment created successfully',
+        title: 'Assignment transferred successfully',
         className: 'bg-green-500 text-gray-50'
       });
     }

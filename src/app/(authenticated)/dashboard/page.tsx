@@ -1,16 +1,18 @@
 'use client';
 
-import StatisticCard from './_components/StatisticCard';
+import { format } from 'date-fns';
+
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { useAssignmentsContext } from '@/context/assignments';
+import { useUserContext } from '@/context/user';
+import useGetClients from '@/hooks/react-query/clients/getClients';
+import { Client } from '@/interfaces/Client';
+import { isEmpty } from '@/utils';
+
 import ActionButton from './_components/ActionButton';
 import InfoCardScrollable from './_components/InfoCardScrollable';
 import InfoItem from './_components/InfoItem';
-import { format } from 'date-fns';
-import { useUserContext } from '@/context/user';
-import useGetClients from '@/hooks/react-query/clients/getClients';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useAssignmentsContext } from '@/context/assignments';
-import { isEmpty } from '@/utils';
-import { Client } from '@/interfaces/Client';
+import StatisticCard from './_components/StatisticCard';
 
 export default function Page() {
   const { user } = useUserContext();
@@ -30,54 +32,81 @@ export default function Page() {
     return acc;
   }, {});
 
-  const poolsByCityAsSubcontractor = allAssignments.reduce(
-    (acc, assignment) => {
-      if (
-        assignment.assignmentToId === user.id &&
-        assignment.assignmentOwnerId !== user.id
-      ) {
-        if (acc[assignment.pool.city]) {
-          acc[assignment.pool.city] += 1;
-        } else {
-          acc[assignment.pool.city] = 1;
-        }
+  const poolsByCityAsSubcontractor = allAssignments.reduce((acc, assignment) => {
+    if (assignment.assignmentToId === user?.id && assignment.assignmentOwnerId !== user.id) {
+      if (acc[assignment.pool.city]) {
+        acc[assignment.pool.city] += 1;
+      } else {
+        acc[assignment.pool.city] = 1;
       }
-      return acc;
-    },
-    {}
-  );
+    }
+    return acc;
+  }, {});
 
-  const assignmentsBySubcontractors = allAssignments.reduce(
-    (acc, assignment) => {
-      const subcontractor = user.subcontractors.find(
-        (subcontractor) =>
-          subcontractor.subcontractor.id === assignment.assignmentToId
-      );
-      if (subcontractor) {
-        const fullName = `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`;
-        if (acc[fullName]) {
-          acc[fullName] += 1;
-        } else {
-          acc[fullName] = 1;
-        }
+  const assignmentsBySubcontractors = allAssignments.reduce((acc, assignment) => {
+    const subcontractor = user.subcontractors.find(
+      (subcontractor) => subcontractor.subcontractor.id === assignment.assignmentToId
+    );
+    if (subcontractor) {
+      const fullName = `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`;
+      if (acc[fullName]) {
+        acc[fullName] += 1;
+      } else {
+        acc[fullName] = 1;
       }
-      return acc;
-    },
-    {}
-  );
+    }
+    return acc;
+  }, {});
 
   return (
     <div>
-      <div className="my-7 text-2xl font-semibold text-gray-800">
-        {format(new Date(), 'LLLL yyyy')}
+      <div className="my-7 text-2xl font-semibold text-gray-800">{format(new Date(), 'LLLL yyyy')}</div>
+      <div className="flex w-full flex-wrap gap-6 text-nowrap">
+        <div className="flex flex-1 flex-col items-start gap-6">
+          <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />
+          <ActionButton type="add_client" />
+          <InfoCardScrollable title="Pools by city" subtitle=" (as a company)">
+            {isEmpty(poolsByCityAsCompany) ? (
+              <div>No pools found</div>
+            ) : (
+              Object.entries(poolsByCityAsCompany)
+                .sort((a, b) => b[1] - a[1])
+                .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
+            )}
+          </InfoCardScrollable>
+        </div>
+        <div className="flex flex-1 flex-col items-start gap-6">
+          <StatisticCard value={user?.incomeAsASubcontractor} type="incomeSubcontractor" />
+          <ActionButton type="route_dashboard" />
+          <InfoCardScrollable title="Pools by city" subtitle=" (as a subcontractor)">
+            {isEmpty(poolsByCityAsSubcontractor) ? (
+              <div>No pools found</div>
+            ) : (
+              Object.entries(poolsByCityAsSubcontractor)
+                .sort((a, b) => b[1] - a[1])
+                .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
+            )}
+          </InfoCardScrollable>
+        </div>
+        <div className="flex flex-1 flex-col items-start gap-6">
+          <StatisticCard value={clients.length} type="clients" />
+          <ActionButton type="my_team" />
+          <InfoCardScrollable title="My Team">
+            {isEmpty(assignmentsBySubcontractors) ? (
+              <div>No pools found</div>
+            ) : (
+              Object.entries(assignmentsBySubcontractors)
+                .sort((a, b) => b[1] - a[1])
+                .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
+            )}
+          </InfoCardScrollable>
+        </div>
       </div>
-      <div className="Frame211 inline-flex flex-col items-start justify-start gap-6">
+
+      {/* <div className="Frame211 inline-flex flex-col items-start justify-start gap-6">
         <div className="Row inline-flex items-start justify-start gap-6 self-stretch">
           <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />
-          <StatisticCard
-            value={user?.incomeAsASubcontractor}
-            type="incomeSubcontractor"
-          />
+          <StatisticCard value={user?.incomeAsASubcontractor} type="incomeSubcontractor" />
           <StatisticCard value={clients.length} type="clients" />
         </div>
         <div className="Row inline-flex items-start justify-start gap-6 self-stretch">
@@ -92,31 +121,16 @@ export default function Page() {
             ) : (
               Object.entries(poolsByCityAsCompany)
                 .sort((a, b) => b[1] - a[1])
-                .map(([city, pools]) => (
-                  <InfoItem
-                    key={city}
-                    title={city}
-                    description={`${pools} pools`}
-                  />
-                ))
+                .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
           </InfoCardScrollable>
-          <InfoCardScrollable
-            title="Pools by city"
-            subtitle=" (as a subcontractor)"
-          >
+          <InfoCardScrollable title="Pools by city" subtitle=" (as a subcontractor)">
             {isEmpty(poolsByCityAsSubcontractor) ? (
               <div>No pools found</div>
             ) : (
               Object.entries(poolsByCityAsSubcontractor)
                 .sort((a, b) => b[1] - a[1])
-                .map(([city, pools]) => (
-                  <InfoItem
-                    key={city}
-                    title={city}
-                    description={`${pools} pools`}
-                  />
-                ))
+                .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
           </InfoCardScrollable>
           <InfoCardScrollable title="My Team">
@@ -125,17 +139,11 @@ export default function Page() {
             ) : (
               Object.entries(assignmentsBySubcontractors)
                 .sort((a, b) => b[1] - a[1])
-                .map(([city, pools]) => (
-                  <InfoItem
-                    key={city}
-                    title={city}
-                    description={`${pools} pools`}
-                  />
-                ))
+                .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
           </InfoCardScrollable>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

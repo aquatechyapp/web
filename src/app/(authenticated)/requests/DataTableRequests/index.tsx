@@ -44,7 +44,7 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
 
   return (
     <>
-      <div className="mx-2 my-4 flex gap-4">
+      <div className="mx-2 my-4 flex flex-wrap gap-4 md:flex-nowrap">
         <Input
           className="w-auto"
           placeholder="Filter clients..."

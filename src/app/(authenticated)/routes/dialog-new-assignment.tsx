@@ -1,15 +1,12 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import { FormNewAssignment } from './FormNewAssignment';
+import { useState } from 'react';
+
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useCreateAssignment } from '@/hooks/react-query/assignments/createAssignment';
 import { isEmpty } from '@/utils';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useState } from 'react';
+
+import { FormNewAssignment } from './FormNewAssignment';
 
 type Props = {
   form: any;
@@ -46,9 +43,7 @@ export function DialogNewAssignment({ form }: Props) {
         frequency: form.watch('frequency'),
         startOn: form.watch('startOn'),
         endAfter: form.watch('endAfter'),
-        paidByService: parseInt(
-          form.watch('paidByService').replaceAll(/\D/g, '')
-        )
+        paidByService: parseInt(form.watch('paidByService').replaceAll(/\D/g, ''))
       });
       // preciso guardar o assignmentToId selecionado antes de dar reset, se não vai bugar ao criar 2 assignments seguidos
       // em um technician que não é o user logado
@@ -67,20 +62,20 @@ export function DialogNewAssignment({ form }: Props) {
           New Assignment
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-fit">
+      <DialogContent className="max-h-screen max-w-fit overflow-y-scroll">
         <DialogTitle>Create Assignment</DialogTitle>
         {isPending ? <LoadingSpinner /> : <FormNewAssignment form={form} />}
         <div className="flex justify-around">
           <Button
             onClick={createNewAssignment}
-            className="bg-green-500 hover:bg-green-700 text-gray-50 font-bold py-2 px-4 rounded"
+            className="rounded bg-green-500 px-4 py-2 font-bold text-gray-50 hover:bg-green-700"
           >
             Accept
           </Button>
 
           <Button
             onClick={() => setIsModalOpen(false)}
-            className="bg-gray-500 hover:bg-gray-700 text-gray-50 font-bold py-2 px-4 rounded"
+            className="rounded bg-gray-500 px-4 py-2 font-bold text-gray-50 hover:bg-gray-700"
           >
             Cancel
           </Button>
