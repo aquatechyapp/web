@@ -82,6 +82,7 @@ export default function InputField({ form, name, placeholder, type = 'default', 
           placeholder={placeholder}
           {...props}
           {...field}
+          style={{ marginTop: 0 }}
           onInput={(e) => {
             form.setValue(field.name, e.target.value);
           }}

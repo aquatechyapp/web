@@ -19,7 +19,7 @@ export function MobileSideMenu() {
         <aside className="col-span-1  h-full bg-gray-900">
           <div className="inline-flex h-[100%] w-full flex-col items-start justify-start gap-4 bg-gray-900 shadow-inner">
             <div className="mt-10 self-center">
-              <Image width={200} height={200} src="/logoHor.png" alt="Aquatechy Logo" />
+              <Image width={200} height={200} src="/images/logoHor.png" alt="Aquatechy Logo" />
             </div>
             <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
               {routes.map((route) => {
@@ -49,7 +49,7 @@ export function SideMenu() {
     <aside className="col-span-1  h-full bg-gray-900">
       <div className="inline-flex h-[100%] w-full flex-col items-start justify-start gap-4 bg-gray-900 shadow-inner">
         <div className="mx-4 mt-6 self-center">
-          <Image width={200} height={200} src="/logoHor.png" alt="Aquatechy Logo" />
+          <Image width={200} height={200} src="/images/logoHor.png" alt="Aquatechy Logo" />
         </div>
         <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
           {routes.map((route) => {

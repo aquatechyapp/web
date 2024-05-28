@@ -38,14 +38,15 @@ export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }) {
               placeholder="Chemical type"
               form={form}
               data={PoolTypes}
+              label="Chemical type"
             />
           </div>
 
-          <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-            <div className="h-44 w-[40%]">
+          <div className="inline-flex h-44 items-start justify-start gap-4 self-stretch">
+            <div className="h-full w-[40%]">
               <InputField className="h-full" type="textArea" form={form} name="notes" placeholder="Location notes..." />
             </div>
-            <div className="Form mt-8 flex h-44 w-[60%] shrink grow basis-0 items-start justify-between gap-1">
+            <div className="mt-6 flex h-full w-[60%] shrink grow basis-0 items-start justify-between gap-1">
               <InputFile
                 handleChange={() => {}}
                 defaultPhotos={form.watch('photos').map((photo) => ({
@@ -55,7 +56,11 @@ export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }) {
               />
             </div>
           </div>
-          {(isDirty || monthlyPaymentChanged) && <Button type="submit">Save</Button>}
+          {(isDirty || monthlyPaymentChanged) && (
+            <Button className="mt-4" type="submit">
+              Save
+            </Button>
+          )}
         </form>
       </DialogContent>
     </Dialog>

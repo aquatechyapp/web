@@ -27,10 +27,10 @@ export default function Page() {
 
   return (
     <div>
-      <div className="flex h-16 items-start justify-start border-b py-3">
-        <Link href="/team/newSubcontractor">
-          <Button>
-            <PlusIcon className="mr-1" />
+      <div className="flex flex-col items-start justify-start gap-4 border-b py-3 md:flex-row">
+        <Link href="/team/newSubcontractor" className="w-full md:w-fit">
+          <Button className="w-full text-nowrap ">
+            <PlusIcon className="mr-1p" />
             Add Sub-contractor
           </Button>
         </Link>
@@ -38,12 +38,12 @@ export default function Page() {
           placeholder="Filter by name..."
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
-          className="ml-4 max-w-sm"
+          className="w-full md:max-w-sm"
         />
       </div>
 
       <div className="mt-3">
-        <div className="flex flex-wrap gap-6 self-stretch">
+        <div className="flex flex-wrap justify-center gap-6 self-stretch md:justify-normal">
           {filteredSubcontractors?.length === 0 && filteredEmployers?.length === 0 && (
             <span>No contractors found.</span>
           )}
