@@ -55,7 +55,9 @@ export default function Page() {
       }));
 
       // Combine os dados do formulário com os dados dos clientes selecionados e formate a data corretamente
-      const sendAt = new Date(`${formData.startOn.toISOString().split('T')[0]}T${formData.time}:00.000Z`).toISOString();
+      const localDateTime = new Date(`${formData.startOn.toISOString().split('T')[0]}T${formData.time}:00`);
+      const sendAt = localDateTime.toISOString();
+
       const formDataToSend = {
         emailType: formData.emailType,
         message: formData.message,
