@@ -90,7 +90,9 @@ export default function ClientInfo({ client }: { client: Client }) {
 
           {/* <InputField form={form} name="email2" placeholder="Invoice e-mail" /> */}
         </div>
-        <InputField form={form} placeholder="Type client notes here..." name="clientNotes" type="textArea" />
+        <div className="w-full">
+          <InputField form={form} placeholder="Type client notes here..." name="clientNotes" type="textArea" />
+        </div>
         {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium   text-gray-500">
           Notes about client (customer won't see that)
         </div>

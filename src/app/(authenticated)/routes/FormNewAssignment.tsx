@@ -58,6 +58,7 @@ export const FormNewAssignment = ({ form }) => {
                     value: 'id'
                   }
                 )}
+                label="Location"
                 placeholder="Location"
                 form={form}
                 name="poolId"

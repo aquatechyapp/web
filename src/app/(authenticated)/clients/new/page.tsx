@@ -244,7 +244,7 @@ export default function Page() {
                 type="textArea"
               />
             </div>
-            <div className="mt-8 inline-flex h-44 w-full shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
+            <div className="mt-auto inline-flex h-44 w-full shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
               <InputFile handleChange={handleImagesChange} />
             </div>
           </div>

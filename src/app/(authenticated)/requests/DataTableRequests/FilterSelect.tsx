@@ -10,7 +10,7 @@ type Props = {
 export function FilterSelect({ data, placeholder, onChange, value }: Props) {
   return (
     <Select onValueChange={onChange}>
-      <SelectTrigger className="w-auto">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent defaultValue={value}>
