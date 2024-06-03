@@ -16,6 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Categories, RequestStatus } from '@/constants';
 import { buildSelectOptions } from '@/utils/formUtils';
 
+import { ModalAddRequest } from '../ModalAddRequest';
 import { FilterSelect } from './FilterSelect';
 
 interface DataTableProps<TData, TValue> {
@@ -44,9 +45,10 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
 
   return (
     <>
-      <div className="mx-2 my-4 flex gap-4">
+      <div className="mx-2 my-4 flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap">
+        <ModalAddRequest />
         <Input
-          className="w-auto"
+          className="min-w-50"
           placeholder="Filter clients..."
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
@@ -68,7 +70,7 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
           placeholder="Category"
         />
         <DatePicker
-          placeholder="From"
+          placeholder="Created From"
           onChange={(value) => {
             table.getColumn('createdAt')?.setFilterValue((old: [d1: Date, d2: Date]) => {
               if (!old) return [value, null];
@@ -77,7 +79,7 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
           }}
         />
         <DatePicker
-          placeholder="To"
+          placeholder="Created To"
           onChange={(value) =>
             table.getColumn('createdAt')?.setFilterValue((old: [d1: Date, d2: Date]) => {
               if (!old) return [null, value];

@@ -42,19 +42,15 @@ export default function Page() {
     try {
       const { fromDate, toDate, assignmentToId } = formData;
 
-      // Montando os parâmetros da URL
       const params = new URLSearchParams({
         from: fromDate,
         to: toDate,
         technicianId: assignmentToId
       });
 
-      // Fazendo a solicitação HTTP
       const response = await clientAxios.get(`/services/reports?${params}`);
 
       // Manipulando a resposta
-      // console.log('Resposta do backend:', response.data);
-      // console.log(formData);
       setPdfData(response.data);
     } catch (error) {
       console.error('Erro ao enviar solicitação:', error);
@@ -70,7 +66,7 @@ export default function Page() {
           <div className="h-5 text-sm font-medium   text-gray-500">
             Select who you want to generate a report from and select an interval.
           </div>
-          <div className="inline-flex justify-start gap-4 self-stretch">
+          <div className="flex flex-col justify-start gap-4 self-stretch md:flex-row">
             <SelectField
               disabled={subContractors.length === 0}
               name="assignmentToId"

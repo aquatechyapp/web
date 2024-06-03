@@ -68,7 +68,7 @@ export default function Page() {
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
           <div className="h-5 text-sm font-medium   text-gray-500">Basic information</div>
-          <div className="inline-flex justify-start gap-4 self-stretch">
+          <div className="inline-flex flex-wrap justify-start gap-4 self-stretch md:flex-nowrap">
             <InputField form={form} name="emailSubContractor" placeholder="E-mail" />
             <SelectField
               data={paymentType}

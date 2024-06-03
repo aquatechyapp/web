@@ -99,7 +99,7 @@ export const QuixotePdf = ({ pdfData }) => {
         className="mt-8 p-8"
       >
         <div className="flex items-center justify-between">
-          <img src="./logotransparente.jpg" className="h-20 w-20" alt="Logo" />
+          <img src="./images/logotransparente.jpg" className="h-20 w-20" alt="Logo" />
           <h1 className="text-2xl font-bold">REPORT OF SERVICES AND PAYMENTS</h1>
           <span />
         </div>
@@ -221,7 +221,7 @@ export const QuixotePdf = ({ pdfData }) => {
           </div>
         </div>
         <div className="mt-8 flex justify-center">
-          <img src="./logoHor.png" className="h-12" alt="Aquatechy Logo" />
+          <img src="./images/logoHor.png" className="h-12" alt="Aquatechy Logo" />
         </div>
       </div>
     </div>

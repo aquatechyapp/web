@@ -43,7 +43,7 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
       isEntireRoute
     }
   });
-
+  console.log(form.watch('paidByService'));
   const userSelectedAsTechnician = useMemo(
     () => assignmentToId === form.watch('assignmentToId'),
     [form.watch('assignmentToId'), assignmentToId]
@@ -55,7 +55,7 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
     } else {
       form.setValue('paidByService', assignment?.paidByService);
     }
-  }, [form.watch('assignmentToId'), assignmentToId]);
+  }, [form.watch('assignmentToId'), assignmentToId, open]);
 
   const shouldTransferOnce = form.watch('type') === 'once';
 
@@ -82,7 +82,7 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
     const { assignmentToId, onlyAt, weekday, paidByService } = form.getValues();
     const paidByServiceValue =
       typeof paidByService === 'string' ? parseInt(paidByService?.replaceAll(/\D/g, '')) : paidByService;
-
+    console.log(paidByService);
     let payload = {};
 
     if (shouldTransferOnce) {
@@ -114,9 +114,9 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
     if (isValid) {
       setOpen(false);
       if (shouldTransferOnce) {
-        transferOnce(() => buildPayload());
+        transferOnce(buildPayload());
       } else {
-        transferPermanently(() => buildPayload());
+        transferPermanently(buildPayload());
       }
       form.reset();
       return;
@@ -127,7 +127,7 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-[580px]">
+      <DialogContent className="max-h-screen max-w-[580px] overflow-y-scroll">
         <DialogTitle>Transfer Route</DialogTitle>
         {isPending ? (
           <LoadingSpinner />
@@ -163,7 +163,7 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
                 {shouldTransferOnce ? (
                   <CalendarField form={form} name="onlyAt" placeholder="Only at" />
                 ) : (
-                  <div className="flex">
+                  <div className="flex flex-col md:flex-row">
                     <CalendarField form={form} name="startOn" placeholder="Start on" />
                     <CalendarField form={form} name="endAfter" placeholder="End after" />
                   </div>

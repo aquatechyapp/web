@@ -136,8 +136,8 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
 
   return (
     <div className="rounded-md border">
-      <div className="flex w-full items-center justify-between px-2 py-4">
-        <div className="flex w-full">
+      <div className="flex w-full flex-col items-center justify-between px-2 py-4 md:flex-row">
+        <div className="flex w-full flex-col gap-4 text-nowrap md:flex-row">
           <Button>
             <PlusIcon className="mr-2" />
             <Link href={'/clients/new'}>New Client</Link>
@@ -146,12 +146,12 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
             placeholder="Filter clients..."
             value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
             onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
-            className="ml-4 max-w-sm"
+            className="mb-2 md:mb-0 md:max-w-sm"
           />
         </div>
         <div className="flex w-full">
           <Form {...form}>
-            <form className="mb-2 flex w-full gap-4">
+            <form className="mb-2 flex w-full flex-col gap-4 md:flex-row">
               <SelectField
                 form={form}
                 name="Filter"

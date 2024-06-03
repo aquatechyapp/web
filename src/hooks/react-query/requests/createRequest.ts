@@ -19,15 +19,15 @@ export const useCreateRequest = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['requests'] });
       toast({
-        variant: 'default',
-        title: 'Pool created successfully',
+        variant: 'destructive',
+        title: 'Request created successfully',
         className: 'bg-green-500 text-gray-50'
       });
     },
     onError: () => {
       toast({
-        variant: 'default',
-        title: 'Error creating pool',
+        variant: 'destructive',
+        title: 'Error creating Request',
         className: 'bg-red-500 text-gray-50'
       });
     }

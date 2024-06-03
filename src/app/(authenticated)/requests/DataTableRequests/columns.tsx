@@ -5,7 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Categories } from '@/constants';
 import { Request } from '@/interfaces/Request';
 
-import { ModalAddRequest } from '../ModalAddRequest';
+import { ModalEditRequest } from '../ModalEditRequest';
 
 const statusOptions = {
   Pending: {
@@ -31,7 +31,7 @@ export const columns: ColumnDef<Request>[] = [
       const { client } = props.cell.row.original;
       return (
         <div className="flex">
-          <div className="ml-4 flex flex-col">
+          <div className="flex flex-col">
             <span>{client.name}</span>
             <span className="text-gray-400">{client.email1}</span>
           </div>
@@ -45,15 +45,6 @@ export const columns: ColumnDef<Request>[] = [
     cell: ({ row: { original } }) => (
       <div>{Object.values(Categories).find((category) => category.value === original.category)?.name}</div>
     )
-  },
-  {
-    accessorKey: 'details',
-    header: 'Details',
-    cell: ({ row: { original } }) => {
-      return (
-        <div className="max-w-[420px] overflow-hidden text-ellipsis whitespace-nowrap">{original.description}</div>
-      );
-    }
   },
   {
     accessorKey: 'status',
@@ -71,7 +62,7 @@ export const columns: ColumnDef<Request>[] = [
   {
     id: 'actions',
     cell: ({ row: { original } }) => {
-      return <ModalAddRequest request={original} />;
+      return <ModalEditRequest request={original} />;
     }
   },
   {

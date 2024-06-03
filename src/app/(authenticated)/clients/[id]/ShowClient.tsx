@@ -34,9 +34,9 @@ export default function ShowClient({ client }: Props) {
 
   return (
     <div>
-      <div className="flex items-start gap-6 self-stretch">
-        <div className="LeftCol inline-flex  w-[387px] flex-col items-start justify-start gap-7">
-          <div className="UserDetail relative flex h-[698px] flex-col items-center justify-start gap-6 rounded-lg border border-gray-200 bg-gray-50 px-6 pb-6 pt-16">
+      <div className="flex flex-col items-start gap-6 self-stretch pt-2 lg:flex-row lg:pt-0">
+        <div className="inline-flex w-full flex-col items-start justify-start gap-7 lg:w-[380px]">
+          <div className="relative flex w-full flex-col items-center justify-start gap-6 text-nowrap rounded-lg border border-gray-200 bg-gray-50 px-6 pb-6 pt-16">
             <div className="w-[100% - 16px] absolute left-2 right-2 top-2 h-[148px] rounded bg-gradient-to-b from-sky-400 to-teal-400" />
 
             <div className="PhotoName flex h-[206px] flex-col items-center justify-start gap-3 self-stretch">
@@ -44,40 +44,30 @@ export default function ShowClient({ client }: Props) {
                 <AvatarImage src={client.pools[0].photos[0] || 'https://via.placeholder.com/140x140'} />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <div className="NameStatus flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
-                <div className="self-stretch text-center text-xl font-semibold leading-[30px]  text-gray-800">
+              <div className="flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
+                <div className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px]  text-gray-800">
                   {client.name}
                 </div>
                 <div className="text-sm font-medium   text-gray-500">{client.address}</div>
               </div>
             </div>
-            <div className="flex flex-col items-center justify-start gap-[18px]">
-              <div className="inline-flex w-[312px] items-start justify-start gap-2">
+            <div className="flex flex-row flex-wrap items-start justify-start gap-[18px] self-start lg:flex-col lg:flex-nowrap">
+              <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="self-stretch text-sm font-medium   text-gray-500">Email</div>
                   <div className="self-stretch text-sm font-medium   text-gray-800">{client.email1}</div>
                 </div>
-                <div className=" flex items-center justify-center gap-2">
-                  <div className=" flex h-[18px] w-[18px] items-center justify-center gap-2 p-2">
-                    <div className=" relative h-4 w-4" />
-                  </div>
-                </div>
               </div>
-              <div className="inline-flex w-[312px] items-start justify-start gap-2">
+              <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium   text-gray-500">Phone Number</div>
-                  <div className="self-stretch text-sm font-medium   text-gray-800">{client.phone1}</div>
-                </div>
-                <div className=" flex items-center justify-center gap-2">
-                  <div className=" flex h-[18px] w-[18px] items-center justify-center gap-2 p-2">
-                    <div className=" relative h-4 w-4" />
-                  </div>
+                  <div className="self-stretch text-sm font-medium text-gray-500">Phone Number</div>
+                  <div className="self-stretch text-sm font-medium text-gray-800">{client.phone1}</div>
                 </div>
               </div>
-              <div className="inline-flex w-[312px] items-start justify-start gap-2">
+              <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium   text-gray-500">Locations</div>
-                  <div className="self-stretch text-sm font-medium   text-gray-800">
+                  <div className="self-stretch text-sm font-medium text-gray-500">Locations</div>
+                  <div className="self-stretch text-sm font-medium text-gray-800">
                     {client.pools.length > 0
                       ? client.pools.length === 1
                         ? '1 Pool'
@@ -86,7 +76,7 @@ export default function ShowClient({ client }: Props) {
                   </div>
                 </div>
               </div>
-              <div className="inline-flex w-[312px] items-start justify-start gap-2">
+              <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="self-stretch text-sm font-medium   text-gray-500">Last Service</div>
                   <div className="self-stretch text-sm font-medium   text-gray-800">
@@ -96,7 +86,7 @@ export default function ShowClient({ client }: Props) {
                   </div>
                 </div>
               </div>
-              <div className="inline-flex w-[312px] items-start justify-start gap-2">
+              <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className=" text-sm font-medium   text-gray-500">Joined</div>
                   <div className=" text-sm font-medium   text-gray-800">
@@ -130,9 +120,9 @@ export default function ShowClient({ client }: Props) {
         </div>
         <div className="flex w-full flex-col items-start  gap-7">
           <div className="inline-flex h-full w-full flex-col items-start justify-start gap-7">
-            <div className=" inline-flex items-start justify-start gap-6 self-stretch">
+            <div className="inline-flex flex-wrap items-start justify-start gap-6 self-stretch text-nowrap md:flex-nowrap">
               <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <div className=" inline-flex items-start justify-start gap-4 self-stretch">
+                <div className=" inline-flex items-start justify-start gap-4 self-stretch ">
                   <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
                     <div className="self-stretch text-base font-medium leading-normal  text-gray-500">
                       Monthly payment

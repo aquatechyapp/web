@@ -82,6 +82,7 @@ export default function InputField({ form, name, placeholder, type = 'default', 
           placeholder={placeholder}
           {...props}
           {...field}
+          style={{ marginTop: 0 }}
           onInput={(e) => {
             form.setValue(field.name, e.target.value);
           }}
@@ -122,7 +123,7 @@ export default function InputField({ form, name, placeholder, type = 'default', 
       render={({ field }) => {
         return (
           <FormItem className="h-full w-full">
-            {!['checkbox'].includes(type) && <Label>{label || placeholder}</Label>}
+            {!['checkbox'].includes(type) && <Label className="text-nowrap">{label || placeholder}</Label>}
             <FormControl>{types[type].component(field)}</FormControl>
             <FormMessage />
           </FormItem>

@@ -5,7 +5,7 @@ import ImageUploading, { ImageListType } from 'react-images-uploading';
 
 import { Button } from './ui/button';
 
-export function InputFile({ handleChange, defaultPhotos = [], disabled = false }) {
+export function InputFile({ handleChange, defaultPhotos = [], disabled = false, showIcon = true }) {
   const [images, setImages] = useState(defaultPhotos);
   const maxNumber = 4;
 
@@ -22,31 +22,34 @@ export function InputFile({ handleChange, defaultPhotos = [], disabled = false }
       <ImageUploading multiple value={images} onChange={onChange} maxNumber={maxNumber}>
         {({ imageList, onImageUpload, onImageRemoveAll, onImageUpdate, onImageRemove, isDragging, dragProps }) => (
           // write your building UI
-          <div className="flex h-full flex-col items-center justify-evenly rounded border border-dashed border-stone-300">
-            {imageList.length === 0 && (
+          <div
+            className={`flex h-full flex-col items-center justify-evenly rounded border border-dashed border-stone-300 ${disabled && 'border-none'}`}
+          >
+            {imageList.length === 0 && showIcon && (
               <div className="rounded-full bg-stone-200 p-3">
                 <FaRegImages size={22} />
               </div>
             )}
-            {/* <button onClick={onImageRemoveAll}>Remove all images</button> */}
-            <div className="flex gap-8 ">
-              {imageList.map((image, index) => (
-                <div key={index} className="group relative mt-2 px-2">
-                  <img src={image.dataURL} alt="" className="h-24 w-24  rounded-md object-cover" />
-                  {!disabled && (
-                    <Button
-                      size={'sm'}
-                      className="absolute -right-3 -top-1 hidden h-6 px-1 group-hover:block"
-                      variant={'destructive'}
-                      onClick={() => onImageRemove(index)}
-                      disabled={disabled}
-                    >
-                      <MdDeleteOutline size={18} className="cursor-pointer" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
+            {imageList.length > 0 && (
+              <div className="flex gap-8 self-start">
+                {imageList.map((image, index) => (
+                  <div key={index} className="group relative mt-2 px-2">
+                    <img src={image.dataURL} alt="" className="h-24 w-24  rounded-md object-cover" />
+                    {!disabled && (
+                      <Button
+                        size={'sm'}
+                        className="absolute -right-3 -top-1 hidden h-6 px-1 group-hover:block"
+                        variant={'destructive'}
+                        onClick={() => onImageRemove(index)}
+                        disabled={disabled}
+                      >
+                        <MdDeleteOutline size={18} className="cursor-pointer" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
             {!disabled && (
               <Button
                 type="button"

@@ -48,7 +48,7 @@ export default function StatisticCard({ type, value }: Props) {
   const displayValue = type.startsWith('income') ? value / 100 : value;
 
   return (
-    <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-5">
+    <div className="inline-flex w-full flex-col items-start justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-5">
       <div className="flex flex-col items-start justify-start gap-2 self-stretch">
         <div className="inline-flex items-start justify-start gap-1 self-stretch">
           <div className="flex h-6 w-6 items-center justify-center gap-2">

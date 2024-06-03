@@ -1,9 +1,10 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { IoMdMail } from 'react-icons/io';
+import { MdOutlinePhoneAndroid } from 'react-icons/md';
 import { z } from 'zod';
 
 import InputField from '@/components/InputField';
@@ -13,13 +14,16 @@ import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import { Categories } from '@/constants';
+import { Categories, RequestStatus } from '@/constants';
 import { useUserContext } from '@/context/user';
 import useGetClients from '@/hooks/react-query/clients/getClients';
-import { useCreateRequest } from '@/hooks/react-query/requests/createRequest';
+import { useUpdateRequest } from '@/hooks/react-query/requests/updateRequest';
 import { Client } from '@/interfaces/Client';
+import { Request } from '@/interfaces/Request';
 import { isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
+
+import { CopyToClipboard } from './CopyToClipboard';
 
 const schema = z.object({
   clientId: z.string().min(1, { message: 'Client is required' }),
@@ -37,56 +41,72 @@ const schema = z.object({
   })
 });
 
-export function ModalAddRequest() {
+type Props = {
+  request: Request;
+};
+
+export function ModalEditRequest({ request }: Props) {
   const [open, setOpen] = useState(false);
   const { user } = useUserContext();
-  const { mutate: createRequest, isPending: isPendingCreate } = useCreateRequest();
+  const { mutate: updateRequest, isPending: isPendingUpdate } = useUpdateRequest(request.id);
+
+  const CopyToClipboardData = [
+    {
+      value: request.client?.email1 || 'Email not available',
+      Icon: IoMdMail
+    },
+    {
+      value: request.client?.phone1 || 'Phone not available',
+      Icon: MdOutlinePhoneAndroid
+    }
+  ];
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      clientId: '',
-      category: '',
+      clientId: request.clientId || '',
+      category: request.category || '',
       createdBy: {
         id: user?.id,
         firstName: user?.firstName,
         lastName: user?.lastName
       },
       addressedTo: user?.id,
-      poolId: '',
-      description: '',
-      photo: [],
-      status: 'Pending',
-      outcome: undefined
+      poolId: request.poolId || '',
+      description: request.description || '',
+      photo: request.photo || [],
+      status: request.status || 'Pending',
+      outcome: request.outcome || undefined
     }
   });
 
   function handleSubmit(data) {
     if (isEmpty(form.formState.errors)) {
-      createRequest(data);
+      updateRequest(data);
       setOpen(false);
     }
   }
 
   const { data: clients, isLoading: isLoadingClients } = useGetClients();
-  const isLoading = isLoadingClients || isPendingCreate;
+  const isLoading = isLoadingClients || isPendingUpdate;
 
   if (isLoading) return <LoadingSpinner />;
 
   const clientId = form.watch('clientId');
+  const isOnlyDetailModal = !!request;
+  const disabled = isOnlyDetailModal;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <PlusIcon className="mr-2" />
-          Add request
+        <Button variant="link" className="font-semibold">
+          See Details
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="">
         <Form {...form}>
           <form className="flex flex-col gap-4" onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
-            <DialogTitle>New Request</DialogTitle>
+            <DialogTitle className="font-semibold">{request ? `Request #${request.id}` : 'New Request'}</DialogTitle>
             <div className="flex gap-4">
               <SelectField
                 data={buildSelectOptions(
@@ -100,6 +120,8 @@ export function ModalAddRequest() {
                 placeholder={clients.length > 0 ? 'Clients' : 'No clients available'}
                 form={form}
                 name="clientId"
+                disabled={disabled}
+                label="Client"
               />
               {clientId && (
                 <SelectField
@@ -114,27 +136,54 @@ export function ModalAddRequest() {
                   )}
                   placeholder="Pools"
                   form={form}
-                  label="Pool"
                   name="poolId"
+                  disabled={disabled}
+                  label="Pool"
                 />
               )}
             </div>
             <div>
-              <InputField form={form} name="description" placeholder="Description" type="textArea" label=" " />
+              <InputField
+                form={form}
+                name="description"
+                placeholder="Description"
+                type="textArea"
+                disabled={disabled}
+                label="Description"
+              />
             </div>
-            <div>
-              <div className="h-44">
-                <InputFile
-                  showIcon={false}
-                  handleChange={(images) => form.setValue('photo', images)}
-                  defaultPhotos={[]}
-                />
-              </div>
-            </div>
-            <SelectField form={form} name="category" data={Categories} placeholder="Category" />
+            <InputFile
+              disabled={disabled}
+              handleChange={(images) => form.setValue('photo', images)}
+              defaultPhotos={request.photos.map((photo) => ({
+                dataURL: photo,
+                file: new File([], photo.url)
+              }))}
+            />
+            <SelectField
+              label="Category"
+              form={form}
+              name="category"
+              data={Categories}
+              placeholder="Category"
+              disabled={disabled}
+            />
+            <SelectField label="Status" form={form} name="status" data={RequestStatus} placeholder="Status" />
 
+            <InputField
+              form={form}
+              label="Outcome (description of how the problem was fixed)"
+              name="outcome"
+              placeholder="Outcome"
+              type="textArea"
+            />
+            <div>
+              {CopyToClipboardData.map((item) => (
+                <CopyToClipboard key={item.value} value={item.value} Icon={item.Icon} />
+              ))}
+            </div>
             <Button className="w-full" type="submit">
-              Create
+              Update Request
             </Button>
           </form>
         </Form>

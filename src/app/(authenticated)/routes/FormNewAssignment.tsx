@@ -7,11 +7,13 @@ import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
 import { Frequencies } from '@/constants';
+import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { Client } from '@/interfaces/Client';
 import { clientAxios } from '@/lib/clientAxios';
 import { buildSelectOptions } from '@/utils/formUtils';
 
 export const FormNewAssignment = ({ form }) => {
+  const { width = 0 } = useWindowDimensions();
   const { data, isLoading, isError } = useQuery({
     queryKey: ['clients'],
     queryFn: async () => {
@@ -56,6 +58,7 @@ export const FormNewAssignment = ({ form }) => {
                     value: 'id'
                   }
                 )}
+                label="Location"
                 placeholder="Location"
                 form={form}
                 name="poolId"
@@ -73,9 +76,9 @@ export const FormNewAssignment = ({ form }) => {
             />
           </div>
 
-          <div className="mt-4 flex gap-8">
+          <div className="mt-4 flex flex-col gap-8 md:flex-row">
             <CalendarField form={form} name="startOn" placeholder="Start on" />
-            <Separator orientation="vertical" className="h-72" />
+            {width > 768 && <Separator orientation="vertical" className="h-72" />}
             <CalendarField form={form} name="endAfter" placeholder="End after" />
           </div>
         </div>

@@ -130,7 +130,7 @@ export default function Page() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8"
+        className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] overflow-scroll rounded-lg bg-gray-50 px-6 py-8"
       >
         <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
           <img src="./logoHor.png" alt="" className="w-[30%]" />
