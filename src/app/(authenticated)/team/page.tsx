@@ -48,7 +48,7 @@ export default function Page() {
             <span>No contractors found.</span>
           )}
           {filteredSubcontractors && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
               {filteredSubcontractors.map((subcontractor) => (
                 <SubcontractorCard
                   type="subcontractor"
