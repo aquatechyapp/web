@@ -20,14 +20,14 @@ export const useDeletePool = (queryKey: string[], poolId: string) => {
         };
       });
       toast({
-        variant: 'destructive',
+        duration: 2000,
         title: 'Deleted pool successfully',
         className: 'bg-green-500 text-gray-50'
       });
     },
     onError: () => {
       toast({
-        variant: 'destructive',
+        duration: 2000,
         title: 'Error deleting pool',
         className: 'bg-red-500 text-gray-50'
       });

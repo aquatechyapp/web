@@ -77,7 +77,7 @@ export default function Page() {
       console.log('Email sent successfully');
       // Toast de sucesso
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Email enviado com sucesso',
         className: 'bg-green-500 text-white'
       });
@@ -85,7 +85,7 @@ export default function Page() {
       console.error('Error sending email:', error.message);
       // Toast de erro
       toast({
-        variant: 'destructive',
+        duration: 2000,
         title: 'Erro ao enviar o email',
         className: 'bg-red-500 text-white'
       });

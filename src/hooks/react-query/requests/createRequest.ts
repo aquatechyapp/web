@@ -19,14 +19,14 @@ export const useCreateRequest = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['requests'] });
       toast({
-        variant: 'destructive',
+        duration: 2000,
         title: 'Request created successfully',
         className: 'bg-green-500 text-gray-50'
       });
     },
     onError: () => {
       toast({
-        variant: 'destructive',
+        duration: 2000,
         title: 'Error creating Request',
         className: 'bg-red-500 text-gray-50'
       });
