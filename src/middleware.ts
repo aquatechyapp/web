@@ -18,7 +18,10 @@ export async function middleware(req: NextRequest) {
   if (!token) {
     return NextResponse.rewrite(new URL('/login', req.url));
   }
-
+  // if no token found, redirect to login page
+  if (!token || token === '') {
+    return NextResponse.rewrite(new URL('/login', req.url));
+  }
   // verify token
   let decodedToken;
   try {
