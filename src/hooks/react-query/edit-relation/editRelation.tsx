@@ -1,8 +1,10 @@
-import { useToast } from '../../../components/ui/use-toast';
-import { clientAxios } from '../../../lib/clientAxios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+
 import { useUserContext } from '@/context/user';
+
+import { useToast } from '../../../components/ui/use-toast';
+import { clientAxios } from '../../../lib/clientAxios';
 
 export const useEditRelation = () => {
   const queryClient = useQueryClient();
@@ -14,7 +16,7 @@ export const useEditRelation = () => {
     mutationFn: async (data) => {
       return clientAxios.patch('/workrelations/update', {
         ...data,
-        paymentValue: data.paymentValue,
+        paymentValue: data.paymentValue
       });
     },
     onSuccess: (res) => {
@@ -33,14 +35,14 @@ export const useEditRelation = () => {
 
       push('/team');
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Information updated with success.',
         className: 'bg-green-500 text-white'
       });
     },
     onError: (error) => {
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Error adding technician',
         className: 'bg-red-500 text-white'
       });

@@ -44,14 +44,14 @@ export default function Page() {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       push('/clients');
       toast({
-        variant: 'destructive',
+        duration: 2000,
         title: 'Client added successfully',
         className: 'bg-green-500 text-white'
       });
     },
     onError: () => {
       toast({
-        variant: 'destructive',
+        duration: 2000,
         title: 'Error adding client',
         className: 'bg-red-500 text-white'
       });

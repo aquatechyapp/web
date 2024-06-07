@@ -27,14 +27,14 @@ export function EmployerCard({ email, phone, name, workRelationId, status }: Pro
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Invite Active successfully',
         className: 'bg-green-500 text-gray-50'
       });
     },
     onError: () => {
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Error accepting invite',
         className: 'bg-red-500 text-gray-50'
       });

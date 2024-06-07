@@ -49,14 +49,14 @@ export default function Page() {
       }));
       push('/team');
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Technician added successfully',
         className: 'bg-green-500 text-gray-50'
       });
     },
     onError: (error) => {
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Error adding technician',
         className: 'bg-red-500 text-gray-50'
       });

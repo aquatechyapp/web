@@ -55,7 +55,7 @@ export default function Page() {
     onSuccess: ({ data }) => {
       router.push('/login');
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Success',
         description: 'User created successfully',
         className: 'bg-green-500'
@@ -63,7 +63,7 @@ export default function Page() {
     },
     onError: (error) => {
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Internal error',
         description: 'Please try again later',
         className: 'bg-red-500 text-gray-50'

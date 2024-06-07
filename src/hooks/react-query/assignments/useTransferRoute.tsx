@@ -49,6 +49,7 @@ export const useTransferOnceRoute = (isSelected = false) => {
     },
     onError: () => {
       toast({
+        duration: 2000,
         title: 'Error creating assignment',
         className: 'bg-red-500 text-gray-50'
       });
@@ -56,6 +57,7 @@ export const useTransferOnceRoute = (isSelected = false) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       toast({
+        duration: 2000,
         title: 'Assignment transferred successfully',
         className: 'bg-green-500 text-gray-50'
       });
@@ -85,6 +87,7 @@ export const useTransferPermanentlyRoute = (isSelected = false) => {
     },
     onError: () => {
       toast({
+        duration: 2000,
         title: 'Error creating assignment',
         className: 'bg-red-500 text-gray-50'
       });
@@ -92,6 +95,7 @@ export const useTransferPermanentlyRoute = (isSelected = false) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       toast({
+        duration: 2000,
         title: 'Assignment transferred successfully',
         className: 'bg-green-500 text-gray-50'
       });

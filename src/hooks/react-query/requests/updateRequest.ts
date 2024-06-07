@@ -25,14 +25,14 @@ export const useUpdateRequest = (requestId: string) => {
       //   return { requests: newRequests };
       // });
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Request updated successfully',
         className: 'bg-green-500 text-gray-50'
       });
     },
     onError: () => {
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Error updating request',
         className: 'bg-red-500 text-gray-50'
       });
