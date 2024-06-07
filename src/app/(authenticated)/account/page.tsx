@@ -13,6 +13,8 @@ import { useUpdateUser } from '@/hooks/react-query/user/updateUser';
 import { isEmpty } from '@/utils';
 import { filterChangedFormFields } from '@/utils/formUtils';
 
+import SelectField from '../../../components/SelectField';
+
 export default function Page() {
   const { user } = useUserContext();
   const { mutate, isPending } = useUpdateUser();
@@ -27,11 +29,13 @@ export default function Page() {
       address: user?.address || '',
       zip: user?.zip || '',
       state: user?.state || '',
-      city: user?.city || ''
+      city: user?.city || '',
+      language: user?.language || ''
     }
   });
 
   const phoneIsDirty = useMemo(() => form.watch('phone') !== user?.phone, [form.watch('phone'), user?.phone]);
+  const languageSelectOptions = ['English', 'Portuguese', 'Spanish'].map((lang) => ({ value: lang, name: lang }));
 
   const isDirty = useMemo(
     () => !isEmpty(filterChangedFormFields(form.getValues(), form.formState.dirtyFields)) || phoneIsDirty,
@@ -71,6 +75,13 @@ export default function Page() {
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
             <InputField form={form} name="phone" placeholder="Mobile phone" type="phone" />
             <InputField form={form} name="email" placeholder="E-mail" />
+            <SelectField
+              data={languageSelectOptions}
+              form={form}
+              label="Language"
+              name="language"
+              placeholder="Language"
+            />
           </div>
           {isDirty && (
             <Button type="submit" className="h-10 w-full">

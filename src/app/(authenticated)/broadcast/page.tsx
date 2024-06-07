@@ -94,7 +94,6 @@ export default function Page() {
         throw new Error('Failed to send email');
       }
 
-      console.log('Email sent successfully');
       // Toast de sucesso
       toast({
         variant: 'default',
