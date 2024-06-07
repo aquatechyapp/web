@@ -54,6 +54,26 @@ export default function Page() {
         email: client.email1
       }));
 
+      // Validar se há mensagem
+      if (!formData.message) {
+        toast({
+          variant: 'destructive',
+          title: 'Message is required',
+          className: 'bg-red-500 text-white'
+        });
+        return;
+      }
+
+      // Validar se há contatos selecionados
+      if (contacts.length === 0) {
+        toast({
+          variant: 'destructive',
+          title: 'No contacts selected',
+          className: 'bg-red-500 text-white'
+        });
+        return;
+      }
+
       // Combine os dados do formulário com os dados dos clientes selecionados e formate a data corretamente
       const localDateTime = new Date(`${formData.startOn.toISOString().split('T')[0]}T${formData.time}:00`);
       const sendAt = localDateTime.toISOString();
@@ -77,16 +97,16 @@ export default function Page() {
       console.log('Email sent successfully');
       // Toast de sucesso
       toast({
-        duration: 2000,
-        title: 'Email enviado com sucesso',
+        variant: 'default',
+        title: 'Email sent successfully',
         className: 'bg-green-500 text-white'
       });
     } catch (error: any) {
       console.error('Error sending email:', error.message);
       // Toast de erro
       toast({
-        duration: 2000,
-        title: 'Erro ao enviar o email',
+        variant: 'destructive',
+        title: 'Error sending email',
         className: 'bg-red-500 text-white'
       });
     }
