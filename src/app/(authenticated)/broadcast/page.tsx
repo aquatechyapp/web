@@ -74,11 +74,10 @@ export default function Page() {
         throw new Error('Failed to send email');
       }
 
-      console.log('Email sent successfully');
       // Toast de sucesso
       toast({
         variant: 'default',
-        title: 'Email enviado com sucesso',
+        title: 'Email successfully sent',
         className: 'bg-green-500 text-white'
       });
     } catch (error: any) {
@@ -86,7 +85,7 @@ export default function Page() {
       // Toast de erro
       toast({
         variant: 'destructive',
-        title: 'Erro ao enviar o email',
+        title: 'Error sending the e-mail',
         className: 'bg-red-500 text-white'
       });
     }

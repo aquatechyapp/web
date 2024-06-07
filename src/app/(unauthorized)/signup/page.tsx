@@ -3,8 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -51,7 +50,6 @@ const formSchema = z
   );
 
 export default function Page() {
-  const router = useRouter();
   const { toast } = useToast();
   const [showModal, setShowModal] = useState(false);
 
@@ -101,30 +99,6 @@ export default function Page() {
     };
     createUser(formattedData);
   };
-
-  const searchParams = useSearchParams();
-  const token = searchParams.get('token');
-  const [confirmationStatus, setConfirmationStatus] = useState(null);
-
-  useEffect(() => {
-    if (token) {
-      clientAxios
-        .post('/confirm-email', { token })
-        .then((response) => {
-          if (response.data.status === 'aprovado') {
-            localStorage.setItem('jwtToken', response.data.jwtToken);
-            router.push('/dashboard');
-            setConfirmationStatus('aprovado');
-          } else {
-            setConfirmationStatus('não aprovado');
-          }
-        })
-        .catch((error) => {
-          console.error('Erro na confirmação de email:', error);
-          setConfirmationStatus('não aprovado');
-        });
-    }
-  }, [token, router]);
 
   return (
     <Form {...form}>
