@@ -114,7 +114,6 @@ export function ModalAddRequest() {
                   )}
                   placeholder="Pools"
                   form={form}
-                  label="Pool"
                   name="poolId"
                 />
               )}

@@ -47,7 +47,7 @@ export default function Page() {
       });
       push('/dashboard');
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Login successful!',
         className: 'bg-green-500 text-gray-50'
       });
@@ -55,7 +55,7 @@ export default function Page() {
     onError: (error) => {
       if (error.message === 'Network Error') {
         toast({
-          variant: 'default',
+          duration: 2000,
           title: 'Internal error',
           description: 'Please try again later',
           className: 'bg-red-500 text-gray-50'

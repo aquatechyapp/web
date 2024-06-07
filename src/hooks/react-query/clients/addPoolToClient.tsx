@@ -1,7 +1,9 @@
-import { createFormData } from '@/utils/formUtils';
-import { useToast } from '../../../components/ui/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { clientAxios } from '@/lib/clientAxios';
+import { createFormData } from '@/utils/formUtils';
+
+import { useToast } from '../../../components/ui/use-toast';
 
 export const useAddPoolToClient = () => {
   const queryClient = useQueryClient();
@@ -16,14 +18,14 @@ export const useAddPoolToClient = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Pool created successfully',
         className: 'bg-green-500 text-gray-50'
       });
     },
     onError: (error) => {
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Error creating pool',
         className: 'bg-red-500 text-gray-50'
       });

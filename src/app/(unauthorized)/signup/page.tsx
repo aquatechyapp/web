@@ -58,7 +58,7 @@ export default function Page() {
     onSuccess: () => {
       setShowModal(true);
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Success',
         description: 'User created successfully. Please check your email to confirm your account.',
         className: 'bg-green-500'
@@ -66,7 +66,7 @@ export default function Page() {
     },
     onError: () => {
       toast({
-        variant: 'default',
+        duration: 2000,
         title: 'Internal error',
         description: 'Please try again later',
         className: 'bg-red-500 text-gray-50'
