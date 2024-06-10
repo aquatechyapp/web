@@ -16,16 +16,16 @@ export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }) {
       <DialogTrigger>
         <MdOutlineEdit className="cursor-pointer" />
       </DialogTrigger>
-      <DialogContent className="max-w-[1200px]">
+      <DialogContent className="max-h-screen max-w-fit overflow-y-scroll">
         <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(handleSubmit)}>
           {/* <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
           </DialogHeader> */}
           <div>
-            <InputField form={form} name="poolAddress" placeholder="Address" />
+            <InputField form={form} name="address" placeholder="Address" />
           </div>
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
-            <StateAndCitySelect form={form} cityName="poolCity" stateName="poolState" />
+            <StateAndCitySelect form={form} cityName="city" stateName="state" />
             {/* <InputField form={form} placeholder="Number" /> */}
           </div>
           <div className="Form inline-flex items-start justify-start gap-4 self-stretch">

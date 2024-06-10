@@ -5,7 +5,7 @@ import ImageUploading, { ImageListType } from 'react-images-uploading';
 
 import { Button } from './ui/button';
 
-export function InputFile({ handleChange, defaultPhotos = [], disabled = false, showIcon = true }) {
+export function InputFile({ handleChange, defaultPhotos = [], disabled = false, showIcon = true, showBorder = true }) {
   const [images, setImages] = useState(defaultPhotos);
   const maxNumber = 4;
 
@@ -23,7 +23,7 @@ export function InputFile({ handleChange, defaultPhotos = [], disabled = false, 
         {({ imageList, onImageUpload, onImageRemoveAll, onImageUpdate, onImageRemove, isDragging, dragProps }) => (
           // write your building UI
           <div
-            className={`flex h-full flex-col items-center justify-evenly rounded border border-dashed border-stone-300 ${disabled && 'border-none'}`}
+            className={`flex h-full flex-col items-center justify-evenly rounded border border-dashed border-stone-300 ${!showBorder && 'border-none'}`}
           >
             {imageList.length === 0 && showIcon && (
               <div className="rounded-full bg-stone-200 p-3">

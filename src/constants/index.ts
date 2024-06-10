@@ -116,6 +116,11 @@ export const routes = [
     icon: RouteIcon
   },
   {
+    text: 'Requests',
+    href: '/requests',
+    icon: PiCheckSquareOffsetBold
+  },
+  {
     text: 'My team',
     submenu: {
       myAccount: {
@@ -134,11 +139,6 @@ export const routes = [
     text: 'My Account',
     href: '/account',
     icon: AvatarIcon
-  },
-  {
-    text: 'Requests',
-    href: '/requests',
-    icon: PiCheckSquareOffsetBold
   }
 ];
 

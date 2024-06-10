@@ -11,7 +11,7 @@ import { PoolTypes } from '@/constants';
 import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 import { Pool } from '@/interfaces/Assignments';
-import { poolSchema } from '@/schemas/pool';
+import { editPoolSchema } from '@/schemas/pool';
 import { filterChangedFormFields } from '@/utils/formUtils';
 
 import { DialogEditPool } from './DialogEditPool';
@@ -22,7 +22,7 @@ const additionalFieldsSchema = z.object({
   monthlyPayment: z.string().nullable()
 });
 
-const poolAndAdditionalFieldsSchema = poolSchema.and(additionalFieldsSchema);
+const poolAndAdditionalFieldsSchema = editPoolSchema.and(additionalFieldsSchema);
 
 export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: string }) {
   const { mutate, isPending: isPendingUpdatePool } = useUpdatePool();
@@ -30,9 +30,9 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
   const isPending = isPendingUpdatePool || isPendingDeletePool;
   const form = useForm<z.infer<typeof poolAndAdditionalFieldsSchema>>({
     defaultValues: {
-      poolAddress: pool.address || '',
-      poolCity: pool.city || '',
-      poolState: pool.state || '',
+      address: pool.address || '',
+      city: pool.city || '',
+      state: pool.state || '',
       monthlyPayment: pool.monthlyPayment || '',
       lockerCode: pool.lockerCode || '',
       enterSide: pool.enterSide || '',
@@ -73,8 +73,8 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
         </div>
       </div>
       <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-        <InputField disabled form={form} name="poolAddress" placeholder="Address" />
-        <StateAndCitySelect disabled form={form} cityName="poolCity" stateName="poolState" />
+        <InputField disabled form={form} name="address" placeholder="Address" />
+        <StateAndCitySelect disabled form={form} cityName="city" stateName="state" />
         {/* <InputField form={form} placeholder="Number" /> */}
       </div>
       <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
@@ -88,6 +88,7 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
           form={form}
           data={PoolTypes}
           disabled
+          label="Chemical type"
         />
       </div>
       <div className="Form flex flex-col items-start justify-start gap-4 self-stretch lg:flex-row">

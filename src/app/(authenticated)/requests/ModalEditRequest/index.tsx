@@ -159,6 +159,7 @@ export function ModalEditRequest({ request }: Props) {
                 dataURL: photo,
                 file: new File([], photo.url)
               }))}
+              showBorder={false}
             />
             <SelectField
               label="Category"
