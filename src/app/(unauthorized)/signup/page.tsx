@@ -64,11 +64,12 @@ export default function Page() {
         className: 'bg-green-500'
       });
     },
-    onError: () => {
+    onError: (error) => {
+      const errorMessage = error.response?.data?.message || 'Internal error';
       toast({
         duration: 2000,
         title: 'Internal error',
-        description: 'Please try again later',
+        description: errorMessage,
         className: 'bg-red-500 text-gray-50'
       });
     }
