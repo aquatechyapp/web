@@ -102,6 +102,10 @@ export const routes = [
         text: 'Add Clients',
         href: '/clients/new'
       },
+      import: {
+        text: 'Import',
+        href: '/import'
+      },
       broadcast: {
         text: 'Broadcast',
         href: '/broadcast'
@@ -137,7 +141,21 @@ export const routes = [
   },
   {
     text: 'My Account',
-    href: '/account',
+    submenu: {
+      profile: {
+        text: 'Profile',
+        href: '/account'
+      },
+      subscription: {
+        text: 'Subscription',
+        href: '/subscription'
+      },
+      payment: {
+        text: 'Payment',
+        href: '/payment'
+      }
+    },
+    href: '',
     icon: AvatarIcon
   }
 ];
