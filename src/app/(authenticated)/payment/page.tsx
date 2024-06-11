@@ -3,17 +3,26 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 
+import { useUserContext } from '@/context/user';
+
 export default function Payment() {
   const [loading, setLoading] = useState(false);
+  const { user } = useUserContext();
 
   const handleCheckout = async () => {
     setLoading(true);
     try {
       const { data } = await axios.post('/api/checkout_sessions', {
         customerInfo: {
-          email: 'customer@example.com', // Substitua pelo email do cliente
-          name: 'John Doe', // Substitua pelo nome do cliente
-          address: '123 Street, City' // Substitua pelo endereço do cliente
+          email: user?.email,
+          name: user?.firstName,
+          address: user?.address,
+          price: 1000
+        },
+        productInfo: {
+          name: 'Product Name', // Nome do produto
+          description: 'Product Description', // Descrição do produto
+          price: 1000 // Valor em centavos (1000 = R$ 10,00)
         }
       });
 

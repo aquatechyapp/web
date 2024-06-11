@@ -14,12 +14,16 @@ const stripe = new Stripe(stripeSecretKey, {
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    const { customerInfo } = req.body;
+    const { customerInfo, productInfo } = req.body;
 
     try {
       // Verifica se os dados necessários foram fornecidos
       if (!customerInfo?.email || !customerInfo?.name || !customerInfo?.address) {
         throw new Error('Missing required customer information');
+      }
+
+      if (!productInfo?.name || !productInfo?.description || !productInfo?.price) {
+        throw new Error('Missing required product information');
       }
 
       // Cria uma sessão de Checkout usando um preço fixo
@@ -30,10 +34,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             price_data: {
               currency: 'brl',
               product_data: {
-                name: 'Produto',
-                description: 'Descrição do produto'
+                name: productInfo.name,
+                description: productInfo.description
               },
-              unit_amount: 1000 // Valor em centavos (1000 = R$ 10,00)
+              unit_amount: productInfo.price
             },
             quantity: 1
           }
