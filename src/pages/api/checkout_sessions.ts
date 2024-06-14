@@ -28,11 +28,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // Cria uma sessão de Checkout usando um preço fixo
       const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
+        // payment_method_types: ['card'],
         line_items: [
           {
             price_data: {
-              currency: 'brl',
+              currency: 'usd',
               product_data: {
                 name: productInfo.name,
                 description: productInfo.description
