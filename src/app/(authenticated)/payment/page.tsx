@@ -78,25 +78,27 @@ export default function Payment() {
         <div className="grid gap-4">
           {invoices.map((invoice) => (
             <div key={invoice.id} className="rounded-lg bg-white p-4 shadow-md">
-              <div className="mb-2 flex items-center justify-between">
-                <h2 className="text-xl font-semibold">{invoice.item}</h2>
+              <div className="mb-2 flex items-center justify-start">
+                <h2 className="mr-2 text-xl font-semibold">{invoice.item}</h2>
                 <span
                   className={`rounded px-2 py-1 ${invoice.status === 'pending' ? 'bg-yellow-500 text-white' : 'bg-green-500 text-white'}`}
                 >
                   {invoice.status}
                 </span>
               </div>
-              <p className="text-gray-600">Invoice #: {invoice.invoiceNumber}</p>
-              <p className="text-gray-600">Value: {(invoice.value / 100).toFixed(2)} R$</p>
-              <p className="text-gray-600">Created At: {new Date(invoice.createdAt).toLocaleDateString()}</p>
-              <p className="text-gray-600">Due Date: {new Date(invoice.dueDate).toLocaleDateString()}</p>
-              <button
-                className="mt-4 w-full rounded bg-blue-500 py-2 text-white transition-colors hover:bg-blue-600"
-                onClick={handleCheckout}
-                disabled={loading}
-              >
-                {loading ? 'Loading...' : `Pay ${invoice.value / 100} R$`}
-              </button>
+              <div className="mb-2 flex items-center justify-between">
+                <div>
+                  <p className="text-gray-600">Value: U$ {(invoice.value / 100).toFixed(2)} </p>
+                  <p className="text-gray-600">Due Date: {new Date(invoice.dueDate).toLocaleDateString()}</p>
+                </div>
+                <button
+                  className="mt-4 rounded bg-blue-500 p-3 py-2 text-white transition-colors hover:bg-blue-600"
+                  onClick={handleCheckout}
+                  disabled={loading}
+                >
+                  {loading ? 'Loading...' : `Pay ${invoice.value / 100}U$`}
+                </button>
+              </div>
             </div>
           ))}
         </div>
