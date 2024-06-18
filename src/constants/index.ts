@@ -150,9 +150,9 @@ export const routes = [
         text: 'Subscription',
         href: '/subscription'
       },
-      payment: {
-        text: 'Payment',
-        href: '/payment'
+      invoices: {
+        text: 'Invoices',
+        href: '/invoices'
       }
     },
     href: '',

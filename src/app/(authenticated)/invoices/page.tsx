@@ -1,12 +1,13 @@
 'use client';
 
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { useToast } from '@/components/ui/use-toast';
 import { useUserContext } from '@/context/user';
 import { clientAxios } from '@/lib/clientAxios';
+
 interface Invoice {
   createdAt: string;
   dueDate: string;
@@ -22,20 +23,46 @@ interface Invoice {
 
 const locale = 'en-US';
 
-const options = {
+const options: Intl.DateTimeFormatOptions = {
   weekday: 'long',
   month: 'long',
   day: 'numeric',
   year: 'numeric'
-} as any;
+};
 
-export default function Payment() {
+export default function Invoices() {
   const { user } = useUserContext();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loadingInvoices, setLoadingInvoices] = useState<{ [key: string]: boolean }>({});
   const { toast } = useToast();
-  // const router = useRouter();
-  // const { session_id } = router.query;
+  const searchParams = useSearchParams();
+  const [success, setSuccess] = useState<string | null>(null);
+  const [canceled, setCanceled] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams) {
+      setSuccess(searchParams.get('success'));
+      setCanceled(searchParams.get('canceled'));
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (success === 'true') {
+      toast({
+        variant: 'default',
+        title: 'Payment Successful',
+        description: 'Your payment was successful.',
+        className: 'bg-green-500 text-white'
+      });
+    } else if (canceled === 'true') {
+      toast({
+        variant: 'destructive',
+        title: 'Payment Canceled',
+        description: 'Your payment was canceled.',
+        className: 'bg-red-500 text-white'
+      });
+    }
+  }, [success, canceled, toast]);
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -45,11 +72,17 @@ export default function Payment() {
         console.log(response.data);
       } catch (error) {
         console.error('Error fetching invoices:', error);
+        toast({
+          variant: 'destructive',
+          title: 'Error fetching invoices',
+          description: 'Unable to load invoices. Please try again later.',
+          className: 'bg-red-500 text-white'
+        });
       }
     };
 
     fetchInvoices();
-  }, []);
+  }, [toast]);
 
   const handleCheckout = async (invoiceId: string) => {
     setLoadingInvoices((prev) => ({ ...prev, [invoiceId]: true }));

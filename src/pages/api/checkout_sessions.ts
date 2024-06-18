@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // Cria uma sessão de Checkout usando um preço fixo
       const session = await stripe.checkout.sessions.create({
-        // payment_method_types: ['card'],
+        payment_method_types: ['card'],
         line_items: [
           {
             price_data: {
@@ -42,8 +42,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           }
         ],
         mode: 'payment',
-        success_url: `${req.headers.origin}/payment?success=true`,
-        cancel_url: `${req.headers.origin}/payment?canceled=true`,
+        success_url: `${req.headers.origin}/invoices?success=true`,
+        cancel_url: `${req.headers.origin}/invoices?canceled=true`,
         metadata: {
           customer_name: customerInfo.name,
           customer_address: customerInfo.address,
