@@ -1,4 +1,3 @@
-// pages/api/create_checkout_session.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 
@@ -35,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               currency: 'usd',
               product_data: {
                 name: productInfo.name,
-                description: productInfo.description
+                description: 'No description provided'
               },
               unit_amount: productInfo.price
             },
@@ -43,12 +42,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           }
         ],
         mode: 'payment',
-        success_url: `${req.headers.origin}/success?success=true`,
-        cancel_url: `${req.headers.origin}/cancel?canceled=true`,
-        customer_email: customerInfo.email,
+        success_url: `${req.headers.origin}/payment?success=true`,
+        cancel_url: `${req.headers.origin}/payment?canceled=true`,
         metadata: {
           customer_name: customerInfo.name,
-          customer_address: customerInfo.address
+          customer_address: customerInfo.address,
+          customer_id: customerInfo.id
         }
       });
 
