@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useToast } from '@/components/ui/use-toast';
 import { useUserContext } from '@/context/user';
+import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
 
 interface Invoice {
@@ -32,6 +33,7 @@ const options: Intl.DateTimeFormatOptions = {
 
 export default function Invoices() {
   const { user } = useUserContext();
+  const { width } = useWindowDimensions();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loadingInvoices, setLoadingInvoices] = useState<{ [key: string]: boolean }>({});
   const { toast } = useToast();
@@ -138,7 +140,7 @@ export default function Invoices() {
 
   return (
     <div className="p-4">
-      <h1 className="mb-4 text-2xl font-bold">Invoices</h1>
+      <h1 className={`mb-4 font-bold ${width < 640 ? 'text-xl' : 'text-2xl'}`}>Invoices</h1>
       {invoices.length > 0 ? (
         <div className="grid gap-4">
           {invoices.map((invoice) => (
@@ -146,18 +148,18 @@ export default function Invoices() {
               <div className="mb-2 flex items-center justify-between">
                 <div>
                   <div className="mb-2 flex items-center justify-start">
-                    <h2 className="mr-2 text-xl font-semibold">{invoice.item}</h2>
-                    <span
-                      className={`rounded px-2 py-1 ${invoice.status === 'pending' ? 'bg-yellow-500 text-white' : 'bg-green-500 text-white'}`}
-                    >
-                      {invoice.status}
-                    </span>
+                    <h2 className={`mr-2 font-semibold ${width < 640 ? 'text-lg' : 'text-xl'}`}>{invoice.item}</h2>
                   </div>
-                  <div>
-                    <p className="text-gray-600">Price: US${(invoice.value / 100).toFixed(2)}</p>
-                    <p className="text-gray-600">
+                  <div className="items-center justify-center">
+                    <p className={`text-gray-600 ${width < 640 ? 'text-sm' : 'text-base'}`}>
+                      Price: US${(invoice.value / 100).toFixed(2)}
+                    </p>
+                    <p className={`text-gray-600 ${width < 640 ? 'text-sm' : 'text-base'}`}>
                       Due Date: {new Date(invoice.dueDate).toLocaleDateString(locale, options)}
                     </p>
+                    <span className={` text-gray-600 ${width < 640 ? 'text-sm' : 'text-base'}`}>
+                      Status: {invoice.status}
+                    </span>
                   </div>
                 </div>
                 <button

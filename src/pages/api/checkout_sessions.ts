@@ -34,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               currency: 'usd',
               product_data: {
                 name: productInfo.name,
-                description: 'No description provided'
+                description: productInfo.description
               },
               unit_amount: productInfo.price
             },
