@@ -11,7 +11,7 @@ const stripe = new Stripe(stripeSecretKey, {
   apiVersion: '2024-04-10'
 });
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { customerInfo, productInfo } = req.body;
 
@@ -27,14 +27,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // Cria uma sessão de Checkout usando um preço fixo
       const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
+        // payment_method_types: ['card'],
         line_items: [
           {
             price_data: {
               currency: 'usd',
               product_data: {
                 name: productInfo.name,
-                description: productInfo.description
+                description: 'Not'
               },
               unit_amount: productInfo.price
             },
@@ -61,6 +61,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.setHeader('Allow', 'POST');
     res.status(405).end('Method Not Allowed');
   }
-};
-
-export default handler;
+}
