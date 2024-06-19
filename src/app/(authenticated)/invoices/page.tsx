@@ -91,7 +91,7 @@ export default function Invoices() {
     try {
       const invoice = invoices.find((inv) => inv.id === invoiceId);
       if (invoice) {
-        const { data } = await axios.post('/api/route', {
+        const { data } = await axios.post('/api/checkout_sessions', {
           customerInfo: {
             email: user?.email,
             name: user?.firstName,
@@ -126,7 +126,6 @@ export default function Invoices() {
         });
       }
     } catch (error) {
-      console.error('Error creating checkout session:', error);
       toast({
         variant: 'destructive',
         title: 'Error starting checkout',
