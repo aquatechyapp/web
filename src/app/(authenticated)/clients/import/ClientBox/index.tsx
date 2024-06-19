@@ -9,12 +9,13 @@ import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
+import { useFormContext } from '@/context/importClients';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { paidByServiceSchema } from '@/schemas/assignments';
 import { clientSchema } from '@/schemas/client';
 import { dateSchema } from '@/schemas/date';
 import { poolSchema } from '@/schemas/pool';
-import { isEmpty } from '@/utils';
+import { isEmpty, onlyNumbers } from '@/utils';
 
 type Props = {
   data: any;
@@ -25,38 +26,52 @@ const ClientBox = memo(function ClientBox({ data, index }: Props) {
   const { width } = useWindowDimensions();
 
   const isMobile = width ? width < 640 : false;
+  const { updateFormValues } = useFormContext();
 
-  const form = useForm<z.infer<typeof poolAndClientSchema>>({
+  const form = useForm({
     mode: 'onChange',
     resolver: zodResolver(poolAndClientSchema),
     defaultValues: {
-      monthlyPayment: data.monthlyPayment || '',
-
+      monthlyPayment: onlyNumbers(data.monthlyPayment) || undefined,
       // Client data
       clientAddress: data.clientAddress || '',
       clientCity: data.clientCity || '',
+      clientName: data.clientName || '',
       customerCode: data.customerCode || undefined,
       email1: data.email1 || '',
-      firstName: data.firstName || '',
-      lastName: data.lastName || '',
+      // firstName: data.firstName || '',
+      // lastName: data.lastName || '',
       clientNotes: data.clientNotes || '',
       clientZip: data.clientZip || '',
       clientState: data.clientState || '',
       clientCompany: data.clientCompany || '',
       clientType: data.clientType || 'Residential',
-      phone1: data.phone1 || '',
+      phone1: onlyNumbers(data.phone1) || '',
 
       // Pool data
       poolAddress: data.poolAddress || '',
       poolCity: data.poolCity || '',
       poolState: data.poolState || '',
       poolZip: data.poolZip || '',
+      poolType: data.poolType || '',
       poolNotes: data.poolNotes || '',
       animalDanger: !!data.animalDanger || '',
       enterSide: data.enterSide || '',
       lockerCode: data.lockerCode || ''
     }
   });
+
+  useEffect(() => {
+    // Update the context initially with default values
+    updateFormValues(index, form.getValues());
+
+    // Update the context whenever form values change
+    const subscription = form.watch((values) => {
+      updateFormValues(index, values);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const name = `${index + 1} - ${form.getValues('firstName')} ${form.getValues('lastName')} - ${form.getValues('clientAddress')}`;
   const validateForm = async (): Promise<boolean> => {
@@ -130,7 +145,6 @@ const ClientBox = memo(function ClientBox({ data, index }: Props) {
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                   <InputField type="phone" form={form} name="phone1" placeholder="Mobile phone" label="Mobile phone" />
                   <InputField form={form} name="email1" placeholder="E-mail" label="E-mail" />
-                  <InputField form={form} name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
                 </div>
                 <div className="flex w-full items-center gap-4">
                   <div className="w-[50%]">

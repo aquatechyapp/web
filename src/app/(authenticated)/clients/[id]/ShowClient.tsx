@@ -41,7 +41,7 @@ export default function ShowClient({ client }: Props) {
 
             <div className="PhotoName flex h-[206px] flex-col items-center justify-start gap-3 self-stretch">
               <Avatar className="h-[140px] w-[140px]">
-                <AvatarImage src={client.pools[0]?.photos[0] || 'https://via.placeholder.com/140x140'} />
+                <AvatarImage src={client?.pools[0]?.photos[0] || 'https://via.placeholder.com/140x140'} />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div className="flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">

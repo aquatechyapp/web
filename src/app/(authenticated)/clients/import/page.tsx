@@ -6,9 +6,12 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { FormProvider, useFormContext } from '@/context/importClients';
+import { useImportClientsFromCsv } from '@/hooks/react-query/clients/importClientsFromCsv';
 
 import ClientBox from './ClientBox';
 
@@ -24,7 +27,9 @@ export const csvFileSchema = z.object({
 });
 
 export default function Page() {
+  const { getAllFormValues } = useFormContext();
   const [newClients, setNewClients] = useState([]);
+  const { isPending, mutate } = useImportClientsFromCsv();
 
   const form = useForm<z.infer<typeof csvFileSchema>>({
     resolver: zodResolver(csvFileSchema),
@@ -32,6 +37,23 @@ export default function Page() {
       csvFile: undefined
     }
   });
+
+  const handleImportClients = () => {
+    const allValues = getAllFormValues();
+    // allValues is an array with Objects with Key as index and Value as form values
+    // Ex.: { 0: { clientName: 'John Doe', clientEmail: '}
+    // I need to transform this object into an array of objects
+    // Ex.: [{ clientName: 'John Doe', clientEmail: '' }]
+    // Then I can pass this array to the mutation function
+    // mutate(allValues);
+    console.log([{ oi: 'tchau' }]);
+    const clients = allValues.map((client) => {
+      console.log(client);
+      return { ...client };
+    });
+    mutate(clients);
+    console.log(clients); // All form values from ClientBox components
+  };
 
   function handleImportFile(file: File | null) {
     form.trigger('csvFile');
@@ -46,17 +68,14 @@ export default function Page() {
       header: true,
       complete: (results) => {
         console.log(results);
-        // Vai verificar aqui linhas vazias
+        // filter if there are any empty rows
+
         setNewClients(results.data);
-        form2.reset(
-          newClients.map((client, index) => {
-            return {
-              [`clientAddress${index}`]: client.clientAddress || ''
-            };
-          })
-        );
       }
     });
+  }
+  if (isPending) {
+    return <LoadingSpinner />;
   }
 
   // console.log(form.getValues('csvFile'));
@@ -100,7 +119,7 @@ export default function Page() {
           return <ClientBox data={data} index={index} />;
         })}
       </div>
-      <Button>Import Clients</Button>
+      <Button onClick={handleImportClients}>Import Clients</Button>
     </div>
   );
 }
