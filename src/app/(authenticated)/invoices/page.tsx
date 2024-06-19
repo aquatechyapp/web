@@ -38,6 +38,7 @@ export default function Invoices() {
   const [loadingInvoices, setLoadingInvoices] = useState<{ [key: string]: boolean }>({});
   const { toast } = useToast();
   const searchParams = useSearchParams();
+
   const [success, setSuccess] = useState<string | null>(null);
   const [canceled, setCanceled] = useState<string | null>(null);
 
@@ -71,7 +72,6 @@ export default function Invoices() {
       try {
         const response = await clientAxios.get('/invoices');
         setInvoices(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error('Error fetching invoices:', error);
         toast({
@@ -126,7 +126,6 @@ export default function Invoices() {
         });
       }
     } catch (error) {
-      console.error('Error creating checkout session:', error);
       toast({
         variant: 'destructive',
         title: 'Error starting checkout',
