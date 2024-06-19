@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { paymentType } from '@/constants';
+import { onlyNumbers } from '@/utils';
 
 import InputField from '../../../../components/InputField';
 import SelectField from '../../../../components/SelectField';
@@ -18,7 +19,15 @@ import { clientAxios } from '../../../../lib/clientAxios';
 
 const schema = z.object({
   emailSubContractor: z.string().email({ message: 'Invalid email' }),
-  paymentValue: z.preprocess((value) => value.replace(/\D/g, ''), z.coerce.number().min(1, { message: 'Required' })),
+  paymentValue: z.preprocess(
+    (value) => {
+      if (typeof value === 'string') {
+        return onlyNumbers(value);
+      }
+      return value;
+    },
+    z.coerce.number().min(1, { message: 'Required' })
+  ),
   paymentType: z.string().min(1)
 });
 
