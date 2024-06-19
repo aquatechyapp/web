@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeSecretKey =
+  'sk_test_51M2kXKHTSBDDJQzm1cVFeQptvYmPoXukUpfSXZ05H7KeYoLAPedkcP9YR95svQiYDa9t0dy2fKwGhsj9yBxwpZCc00A93W1NyO';
 
 if (!stripeSecretKey) {
   throw new Error('Stripe secret key not found in environment variables');
