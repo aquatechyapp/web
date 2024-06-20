@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
             currency: 'usd',
             product_data: {
               name: productInfo.name,
-              description: 'Not'
+              description: 'Aquatechy'
             },
             unit_amount: productInfo.price
           },
