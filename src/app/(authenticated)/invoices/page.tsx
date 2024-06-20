@@ -36,6 +36,7 @@ export default function Invoices() {
   const { width } = useWindowDimensions();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loadingInvoices, setLoadingInvoices] = useState<{ [key: string]: boolean }>({});
+  const [checkoutInvoiceId, setCheckoutInvoiceId] = useState<string | null>(null);
   const { toast } = useToast();
   const searchParams = useSearchParams();
 
@@ -50,13 +51,31 @@ export default function Invoices() {
   }, [searchParams]);
 
   useEffect(() => {
-    if (success === 'true') {
+    const updateInvoiceStatus = async (invoiceId: string, newStatus: string) => {
+      try {
+        const response = await clientAxios.patch('/invoices', { invoiceId, newStatus });
+      } catch (error) {
+        console.error('Error updating invoice status:', error);
+        toast({
+          variant: 'destructive',
+          title: 'Error updating invoice status',
+          description: 'Unable to update the status of the invoice. Please try again later.',
+          className: 'bg-red-500 text-white'
+        });
+      }
+    };
+
+    if (success === 'true' && checkoutInvoiceId) {
       toast({
         variant: 'default',
         title: 'Payment Successful',
         description: 'Your payment was successful.',
         className: 'bg-green-500 text-white'
       });
+
+      updateInvoiceStatus(checkoutInvoiceId, 'processing');
+
+      setCheckoutInvoiceId(null);
     } else if (canceled === 'true') {
       toast({
         variant: 'destructive',
@@ -65,13 +84,14 @@ export default function Invoices() {
         className: 'bg-red-500 text-white'
       });
     }
-  }, [success, canceled, toast]);
+  }, [success, canceled, toast, checkoutInvoiceId]);
 
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
         const response = await clientAxios.get('/invoices');
         setInvoices(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error('Error fetching invoices:', error);
         toast({
@@ -108,6 +128,9 @@ export default function Invoices() {
 
         // Redireciona para a página de checkout do Stripe
         window.location.href = data.url;
+
+        // Armazena o ID da fatura em checkout
+        setCheckoutInvoiceId(invoiceId);
 
         // Mostra toast de sucesso
         toast({
@@ -156,17 +179,25 @@ export default function Invoices() {
                     <p className={`text-gray-600 ${width < 640 ? 'text-sm' : 'text-base'}`}>
                       Due Date: {new Date(invoice.dueDate).toLocaleDateString(locale, options)}
                     </p>
-                    <span className={` text-gray-600 ${width < 640 ? 'text-sm' : 'text-base'}`}>
+                    <span className={`text-gray-600 ${width < 640 ? 'text-sm' : 'text-base'}`}>
                       Status: {invoice.status}
                     </span>
                   </div>
                 </div>
                 <button
-                  className={`mt-4 w-[100px] rounded p-3 text-white transition-colors ${invoice.status === 'succeeded' ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}
+                  className={`mt-4 w-[100px] rounded p-3 text-white transition-colors ${invoice.status === 'succeeded' || invoice.status === 'processing' ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}
                   onClick={() => handleCheckout(invoice.id)}
-                  disabled={loadingInvoices[invoice.id] || invoice.status === 'succeeded'}
+                  disabled={
+                    loadingInvoices[invoice.id] || invoice.status === 'succeeded' || invoice.status === 'processing'
+                  }
                 >
-                  {loadingInvoices[invoice.id] ? 'Loading...' : invoice.status === 'succeeded' ? 'Paid out' : 'Pay'}
+                  {loadingInvoices[invoice.id]
+                    ? 'Loading...'
+                    : invoice.status === 'succeeded'
+                      ? 'Paid out'
+                      : invoice.status === 'processing'
+                        ? 'Processing...'
+                        : 'Pay'}
                 </button>
               </div>
             </div>
