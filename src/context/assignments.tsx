@@ -1,24 +1,19 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useTechniciansContext } from './technicians';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { clientAxios } from '../lib/clientAxios';
-import { useWeekdayContext } from './weekday';
-import { LoadingSpinner } from '../components/LoadingSpinner';
 import Cookies from 'js-cookie';
+import { createContext, useContext, useEffect, useState } from 'react';
+
+import { LoadingSpinner } from '../components/LoadingSpinner';
 import { Assignment } from '../interfaces/Assignments';
+import { clientAxios } from '../lib/clientAxios';
+import { useTechniciansContext } from './technicians';
+import { useWeekdayContext } from './weekday';
 
 type AssignmentsContextType = {
   assignments: {
     initial: Assignment[];
     current: Assignment[];
   };
-  setAssignments: ({
-    initial,
-    current
-  }: {
-    initial: Assignment[];
-    current: Assignment[];
-  }) => void;
+  setAssignments: ({ initial, current }: { initial: Assignment[]; current: Assignment[] }) => void;
   assignmentToTransfer?: Assignment[];
   setAssignmentToTransfer: (assignment: Assignment[]) => void;
   allAssignments: Assignment[];
@@ -35,11 +30,7 @@ const AssignmentsContext = createContext<AssignmentsContextType>({
   allAssignments: []
 });
 
-export const AssignmentsProvider = ({
-  children
-}: {
-  children: React.ReactNode;
-}) => {
+export const AssignmentsProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
 
   const { assignmentToId } = useTechniciansContext();
@@ -66,18 +57,15 @@ export const AssignmentsProvider = ({
 
   const [allAssignments, setAllAssignments] = useState<Assignment[]>([]);
 
-  const [assignmentToTransfer, setAssignmentToTransfer] = useState<
-    Assignment[]
-  >([]);
+  const [assignmentToTransfer, setAssignmentToTransfer] = useState<Assignment[]>([]);
 
   useEffect(() => {
     if (!userId) return;
     if (isError || isLoading) return;
     const filteredAssignments = data
-      .filter(
+      ?.filter(
         (assignment: Assignment) =>
-          assignment.weekday === selectedWeekday &&
-          assignment.assignmentToId === assignmentToId
+          assignment.weekday === selectedWeekday && assignment.assignmentToId === assignmentToId
       )
       .sort((a: Assignment, b: Assignment) => a.order - b.order);
 

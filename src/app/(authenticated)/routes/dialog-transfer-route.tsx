@@ -11,13 +11,15 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTechniciansContext } from '@/context/technicians';
 import { useWeekdayContext } from '@/context/weekday';
 import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
 import { Assignment } from '@/interfaces/Assignments';
+import { WorkRelation } from '@/interfaces/User';
 import { transferAssignmentsSchema } from '@/schemas/assignments';
 import { isEmpty } from '@/utils';
 
-import TechnicianSelect from './TechnicianSelect';
 import WeekdaySelect from './weekday-select';
 
 type Props = {
@@ -28,8 +30,18 @@ type Props = {
   isEntireRoute?: boolean;
 };
 
-export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment, isEntireRoute = false }: Props) {
+export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute = false }: Props) {
+  const { assignmentToId, technicians } = useTechniciansContext();
   const { selectedWeekday } = useWeekdayContext();
+
+  useEffect(() => {
+    form.setValue('assignmentToId', assignmentToId);
+  }, [assignmentToId]);
+
+  useEffect(() => {
+    form.setValue('weekday', selectedWeekday);
+  }, [selectedWeekday]);
+
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
     resolver: zodResolver(transferAssignmentsSchema),
     defaultValues: {
@@ -43,7 +55,7 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
       isEntireRoute
     }
   });
-  console.log(form.watch('paidByService'));
+
   const userSelectedAsTechnician = useMemo(
     () => assignmentToId === form.watch('assignmentToId'),
     [form.watch('assignmentToId'), assignmentToId]
@@ -79,10 +91,11 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
   const isPending = isPendingOnce || isPendingPermanently;
 
   const buildPayload = () => {
-    const { assignmentToId, onlyAt, weekday, paidByService } = form.getValues();
+    const { onlyAt, weekday, paidByService } = form.getValues();
+    const assignmentToId = form.watch('assignmentToId');
     const paidByServiceValue =
       typeof paidByService === 'string' ? parseInt(paidByService?.replaceAll(/\D/g, '')) : paidByService;
-    console.log(paidByService);
+
     let payload = {};
 
     if (shouldTransferOnce) {
@@ -124,7 +137,6 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
 
     setOpen(true);
   }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-screen max-w-[580px] overflow-y-scroll">
@@ -138,7 +150,26 @@ export function DialogTransferRoute({ assignmentToId, open, setOpen, assignment,
                 <div className="basis-full">
                   {/* -mb-4 pra remover o gap-4. Não coloquei a Label dentro do componente pois não quero aplicar sempre */}
                   <Label className="-mb-4">Technician</Label>
-                  <TechnicianSelect onChange={(technicianId) => form.setValue('assignmentToId', technicianId)} />
+                  <div className="mt-2">
+                    {/* por padrão, o User logado é o tecnico selecionado */}
+                    <Select
+                      onValueChange={(assignmentToId) => form.setValue('assignmentToId', assignmentToId)}
+                      defaultValue={assignmentToId}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Technician..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {technicians.map((technician: WorkRelation) => (
+                            <SelectItem key={technician.subcontractor.id} value={technician.subcontractor.id}>
+                              {technician.subcontractor.firstName} {technician.subcontractor.lastName}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 {/* quando for transferir rota inteira, não preciso informar paidByService, ele pega de cada assignment */}
                 {!userSelectedAsTechnician && (

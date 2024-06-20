@@ -210,7 +210,9 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
                       // click na linha para enviar para view do client, mas não
                       // se aplica nas
                       onClick={
-                        [2, 3].includes(cell.column.getIndex()) ? () => {} : () => push(`/clients/${row.original.id}`)
+                        [2, 3, 4].includes(cell.column.getIndex())
+                          ? () => {}
+                          : () => push(`/clients/${row.original.id}`)
                       }
                       key={cell.id}
                     >

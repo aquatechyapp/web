@@ -5,15 +5,10 @@ export default function NamePhoto({ cell }) {
   return (
     <div className="flex">
       <Avatar>
-        <AvatarImage
-          src={
-            pools[pools.length - 1].photos[0] ||
-            'https://via.placeholder.com/30x30'
-          }
-        />
+        <AvatarImage src={pools[pools.length - 1]?.photos[0] || 'https://via.placeholder.com/30x30'} />
         <AvatarFallback />
       </Avatar>
-      <div className="flex flex-col ml-4">
+      <div className="ml-4 flex flex-col">
         <span>{name}</span>
         <span>{email1}</span>
       </div>
