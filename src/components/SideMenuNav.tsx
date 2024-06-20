@@ -24,7 +24,7 @@ export function MobileSideMenu() {
             <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
               {routes.map((route) => {
                 return (
-                  <div key={route.href} className="w-full">
+                  <div key={route.href + route.submenu} className="w-full">
                     <SideMenuNavLink
                       href={route.href}
                       Icon={route.icon}
@@ -55,7 +55,7 @@ export function SideMenu() {
           {routes.map((route) => {
             return (
               <SideMenuNavLink
-                key={route.href}
+                key={route.href + route.text + route.submenu}
                 href={route.href}
                 Icon={route.icon}
                 text={route.text}

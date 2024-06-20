@@ -35,6 +35,7 @@ export function DialogNewAssignment({ form }: Props) {
     const isValid = await validateForm();
     if (isValid) {
       setIsModalOpen(false);
+      const weekday = form.watch('weekday');
       const assignmentToId = form.watch('assignmentToId');
 
       mutate({
@@ -50,6 +51,7 @@ export function DialogNewAssignment({ form }: Props) {
       // em um technician que não é o user logado
       form.reset();
       form.setValue('assignmentToId', assignmentToId);
+      form.setValue('weekday', weekday);
       return;
     }
 

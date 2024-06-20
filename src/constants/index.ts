@@ -104,7 +104,7 @@ export const routes = [
       },
       import: {
         text: 'Import',
-        href: '/import'
+        href: '/clients/import'
       },
       broadcast: {
         text: 'Broadcast',

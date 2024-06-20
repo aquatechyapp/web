@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import { SideMenu } from '@/components/SideMenuNav';
 import { Colors } from '@/constants/colors';
 import { AssignmentsProvider } from '@/context/assignments';
+import { FormProvider } from '@/context/importClients';
 import { TechniciansProvider } from '@/context/technicians';
 import { UserProvider } from '@/context/user';
 import { WeekdayProvider } from '@/context/weekday';
@@ -27,7 +28,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <UserProvider>
                 <TechniciansProvider>
                   <WeekdayProvider>
-                    <AssignmentsProvider>{children}</AssignmentsProvider>
+                    <AssignmentsProvider>
+                      <FormProvider>{children}</FormProvider>
+                    </AssignmentsProvider>
                   </WeekdayProvider>
                 </TechniciansProvider>
               </UserProvider>

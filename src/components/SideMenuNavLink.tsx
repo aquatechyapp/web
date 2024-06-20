@@ -63,7 +63,7 @@ export default function SideMenuNavLink({ Icon, text, href, submenu, setOpen }: 
                 <div className="flex w-[100%] items-start justify-start text-slate-50">{text}</div>
               </AccordionTrigger>
               {Object.entries(submenu).map(([key, subItem]) => (
-                <span key={key} onClick={() => handleClick(subItem.href)}>
+                <span key={key + subItem.href + subItem.text} onClick={() => handleClick(subItem.href)}>
                   <AccordionContent className="text-ls font-medium leading-none text-gray-500 hover:font-semibold hover:text-gray-400">
                     <div className="ml-10 flex w-[50%] items-start justify-start">{subItem.text}</div>
                   </AccordionContent>
