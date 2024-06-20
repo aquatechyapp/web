@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       metadata: {
         customer_name: customerInfo.name,
         customer_address: customerInfo.address,
-        customer_id: customerInfo.id
+        invoice_id: customerInfo.id
       }
     });
 
