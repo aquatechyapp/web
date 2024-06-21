@@ -1,5 +1,7 @@
 import { FieldValues } from 'react-hook-form';
 
+import { isEmpty } from '.';
+
 export function buildSelectOptions(data: any[], { key, name, value }: { key: string; name: string; value: string }) {
   const options = data.map((item) => {
     return {
@@ -52,4 +54,18 @@ export const filterChangedFormFields = <T extends FieldValues>(
   }, {} as Partial<T>);
 
   return changedFieldValues;
+};
+
+export const validateForm = async (form): Promise<boolean> => {
+  const _ = form.formState.errors; // also works if you read form.formState.isValid
+  await form.trigger();
+  if (form.formState.isValid) {
+    return true;
+  }
+  if (isEmpty(form.formState.errors)) {
+    console.error('Error in the form');
+  } else {
+    console.error(form.formState.errors);
+  }
+  return false;
 };

@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import Papa from 'papaparse';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,12 +11,14 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { FormProvider, useFormContext } from '@/context/importClients';
-import { useImportClientsFromCsv } from '@/hooks/react-query/clients/importClientsFromCsv';
+import { useToast } from '@/components/ui/use-toast';
+import { useFormContext } from '@/context/importClients';
+import { clientAxios } from '@/lib/clientAxios';
 
 import ClientBox from './ClientBox';
 
 const ACCEPTED_FILE_TYPES = ['text/csv'];
+const IGNORE_FIELDS = ['animalDanger', 'clientType'];
 
 export const csvFileSchema = z.object({
   csvFile: z
@@ -29,7 +32,28 @@ export const csvFileSchema = z.object({
 export default function Page() {
   const { getAllFormValues } = useFormContext();
   const [newClients, setNewClients] = useState([]);
-  const { isPending, mutate } = useImportClientsFromCsv();
+  const [hasErrorInSomeForm, setHasErrorInSomeForm] = useState(false);
+  const { toast } = useToast();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (data) => await clientAxios.post('/importclientsandpools', data),
+    onSuccess: () => {
+      toast({
+        duration: 2000,
+        title: 'Clients created successfully',
+        className: 'bg-green-500 text-gray-50'
+      });
+      setNewClients([]);
+      form.reset();
+    },
+    onError: () => {
+      toast({
+        duration: 2000,
+        title: 'Error creating clients',
+        className: 'bg-red-500 text-gray-50'
+      });
+    }
+  });
 
   const form = useForm<z.infer<typeof csvFileSchema>>({
     resolver: zodResolver(csvFileSchema),
@@ -40,19 +64,12 @@ export default function Page() {
 
   const handleImportClients = () => {
     const allValues = getAllFormValues();
-    // allValues is an array with Objects with Key as index and Value as form values
-    // Ex.: { 0: { clientName: 'John Doe', clientEmail: '}
-    // I need to transform this object into an array of objects
-    // Ex.: [{ clientName: 'John Doe', clientEmail: '' }]
-    // Then I can pass this array to the mutation function
-    // mutate(allValues);
-    console.log([{ oi: 'tchau' }]);
+
     const clients = allValues.map((client) => {
-      console.log(client);
       return { ...client };
     });
+
     mutate(clients);
-    console.log(clients); // All form values from ClientBox components
   };
 
   function handleImportFile(file: File | null) {
@@ -67,18 +84,23 @@ export default function Page() {
     Papa.parse(file, {
       header: true,
       complete: (results) => {
-        console.log(results);
-        // filter if there are any empty rows
-
-        setNewClients(results.data);
+        const result = results.data.filter((obj) => {
+          // clona o objeto
+          const objWithoutIgnoredFields = { ...obj };
+          // remove os campos que já vem com valor default da planilha
+          IGNORE_FIELDS.forEach((field) => {
+            delete objWithoutIgnoredFields[field];
+          });
+          // Filtra se algum campo não é vazio. Se tiver qualquer campo preenchido, retorna true
+          return Object.values(objWithoutIgnoredFields).some((value) => value);
+        });
+        setNewClients(result);
       }
     });
   }
   if (isPending) {
     return <LoadingSpinner />;
   }
-
-  // console.log(form.getValues('csvFile'));
 
   return (
     <div className="rounded-md border">
@@ -116,10 +138,21 @@ export default function Page() {
       </div>
       <div className="flex flex-col gap-4">
         {newClients.map((data, index) => {
-          return <ClientBox data={data} index={index} />;
+          return (
+            <ClientBox
+              hasErrorInSomeForm={hasErrorInSomeForm}
+              setHasErrorInSomeForm={setHasErrorInSomeForm}
+              data={data}
+              index={index}
+            />
+          );
         })}
       </div>
-      <Button onClick={handleImportClients}>Import Clients</Button>
+      <div className="w-full p-2">
+        <Button className="w-full" disabled={hasErrorInSomeForm} onClick={handleImportClients}>
+          Import Clients
+        </Button>
+      </div>
     </div>
   );
 }

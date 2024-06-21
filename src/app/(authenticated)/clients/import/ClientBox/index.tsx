@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -11,18 +11,19 @@ import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
 import { useFormContext } from '@/context/importClients';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { paidByServiceSchema } from '@/schemas/assignments';
 import { clientSchema } from '@/schemas/client';
-import { dateSchema } from '@/schemas/date';
 import { poolSchema } from '@/schemas/pool';
 import { isEmpty, onlyNumbers } from '@/utils';
+import { validateForm } from '@/utils/formUtils';
 
 type Props = {
   data: any;
   index: number;
+  hasErrorInSomeForm: boolean;
+  setHasErrorInSomeForm: (value: boolean) => void;
 };
 
-const ClientBox = memo(function ClientBox({ data, index }: Props) {
+const ClientBox = memo(function ClientBox({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: Props) {
   const { width } = useWindowDimensions();
 
   const isMobile = width ? width < 640 : false;
@@ -46,7 +47,7 @@ const ClientBox = memo(function ClientBox({ data, index }: Props) {
       clientState: data.clientState || '',
       clientCompany: data.clientCompany || '',
       clientType: data.clientType || 'Residential',
-      phone1: onlyNumbers(data.phone1) || '',
+      phone1: onlyNumbers(data.phone1).toString() || '',
 
       // Pool data
       poolAddress: data.poolAddress || '',
@@ -73,26 +74,26 @@ const ClientBox = memo(function ClientBox({ data, index }: Props) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const name = `${index + 1} - ${form.getValues('firstName')} ${form.getValues('lastName')} - ${form.getValues('clientAddress')}`;
-  const validateForm = async (): Promise<boolean> => {
-    const _ = form.formState.errors; // also works if you read form.formState.isValid
-    await form.trigger();
-    if (form.formState.isValid) {
-      return true;
-    }
-    if (isEmpty(form.formState.errors)) {
-      console.error('Error in the form');
-    } else {
-      console.error(form.formState.errors);
-    }
-    return false;
-  };
+  const name = useMemo(
+    () => `${index + 1} - ${form.getValues('clientName')} - ${form.getValues('clientAddress')}`,
+    [form.watch('clientName'), form.watch('clientAddress')]
+  );
 
   useEffect(() => {
-    validateForm();
+    validateForm(form);
   }, []);
 
-  console.log(form.getValues());
+  useEffect(
+    () => {
+      if (!hasErrorInSomeForm && !form.formState.isValid) {
+        setHasErrorInSomeForm(true);
+      } else if (hasErrorInSomeForm && form.formState.isValid) {
+        setHasErrorInSomeForm(false);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [form.formState.isValid]
+  );
 
   return (
     <Accordion type="single" collapsible>
@@ -103,8 +104,7 @@ const ClientBox = memo(function ClientBox({ data, index }: Props) {
             <form onSubmit={form.handleSubmit(() => {})}>
               <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                  <InputField form={form} name="firstName" placeholder="First name" label="First name" />
-                  <InputField form={form} name="lastName" placeholder="Last name" label="Last name" />
+                  <InputField form={form} name="clientName" placeholder="Client Name" label="Client Name" />
                   <InputField form={form} name="clientCompany" placeholder="Company" label="Company" />
                   <InputField form={form} name="customerCode" placeholder="Customer code" label="Customer code" />
                 </div>
@@ -220,9 +220,22 @@ const additionalSchemas = z.object({
   customerCode: z.string().nullable(),
   monthlyPayment: z.number().nullable(),
   clientCompany: z.string().nullable(),
-  clientType: z.enum(['Commercial', 'Residential'])
+  clientType: z.enum(['Commercial', 'Residential']),
+  clientName: z
+    .string({
+      required_error: 'Name is required.',
+      invalid_type_error: 'Name must be a string.'
+    })
+    .trim()
+    .min(1, { message: 'First name must be at least 1 character.' })
 });
 
-const poolAndClientSchema = clientSchema.and(poolSchema).and(additionalSchemas).and(dateSchema);
+const poolAndClientSchema = clientSchema
+  .omit({
+    firstName: true,
+    lastName: true
+  })
+  .and(poolSchema)
+  .and(additionalSchemas);
 
 export default ClientBox;
