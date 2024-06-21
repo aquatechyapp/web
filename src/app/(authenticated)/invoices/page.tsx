@@ -47,35 +47,44 @@ export default function Invoices() {
     if (searchParams) {
       setSuccess(searchParams.get('success'));
       setCanceled(searchParams.get('canceled'));
+      if (searchParams.get('success') === 'true') {
+        const invoiceId = searchParams.get('invoiceId');
+        if (invoiceId) {
+          setCheckoutInvoiceId(invoiceId);
+        }
+      }
     }
   }, [searchParams]);
 
   useEffect(() => {
-    const updateInvoiceStatus = async (invoiceId: string, newStatus: string) => {
-      try {
-        const response = await clientAxios.patch('/invoices', { invoiceId, newStatus });
-      } catch (error) {
-        console.error('Error updating invoice status:', error);
+    const handlePaymentSuccess = async (invoiceId: string, newStatus: string) => {
+      const response = await clientAxios.patch('/invoices', { invoiceId, newStatus });
+      if (response) {
+        // Use os dados da fatura atualizada conforme necessário
+        console.log('Updated invoice:', response);
         toast({
-          variant: 'destructive',
-          title: 'Error updating invoice status',
-          description: 'Unable to update the status of the invoice. Please try again later.',
-          className: 'bg-red-500 text-white'
+          variant: 'default',
+          title: 'Payment Successful',
+          description: `Your payment was successful and the invoice status is now ${response.status}.`,
+          className: 'bg-green-500 text-white'
         });
+        // Atualizar a lista de faturas após o pagamento
+        const updatedInvoices = invoices.map((invoice) =>
+          invoice.id === invoiceId ? { ...invoice, status: response.status } : invoice
+        );
+        setInvoices(updatedInvoices);
       }
+      setCheckoutInvoiceId(null);
     };
 
+    if (checkoutInvoiceId) {
+      handlePaymentSuccess(checkoutInvoiceId, 'processing');
+    }
+  }, [checkoutInvoiceId, invoices, toast]);
+
+  useEffect(() => {
     if (success === 'true' && checkoutInvoiceId) {
-      toast({
-        variant: 'default',
-        title: 'Payment Successful',
-        description: 'Your payment was successful.',
-        className: 'bg-green-500 text-white'
-      });
-
-      updateInvoiceStatus(checkoutInvoiceId, 'processing');
-
-      setCheckoutInvoiceId(null);
+      setCheckoutInvoiceId((prev) => prev); // Trigger re-render
     } else if (canceled === 'true') {
       toast({
         variant: 'destructive',
@@ -84,14 +93,13 @@ export default function Invoices() {
         className: 'bg-red-500 text-white'
       });
     }
-  }, [success, canceled, toast, checkoutInvoiceId]);
+  }, [success, canceled, checkoutInvoiceId, toast]);
 
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
         const response = await clientAxios.get('/invoices');
         setInvoices(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error('Error fetching invoices:', error);
         toast({
