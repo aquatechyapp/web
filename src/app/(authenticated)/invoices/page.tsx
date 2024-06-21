@@ -36,6 +36,7 @@ export default function Invoices() {
   const { width } = useWindowDimensions();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loadingInvoices, setLoadingInvoices] = useState<{ [key: string]: boolean }>({});
+  const [checkoutInvoiceId, setCheckoutInvoiceId] = useState<string | null>(null);
   const { toast } = useToast();
   const searchParams = useSearchParams();
 
@@ -46,17 +47,44 @@ export default function Invoices() {
     if (searchParams) {
       setSuccess(searchParams.get('success'));
       setCanceled(searchParams.get('canceled'));
+      if (searchParams.get('success') === 'true') {
+        const invoiceId = searchParams.get('invoiceId');
+        if (invoiceId) {
+          setCheckoutInvoiceId(invoiceId);
+        }
+      }
     }
   }, [searchParams]);
 
   useEffect(() => {
-    if (success === 'true') {
-      toast({
-        variant: 'default',
-        title: 'Payment Successful',
-        description: 'Your payment was successful.',
-        className: 'bg-green-500 text-white'
-      });
+    const handlePaymentSuccess = async (invoiceId: string, newStatus: string) => {
+      const response = await clientAxios.patch('/invoices', { invoiceId, newStatus });
+      if (response) {
+        // Use os dados da fatura atualizada conforme necessário
+        console.log('Updated invoice:', response);
+        toast({
+          variant: 'default',
+          title: 'Payment Successful',
+          description: `Your payment was successful and the invoice status is now ${response.status}.`,
+          className: 'bg-green-500 text-white'
+        });
+        // Atualizar a lista de faturas após o pagamento
+        const updatedInvoices = invoices.map((invoice) =>
+          invoice.id === invoiceId ? { ...invoice, status: response.status } : invoice
+        );
+        setInvoices(updatedInvoices);
+      }
+      setCheckoutInvoiceId(null);
+    };
+
+    if (checkoutInvoiceId) {
+      handlePaymentSuccess(checkoutInvoiceId, 'processing');
+    }
+  }, [checkoutInvoiceId, invoices, toast]);
+
+  useEffect(() => {
+    if (success === 'true' && checkoutInvoiceId) {
+      setCheckoutInvoiceId((prev) => prev); // Trigger re-render
     } else if (canceled === 'true') {
       toast({
         variant: 'destructive',
@@ -65,7 +93,7 @@ export default function Invoices() {
         className: 'bg-red-500 text-white'
       });
     }
-  }, [success, canceled, toast]);
+  }, [success, canceled, checkoutInvoiceId, toast]);
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -108,6 +136,9 @@ export default function Invoices() {
 
         // Redireciona para a página de checkout do Stripe
         window.location.href = data.url;
+
+        // Armazena o ID da fatura em checkout
+        setCheckoutInvoiceId(invoiceId);
 
         // Mostra toast de sucesso
         toast({
@@ -156,17 +187,25 @@ export default function Invoices() {
                     <p className={`text-gray-600 ${width < 640 ? 'text-sm' : 'text-base'}`}>
                       Due Date: {new Date(invoice.dueDate).toLocaleDateString(locale, options)}
                     </p>
-                    <span className={` text-gray-600 ${width < 640 ? 'text-sm' : 'text-base'}`}>
+                    <span className={`text-gray-600 ${width < 640 ? 'text-sm' : 'text-base'}`}>
                       Status: {invoice.status}
                     </span>
                   </div>
                 </div>
                 <button
-                  className={`mt-4 w-[100px] rounded p-3 text-white transition-colors ${invoice.status === 'succeeded' ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}
+                  className={`mt-4 w-[100px] rounded p-3 text-white transition-colors ${invoice.status === 'succeeded' || invoice.status === 'processing' ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}
                   onClick={() => handleCheckout(invoice.id)}
-                  disabled={loadingInvoices[invoice.id] || invoice.status === 'succeeded'}
+                  disabled={
+                    loadingInvoices[invoice.id] || invoice.status === 'succeeded' || invoice.status === 'processing'
+                  }
                 >
-                  {loadingInvoices[invoice.id] ? 'Loading...' : invoice.status === 'succeeded' ? 'Paid out' : 'Pay'}
+                  {loadingInvoices[invoice.id]
+                    ? 'Loading...'
+                    : invoice.status === 'succeeded'
+                      ? 'Paid out'
+                      : invoice.status === 'processing'
+                        ? 'Processing...'
+                        : 'Pay'}
                 </button>
               </div>
             </div>
