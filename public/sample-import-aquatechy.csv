@@ -1,1 +1,3 @@
-clientAddress,clientCity,email1,firstName,lastName,clientNotes,phone1,clientState,clientZip,poolAddress,animalDanger,poolCity,enterSide,lockerCode,poolNotes,poolType,poolState,poolZip,weekday,frequency,sameBillingAddress,customerCode,clientCompany,clientType,startOn,endAfter
+clientAddress,clientCity,email1,clientName,clientNotes,phone1,clientState,clientZip,poolAddress,animalDanger,poolCity,enterSide,lockerCode,poolNotes,poolType,poolState,poolZip,customerCode,clientCompany,clientType,monthlyPayment
+Endereço 2,Arab,asd@asd.com,Segybdi Nome,Notas,1 232 323-2323,AL,123123,Endereço piscina,FALSE,Arab,north,123,notes,Chlorine,AL,123123,123,Companhia CLiente,Residential,"$123,00"
+Endereço 1,Arab,asd@asd.com,Primeiro Nome,Notas,1 232 323-2323,AL,123123,Endereço piscina,TRUE,Arab,north,123,notes,Salt,AL,123123,123,Companhia CLiente,Commercial,"$123,00"
