@@ -204,7 +204,7 @@ export default function Invoices() {
                     : invoice.status === 'succeeded'
                       ? 'Paid out'
                       : invoice.status === 'processing'
-                        ? 'Processing...'
+                        ? 'Processing'
                         : 'Pay'}
                 </button>
               </div>
