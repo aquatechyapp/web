@@ -34,14 +34,6 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
   const { assignmentToId, technicians } = useTechniciansContext();
   const { selectedWeekday } = useWeekdayContext();
 
-  useEffect(() => {
-    form.setValue('assignmentToId', assignmentToId);
-  }, [assignmentToId]);
-
-  useEffect(() => {
-    form.setValue('weekday', selectedWeekday);
-  }, [selectedWeekday]);
-
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
     resolver: zodResolver(transferAssignmentsSchema),
     defaultValues: {
@@ -55,6 +47,10 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
       isEntireRoute
     }
   });
+
+  useEffect(() => {
+    form.setValue('assignmentToId', assignmentToId);
+  }, [assignmentToId]);
 
   const userSelectedAsTechnician = useMemo(
     () => assignmentToId === form.watch('assignmentToId'),
@@ -134,9 +130,9 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
       form.reset();
       return;
     }
-
     setOpen(true);
   }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-screen max-w-[580px] overflow-y-scroll">

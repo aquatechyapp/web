@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { City, State } from 'country-state-city';
 import Papa from 'papaparse';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -14,11 +15,14 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useFormContext } from '@/context/importClients';
 import { clientAxios } from '@/lib/clientAxios';
+import { normalizeState } from '@/utils';
 
 import ClientBox from './ClientBox';
 
 const ACCEPTED_FILE_TYPES = ['text/csv'];
 const IGNORE_FIELDS = ['animalDanger', 'clientType'];
+
+const states = State.getStatesOfCountry('US');
 
 export const csvFileSchema = z.object({
   csvFile: z
@@ -30,8 +34,7 @@ export const csvFileSchema = z.object({
 });
 
 export default function Page() {
-  const { getAllFormValues } = useFormContext();
-  const [newClients, setNewClients] = useState([]);
+  const { forms, updateFormValues, removeForm } = useFormContext();
   const [hasErrorInSomeForm, setHasErrorInSomeForm] = useState(false);
   const { toast } = useToast();
 
@@ -43,8 +46,7 @@ export default function Page() {
         title: 'Clients created successfully',
         className: 'bg-green-500 text-gray-50'
       });
-      setNewClients([]);
-      form.reset();
+      form.setValue('csvFile', undefined);
     },
     onError: () => {
       toast({
@@ -63,13 +65,7 @@ export default function Page() {
   });
 
   const handleImportClients = () => {
-    const allValues = getAllFormValues();
-
-    const clients = allValues.map((client) => {
-      return { ...client };
-    });
-
-    mutate(clients);
+    mutate(forms);
   };
 
   function handleImportFile(file: File | null) {
@@ -94,7 +90,37 @@ export default function Page() {
           // Filtra se algum campo não é vazio. Se tiver qualquer campo preenchido, retorna true
           return Object.values(objWithoutIgnoredFields).some((value) => value);
         });
-        setNewClients(result);
+        result.forEach((data, index) => {
+          // normalize data.clientState (remove acentos, espaços e deixa em caixa alta)
+          const normalizedState = normalizeState(data.clientState);
+          // find the index of the state in the array of states
+          const foundedState = states.find(
+            (state) => normalizeState(state.name) === normalizedState || state.isoCode === normalizedState
+          );
+
+          // Se encontrar estado, tenta encontrar a cidade
+          if (foundedState) {
+            data.clientState = foundedState.isoCode;
+
+            // find city by state
+            const cities = City.getCitiesOfState('US', foundedState.isoCode);
+            const foundedCity = cities.find((city) => normalizeState(city.name) === normalizeState(data.clientCity));
+
+            // Se encontrar cidade, seta o nome da cidade
+            if (foundedCity) {
+              data.clientCity = foundedCity.name;
+            } else {
+              // Se não encontrar cidade, seta vazio e deixa somente o estado
+              data.clientCity = '';
+            }
+          } else {
+            // Se não encontrar estado, seta ambos vazios pois sem estado não conseguimos buscar as cidades
+            data.clientState = '';
+            data.clientCity = '';
+          }
+
+          updateFormValues(index, data);
+        });
       }
     });
   }
@@ -137,14 +163,16 @@ export default function Page() {
         </Form>
       </div>
       <div className="flex flex-col gap-4">
-        {newClients.map((data, index) => {
+        {forms.map((data, index) => {
           return (
-            <ClientBox
-              hasErrorInSomeForm={hasErrorInSomeForm}
-              setHasErrorInSomeForm={setHasErrorInSomeForm}
-              data={data}
-              index={index}
-            />
+            <>
+              <ClientBox
+                hasErrorInSomeForm={hasErrorInSomeForm}
+                setHasErrorInSomeForm={setHasErrorInSomeForm}
+                data={data}
+                index={index}
+              />
+            </>
           );
         })}
       </div>

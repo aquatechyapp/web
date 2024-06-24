@@ -7,6 +7,7 @@ import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
 import { useFormContext } from '@/context/importClients';
@@ -23,11 +24,11 @@ type Props = {
   setHasErrorInSomeForm: (value: boolean) => void;
 };
 
-const ClientBox = memo(function ClientBox({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: Props) {
+const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: Props) => {
   const { width } = useWindowDimensions();
-
   const isMobile = width ? width < 640 : false;
-  const { updateFormValues } = useFormContext();
+
+  const { updateFormValues, removeForm, forms } = useFormContext();
 
   const form = useForm({
     mode: 'onChange',
@@ -95,9 +96,20 @@ const ClientBox = memo(function ClientBox({ data, index, hasErrorInSomeForm, set
     [form.formState.isValid]
   );
 
+  useEffect(() => {
+    form.trigger();
+  }, [forms.length]);
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1" className="px-4 py-2">
+        {/* <Button
+          onClick={() => {
+            removeForm(index);
+          }}
+        >
+          Remove
+        </Button> */}
         <AccordionTrigger className={!isEmpty(form.formState.errors) && 'text-red-500'}>{name}</AccordionTrigger>
         <AccordionContent>
           <Form {...form}>
@@ -214,7 +226,7 @@ const ClientBox = memo(function ClientBox({ data, index, hasErrorInSomeForm, set
       </AccordionItem>
     </Accordion>
   );
-});
+};
 
 const additionalSchemas = z.object({
   customerCode: z.string().nullable(),

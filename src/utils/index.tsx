@@ -24,4 +24,12 @@ export function calculateTotalAssignmentsOfAllPools(pools: Pool[]) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isEmpty = (val: any) => val == null || !(Object.keys(val) || val).length;
 
-export const onlyNumbers = (value: string) => parseInt(value.replace(/\D/g, ''));
+export const onlyNumbers = (value: string | number) => parseInt(value.toString().replace(/\D/g, ''));
+
+export const normalizeState = (state: string) => {
+  if (!state) return '';
+  return state
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+};
