@@ -24,8 +24,9 @@ export default function Page() {
       emailType: 'broadcast',
       message: '',
       type: 'All types',
-      sendAt: '',
-      contacts: [] // Inicializa os contatos como um array vazio
+      startOn: '',
+      time: '',
+      contacts: []
     }
   });
 
@@ -34,6 +35,17 @@ export default function Page() {
 
   const cities = ['All cities', ...Array.from(new Set(clientsData?.map((client) => client.city) ?? []))];
   const citysSelectOptions = cities.map((city) => ({ value: city, name: city, label: city }));
+
+  const generateTimeOptions = () => {
+    const times = [];
+    for (let i = 1; i <= 12; i++) {
+      // times.push({ value: `${i}:00 AM`, name: `${i}:00 AM` });
+      times.push({ value: `${i}:00 PM`, name: `${i}:00 PM` });
+    }
+    return times;
+  };
+
+  const timeOptions = generateTimeOptions();
 
   const handleSubmit = async (formData) => {
     try {
@@ -64,6 +76,16 @@ export default function Page() {
         return;
       }
 
+      // Validar se há horário selecionado
+      if (!formData.time) {
+        toast({
+          variant: 'destructive',
+          title: 'Time is required',
+          className: 'bg-red-500 text-white'
+        });
+        return;
+      }
+
       // Validar se há contatos selecionados
       if (contacts.length === 0) {
         toast({
@@ -75,8 +97,18 @@ export default function Page() {
       }
 
       // Combine os dados do formulário com os dados dos clientes selecionados e formate a data corretamente
-      const localDateTime = new Date(`${formData.startOn.toISOString().split('T')[0]}T${formData.time}:00`);
-      const sendAt = localDateTime.toISOString();
+      const [time, period] = formData.time.split(' ');
+      let [hours, minutes] = time.split(':').map(Number);
+      if (period === 'PM' && hours !== 12) hours += 12;
+      if (period === 'AM' && hours === 12) hours = 0;
+
+      // Considerando o fuso horário do usuário
+      const localDateTime = new Date(formData.startOn);
+      localDateTime.setHours(hours, minutes, 0, 0);
+
+      // Converte o horário local para UTC
+      const utcDateTime = new Date(localDateTime.getTime() - localDateTime.getTimezoneOffset() * 60000);
+      const sendAt = utcDateTime.toISOString();
 
       const formDataToSend = {
         emailType: formData.emailType,
@@ -113,12 +145,17 @@ export default function Page() {
 
   const handleCitySelectionChange = (selected) => {
     setSelectedCities(selected);
-  };
+    const filteredClientsTypes =
+      form.getValues('type') === 'All types'
+        ? clientsData
+        : clientsData.filter((client) => client.type === form.getValues('type'));
 
-  const timeOptions = Array.from({ length: 24 }, (_, i) => ({
-    value: `${i.toString().padStart(2, '0')}:00`,
-    name: `${i.toString().padStart(2, '0')}:00`
-  }));
+    const filteredClientsCitys = selected.includes('All cities')
+      ? filteredClientsTypes
+      : filteredClientsTypes.filter((client) => selected.includes(client.city));
+
+    setSelect(filteredClientsCitys.length);
+  };
 
   return (
     <Form {...form}>
