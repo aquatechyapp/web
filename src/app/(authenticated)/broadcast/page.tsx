@@ -120,11 +120,11 @@ export default function Page() {
       console.log('formDataToSend', formDataToSend);
 
       // Enviar os dados para a API
-      // const response = await clientAxios.post('/sendemail', formDataToSend);
+      const response = await clientAxios.post('/sendemail', formDataToSend);
 
-      // if (response.status !== 200) {
-      //   throw new Error('Failed to send email');
-      // }
+      if (response.status !== 200) {
+        throw new Error('Failed to send email');
+      }
 
       // Toast de sucesso
       toast({
