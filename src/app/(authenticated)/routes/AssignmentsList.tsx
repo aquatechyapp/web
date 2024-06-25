@@ -124,12 +124,7 @@ export function AssignmentsList({ handleDragEnd }: Props) {
         ))}
         <DialogDeleteAssignment open={openDialogDelete} setOpen={setOpenDialogDelete} assignment={assignment} />
 
-        <DialogTransferRoute
-          open={openDialogTransfer}
-          setOpen={setOpenDialogTransfer}
-          assignmentToId={assignmentToId}
-          assignment={assignment}
-        />
+        <DialogTransferRoute open={openDialogTransfer} setOpen={setOpenDialogTransfer} assignment={assignment} />
       </SortableContext>
       <DragOverlay className="w-full">
         {active !== null ? (

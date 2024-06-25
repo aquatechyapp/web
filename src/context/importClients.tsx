@@ -1,28 +1,27 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 const FormContext = createContext({
-  forms: {},
+  forms: [],
   updateFormValues: () => {},
-  getAllFormValues: () => {}
+  removeForm: () => {}
 });
 
 export const useFormContext = () => useContext(FormContext);
 
 export const FormProvider = ({ children }) => {
-  const [forms, setForms] = useState({});
+  const [forms, setForms] = useState([]);
 
-  const updateFormValues = (index, values) => {
-    setForms((prevForms) => ({
-      ...prevForms,
-      [index]: values
-    }));
+  const updateFormValues = (index: number, values) => {
+    setForms((prevForms) => {
+      const newForms = [...prevForms];
+      newForms[index] = values;
+      return newForms;
+    });
   };
 
-  const getAllFormValues = () => {
-    return Object.values(forms);
+  const removeForm = (index: number) => {
+    setForms((prevForms) => prevForms.filter((_, i) => i !== index));
   };
 
-  console.log(forms);
-
-  return <FormContext.Provider value={{ forms, updateFormValues, getAllFormValues }}>{children}</FormContext.Provider>;
+  return <FormContext.Provider value={{ forms, updateFormValues, removeForm }}>{children}</FormContext.Provider>;
 };
