@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useFormContext } from '@/context/importClients';
 import { clientAxios } from '@/lib/clientAxios';
-import { normalizeState } from '@/utils';
+import { fuseSearchStatesAndCities, simpleFuseSearch } from '@/lib/fusejs';
 
 import ClientBox from './ClientBox';
 
@@ -91,34 +91,22 @@ export default function Page() {
           return Object.values(objWithoutIgnoredFields).some((value) => value);
         });
         result.forEach((data, index) => {
-          // normalize data.clientState (remove acentos, espaços e deixa em caixa alta)
-          const normalizedState = normalizeState(data.clientState);
-          // find the index of the state in the array of states
-          const foundedState = states.find(
-            (state) => normalizeState(state.name) === normalizedState || state.isoCode === normalizedState
-          );
+          if (data.clientState) {
+            const state = fuseSearchStatesAndCities(states, data.clientState)[0].isoCode;
 
-          // Se encontrar estado, tenta encontrar a cidade
-          if (foundedState) {
-            data.clientState = foundedState.isoCode;
-
-            // find city by state
-            const cities = City.getCitiesOfState('US', foundedState.isoCode);
-            const foundedCity = cities.find((city) => normalizeState(city.name) === normalizeState(data.clientCity));
-
-            // Se encontrar cidade, seta o nome da cidade
-            if (foundedCity) {
-              data.clientCity = foundedCity.name;
-            } else {
-              // Se não encontrar cidade, seta vazio e deixa somente o estado
+            if (!state) {
+              data.clientState = '';
               data.clientCity = '';
+            } else {
+              data.clientState = state;
+              console.log(state, fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.clientCity));
+              data.clientCity =
+                fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.clientCity)[0]?.name || '';
             }
-          } else {
-            // Se não encontrar estado, seta ambos vazios pois sem estado não conseguimos buscar as cidades
-            data.clientState = '';
-            data.clientCity = '';
           }
 
+          data.clientType = simpleFuseSearch(['Residential', 'Commercial'], data.clientType)[0] || undefined;
+          data.poolType = simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType)[0] || undefined;
           updateFormValues(index, data);
         });
       }
@@ -127,6 +115,8 @@ export default function Page() {
   if (isPending) {
     return <LoadingSpinner />;
   }
+
+  console.log('Map do Forms: ', forms);
 
   return (
     <div className="rounded-md border">
