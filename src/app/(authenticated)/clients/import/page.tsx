@@ -99,12 +99,23 @@ export default function Page() {
               data.clientCity = '';
             } else {
               data.clientState = state;
-              console.log(state, fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.clientCity));
               data.clientCity =
                 fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.clientCity)[0]?.name || '';
             }
           }
 
+          if (data.poolState) {
+            const state = fuseSearchStatesAndCities(states, data.poolState)[0].isoCode;
+
+            if (!state) {
+              data.poolState = '';
+              data.poolCity = '';
+            } else {
+              data.poolState = state;
+              data.poolCity =
+                fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.poolCity)[0]?.name || '';
+            }
+          }
           data.clientType = simpleFuseSearch(['Residential', 'Commercial'], data.clientType)[0] || undefined;
           data.poolType = simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType)[0] || undefined;
           updateFormValues(index, data);

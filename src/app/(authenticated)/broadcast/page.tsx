@@ -38,9 +38,10 @@ export default function Page() {
 
   const generateTimeOptions = () => {
     const times = [];
-    for (let i = 1; i <= 12; i++) {
-      // times.push({ value: `${i}:00 AM`, name: `${i}:00 AM` });
-      times.push({ value: `${i}:00 PM`, name: `${i}:00 PM` });
+    for (let i = 0; i < 24; i++) {
+      // Formata a hora para dois dígitos (00-23)
+      const hour = i.toString().padStart(2, '0');
+      times.push({ value: `${hour}:00 PM`, name: `${hour}:00 PM` });
     }
     return times;
   };
