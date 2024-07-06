@@ -7,8 +7,8 @@ export const clientAxios = axios.create({
   baseURL: baseUrl,
   headers: {
     'Content-Type': 'application/json'
-  }
-  // withCredentials: true
+  },
+  withCredentials: true
 });
 
 clientAxios.interceptors.request.use(
