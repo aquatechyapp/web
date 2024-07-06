@@ -118,8 +118,6 @@ export default function Page() {
         contacts: contacts.length > 0 ? contacts : []
       };
 
-      console.log('formDataToSend', formDataToSend);
-
       // Enviar os dados para a API
       const response = await clientAxios.post('/sendemail', formDataToSend);
 

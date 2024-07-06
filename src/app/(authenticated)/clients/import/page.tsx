@@ -34,7 +34,7 @@ export const csvFileSchema = z.object({
 });
 
 export default function Page() {
-  const { forms, updateFormValues, removeForm } = useFormContext();
+  const { forms, updateFormValues, cleanForms } = useFormContext();
   const [hasErrorInSomeForm, setHasErrorInSomeForm] = useState(false);
   const { toast } = useToast();
 
@@ -47,6 +47,7 @@ export default function Page() {
         className: 'bg-green-500 text-gray-50'
       });
       form.setValue('csvFile', undefined);
+      cleanForms();
     },
     onError: () => {
       toast({
@@ -126,8 +127,6 @@ export default function Page() {
   if (isPending) {
     return <LoadingSpinner />;
   }
-
-  console.log('Map do Forms: ', forms);
 
   return (
     <div className="rounded-md border">

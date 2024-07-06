@@ -23,7 +23,7 @@ export default function Page() {
 
   if (isLoading) return <LoadingSpinner />;
 
-  const poolsByCityAsCompany = clients.reduce((acc, client: Client) => {
+  const poolsByCityAsCompany = clients?.reduce((acc, client: Client) => {
     client.pools.forEach((pool) => {
       if (acc[pool.city]) {
         acc[pool.city] += 1;
@@ -67,7 +67,7 @@ export default function Page() {
         <div className="flex w-full flex-col gap-6 text-nowrap">
           <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />
           <StatisticCard value={user?.incomeAsASubcontractor} type="incomeSubcontractor" />
-          <StatisticCard value={clients.length} type="clients" />
+          <StatisticCard value={clients?.length} type="clients" />
           <ActionButton type="add_client" />
           <ActionButton type="route_dashboard" />
           <ActionButton type="my_team" />
@@ -134,7 +134,7 @@ export default function Page() {
           </InfoCardScrollable>
         </div>
         <div className="flex flex-1 flex-col items-start gap-6">
-          <StatisticCard value={clients.length} type="clients" />
+          <StatisticCard value={clients?.length} type="clients" />
           <ActionButton type="my_team" />
           <InfoCardScrollable title="My Team">
             {isEmpty(assignmentsBySubcontractors) ? (
