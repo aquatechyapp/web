@@ -34,32 +34,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
   const form = useForm({
     mode: 'onChange',
     resolver: zodResolver(poolAndClientSchema),
-    defaultValues: {
-      monthlyPayment: onlyNumbers(data.monthlyPayment) || '',
-      // Client data
-      clientAddress: data.clientAddress || '',
-      clientCity: data.clientCity || '',
-      clientName: data.clientName || '',
-      customerCode: data.customerCode || '',
-      email1: data.email1 || '',
-      clientNotes: data.clientNotes || '',
-      clientZip: data.clientZip || '',
-      clientState: data.clientState || '',
-      clientCompany: data.clientCompany || '',
-      clientType: data.clientType || 'Residential',
-      phone1: onlyNumbers(data.phone1).toString() || '',
-
-      // Pool data
-      poolAddress: data.poolAddress || '',
-      poolCity: data.poolCity || '',
-      poolState: data.poolState || '',
-      poolZip: data.poolZip || '',
-      poolType: data.poolType || '',
-      poolNotes: data.poolNotes || '',
-      animalDanger: !!data.animalDanger || '',
-      enterSide: data.enterSide || '',
-      lockerCode: data.lockerCode || ''
-    }
+    defaultValues: { ...data }
   });
 
   useEffect(() => {
@@ -76,8 +51,10 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
 
   useEffect(() => {
     // Bug ao deletar
-    data.monthlyPayment = onlyNumbers(data.monthlyPayment) || '';
-    data.animalDanger = !!data.animalDanger || '';
+    // data.monthlyPayment = onlyNumbers(data.monthlyPayment) || '';
+    // data.animalDanger = !!data.animalDanger
+    // data.clientType = data.clientType || 'Residential';
+    // data.poolType = data.poolType || null;
     form.reset(data);
   }, [forms.length]);
 
@@ -101,7 +78,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [form.formState.isValid]
   );
-
+  console.log(form.formState.errors, form.watch('animalDanger'));
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1" className="px-4 py-2">
@@ -244,7 +221,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
 
 const additionalSchemas = z.object({
   customerCode: z.string().nullable(),
-  monthlyPayment: z.number().nullable(),
+  monthlyPayment: z.number(),
   clientCompany: z.string().nullable(),
   clientType: z.enum(['Commercial', 'Residential']),
   clientName: z

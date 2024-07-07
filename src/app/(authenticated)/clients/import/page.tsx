@@ -16,6 +16,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useFormContext } from '@/context/importClients';
 import { clientAxios } from '@/lib/clientAxios';
 import { fuseSearchStatesAndCities, simpleFuseSearch } from '@/lib/fusejs';
+import { onlyNumbers } from '@/utils';
 
 import ClientBox from './ClientBox';
 
@@ -117,8 +118,11 @@ export default function Page() {
                 fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.poolCity)[0]?.name || '';
             }
           }
-          data.clientType = simpleFuseSearch(['Residential', 'Commercial'], data.clientType)[0] || undefined;
-          data.poolType = simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType)[0] || undefined;
+          data.clientType = simpleFuseSearch(['Residential', 'Commercial'], data.clientType)[0] || 'Residential';
+          data.poolType = simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType)[0] || 'Chlorine';
+          data.phone1 = onlyNumbers(data.phone1);
+          data.animalDanger = !!data.animalDanger;
+          data.monthlyPayment = onlyNumbers(data.monthlyPayment);
           updateFormValues(index, data);
         });
       }
