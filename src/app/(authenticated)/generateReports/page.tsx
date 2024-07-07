@@ -56,7 +56,6 @@ export default function Page() {
       console.error('Erro ao enviar solicitação:', error);
     }
   };
-  // console.log(pdfData);
 
   return (
     <Form {...form}>

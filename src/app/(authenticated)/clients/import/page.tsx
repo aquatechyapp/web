@@ -16,6 +16,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useFormContext } from '@/context/importClients';
 import { clientAxios } from '@/lib/clientAxios';
 import { fuseSearchStatesAndCities, simpleFuseSearch } from '@/lib/fusejs';
+import { onlyNumbers } from '@/utils';
 
 import ClientBox from './ClientBox';
 
@@ -34,7 +35,7 @@ export const csvFileSchema = z.object({
 });
 
 export default function Page() {
-  const { forms, updateFormValues, removeForm } = useFormContext();
+  const { forms, updateFormValues, cleanForms } = useFormContext();
   const [hasErrorInSomeForm, setHasErrorInSomeForm] = useState(false);
   const { toast } = useToast();
 
@@ -47,6 +48,7 @@ export default function Page() {
         className: 'bg-green-500 text-gray-50'
       });
       form.setValue('csvFile', undefined);
+      cleanForms();
     },
     onError: () => {
       toast({
@@ -116,8 +118,11 @@ export default function Page() {
                 fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.poolCity)[0]?.name || '';
             }
           }
-          data.clientType = simpleFuseSearch(['Residential', 'Commercial'], data.clientType)[0] || undefined;
-          data.poolType = simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType)[0] || undefined;
+          data.clientType = simpleFuseSearch(['Residential', 'Commercial'], data.clientType)[0] || 'Residential';
+          data.poolType = simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType)[0] || 'Chlorine';
+          data.phone1 = onlyNumbers(data.phone1);
+          data.animalDanger = !!data.animalDanger;
+          data.monthlyPayment = onlyNumbers(data.monthlyPayment);
           updateFormValues(index, data);
         });
       }
@@ -126,8 +131,6 @@ export default function Page() {
   if (isPending) {
     return <LoadingSpinner />;
   }
-
-  console.log('Map do Forms: ', forms);
 
   return (
     <div className="rounded-md border">

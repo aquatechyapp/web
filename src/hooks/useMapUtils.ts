@@ -7,9 +7,15 @@ type DirectionsResult = google.maps.DirectionsResult | null;
 
 const libraries: Libraries = ['places'];
 
+const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+
+if (!googleMapsApiKey) {
+  throw new Error('Missing GOOGLE_MAPS_API_KEY');
+}
+
 export function useMapUtils() {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyDhW4IvM4Db-AmtZp9V2DuWN8XWHbcx-es',
+    googleMapsApiKey,
     // googleMapsApiKey: 'AIzaSyDhW4IvM4Db-AmtZp9V2DuWN8XWHbcx-es',
     libraries
   });

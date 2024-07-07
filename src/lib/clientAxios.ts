@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 
 const baseUrl = process.env.API_URL;
@@ -7,8 +7,8 @@ export const clientAxios = axios.create({
   baseURL: baseUrl,
   headers: {
     'Content-Type': 'application/json'
-  },
-  withCredentials: true
+  }
+  // withCredentials: true
 });
 
 clientAxios.interceptors.request.use(
@@ -28,5 +28,17 @@ clientAxios.interceptors.request.use(
 
   (error) => {
     return Promise.reject(error);
+  }
+);
+
+clientAxios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      window.location.href = window.location.protocol + '//' + window.location.host + '/login';
+    }
+    return error;
   }
 );

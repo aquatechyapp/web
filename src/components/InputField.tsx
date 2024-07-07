@@ -92,7 +92,13 @@ export default function InputField({ form, name, placeholder, type = 'default', 
     checkbox: {
       component: (field: ControllerRenderProps) => (
         <div className="inline-flex items-start justify-start gap-2 self-stretch">
-          <Checkbox {...field} {...props} id={name} onCheckedChange={() => field.onChange(!field.value)} />
+          <Checkbox
+            {...field}
+            {...props}
+            checked={!!field.value}
+            id={name}
+            onCheckedChange={() => field.onChange(!field.value)}
+          />
           <Label htmlFor={name} className="text-sm font-semibold leading-none text-gray-400">
             {placeholder}
           </Label>

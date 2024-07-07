@@ -3,7 +3,8 @@ import { createContext, useCallback, useContext, useState } from 'react';
 const FormContext = createContext({
   forms: [],
   updateFormValues: () => {},
-  removeForm: () => {}
+  removeForm: () => {},
+  cleanForms: () => {}
 });
 
 export const useFormContext = () => useContext(FormContext);
@@ -23,5 +24,11 @@ export const FormProvider = ({ children }) => {
     setForms((prevForms) => prevForms.filter((_, i) => i !== index));
   };
 
-  return <FormContext.Provider value={{ forms, updateFormValues, removeForm }}>{children}</FormContext.Provider>;
+  const cleanForms = useCallback(() => {
+    setForms([]);
+  }, []);
+
+  return (
+    <FormContext.Provider value={{ forms, updateFormValues, removeForm, cleanForms }}>{children}</FormContext.Provider>
+  );
 };

@@ -6,13 +6,14 @@ import { z } from 'zod';
 import CalendarField from '@/components/CalendarField';
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTechniciansContext } from '@/context/technicians';
+import { useUserContext } from '@/context/user';
 import { useWeekdayContext } from '@/context/weekday';
 import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
 import { Assignment } from '@/interfaces/Assignments';
@@ -23,7 +24,6 @@ import { isEmpty } from '@/utils';
 import WeekdaySelect from './weekday-select';
 
 type Props = {
-  assignmentToId: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   assignment?: Assignment;
@@ -31,8 +31,9 @@ type Props = {
 };
 
 export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute = false }: Props) {
-  const { assignmentToId, technicians } = useTechniciansContext();
+  const { technicians, assignmentToId } = useTechniciansContext();
   const { selectedWeekday } = useWeekdayContext();
+  const { user } = useUserContext();
 
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
     resolver: zodResolver(transferAssignmentsSchema),
@@ -48,13 +49,9 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
     }
   });
 
-  useEffect(() => {
-    form.setValue('assignmentToId', assignmentToId);
-  }, [assignmentToId]);
-
   const userSelectedAsTechnician = useMemo(
-    () => assignmentToId === form.watch('assignmentToId'),
-    [form.watch('assignmentToId'), assignmentToId]
+    () => user.id === form.watch('assignmentToId'),
+    [form.watch('assignmentToId')]
   );
 
   useEffect(() => {
@@ -63,7 +60,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
     } else {
       form.setValue('paidByService', assignment?.paidByService);
     }
-  }, [form.watch('assignmentToId'), assignmentToId, open]);
+  }, [form.watch('assignmentToId'), open]);
 
   const shouldTransferOnce = form.watch('type') === 'once';
 
@@ -148,23 +145,16 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                   <Label className="-mb-4">Technician</Label>
                   <div className="mt-2">
                     {/* por padrão, o User logado é o tecnico selecionado */}
-                    <Select
-                      onValueChange={(assignmentToId) => form.setValue('assignmentToId', assignmentToId)}
-                      defaultValue={assignmentToId}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Technician..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {technicians.map((technician: WorkRelation) => (
-                            <SelectItem key={technician.subcontractor.id} value={technician.subcontractor.id}>
-                              {technician.subcontractor.firstName} {technician.subcontractor.lastName}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                    <SelectField
+                      name="assignmentToId"
+                      form={form}
+                      placeholder="Technician..."
+                      data={technicians.map((t) => ({
+                        key: t.subcontractor.id,
+                        value: t.subcontractor.id,
+                        name: `${t.subcontractor.firstName} ${t.subcontractor.lastName}`
+                      }))}
+                    />
                   </div>
                 </div>
                 {/* quando for transferir rota inteira, não preciso informar paidByService, ele pega de cada assignment */}

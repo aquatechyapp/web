@@ -61,7 +61,6 @@ export default function Invoices() {
       const response = await clientAxios.patch('/invoices', { invoiceId, newStatus });
       if (response) {
         // Use os dados da fatura atualizada conforme necessário
-        console.log('Updated invoice:', response);
         toast({
           variant: 'default',
           title: 'Payment Successful',
