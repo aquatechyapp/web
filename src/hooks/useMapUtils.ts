@@ -1,11 +1,10 @@
-import { Libraries, useLoadScript } from '@react-google-maps/api';
+import { useLoadScript } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
 
+import { libraries } from '@/constants';
 import { useAssignmentsContext } from '@/context/assignments';
 
 type DirectionsResult = google.maps.DirectionsResult | null;
-
-const libraries: Libraries = ['places'];
 
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
@@ -16,7 +15,6 @@ if (!googleMapsApiKey) {
 export function useMapUtils() {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey,
-    // googleMapsApiKey: 'AIzaSyDhW4IvM4Db-AmtZp9V2DuWN8XWHbcx-es',
     libraries
   });
   const { assignments, setAssignments } = useAssignmentsContext();

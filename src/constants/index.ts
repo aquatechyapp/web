@@ -1,4 +1,5 @@
 import { AvatarIcon } from '@radix-ui/react-icons';
+import { Libraries } from '@react-google-maps/api';
 import { PiCheckSquareOffsetBold } from 'react-icons/pi';
 
 import ClientIcon from '@/components/ui/client-icon';
@@ -269,3 +270,5 @@ export const Categories = [
     key: 'CustomerCommunication'
   }
 ];
+
+export const libraries: Libraries = ['places'];

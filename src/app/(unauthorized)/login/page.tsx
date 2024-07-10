@@ -71,7 +71,7 @@ export default function Page() {
   return (
     <div className="inline-flex w-[448px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8">
       <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
-        <Image src={imageIcon} alt="Logo" width={250} height={10} />
+        <Image src={imageIcon} alt="Logo" width={250} />
       </div>
       <div className="relative mt-4 h-[50px] w-[400px]">
         <div className="left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px]  text-gray-900">Login</div>

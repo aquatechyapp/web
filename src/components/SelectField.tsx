@@ -12,6 +12,7 @@ type Props = {
   name: string;
   placeholder: string;
   label?: string;
+  props?: React.HTMLProps<HTMLSelectElement>;
 };
 
 export default function SelectField({ data, form, name, placeholder, label, ...props }: Props & SelectProps) {

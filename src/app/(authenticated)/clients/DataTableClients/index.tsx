@@ -96,9 +96,9 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
 
   // Defina as opções para o SelectField
   const selectOptions = [
-    { value: 'all', name: 'All clients' },
-    { value: 'active', name: 'Active' },
-    { value: 'inactive', name: 'Inactive' }
+    { key: 'all', value: 'all', name: 'All clients' },
+    { key: 'active', value: 'active', name: 'Active' },
+    { key: 'inactive', value: 'inactive', name: 'Inactive' }
   ];
 
   // Use o useForm para gerenciar o estado dos campos do formulário
@@ -124,14 +124,14 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
   const cities = Array.from(new Set(sortedData.map((client) => client.city)));
   // Definindo opções para o SelectField da cidade
   const citySelectOptions = [
-    { value: null, name: 'All cities' },
-    ...cities.map((city) => ({ value: city, name: city }))
+    { value: null, name: 'All cities', key: 'all_cities' },
+    ...cities.map((city, index) => ({ value: city, name: city, key: city }))
   ];
 
   const types = Array.from(new Set(sortedData.map((client) => client.type)));
   const typesSelectOptions = [
-    { value: null, name: 'All types' },
-    ...types.map((type) => ({ value: type, name: type }))
+    { value: null, name: 'All types', key: 'all_types' },
+    ...types.map((type) => ({ value: type, name: type, key: type }))
   ];
 
   return (

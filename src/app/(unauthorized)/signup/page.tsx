@@ -91,7 +91,11 @@ export default function Page() {
     }
   });
 
-  const languageSelectOptions = ['English', 'Portuguese', 'Spanish'].map((lang) => ({ value: lang, name: lang }));
+  const languageSelectOptions = ['English', 'Portuguese', 'Spanish'].map((lang) => ({
+    value: lang,
+    name: lang,
+    key: lang
+  }));
 
   const handleSubmit = async (data) => {
     const formattedData = {

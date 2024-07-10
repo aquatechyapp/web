@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDeleteOutline, MdEdit } from 'react-icons/md';
 
@@ -8,7 +8,6 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '../../../components/ui/dropdown-menu';
@@ -62,12 +61,12 @@ export default function DropdownMenuWorkRelation({ workRelationId }: Props) {
           <DialogTitle>Are you sure?</DialogTitle>
           <DialogDescription>Once you remove the work relation, you will lose all the information</DialogDescription>
           <div className="flex justify-around">
-            <DialogTrigger>
+            <DialogTrigger asChild>
               <Button variant={'destructive'} onClick={handleDelete}>
                 Delete
               </Button>
             </DialogTrigger>
-            <DialogTrigger>
+            <DialogTrigger asChild>
               <Button variant={'outline'}>Cancel</Button>
             </DialogTrigger>
           </div>
