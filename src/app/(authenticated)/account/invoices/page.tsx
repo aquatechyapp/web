@@ -5,9 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { useToast } from '@/components/ui/use-toast';
-import { useUserStore } from '@/store/user';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
+import { useUserStore } from '@/store/user';
 
 interface Invoice {
   createdAt: string;

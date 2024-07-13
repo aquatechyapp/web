@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { paymentType } from '@/constants';
+import { useUserStore } from '@/store/user';
 import { onlyNumbers } from '@/utils';
 
 import InputField from '../../../../components/InputField';
@@ -14,7 +15,6 @@ import SelectField from '../../../../components/SelectField';
 import { Button } from '../../../../components/ui/button';
 import { Form } from '../../../../components/ui/form';
 import { useToast } from '../../../../components/ui/use-toast';
-import { useUserContext } from '../../../../context/user';
 import { clientAxios } from '../../../../lib/clientAxios';
 
 const schema = z.object({
@@ -32,7 +32,7 @@ const schema = z.object({
 });
 
 export default function Page() {
-  const { setUser } = useUserContext();
+  const { setUser } = useUserStore();
   const { push } = useRouter();
   const { toast } = useToast();
 
