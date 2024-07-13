@@ -94,6 +94,7 @@ export const routes = [
   },
   {
     text: 'Clients',
+    href: '/clients',
     submenu: {
       clients: {
         text: 'Clients',
@@ -109,10 +110,9 @@ export const routes = [
       },
       broadcast: {
         text: 'Broadcast',
-        href: '/broadcast'
+        href: '/clients/broadcast'
       }
     },
-    href: '',
     icon: ClientIcon
   },
   {
@@ -134,10 +134,10 @@ export const routes = [
       },
       generateReports: {
         text: 'Generate Reports',
-        href: '/generateReports'
+        href: '/team/generateReports'
       }
     },
-    href: '',
+    href: '/team',
     icon: TeamIcon
   },
   {
@@ -149,14 +149,14 @@ export const routes = [
       },
       subscription: {
         text: 'Subscription',
-        href: '/subscription'
+        href: '/account/subscription'
       },
       invoices: {
         text: 'Invoices',
-        href: '/invoices'
+        href: '/account/invoices'
       }
     },
-    href: '',
+    href: '/account',
     icon: AvatarIcon
   }
 ];

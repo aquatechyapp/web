@@ -8,15 +8,15 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { useUserContext } from '@/context/user';
 import { useUpdateUser } from '@/hooks/react-query/user/updateUser';
+import { useUserStore } from '@/store/user';
 import { isEmpty } from '@/utils';
 import { filterChangedFormFields } from '@/utils/formUtils';
 
 import SelectField from '../../../components/SelectField';
 
 export default function Page() {
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const { mutate, isPending } = useUpdateUser();
 
   const form = useForm({

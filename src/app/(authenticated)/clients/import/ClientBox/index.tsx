@@ -11,11 +11,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
-import { useFormContext } from '@/context/importClients';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientSchema } from '@/schemas/client';
 import { poolSchema } from '@/schemas/pool';
-import { isEmpty, onlyNumbers } from '@/utils';
+import { useFormStore } from '@/store/importClients';
+import { isEmpty } from '@/utils';
 import { validateForm } from '@/utils/formUtils';
 
 type Props = {
@@ -29,7 +29,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
   const { width } = useWindowDimensions();
   const isMobile = width ? width < 640 : false;
 
-  const { updateFormValues, removeForm, forms } = useFormContext();
+  const { updateFormValues, removeForm, forms } = useFormStore();
 
   const form = useForm({
     mode: 'onChange',
@@ -56,6 +56,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
     // data.clientType = data.clientType || 'Residential';
     // data.poolType = data.poolType || null;
     form.reset(data);
+    validateForm(form);
   }, [forms.length]);
 
   const name = useMemo(

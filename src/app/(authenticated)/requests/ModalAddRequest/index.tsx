@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories } from '@/constants';
-import { useUserContext } from '@/context/user';
+import { useUserStore } from '@/store/user';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useCreateRequest } from '@/hooks/react-query/requests/createRequest';
 import { Client } from '@/interfaces/Client';
@@ -39,7 +39,7 @@ const schema = z.object({
 
 export function ModalAddRequest() {
   const [open, setOpen] = useState(false);
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const { mutate: createRequest, isPending: isPendingCreate } = useCreateRequest();
 
   const form = useForm<z.infer<typeof schema>>({

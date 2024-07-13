@@ -2,11 +2,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from 'react';
 
+import { useTechniciansStore } from '@/store/technicians';
+import { useWeekdayStore } from '@/store/weekday';
+
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { Assignment } from '../interfaces/Assignments';
 import { clientAxios } from '../lib/clientAxios';
-import { useTechniciansContext } from './technicians';
-import { useWeekdayContext } from './weekday';
 
 type AssignmentsContextType = {
   assignments: {
@@ -33,8 +34,8 @@ const AssignmentsContext = createContext<AssignmentsContextType>({
 export const AssignmentsProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
 
-  const { assignmentToId } = useTechniciansContext();
-  const { selectedWeekday } = useWeekdayContext();
+  const assignmentToId = useTechniciansStore((state) => state.assignmentToId);
+  const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
   const userId = Cookies.get('userId');
 
   const { data, isLoading, isError } = useQuery({

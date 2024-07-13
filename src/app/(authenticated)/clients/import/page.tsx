@@ -13,9 +13,9 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { useFormContext } from '@/context/importClients';
 import { clientAxios } from '@/lib/clientAxios';
 import { fuseSearchStatesAndCities, simpleFuseSearch } from '@/lib/fusejs';
+import { useFormStore } from '@/store/importClients';
 import { onlyNumbers } from '@/utils';
 
 import ClientBox from './ClientBox';
@@ -35,7 +35,7 @@ export const csvFileSchema = z.object({
 });
 
 export default function Page() {
-  const { forms, updateFormValues, cleanForms } = useFormContext();
+  const { forms, updateFormValues, cleanForms } = useFormStore();
   const [hasErrorInSomeForm, setHasErrorInSomeForm] = useState(false);
   const { toast } = useToast();
 
@@ -120,7 +120,7 @@ export default function Page() {
           }
           data.clientType = simpleFuseSearch(['Residential', 'Commercial'], data.clientType)[0] || 'Residential';
           data.poolType = simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType)[0] || 'Chlorine';
-          data.phone1 = onlyNumbers(data.phone1);
+          data.phone1 = onlyNumbers(data.phone1).toString();
           data.animalDanger = !!data.animalDanger;
           data.monthlyPayment = onlyNumbers(data.monthlyPayment);
           updateFormValues(index, data);
