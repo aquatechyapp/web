@@ -3,7 +3,7 @@
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 
 import { SideMenu } from '@/components/SideMenuNav';
 import { Colors } from '@/constants/colors';
@@ -15,11 +15,14 @@ import TopBarMenu from '../../components/TopBarMenu';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const userId = Cookies.get('userId');
-  const { push } = useRouter();
+  const router = useRouter();
 
-  if (!userId) {
-    push('/login');
-  }
+  useEffect(() => {
+    if (!userId) {
+      router.push('/login');
+    }
+  }, []);
+
   const { isLoading } = useGetUser({ userId });
 
   return (
