@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories, RequestStatus } from '@/constants';
-import { useUserContext } from '@/context/user';
+import { useUserStore } from '@/store/user';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useUpdateRequest } from '@/hooks/react-query/requests/updateRequest';
 import { Client } from '@/interfaces/Client';
@@ -47,7 +47,7 @@ type Props = {
 
 export function ModalEditRequest({ request }: Props) {
   const [open, setOpen] = useState(false);
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const { mutate: updateRequest, isPending: isPendingUpdate } = useUpdateRequest(request.id);
 
   const CopyToClipboardData = [

@@ -4,7 +4,8 @@ import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import * as React from 'react';
 
-import { useWeekdayContext } from '../../context/weekday';
+import { useWeekdayStore } from '@/store/weekday';
+
 import { cn } from '../../lib/utils';
 import { Button } from './button';
 import { Calendar } from './calendar';
@@ -18,7 +19,7 @@ type Props = {
 
 export function DatePicker({ placeholder, onChange, restrictOnlySelectedDay = false }: Props) {
   const [date, setDate] = React.useState<Date>();
-  const { selectedWeekday } = useWeekdayContext();
+  const { selectedWeekday } = useWeekdayStore();
 
   const disabledWeekdays = [0, 1, 2, 3, 4, 5, 6];
   let selectedWeekdayIndex = 0;

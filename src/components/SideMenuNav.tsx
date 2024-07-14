@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 import { useState } from 'react';
 import { RiMenu2Fill } from 'react-icons/ri';
@@ -19,7 +17,15 @@ export function MobileSideMenu() {
         <aside className="col-span-1  h-full bg-gray-900">
           <div className="inline-flex h-[100%] w-full flex-col items-start justify-start gap-4 bg-gray-900 shadow-inner">
             <div className="mt-10 self-center">
-              <Image width={200} height={200} src="/images/logoHor.png" alt="Aquatechy Logo" priority />
+              <Image
+                width="0"
+                height="0"
+                sizes="100vw"
+                className="h-auto w-52"
+                src="/images/logoHor.png"
+                alt="Aquatechy Logo"
+                priority
+              />
             </div>
             <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
               {routes.map((route) => {
@@ -48,8 +54,16 @@ export function SideMenu() {
   return (
     <aside className="col-span-1  h-full bg-gray-900">
       <div className="inline-flex h-[100%] w-full flex-col items-start justify-start gap-4 bg-gray-900 shadow-inner">
-        <div className="mx-4 mt-6 self-center">
-          <Image width={200} height={200} src="/images/logoHor.png" alt="Aquatechy Logo" priority />
+        <div className="mx-4 mt-6 h-auto self-center">
+          <Image
+            width="0"
+            height="0"
+            sizes="100vw"
+            className="h-auto w-full"
+            src="/images/logoHor.png"
+            alt="Aquatechy Logo"
+            priority
+          />
         </div>
         <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
           {routes.map((route) => {

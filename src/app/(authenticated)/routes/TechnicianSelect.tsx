@@ -1,3 +1,5 @@
+import { useTechniciansStore } from '@/store/technicians';
+
 import {
   Select,
   SelectContent,
@@ -6,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '../../../components/ui/select';
-import { useTechniciansContext } from '../../../context/technicians';
 import { WorkRelation } from '../../../interfaces/User';
 
 type Props = {
@@ -15,7 +16,7 @@ type Props = {
 };
 
 export default function TechnicianSelect({ onChange }: Props) {
-  const { assignmentToId, technicians } = useTechniciansContext();
+  const { assignmentToId, technicians } = useTechniciansStore();
 
   function handleChange(technicianId: string) {
     onChange(technicianId);
@@ -31,12 +32,8 @@ export default function TechnicianSelect({ onChange }: Props) {
         <SelectContent>
           <SelectGroup>
             {technicians.map((technician: WorkRelation) => (
-              <SelectItem
-                key={technician.subcontractor.id}
-                value={technician.subcontractor.id}
-              >
-                {technician.subcontractor.firstName}{' '}
-                {technician.subcontractor.lastName}
+              <SelectItem key={technician.subcontractor.id} value={technician.subcontractor.id}>
+                {technician.subcontractor.firstName} {technician.subcontractor.lastName}
               </SelectItem>
             ))}
           </SelectGroup>

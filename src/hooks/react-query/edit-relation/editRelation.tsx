@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
-import { useUserContext } from '@/context/user';
+import { useUserStore } from '@/store/user';
 
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';

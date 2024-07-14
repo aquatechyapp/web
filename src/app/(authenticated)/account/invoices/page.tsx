@@ -5,9 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { useToast } from '@/components/ui/use-toast';
-import { useUserContext } from '@/context/user';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
+import { useUserStore } from '@/store/user';
 
 interface Invoice {
   createdAt: string;
@@ -32,7 +32,7 @@ const options: Intl.DateTimeFormatOptions = {
 };
 
 export default function Invoices() {
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const { width } = useWindowDimensions();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loadingInvoices, setLoadingInvoices] = useState<{ [key: string]: boolean }>({});

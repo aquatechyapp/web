@@ -14,8 +14,8 @@ export const simpleFuseSearch = (data: string[], name: string) => {
 export const fuseSearchStatesAndCities = (data: (IState | ICity)[], name: string) => {
   const fuseOptions = {
     keys: ['name', 'isoCode'],
-    minMatchCharLength: 3,
-    threshold: 0.4,
+    minMatchCharLength: 1,
+    threshold: 0.2,
     distance: 100
   };
   return new Fuse(data, fuseOptions).search(name).map((p) => p.item);

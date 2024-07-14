@@ -8,11 +8,11 @@ import { QuixotePdf } from '@/components/Pdf';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { useUserContext } from '@/context/user';
+import { useUserStore } from '@/store/user';
 import { clientAxios } from '@/lib/clientAxios';
 
 export default function Page() {
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const [pdfData, setPdfData] = useState(null);
 
   const form = useForm({

@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { Input } from '@/components/ui/input';
+import { useUserStore } from '@/store/user';
 
 import { Button } from '../../../components/ui/button';
-import { useUserContext } from '../../../context/user';
 import { EmployerCard } from './EmployerCard';
 import { SubcontractorCard } from './SubcontractorCard';
 
 export default function Page() {
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredSubcontractors = user?.subcontractors.filter((subcontractor) =>

@@ -12,9 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAssignmentsContext } from '@/context/assignments';
-import { useTechniciansContext } from '@/context/technicians';
-import { useUserContext } from '@/context/user';
-import { useWeekdayContext } from '@/context/weekday';
 import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
 import { useMapUtils } from '@/hooks/useMapUtils';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
@@ -22,6 +19,9 @@ import { Assignment } from '@/interfaces/Assignments';
 import { Weekdays, WeekdaysUppercase } from '@/interfaces/Weekday';
 import { paidByServiceSchema } from '@/schemas/assignments';
 import { dateSchema } from '@/schemas/date';
+import { useTechniciansStore } from '@/store/technicians';
+import { useUserStore } from '@/store/user';
+import { useWeekdayStore } from '@/store/weekday';
 
 import { AssignmentsList } from './AssignmentsList';
 import { DialogNewAssignment } from './dialog-new-assignment';
@@ -33,10 +33,10 @@ export default function Page() {
   const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapUtils();
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
 
-  const { user } = useUserContext();
-  const { assignmentToId, setAssignmentToId } = useTechniciansContext();
+  const user = useUserStore((state) => state.user);
+  const { assignmentToId, setAssignmentToId } = useTechniciansStore();
   const { assignments, setAssignments } = useAssignmentsContext();
-  const { selectedWeekday, setSelectedWeekday } = useWeekdayContext();
+  const { selectedWeekday, setSelectedWeekday } = useWeekdayStore((state) => state);
   const { width = 0 } = useWindowDimensions();
   const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } = useUpdateAssignments();
 

@@ -6,7 +6,7 @@ import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { paymentType } from '@/constants';
-import { useUserContext } from '@/context/user';
+import { useUserStore } from '@/store/user';
 import { useEditRelation } from '@/hooks/react-query/edit-relation/editRelation';
 
 import { Button } from '../../../components/ui/button';
@@ -30,7 +30,7 @@ type PropsEdit = {
 };
 
 export function ModalEdit({ children, workRelationId }: PropsEdit) {
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const { handleSubmit } = useEditRelation();
 
   const selectedWorkRelation = user?.subcontractors.find((subcontractor: any) => subcontractor.id === workRelationId);

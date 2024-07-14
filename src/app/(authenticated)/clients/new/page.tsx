@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
-import { useUserContext } from '@/context/user';
+import { useUserStore } from '@/store/user';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
 import { paidByServiceSchema } from '@/schemas/assignments';
@@ -26,7 +26,7 @@ import { poolSchema } from '@/schemas/pool';
 import { createFormData } from '@/utils/formUtils';
 
 export default function Page() {
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { width } = useWindowDimensions();

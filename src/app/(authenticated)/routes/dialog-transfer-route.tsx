@@ -12,13 +12,13 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useTechniciansContext } from '@/context/technicians';
-import { useUserContext } from '@/context/user';
-import { useWeekdayContext } from '@/context/weekday';
 import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
 import { Assignment } from '@/interfaces/Assignments';
 import { WorkRelation } from '@/interfaces/User';
 import { transferAssignmentsSchema } from '@/schemas/assignments';
+import { useTechniciansStore } from '@/store/technicians';
+import { useUserStore } from '@/store/user';
+import { useWeekdayStore } from '@/store/weekday';
 import { isEmpty } from '@/utils';
 
 import WeekdaySelect from './weekday-select';
@@ -31,9 +31,9 @@ type Props = {
 };
 
 export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute = false }: Props) {
-  const { technicians, assignmentToId } = useTechniciansContext();
-  const { selectedWeekday } = useWeekdayContext();
-  const { user } = useUserContext();
+  const { technicians, assignmentToId } = useTechniciansStore();
+  const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
+  const user = useUserStore((state) => state.user);
 
   const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
     resolver: zodResolver(transferAssignmentsSchema),

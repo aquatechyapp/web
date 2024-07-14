@@ -30,10 +30,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useAssignmentsContext } from '@/context/assignments';
-import { useTechniciansContext } from '@/context/technicians';
-import { useUserContext } from '@/context/user';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { Assignment } from '@/interfaces/Assignments';
+import { useTechniciansStore } from '@/store/technicians';
+import { useUserStore } from '@/store/user';
 
 import { DialogDeleteAssignment } from './dialog-delete-assignment';
 import { DialogTransferRoute } from './dialog-transfer-route';
@@ -43,9 +43,9 @@ type Props = {
 };
 
 export function AssignmentsList({ handleDragEnd }: Props) {
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const { assignments, setAssignmentToTransfer } = useAssignmentsContext();
-  const { assignmentToId } = useTechniciansContext();
+  const assignmentToId = useTechniciansStore((state) => state.assignmentToId);
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [openDialogTransfer, setOpenDialogTransfer] = useState(false);
   const [assignment, setAssignment] = useState<Assignment>();

@@ -2,10 +2,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+
+import imageIcon from '/public/images/logoHor.png';
 
 import InputField from '../../../components/InputField';
 import SelectField from '../../../components/SelectField';
@@ -112,7 +115,7 @@ export default function Page() {
         className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] overflow-scroll rounded-lg bg-gray-50 px-6 py-8"
       >
         <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
-          <img src="./logoHor.png" alt="" className="w-[30%]" />
+          <Image width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
         </div>
         <div className="relative h-[50px] w-[400px]">
           <div className="absolute left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] text-gray-800">

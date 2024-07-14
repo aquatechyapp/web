@@ -4,10 +4,10 @@ import { format } from 'date-fns';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useAssignmentsContext } from '@/context/assignments';
-import { useUserContext } from '@/context/user';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { Client } from '@/interfaces/Client';
+import { useUserStore } from '@/store/user';
 import { isEmpty } from '@/utils';
 
 import ActionButton from './_components/ActionButton';
@@ -16,7 +16,7 @@ import InfoItem from './_components/InfoItem';
 import StatisticCard from './_components/StatisticCard';
 
 export default function Page() {
-  const { user } = useUserContext();
+  const user = useUserStore((state) => state.user);
   const { allAssignments } = useAssignmentsContext();
   const { data: clients, isLoading } = useGetClients();
   const { width = 0 } = useWindowDimensions();
