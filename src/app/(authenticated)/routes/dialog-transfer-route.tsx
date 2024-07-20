@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
+import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
 import { Assignment } from '@/interfaces/Assignments';
 import { WorkRelation } from '@/interfaces/User';
 import { transferAssignmentsSchema } from '@/schemas/assignments';
@@ -48,6 +49,8 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
       isEntireRoute
     }
   });
+
+  const disabledWeekdays = useDisabledWeekdays(form.watch('weekday'));
 
   const userSelectedAsTechnician = useMemo(
     () => user.id === form.watch('assignmentToId'),
@@ -178,11 +181,21 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
               <OptionsOnceOrPermanently form={form} />
               <div className="mt-1">
                 {shouldTransferOnce ? (
-                  <CalendarField form={form} name="onlyAt" placeholder="Only at" />
+                  <CalendarField disabledWeekdays={disabledWeekdays} form={form} name="onlyAt" placeholder="Only at" />
                 ) : (
                   <div className="flex flex-col md:flex-row">
-                    <CalendarField form={form} name="startOn" placeholder="Start on" />
-                    <CalendarField form={form} name="endAfter" placeholder="End after" />
+                    <CalendarField
+                      disabledWeekdays={disabledWeekdays}
+                      form={form}
+                      name="startOn"
+                      placeholder="Start on"
+                    />
+                    <CalendarField
+                      disabledWeekdays={disabledWeekdays}
+                      form={form}
+                      name="endAfter"
+                      placeholder="End after"
+                    />
                   </div>
                 )}
               </div>
