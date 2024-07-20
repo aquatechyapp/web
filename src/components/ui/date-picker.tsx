@@ -4,8 +4,6 @@ import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import * as React from 'react';
 
-import { useWeekdayStore } from '@/store/weekday';
-
 import { cn } from '../../lib/utils';
 import { Button } from './button';
 import { Calendar } from './calendar';
@@ -14,41 +12,10 @@ import { Popover, PopoverContent, PopoverTrigger } from './popover';
 type Props = {
   placeholder: string;
   onChange: (date: Date) => void;
-  restrictOnlySelectedDay?: boolean;
 };
 
-export function DatePicker({ placeholder, onChange, restrictOnlySelectedDay = false }: Props) {
+export function DatePicker({ placeholder, onChange }: Props) {
   const [date, setDate] = React.useState<Date>();
-  const { selectedWeekday } = useWeekdayStore();
-
-  const disabledWeekdays = [0, 1, 2, 3, 4, 5, 6];
-  let selectedWeekdayIndex = 0;
-
-  switch (selectedWeekday) {
-    case 'SUNDAY':
-      selectedWeekdayIndex = 0;
-      break;
-    case 'MONDAY':
-      selectedWeekdayIndex = 1;
-      break;
-    case 'TUESDAY':
-      selectedWeekdayIndex = 2;
-      break;
-    case 'WEDNESDAY':
-      selectedWeekdayIndex = 3;
-      break;
-    case 'THURSDAY':
-      selectedWeekdayIndex = 4;
-      break;
-    case 'FRIDAY':
-      selectedWeekdayIndex = 5;
-      break;
-    case 'SATURDAY':
-      selectedWeekdayIndex = 6;
-      break;
-  }
-
-  disabledWeekdays.splice(selectedWeekdayIndex, 1);
 
   React.useEffect(() => {
     // if (date) {
@@ -68,15 +35,7 @@ export function DatePicker({ placeholder, onChange, restrictOnlySelectedDay = fa
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          disabled={{
-            dayOfWeek: restrictOnlySelectedDay ? disabledWeekdays : []
-          }}
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          initialFocus
-        />
+        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
       </PopoverContent>
     </Popover>
   );

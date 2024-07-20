@@ -7,12 +7,14 @@ import { DayPicker } from 'react-day-picker';
 import { cn } from '../../lib/utils';
 import { buttonVariants } from './button';
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  disabledWeekdays?: number[];
+};
 
-function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
+function Calendar({ className, classNames, showOutsideDays = true, disabledWeekdays, ...props }: CalendarProps) {
   return (
     <DayPicker
-      disabled={{ before: new Date() }}
+      disabled={[{ dayOfWeek: disabledWeekdays }, { before: new Date() }]}
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
       classNames={{

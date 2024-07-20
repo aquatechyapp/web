@@ -7,9 +7,10 @@ type Props = {
   form: any;
   name: string;
   placeholder: string;
+  disabledWeekdays?: number[];
 };
 
-export default function CalendarField({ form, name, placeholder }: Props) {
+export default function CalendarField({ form, name, placeholder, disabledWeekdays }: Props) {
   return (
     <FormField
       control={form.control}
@@ -19,7 +20,13 @@ export default function CalendarField({ form, name, placeholder }: Props) {
           <FormItem className="flex w-full flex-col">
             <Label>{placeholder}</Label>
             <FormControl>
-              <Calendar {...field} selected={field.value} mode="single" onSelect={field.onChange} />
+              <Calendar
+                disabledWeekdays={disabledWeekdays ?? []}
+                {...field}
+                selected={field.value}
+                mode="single"
+                onSelect={field.onChange}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
