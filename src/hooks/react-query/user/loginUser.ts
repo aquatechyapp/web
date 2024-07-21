@@ -27,6 +27,13 @@ export const useLoginUser = () => {
       });
     },
     onError: (error) => {
+      if (error.response?.status === 401 && error.response?.data.message === 'Invalid email or password.') {
+        toast({
+          duration: 2000,
+          title: 'Invalid email or password',
+          className: 'bg-red-500 text-gray-50'
+        });
+      }
       if (error.message === 'Network Error') {
         toast({
           duration: 2000,

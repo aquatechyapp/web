@@ -68,7 +68,7 @@ export default function Page() {
           </div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
             <InputField form={form} name={'address'} placeholder="Address" />
-            <StateAndCitySelect form={form} cityName="City" stateName="State" />
+            <StateAndCitySelect form={form} cityName="city" stateName="state" />
             <InputField form={form} name={'zip'} placeholder="Zip code" />
           </div>
           <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">Contact information</div>

@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 const baseUrl = process.env.API_URL;
 
 export const clientAxios = axios.create({
-  baseURL: baseUrl,
+  baseURL: baseUrl + '/api/v1',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -39,6 +39,6 @@ clientAxios.interceptors.response.use(
     if (error.response?.status === 401) {
       window.location.href = window.location.protocol + '//' + window.location.host + '/login';
     }
-    return error;
+    return Promise.reject(error);
   }
 );

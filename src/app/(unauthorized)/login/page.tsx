@@ -25,7 +25,8 @@ export default function Page() {
   });
 
   const { mutate: handleSubmit, isPending, error } = useLoginUser();
-
+  const isPasswordOrEmailIncorrect =
+    error?.response?.status === 401 && error?.response?.data.message === 'Invalid email or password.';
   return (
     <div className="inline-flex w-[448px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8">
       <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
@@ -46,7 +47,9 @@ export default function Page() {
             <InputField form={form} name="email" placeholder="E-mail address" />
             <InputField form={form} name="password" placeholder="Password" type="password" />
             {error && (
-              <p className="text-[0.8rem] font-medium text-red-500 dark:text-red-900">E-mail or password incorrect</p>
+              <p className="text-[0.8rem] font-medium text-red-500 dark:text-red-900">
+                {isPasswordOrEmailIncorrect ? 'E-mail or password incorrect' : 'Internal server error'}
+              </p>
             )}
           </div>
           <Button disabled={isPending} type="submit" className="w-full">

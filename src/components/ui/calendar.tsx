@@ -11,7 +11,7 @@ export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
   disabledWeekdays?: number[];
 };
 
-function Calendar({ className, classNames, showOutsideDays = true, disabledWeekdays, ...props }: CalendarProps) {
+function Calendar({ className, classNames, showOutsideDays = true, disabledWeekdays = [], ...props }: CalendarProps) {
   return (
     <DayPicker
       disabled={[{ dayOfWeek: disabledWeekdays }, { before: new Date() }]}
