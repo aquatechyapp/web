@@ -22,6 +22,7 @@ const types = {
   },
   profit: {
     title: 'Profit',
+    subtitle: '',
     color: 'from-red-500 to-orange-300',
     colorIcon: '#F1574C',
     prefix: '$',
@@ -29,6 +30,7 @@ const types = {
   },
   clients: {
     title: 'Clients',
+    subtitle: '',
     color: 'from-purple-700 to-blue-600',
     colorIcon: '#7826CF',
     prefix: '',
@@ -45,7 +47,7 @@ type Props = {
 
 export default function StatisticCard({ type, value }: Props) {
   const Icon = types[type].Icon;
-  const displayValue = type.startsWith('income') ? value / 100 : value;
+  const displayValue = type.startsWith('income') ? value! / 100 : value;
 
   return (
     <div className="inline-flex w-full flex-col items-start justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-5">

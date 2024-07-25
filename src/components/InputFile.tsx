@@ -5,12 +5,26 @@ import ImageUploading, { ImageListType } from 'react-images-uploading';
 
 import { Button } from './ui/button';
 
-export function InputFile({ handleChange, defaultPhotos = [], disabled = false, showIcon = true, showBorder = true }) {
-  const [images, setImages] = useState(defaultPhotos);
+type Props = {
+  handleChange: (images: ImageListType) => void;
+  defaultPhotos?: ImageListType;
+  disabled?: boolean;
+  showIcon?: boolean;
+  showBorder?: boolean;
+};
+
+export function InputFile({
+  handleChange,
+  defaultPhotos = [],
+  disabled = false,
+  showIcon = true,
+  showBorder = true
+}: Props) {
+  const [images, setImages] = useState<ImageListType | []>(defaultPhotos);
   const maxNumber = 4;
 
-  const onChange = (imageList: ImageListType, addUpdateIndex: number[] | undefined) => {
-    setImages(imageList as never[]);
+  const onChange = (imageList: ImageListType) => {
+    setImages(imageList);
   };
 
   useEffect(() => {
@@ -20,7 +34,7 @@ export function InputFile({ handleChange, defaultPhotos = [], disabled = false, 
   return (
     <div className="h-full w-full">
       <ImageUploading multiple value={images} onChange={onChange} maxNumber={maxNumber}>
-        {({ imageList, onImageUpload, onImageRemoveAll, onImageUpdate, onImageRemove, isDragging, dragProps }) => (
+        {({ imageList, onImageUpload, onImageRemove, isDragging, dragProps }) => (
           // write your building UI
           <div
             className={`flex h-full flex-col items-center justify-evenly rounded border border-dashed border-stone-300 ${!showBorder && 'border-none'}`}

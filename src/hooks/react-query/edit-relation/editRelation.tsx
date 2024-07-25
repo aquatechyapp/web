@@ -1,19 +1,20 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
+import { FormSchema } from '@/app/(authenticated)/team/ModalEdit';
+import { WorkRelation } from '@/interfaces/User';
 import { useUserStore } from '@/store/user';
 
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
 
 export const useEditRelation = () => {
-  const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { setUser, user } = useUserContext();
+  const { setUser, user } = useUserStore();
   const { push } = useRouter();
 
   const { mutate: handleSubmit } = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: FormSchema) => {
       return clientAxios.patch('/workrelations/update', {
         ...data,
         paymentValue: data.paymentValue
@@ -21,17 +22,18 @@ export const useEditRelation = () => {
     },
     onSuccess: (res) => {
       // Mescla os dados do card editado com os dados existentes do usuário
-      const updatedSubcontractors = user.subcontractors.map((subcontractor) => {
+      const updatedSubcontractors: WorkRelation[] = user!.subcontractors.map((subcontractor) => {
         if (subcontractor.id === res.data.id) {
           return res.data; // Substitui os dados do card editado
         }
         return subcontractor; // Mantém os outros cards inalterados
       });
 
-      setUser((user) => ({
+      // Atualiza o usuário com os dados mesclados
+      setUser({
         ...user,
         subcontractors: updatedSubcontractors
-      }));
+      });
 
       push('/team');
       toast({
@@ -40,7 +42,7 @@ export const useEditRelation = () => {
         className: 'bg-green-500 text-white'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         duration: 2000,
         title: 'Error adding technician',

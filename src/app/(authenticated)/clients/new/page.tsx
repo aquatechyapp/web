@@ -9,21 +9,22 @@ import * as z from 'zod';
 
 import DatePickerField from '@/components/DatePickerField';
 import InputField from '@/components/InputField';
-import { InputFile } from '@/components/InputFile';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
-import { useUserStore } from '@/store/user';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
 import { paidByServiceSchema } from '@/schemas/assignments';
 import { clientSchema } from '@/schemas/client';
 import { dateSchema } from '@/schemas/date';
 import { poolSchema } from '@/schemas/pool';
+import { useUserStore } from '@/store/user';
 import { createFormData } from '@/utils/formUtils';
+
+type PoolAndClientSchema = z.infer<typeof poolAndClientSchema>;
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
@@ -33,7 +34,7 @@ export default function Page() {
   const isMobile = width ? width < 640 : false;
 
   const { mutate: handleSubmit, isPending } = useMutation({
-    mutationFn: async (data) =>
+    mutationFn: async (data: PoolAndClientSchema) =>
       await clientAxios.post('/client-pool', createFormData(data), {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -77,7 +78,7 @@ export default function Page() {
       .concat(userAsSubcontractor);
   }, [user]);
 
-  const form = useForm<z.infer<typeof poolAndClientSchema>>({
+  const form = useForm<PoolAndClientSchema>({
     resolver: zodResolver(poolAndClientSchema),
     defaultValues: {
       assignmentToId: '',
@@ -116,23 +117,29 @@ export default function Page() {
     }
   }
 
+  const sameBillingAddress = form.watch('sameBillingAddress');
+  const clientAddress = form.watch('clientAddress');
+  const clientCity = form.watch('clientCity');
+  const clientState = form.watch('clientState');
+  const clientZip = form.watch('clientZip');
+
+  const handleCheckboxSameBillingAddress = useMemo(() => {
+    return {
+      sameBillingAddress,
+      clientAddress,
+      clientCity,
+      clientState,
+      clientZip
+    };
+  }, [sameBillingAddress, clientAddress, clientCity, clientState, clientZip]);
+
   useEffect(() => {
     handleSameBillingAddress();
-  }, [
-    form.watch('sameBillingAddress'),
-    form.watch('clientAddress'),
-    form.watch('clientCity'),
-    form.watch('clientState'),
-    form.watch('clientZip')
-  ]);
-
-  function handleImagesChange(images: never[]) {
-    form.setValue('photo', images);
-  }
+  }, [handleCheckboxSameBillingAddress]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
+      <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
           <div className="h-5 text-sm font-medium   text-gray-500">Basic information</div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
@@ -243,9 +250,6 @@ export default function Page() {
                 label={isMobile ? 'Notes about location' : "Notes about location (customer won't see that)"}
                 type="textArea"
               />
-            </div>
-            <div className="mt-auto inline-flex h-44 w-full shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
-              <InputFile handleChange={handleImagesChange} />
             </div>
           </div>
           <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">

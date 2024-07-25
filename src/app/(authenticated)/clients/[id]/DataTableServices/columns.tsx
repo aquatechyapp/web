@@ -2,28 +2,26 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
+
 import { Button } from '@/components/ui/button';
-import { zipImages } from '@/lib/js-zip';
-import CellDeleteService from './cell-delete-service';
 import { Service } from '@/interfaces/Service';
+import { zipImages } from '@/lib/js-zip';
+
+import CellDeleteService from './cell-delete-service';
 
 export const columns: ColumnDef<Service>[] = [
   {
     accessorKey: 'createdAt',
     header: 'Date',
     cell: (props) => {
-      const formattedDate = format(
-        new Date(props.row.original.createdAt),
-        "iiii, MMMM do 'at' h:mm aaaa"
-      );
+      const formattedDate = format(new Date(props.row.original.createdAt), "iiii, MMMM do 'at' h:mm aaaa");
       return <span className="text-nowrap">{formattedDate}</span>;
     }
   },
   {
     header: 'Chemicals read',
     cell: (props) => {
-      const { ph, chlorine, salt, alkalinity, cyanAcid, calcium } =
-        props.row.original;
+      const { ph, chlorine, salt, alkalinity, cyanAcid, calcium } = props.row.original;
       return (
         <div className="text-nowrap">
           <div>
@@ -46,14 +44,8 @@ export const columns: ColumnDef<Service>[] = [
   {
     header: 'Chemicals spent',
     cell: (props) => {
-      const {
-        saltSpent,
-        chlorineSpent,
-        shockSpent,
-        tabletSpent,
-        phosphateSpent,
-        acidSpent
-      } = props.row.original as Service;
+      const { saltSpent, chlorineSpent, shockSpent, tabletSpent, phosphateSpent, acidSpent } = props.row
+        .original as Service;
 
       return (
         <div className="text-nowrap">

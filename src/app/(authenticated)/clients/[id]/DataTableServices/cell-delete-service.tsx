@@ -1,25 +1,21 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
 import { FaRegTrashAlt } from 'react-icons/fa';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useDeleteService } from '@/hooks/react-query/pools/deleteService';
 
-const ModalDeleteService = ({ handleDelete }) => {
+type Props = {
+  handleDelete: () => void;
+};
+
+const ModalDeleteService = ({ handleDelete }: Props) => {
   return (
     <DialogContent>
       <DialogTitle>Are you sure?</DialogTitle>
-      <DialogDescription>
-        Once you delete service, you will lose all the information related
-      </DialogDescription>
+      <DialogDescription>Once you delete service, you will lose all the information related</DialogDescription>
       <div className="flex justify-around">
         <DialogTrigger asChild>
           <Button variant={'destructive'} onClick={handleDelete}>
@@ -46,17 +42,11 @@ export default function CellDeleteService({ ...props }) {
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button
-            size={'icon'}
-            variant={'destructive'}
-            onClick={() => setOpen(true)}
-          >
+          <Button size={'icon'} variant={'destructive'} onClick={() => setOpen(true)}>
             <FaRegTrashAlt />
           </Button>
         </DialogTrigger>
-        <ModalDeleteService
-          handleDelete={() => deleteService({ serviceId, assignmentId })}
-        />
+        <ModalDeleteService handleDelete={() => deleteService({ serviceId, assignmentId })} />
       </Dialog>
     </>
   );

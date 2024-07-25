@@ -3,14 +3,9 @@
 import * as React from 'react';
 
 import { Button } from './button';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger
-} from './dropdown-menu';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from './dropdown-menu';
 
-export function DropdownMenuCheckboxes({ onChange }) {
+export function DropdownMenuCheckboxes({ onChange }: { onChange: (value: string[]) => void }) {
   const [weekdays, setWeekdays] = React.useState([
     { selected: false, value: 'SUNDAY', label: 'Sunday' },
     { selected: false, value: 'MONDAY', label: 'Monday' },
@@ -22,9 +17,7 @@ export function DropdownMenuCheckboxes({ onChange }) {
   ]);
 
   React.useEffect(() => {
-    onChange(
-      weekdays.filter((day) => day.selected === true).map((day) => day.value)
-    );
+    onChange(weekdays.filter((day) => day.selected === true).map((day) => day.value));
   }, [weekdays]);
 
   return (
@@ -51,11 +44,7 @@ export function DropdownMenuCheckboxes({ onChange }) {
             checked={day.selected}
             onCheckedChange={(checked) =>
               setWeekdays((prev) =>
-                prev.map((prevDay) =>
-                  prevDay.value === day.value
-                    ? { ...prevDay, selected: checked }
-                    : prevDay
-                )
+                prev.map((prevDay) => (prevDay.value === day.value ? { ...prevDay, selected: checked } : prevDay))
               )
             }
           >

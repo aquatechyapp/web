@@ -8,27 +8,30 @@ import {
   DialogTrigger
 } from '../../../../components/ui/dialog';
 
-export function ModalDeleteClient({ children, handleSubmit }) {
+type Props = {
+  children: React.ReactNode;
+  handleSubmit: () => void;
+};
+
+export function ModalDeleteClient({ children, handleSubmit }: Props) {
   return (
     <Dialog>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent>
         <DialogTitle>Are you sure?</DialogTitle>
         <DialogHeader>This action cannot be undone.</DialogHeader>
-        <DialogDescription>
-          Once you delete the client, you will lose all the information related
-        </DialogDescription>
+        <DialogDescription>Once you delete the client, you will lose all the information related</DialogDescription>
         <div className="flex justify-around">
           <DialogTrigger>
             <Button
               onClick={handleSubmit}
-              className="bg-red-500 hover:bg-red-700 text-gray-50 font-bold py-2 px-4 rounded-full"
+              className="rounded-full bg-red-500 px-4 py-2 font-bold text-gray-50 hover:bg-red-700"
             >
               Delete
             </Button>
           </DialogTrigger>
           <DialogTrigger>
-            <Button className="bg-gray-500 hover:bg-gray-700 text-gray-50 font-bold py-2 px-4 rounded-full">
+            <Button className="rounded-full bg-gray-500 px-4 py-2 font-bold text-gray-50 hover:bg-gray-700">
               Cancel
             </Button>
           </DialogTrigger>

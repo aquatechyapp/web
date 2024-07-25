@@ -1,3 +1,5 @@
+import { SubcontractorStatus } from '@/constants/enums';
+
 import { Separator } from '../../../components/ui/separator';
 import DropdownMenuWorkRelation from './DropdownMenuWorkRelation';
 
@@ -6,7 +8,7 @@ type Props = {
   phone: string;
   name: string;
   type: string;
-  status: string;
+  status: SubcontractorStatus;
   workRelationId: string;
 };
 
@@ -25,12 +27,14 @@ export function SubcontractorCard({ email, phone, name, type, status, workRelati
           </div>
         </div>
       </div>
-      {status === 'Inactive' && (
+      {status === SubcontractorStatus.Inactive && (
         // <ModalAcceptInvite handleSubmit={handleAcceptWorkRelation}>
         <div className="rounded-full bg-orange-500 px-2 py-1 text-sm text-white">Pending Approval</div>
         // </ModalAcceptInvite>
       )}
-      {status === 'Active' && <div className="rounded-full bg-green-500 p-1 px-2 text-sm text-white">Active</div>}
+      {status === SubcontractorStatus.Active && (
+        <div className="rounded-full bg-green-500 p-1 px-2 text-sm text-white">Active</div>
+      )}
       <Separator />
       <div className="flex h-[46px] flex-col items-center justify-center gap-2.5 self-stretch">
         <div className="inline-flex items-center justify-start gap-1 self-stretch">

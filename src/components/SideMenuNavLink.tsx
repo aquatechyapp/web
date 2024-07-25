@@ -1,44 +1,43 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import React from 'react';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 type Props = {
-  Icon: React.ElementType;
-  text: string;
-  href: string;
-  submenu?: {
-    [key: string]: {
-      text: string;
-      href: string;
-      isActive: boolean;
+  route: {
+    icon: React.FC<React.SVGProps<SVGSVGElement> & { size?: number }>;
+    text: string;
+    href: string;
+    submenu?: {
+      [key: string]: {
+        text: string;
+        href: string;
+      };
     };
   };
-  isActive: boolean;
 };
 
-export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
+export default function SideMenuNavLink({ route }: Props) {
+  const { icon, text, href, submenu } = route;
+  const Icon = icon;
   const pathname = `/${usePathname().split('/')[1]}`;
 
   const isActive = href === pathname;
 
-  const isActiveSubMenu = submenu ? Object.values(submenu).some((item) => item.href === '/' + pathname) : false;
-
   return (
-    <Link
-      href={submenu ? '' : href}
-      passHref
+    <div
       className={`flex w-full items-start justify-start px-2 text-gray-300 hover:bg-gray-800
       ${isActive && 'border-r-4 border-blue-500 bg-gray-800 '} `}
     >
       <div className="flex w-full items-center">
         {!submenu ? (
-          <div className="flex w-full items-center">
+          <Link href={submenu ? '' : href} passHref className="flex w-full items-center">
             <div className="mr-4 py-4">
               <Icon height={24} width={24} size={22} className={`${isActive && ' text-blue-500'}`} />
             </div>
             <div className="w-full text-base font-medium leading-none text-slate-50">{text}</div>
-          </div>
+          </Link>
         ) : (
           <Accordion collapsible type="single" className="w-[100%]">
             <AccordionItem value="item-1" style={{ borderBottom: 'none' }}>
@@ -63,6 +62,6 @@ export default function SideMenuNavLink({ Icon, text, href, submenu }: Props) {
           </Accordion>
         )}
       </div>
-    </Link>
+    </div>
   );
 }

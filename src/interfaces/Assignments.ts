@@ -1,3 +1,5 @@
+import { PoolType } from '@/constants/enums';
+
 import { Service } from './Service';
 
 export type Assignment = {
@@ -13,7 +15,7 @@ export type Assignment = {
   startOn: string;
   weekday: string;
   pool: Pool;
-  paidByService: number;
+  paidByService: number | null;
 };
 
 export type CreateAssignment = {
@@ -21,8 +23,8 @@ export type CreateAssignment = {
   poolId: string;
   weekday: string;
   frequency: string;
-  startOn: Date;
-  endAfter: Date;
+  startOn: string;
+  endAfter: string;
   paidByService: number;
 };
 
@@ -37,10 +39,10 @@ export type Pool = {
   enterSide: string;
   isActive: boolean;
   lockerCode: string;
-  monthlyPayment: string;
+  monthlyPayment: number;
   name: string;
   notes: string;
-  poolType: 'Chlorine' | 'Salt' | 'Salt' | 'Other' | undefined;
+  poolType: PoolType;
   state: string;
   updatedAt: string;
   userOwnerId: string;

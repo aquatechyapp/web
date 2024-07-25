@@ -1,8 +1,13 @@
-import { FieldValues } from 'react-hook-form';
+import { FieldValues, UseFormReturn } from 'react-hook-form';
 
 import { isEmpty } from '.';
 
-export function buildSelectOptions(data: any[], { key, name, value }: { key: string; name: string; value: string }) {
+export function buildSelectOptions(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any[] | undefined,
+  { key, name, value }: { key: string; name: string; value: string }
+) {
+  if (!data) return [];
   const options = data.map((item) => {
     return {
       key: item[key],
@@ -56,8 +61,29 @@ export const filterChangedFormFields = <T extends FieldValues>(
   return changedFieldValues;
 };
 
-export const validateForm = async (form): Promise<boolean> => {
-  const _ = form.formState.errors; // also works if you read form.formState.isValid
+export const getDirtyValues = <T extends FieldValues>(
+  allFields: T,
+  dirtyFields: Partial<Record<keyof T, boolean | boolean[]>>
+): Partial<T> => {
+  const changedFieldValues = Object.keys(dirtyFields).reduce((acc, currentField) => {
+    const isDirty = Array.isArray(dirtyFields[currentField])
+      ? (dirtyFields[currentField] as boolean[]).some((value) => value === true)
+      : dirtyFields[currentField] === true;
+    if (isDirty) {
+      return {
+        ...acc,
+        [currentField]: allFields[currentField]
+      };
+    }
+    return acc;
+  }, {} as Partial<T>);
+
+  return changedFieldValues;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const validateForm = async (form: UseFormReturn<any>): Promise<boolean> => {
+  form.formState.errors; // also works if you read form.formState.isValid
   await form.trigger();
   if (form.formState.isValid) {
     return true;

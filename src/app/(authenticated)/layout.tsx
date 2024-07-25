@@ -14,7 +14,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import TopBarMenu from '../../components/TopBarMenu';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const userId = Cookies.get('userId');
+  const userId = Cookies.get('userId') as string;
   const router = useRouter();
 
   useEffect(() => {

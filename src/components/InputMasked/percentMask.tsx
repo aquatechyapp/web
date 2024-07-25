@@ -1,13 +1,6 @@
 import type { MaskitoOptions } from '@maskito/core';
-import {
-  maskitoInitialCalibrationPlugin,
-  maskitoUpdateElement
-} from '@maskito/core';
-import {
-  maskitoCaretGuard,
-  maskitoEventHandler,
-  maskitoNumberOptionsGenerator
-} from '@maskito/kit';
+import { maskitoInitialCalibrationPlugin, maskitoUpdateElement } from '@maskito/core';
+import { maskitoCaretGuard, maskitoEventHandler, maskitoNumberOptionsGenerator } from '@maskito/kit';
 
 export const postfix = '%';
 const { plugins, ...numberOptions } = maskitoNumberOptionsGenerator({

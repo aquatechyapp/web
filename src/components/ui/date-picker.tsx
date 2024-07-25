@@ -11,16 +11,14 @@ import { Popover, PopoverContent, PopoverTrigger } from './popover';
 
 type Props = {
   placeholder: string;
-  onChange: (date: Date) => void;
+  onChange: (date: Date | undefined) => void;
 };
 
 export function DatePicker({ placeholder, onChange }: Props) {
   const [date, setDate] = React.useState<Date>();
 
   React.useEffect(() => {
-    // if (date) {
     onChange(date);
-    // }
   }, [date]);
 
   return (

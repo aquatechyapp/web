@@ -20,27 +20,16 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Client } from '@/interfaces/Client';
 
-interface ClientData {
-  id: string;
-  name: string;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    zipcode: string;
-  };
-  // outras propriedades do cliente
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
-interface DataTableProps {
-  columns: ColumnDef<ClientData, keyof ClientData>[];
-  data: ClientData[];
-}
-
-export function DataTableClients<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTableClients<TValue>({ columns, data }: DataTableProps<Client, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortColumn, setSortColumn] = useState<keyof Client | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const { push } = useRouter();
@@ -49,7 +38,7 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
     if (sortColumn === columnId) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
-      setSortColumn(columnId);
+      setSortColumn(columnId as keyof Client);
       setSortOrder('asc');
     }
   };
@@ -79,17 +68,6 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
     initialState: {
       columnVisibility: {
         deactivatedAt: false
-      }
-    },
-    filterFns: {
-      deactivatedAt: (row, value, filter) => {
-        if (filter === 'active') {
-          return row.original.isActive;
-        }
-        if (filter === 'inactive') {
-          return !row.original.isActive;
-        }
-        return true;
       }
     }
   });
@@ -124,13 +102,13 @@ export function DataTableClients<TData, TValue>({ columns, data }: DataTableProp
   const cities = Array.from(new Set(sortedData.map((client) => client.city)));
   // Definindo opções para o SelectField da cidade
   const citySelectOptions = [
-    { value: null, name: 'All cities', key: 'all_cities' },
-    ...cities.map((city, index) => ({ value: city, name: city, key: city }))
+    { value: 'all_cities', name: 'All cities', key: 'all_cities' },
+    ...cities.map((city) => ({ value: city, name: city, key: city }))
   ];
 
   const types = Array.from(new Set(sortedData.map((client) => client.type)));
   const typesSelectOptions = [
-    { value: null, name: 'All types', key: 'all_types' },
+    { value: 'all_types', name: 'All types', key: 'all_types' },
     ...types.map((type) => ({ value: type, name: type, key: type }))
   ];
 

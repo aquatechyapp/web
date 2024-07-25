@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { IUserSchema } from '@/app/(authenticated)/account/page';
+
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
 
@@ -7,7 +9,7 @@ export const useUpdateUser = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data) => await clientAxios.patch('/users', data),
+    mutationFn: async (data: IUserSchema) => await clientAxios.patch('/users', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       toast({

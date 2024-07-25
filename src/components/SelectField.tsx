@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 
 type Props = {
   data: { key: string; value: string; name: string }[];
-  // props for select html
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
   name: string;
   placeholder: string;

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { UseFormReturn } from 'react-hook-form';
 
 import CalendarField from '@/components/CalendarField';
 import InputField from '@/components/InputField';
@@ -13,10 +14,16 @@ import { Client } from '@/interfaces/Client';
 import { clientAxios } from '@/lib/clientAxios';
 import { buildSelectOptions } from '@/utils/formUtils';
 
-export const FormNewAssignment = ({ form }) => {
+import { FormSchema } from './page';
+
+type Props = {
+  form: UseFormReturn<FormSchema>;
+};
+
+export const FormNewAssignment = ({ form }: Props) => {
   const { width = 0 } = useWindowDimensions();
   const disabledWeekdays = useDisabledWeekdays();
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['clients'],
     queryFn: async () => {
       const response = await clientAxios('/clients');

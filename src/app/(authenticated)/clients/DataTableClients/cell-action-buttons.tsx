@@ -1,7 +1,12 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { MdDeleteOutline } from 'react-icons/md';
+
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,33 +14,25 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { BsThreeDotsVertical } from 'react-icons/bs';
-import { MdDeleteOutline } from 'react-icons/md';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import React, { useState } from 'react';
-import { useDeleteClient } from '@/hooks/react-query/clients/deleteClient';
 import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
+import { useDeleteClient } from '@/hooks/react-query/clients/deleteClient';
+
 import { ModalAddPool } from './modal-add-pool';
 
-const ModalDeleteClient = ({ handleDelete, clientOwnerId }) => {
+type Props = {
+  clientOwnerId: string;
+};
+
+const ModalDeleteClient = ({ clientOwnerId }: Props) => {
+  const { mutate: mutateDeleteClient } = useDeleteClient();
+
   return (
     <DialogContent>
       <DialogTitle>Are you sure?</DialogTitle>
-      <DialogDescription>
-        Once you delete the client, you will lose all the information related
-      </DialogDescription>
+      <DialogDescription>Once you delete the client, you will lose all the information related</DialogDescription>
       <div className="flex justify-around">
         <DialogTrigger>
-          <Button
-            variant={'destructive'}
-            onClick={() => handleDelete(clientOwnerId)}
-          >
+          <Button variant={'destructive'} onClick={() => mutateDeleteClient(clientOwnerId)}>
             Delete
           </Button>
         </DialogTrigger>
@@ -54,7 +51,6 @@ export default function ActionButtons({ ...props }) {
 
   const clientOwnerId = props.row.original.id;
 
-  const { mutate: mutateDeleteClient } = useDeleteClient();
   const { mutate: mutateAddPool } = useAddPoolToClient();
 
   return (
@@ -67,20 +63,12 @@ export default function ActionButtons({ ...props }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem
-              onClick={() => push(`/clients/${props.row.original.id}`)}
-            >
-              View
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => push(`/clients/${props.row.original.id}`)}>View</DropdownMenuItem>
             <DialogTrigger asChild className="w-full">
-              <DropdownMenuItem onClick={() => setModalType('ModalAddPool')}>
-                Add Pool
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setModalType('ModalAddPool')}>Add Pool</DropdownMenuItem>
             </DialogTrigger>
             <DialogTrigger asChild className="w-full">
-              <DropdownMenuItem
-                onClick={() => setModalType('ModalDeleteClient')}
-              >
+              <DropdownMenuItem onClick={() => setModalType('ModalDeleteClient')}>
                 <div className="flex  w-full items-center text-red-500">
                   Delete
                   <DropdownMenuShortcut>
@@ -92,17 +80,9 @@ export default function ActionButtons({ ...props }) {
           </DropdownMenuContent>
         </DropdownMenu>
         {modalType === 'ModalDeleteClient' ? (
-          <ModalDeleteClient
-            handleDelete={mutateDeleteClient}
-            clientOwnerId={clientOwnerId}
-          />
+          <ModalDeleteClient clientOwnerId={clientOwnerId} />
         ) : (
-          <ModalAddPool
-            open={open}
-            setOpen={setOpen}
-            handleAddPool={mutateAddPool}
-            clientOwnerId={clientOwnerId}
-          />
+          <ModalAddPool open={open} setOpen={setOpen} handleAddPool={mutateAddPool} clientOwnerId={clientOwnerId} />
         )}
       </Dialog>
     </>

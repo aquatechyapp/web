@@ -42,6 +42,14 @@ export const columns: ColumnDef<Client>[] = [
   {
     id: 'deactivatedAt',
     accessorKey: 'deactivatedAt',
-    filterFn: 'deactivatedAt'
+    filterFn: (row, value, filter) => {
+      if (filter === 'active') {
+        return row.original.isActive;
+      }
+      if (filter === 'inactive') {
+        return !row.original.isActive;
+      }
+      return true;
+    }
   }
 ];

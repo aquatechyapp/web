@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
+import { ImportMultipleClients } from '@/interfaces/Client';
 import { clientSchema } from '@/schemas/client';
 import { poolSchema } from '@/schemas/pool';
 import { useFormStore } from '@/store/importClients';
@@ -19,7 +20,7 @@ import { isEmpty } from '@/utils';
 import { validateForm } from '@/utils/formUtils';
 
 type Props = {
-  data: any;
+  data: ImportMultipleClients;
   index: number;
   hasErrorInSomeForm: boolean;
   setHasErrorInSomeForm: (value: boolean) => void;
@@ -79,11 +80,13 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [form.formState.isValid]
   );
-  console.log(form.formState.errors, form.watch('animalDanger'));
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1" className="px-4 py-2">
-        <AccordionTrigger className={!isEmpty(form.formState.errors) && !form.formState.isValid && 'text-red-500'}>
+        <AccordionTrigger
+          className={!isEmpty(form.formState.errors) && !form.formState.isValid ? 'text-red-500' : undefined}
+        >
           {name}
         </AccordionTrigger>
         <AccordionContent>

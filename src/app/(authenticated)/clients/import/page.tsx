@@ -2,37 +2,28 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { City, State } from 'country-state-city';
+import { City, IState, State } from 'country-state-city';
 import Papa from 'papaparse';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
+import { ImportMultipleClients } from '@/interfaces/Client';
 import { clientAxios } from '@/lib/clientAxios';
 import { fuseSearchStatesAndCities, simpleFuseSearch } from '@/lib/fusejs';
+import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useFormStore } from '@/store/importClients';
 import { onlyNumbers } from '@/utils';
 
 import ClientBox from './ClientBox';
 
-const ACCEPTED_FILE_TYPES = ['text/csv'];
 const IGNORE_FIELDS = ['animalDanger', 'clientType'];
 
 const states = State.getStatesOfCountry('US');
-
-export const csvFileSchema = z.object({
-  csvFile: z
-    .instanceof(File)
-    .refine((file) => file.size < 7000000, {
-      message: 'Your file must be less than 7MB.'
-    })
-    .refine((file) => ACCEPTED_FILE_TYPES.includes(file?.type), 'Only .csv formats are supported.')
-});
 
 export default function Page() {
   const { forms, updateFormValues, cleanForms } = useFormStore();
@@ -40,7 +31,7 @@ export default function Page() {
   const { toast } = useToast();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data) => await clientAxios.post('/importclientsandpools', data),
+    mutationFn: async (data: ImportMultipleClients[]) => await clientAxios.post('/importclientsandpools', data),
     onSuccess: () => {
       toast({
         duration: 2000,
@@ -59,8 +50,8 @@ export default function Page() {
     }
   });
 
-  const form = useForm<z.infer<typeof csvFileSchema>>({
-    resolver: zodResolver(csvFileSchema),
+  const form = useForm({
+    resolver: zodResolver(defaultSchemas.csvFile),
     defaultValues: {
       csvFile: undefined
     }
@@ -81,20 +72,26 @@ export default function Page() {
     }
     Papa.parse(file, {
       header: true,
-      complete: (results) => {
-        const result = results.data.filter((obj) => {
+      complete: (results: { data: ImportMultipleClients[] }) => {
+        const result: ImportMultipleClients[] = results.data.filter((obj) => {
           // clona o objeto
           const objWithoutIgnoredFields = { ...obj };
           // remove os campos que já vem com valor default da planilha
           IGNORE_FIELDS.forEach((field) => {
-            delete objWithoutIgnoredFields[field];
+            delete (
+              objWithoutIgnoredFields as {
+                [key: string]: string | number | boolean | undefined;
+              }
+            )[field];
           });
           // Filtra se algum campo não é vazio. Se tiver qualquer campo preenchido, retorna true
           return Object.values(objWithoutIgnoredFields).some((value) => value);
         });
         result.forEach((data, index) => {
           if (data.clientState) {
-            const state = fuseSearchStatesAndCities(states, data.clientState)[0].isoCode;
+            const state = fuseSearchStatesAndCities(states, data.clientState).filter(
+              (item): item is IState => 'isoCode' in item
+            )[0]?.isoCode;
 
             if (!state) {
               data.clientState = '';
@@ -102,12 +99,14 @@ export default function Page() {
             } else {
               data.clientState = state;
               data.clientCity =
-                fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.clientCity)[0]?.name || '';
+                fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.clientCity!)[0]?.name || '';
             }
           }
 
           if (data.poolState) {
-            const state = fuseSearchStatesAndCities(states, data.poolState)[0].isoCode;
+            const state = fuseSearchStatesAndCities(states, data.poolState).filter(
+              (item): item is IState => 'isoCode' in item
+            )[0]?.isoCode;
 
             if (!state) {
               data.poolState = '';
@@ -115,14 +114,14 @@ export default function Page() {
             } else {
               data.poolState = state;
               data.poolCity =
-                fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.poolCity)[0]?.name || '';
+                fuseSearchStatesAndCities(City.getCitiesOfState('US', state), data.poolCity!)[0]?.name || '';
             }
           }
-          data.clientType = simpleFuseSearch(['Residential', 'Commercial'], data.clientType)[0] || 'Residential';
-          data.poolType = simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType)[0] || 'Chlorine';
-          data.phone1 = onlyNumbers(data.phone1).toString();
+          data.clientType = simpleFuseSearch(['Residential', 'Commercial'], data.clientType!)[0] || 'Residential';
+          data.poolType = simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType!)[0] || 'Chlorine';
+          data.phone1 = onlyNumbers(data.phone1!).toString();
           data.animalDanger = !!data.animalDanger;
-          data.monthlyPayment = onlyNumbers(data.monthlyPayment);
+          data.monthlyPayment = onlyNumbers(data.monthlyPayment!);
           updateFormValues(index, data);
         });
       }

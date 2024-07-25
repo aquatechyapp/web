@@ -1,5 +1,6 @@
-import { clientAxios } from '@/lib/clientAxios';
 import { useQuery } from '@tanstack/react-query';
+
+import { clientAxios } from '@/lib/clientAxios';
 
 export default function useGetClient(clientId: string) {
   const { data, isLoading, isSuccess } = useQuery({

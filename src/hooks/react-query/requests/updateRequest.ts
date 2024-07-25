@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { EditRequest } from '@/app/(authenticated)/requests/ModalEditRequest';
 import { useToast } from '@/components/ui/use-toast';
-import { Request } from '@/interfaces/Request';
 import { clientAxios } from '@/lib/clientAxios';
 
 export const useUpdateRequest = (requestId: string) => {
@@ -9,7 +9,7 @@ export const useUpdateRequest = (requestId: string) => {
   const { toast } = useToast();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: Partial<Request>) =>
+    mutationFn: async (data: EditRequest) =>
       await clientAxios.patch('/requests', { outcome: data.outcome, status: data.status, id: requestId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['requests'] });

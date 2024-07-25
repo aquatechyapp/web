@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
+import * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
@@ -9,13 +9,7 @@ const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
 >(({ className, ...props }, ref) => {
-  return (
-    <RadioGroupPrimitive.Root
-      className={cn('grid gap-2', className)}
-      {...props}
-      ref={ref}
-    />
-  );
+  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} ref={ref} />;
 });
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
 
@@ -27,13 +21,13 @@ const RadioGroupItem = React.forwardRef<
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        'aspect-square h-4 w-4 rounded-full border border-slate-200 border-slate-900 text-slate-900 shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:border-slate-50 dark:text-slate-50 dark:focus-visible:ring-slate-300',
+        'aspect-square h-4 w-4 rounded-full border border-slate-200 border-slate-900 text-slate-900 shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-50 dark:border-slate-800 dark:text-slate-50 dark:focus-visible:ring-slate-300',
         className
       )}
       {...props}
     >
       <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <div className="w-2 h-2 bg-gray-900 rounded" />
+        <div className="h-2 w-2 rounded bg-gray-900" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   );

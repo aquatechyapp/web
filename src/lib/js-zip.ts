@@ -1,6 +1,6 @@
 import JSZip from 'jszip';
 
-export function zipImages(imageUrls: string[]) {
+export function zipImages(imageUrls: string[]): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const zip = new JSZip();
     const promises = [] as Promise<void>[];

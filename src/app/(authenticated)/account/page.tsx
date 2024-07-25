@@ -1,25 +1,39 @@
 'use client';
 
-import { useMemo } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { LanguageOptions } from '@/constants/enums';
 import { useUpdateUser } from '@/hooks/react-query/user/updateUser';
+import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
-import { isEmpty } from '@/utils';
-import { filterChangedFormFields } from '@/utils/formUtils';
 
-import SelectField from '../../../components/SelectField';
+const formSchema = z.object({
+  firstName: defaultSchemas.name,
+  lastName: defaultSchemas.name,
+  company: defaultSchemas.name,
+  phone: defaultSchemas.phone,
+  email: defaultSchemas.email,
+  address: defaultSchemas.address,
+  zip: defaultSchemas.zip,
+  state: defaultSchemas.state,
+  city: defaultSchemas.city,
+  language: defaultSchemas.language
+});
+
+export type IUserSchema = z.infer<typeof formSchema>;
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
   const { mutate, isPending } = useUpdateUser();
 
-  const form = useForm({
+  const form = useForm<IUserSchema>({
     defaultValues: {
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
@@ -30,29 +44,26 @@ export default function Page() {
       zip: user?.zip || '',
       state: user?.state || '',
       city: user?.city || '',
-      language: user?.language || ''
-    }
+      language: user?.language || LanguageOptions.English
+    },
+    resolver: zodResolver(formSchema)
   });
-
-  const phoneIsDirty = useMemo(() => form.watch('phone') !== user?.phone, [form.watch('phone'), user?.phone]);
-  const languageSelectOptions = ['English', 'Portuguese', 'Spanish'].map((lang) => ({ value: lang, name: lang }));
-
-  const isDirty = useMemo(
-    () => !isEmpty(filterChangedFormFields(form.getValues(), form.formState.dirtyFields)) || phoneIsDirty,
-    [form.getValues()]
-  );
 
   if (isPending) return <LoadingSpinner />;
 
-  function handleSubmit(data) {
-    let dirtyFields = filterChangedFormFields(form.getValues(), form.formState.dirtyFields);
-    if (phoneIsDirty) {
-      dirtyFields = {
-        ...dirtyFields,
-        phone: form.getValues().phone
-      };
-      mutate(dirtyFields);
-    }
+  // const phoneIsDirty = useMemo(() => form.watch('phone') !== user?.phone, [form.watch('phone'), user?.phone]);
+  // const languageSelectOptions = ['English', 'Portuguese', 'Spanish'].map((lang) => ({ value: lang, name: lang }));
+
+  // const isDirty = useMemo(() => form.formState.isDirty || phoneIsDirty, [form.getValues()]);
+
+  function handleSubmit(data: IUserSchema) {
+    // if (phoneIsDirty) {
+    //   newData = {
+    //     ...newData,
+    //     phone: form.getValues().phone
+    //   };
+    // }
+    mutate(data);
   }
 
   return (
@@ -75,19 +86,19 @@ export default function Page() {
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
             <InputField form={form} name="phone" placeholder="Mobile phone" type="phone" />
             <InputField form={form} name="email" placeholder="E-mail" />
-            <SelectField
+            {/* <SelectField
               data={languageSelectOptions}
               form={form}
               label="Language"
               name="language"
               placeholder="Language"
-            />
+            /> */}
           </div>
-          {isDirty && (
-            <Button type="submit" className="h-10 w-full">
-              Update account
-            </Button>
-          )}
+          {/* {isDirty && ( */}
+          <Button type="submit" className="h-10 w-full">
+            Update account
+          </Button>
+          {/* )} */}
         </div>
       </form>
     </Form>

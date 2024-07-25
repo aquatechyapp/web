@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
@@ -7,16 +8,17 @@ import { useCreateAssignment } from '@/hooks/react-query/assignments/createAssig
 import { isEmpty } from '@/utils';
 
 import { FormNewAssignment } from './FormNewAssignment';
+import { FormSchema } from './page';
 
 type Props = {
-  form: any;
+  form: UseFormReturn<FormSchema>;
 };
 
 export function DialogNewAssignment({ form }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const validateForm = async (): Promise<boolean> => {
-    const _ = form.formState.errors;
+    form.formState.errors;
     await form.trigger();
     if (form.formState.isValid) {
       return true;

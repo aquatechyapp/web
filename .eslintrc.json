@@ -24,12 +24,7 @@
   "rules": {
     "simple-import-sort/imports": "error",
     "no-console": 1,       // Means warning
-    "prettier/prettier": [
-      "error",
-      {
-        "endOfLine": "auto"
-      }
-    ]
+    "prettier/prettier": "error"
   },
   "settings": {
     "import/resolver": {
