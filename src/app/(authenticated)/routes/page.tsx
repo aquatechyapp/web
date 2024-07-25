@@ -130,12 +130,7 @@ export default function Page() {
                       Transfer Route
                     </Button>
                   )}
-                  <DialogTransferRoute
-                    open={openTransferDialog}
-                    setOpen={setOpenTransferDialog}
-                    assignmentToId={assignmentToId}
-                    isEntireRoute={true}
-                  />
+                  <DialogTransferRoute open={openTransferDialog} setOpen={setOpenTransferDialog} isEntireRoute={true} />
                 </div>
                 <div className="mt-2 flex flex-col  gap-2 sm:flex-row">
                   {assignments.current.length > 0 && assignmentToId === user?.id && (
@@ -194,6 +189,8 @@ export default function Page() {
     </div>
   );
 }
+
+export type FormSchema = z.infer<typeof newAssignmentSchema>;
 
 const newAssignmentSchema = z
   .object({

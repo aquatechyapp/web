@@ -7,8 +7,8 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { paymentType } from '@/constants';
+import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
-import { onlyNumbers } from '@/utils';
 
 import InputField from '../../../../components/InputField';
 import SelectField from '../../../../components/SelectField';
@@ -19,24 +19,18 @@ import { clientAxios } from '../../../../lib/clientAxios';
 
 const schema = z.object({
   emailSubContractor: z.string().email({ message: 'Invalid email' }),
-  paymentValue: z.preprocess(
-    (value) => {
-      if (typeof value === 'string') {
-        return onlyNumbers(value);
-      }
-      return value;
-    },
-    z.coerce.number().min(1, { message: 'Required' })
-  ),
+  paymentValue: defaultSchemas.monthlyPayment,
   paymentType: z.string().min(1)
 });
 
+type FormSchema = z.infer<typeof schema>;
+
 export default function Page() {
-  const { setUser } = useUserStore();
+  const { setUser, user } = useUserStore();
   const { push } = useRouter();
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof schema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
       emailSubContractor: '',
@@ -46,16 +40,16 @@ export default function Page() {
   });
 
   const { mutate: handleSubmit } = useMutation({
-    mutationFn: async (data) =>
+    mutationFn: async (data: FormSchema) =>
       clientAxios.post('/workrelations', {
-        ...data,
-        paymentValue: data.paymentValue
+        ...data
       }),
     onSuccess: (res) => {
-      setUser((user) => ({
+      setUser({
         ...user,
         subcontractors: [...user.subcontractors, res.data]
-      }));
+      });
+
       push('/team');
       toast({
         duration: 2000,
@@ -63,7 +57,7 @@ export default function Page() {
         className: 'bg-green-500 text-gray-50'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         duration: 2000,
         title: 'Error adding technician',
@@ -74,7 +68,7 @@ export default function Page() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
+      <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
           <div className="h-5 text-sm font-medium   text-gray-500">Basic information</div>
           <div className="inline-flex flex-wrap justify-start gap-4 self-stretch md:flex-nowrap">

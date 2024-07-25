@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
 import CalendarField from '@/components/CalendarField';
@@ -15,7 +15,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
 import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
 import { Assignment } from '@/interfaces/Assignments';
-import { WorkRelation } from '@/interfaces/User';
+import { WeekdaysUppercase } from '@/interfaces/Weekday';
 import { transferAssignmentsSchema } from '@/schemas/assignments';
 import { useTechniciansStore } from '@/store/technicians';
 import { useUserStore } from '@/store/user';
@@ -31,12 +31,14 @@ type Props = {
   isEntireRoute?: boolean;
 };
 
+type FormValues = z.infer<typeof transferAssignmentsSchema>;
+
 export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute = false }: Props) {
   const { technicians, assignmentToId } = useTechniciansStore();
   const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
   const user = useUserStore((state) => state.user);
 
-  const form = useForm<z.infer<typeof transferAssignmentsSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(transferAssignmentsSchema),
     defaultValues: {
       assignmentToId: assignmentToId,
@@ -50,6 +52,8 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
     }
   });
 
+  console.log(typeof form.watch('startOn'));
+
   const disabledWeekdays = useDisabledWeekdays(form.watch('weekday'));
 
   const userSelectedAsTechnician = useMemo(
@@ -61,14 +65,16 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
     if (userSelectedAsTechnician) {
       form.setValue('paidByService', 0);
     } else {
-      form.setValue('paidByService', assignment?.paidByService);
+      if (assignment) {
+        form.setValue('paidByService', assignment?.paidByService);
+      }
     }
   }, [form.watch('assignmentToId'), open]);
 
   const shouldTransferOnce = form.watch('type') === 'once';
 
   const validateForm = async (): Promise<boolean> => {
-    const _ = form.formState.errors; // also works if you read form.formState.isValid
+    form.formState.errors; // also works if you read form.formState.isValid
     await form.trigger();
     if (form.formState.isValid) {
       return true;
@@ -87,27 +93,29 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
   const isPending = isPendingOnce || isPendingPermanently;
 
   const buildPayload = () => {
-    const { onlyAt, weekday, paidByService } = form.getValues();
+    const { onlyAt, weekday, paidByService, startOn, endAfter } = form.getValues();
     const assignmentToId = form.watch('assignmentToId');
-    const paidByServiceValue =
-      typeof paidByService === 'string' ? parseInt(paidByService?.replaceAll(/\D/g, '')) : paidByService;
+    // const paidByServiceValue =
+    //   typeof paidByService === 'string' ? parseInt(paidByService?.replaceAll(/\D/g, '')) : paidByService;
 
-    let payload = {};
+    let payload: TransferAssignmentsOnce | TransferAssignmentsPermanently;
 
     if (shouldTransferOnce) {
       payload = {
         assignmentToId,
         onlyAt,
         weekday,
-        paidByService: paidByServiceValue
+        // paidByService: paidByServiceValue
+        paidByService
       };
     } else {
       payload = {
         assignmentToId,
-        startOn: form.getValues('startOn'),
-        endAfter: form.getValues('endAfter'),
+        startOn,
+        endAfter,
         weekday,
-        paidByService: paidByServiceValue
+        // paidByService: paidByServiceValue
+        paidByService
       };
     }
 
@@ -121,11 +129,12 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
   async function transferRoute() {
     const isValid = await validateForm();
     if (isValid) {
+      const payload = buildPayload();
       setOpen(false);
       if (shouldTransferOnce) {
-        transferOnce(buildPayload());
+        transferOnce(payload as TransferAssignmentsOnce);
       } else {
-        transferPermanently(buildPayload());
+        transferPermanently(payload as TransferAssignmentsPermanently);
       }
       form.reset();
       return;
@@ -173,7 +182,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                 <div className="basis-full">
                   <WeekdaySelect
                     value={form.watch('weekday')}
-                    onChange={(weekday) => form.setValue('weekday', weekday)}
+                    onChange={(weekday: WeekdaysUppercase) => form.setValue('weekday', weekday)}
                   />
                 </div>
               </div>
@@ -220,7 +229,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
   );
 }
 
-const OptionsOnceOrPermanently = ({ form }) => {
+const OptionsOnceOrPermanently = ({ form }: { form: UseFormReturn<FormValues> }) => {
   return (
     <FormField
       control={form.control}
@@ -255,4 +264,19 @@ const OptionsOnceOrPermanently = ({ form }) => {
       )}
     />
   );
+};
+
+type TransferAssignments = {
+  assignmentToId: string;
+  weekday: WeekdaysUppercase;
+  paidByService?: number | null;
+};
+
+type TransferAssignmentsOnce = TransferAssignments & {
+  onlyAt?: string;
+};
+
+type TransferAssignmentsPermanently = TransferAssignments & {
+  startOn: string;
+  endAfter: string;
 };

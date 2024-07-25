@@ -7,7 +7,7 @@ export const useDeleteClient = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (id) =>
+    mutationFn: async (id: string) =>
       await clientAxios.delete('/clients', {
         data: { id }
       }),

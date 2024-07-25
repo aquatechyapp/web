@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { Input } from '@/components/ui/input';
+import { WorkRelation } from '@/interfaces/User';
 import { useUserStore } from '@/store/user';
 
 import { Button } from '../../../components/ui/button';
@@ -49,7 +50,7 @@ export default function Page() {
           )}
           {filteredSubcontractors && (
             <div className="flex flex-wrap justify-center gap-2">
-              {filteredSubcontractors.map((subcontractor) => (
+              {filteredSubcontractors.map((subcontractor: WorkRelation) => (
                 <SubcontractorCard
                   type="subcontractor"
                   key={subcontractor.subcontractor.email}

@@ -6,6 +6,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useAssignmentsContext } from '@/context/assignments';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
+import { Assignment } from '@/interfaces/Assignments';
 import { Client } from '@/interfaces/Client';
 import { useUserStore } from '@/store/user';
 import { isEmpty } from '@/utils';
@@ -23,42 +24,66 @@ export default function Page() {
 
   if (isLoading) return <LoadingSpinner />;
 
-  const poolsByCityAsCompany = clients?.reduce((acc, client: Client) => {
-    client.pools.forEach((pool) => {
-      if (acc[pool.city]) {
-        acc[pool.city] += 1;
-      } else {
-        acc[pool.city] = 1;
-      }
-    });
-    return acc;
-  }, {});
+  const poolsByCityAsCompany = clients?.reduce(
+    (
+      acc: {
+        [key: string]: number;
+      },
+      client: Client
+    ) => {
+      client.pools.forEach((pool) => {
+        if (acc[pool.city]) {
+          acc[pool.city] += 1;
+        } else {
+          acc[pool.city] = 1;
+        }
+      });
+      return acc;
+    },
+    {}
+  );
 
-  const poolsByCityAsSubcontractor = allAssignments.reduce((acc, assignment) => {
-    if (assignment.assignmentToId === user?.id && assignment.assignmentOwnerId !== user.id) {
-      if (acc[assignment.pool.city]) {
-        acc[assignment.pool.city] += 1;
-      } else {
-        acc[assignment.pool.city] = 1;
+  const poolsByCityAsSubcontractor = allAssignments.reduce(
+    (
+      acc: {
+        [key: string]: number;
+      },
+      assignment: Assignment
+    ) => {
+      if (assignment.assignmentToId === user?.id && assignment.assignmentOwnerId !== user.id) {
+        if (acc[assignment.pool.city]) {
+          acc[assignment.pool.city] += 1;
+        } else {
+          acc[assignment.pool.city] = 1;
+        }
       }
-    }
-    return acc;
-  }, {});
+      return acc;
+    },
+    {}
+  );
 
-  const assignmentsBySubcontractors = allAssignments.reduce((acc, assignment) => {
-    const subcontractor = user.subcontractors.find(
-      (subcontractor) => subcontractor.subcontractor.id === assignment.assignmentToId
-    );
-    if (subcontractor) {
-      const fullName = `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`;
-      if (acc[fullName]) {
-        acc[fullName] += 1;
-      } else {
-        acc[fullName] = 1;
+  const assignmentsBySubcontractors = allAssignments.reduce(
+    (
+      acc: {
+        [key: string]: number;
+      },
+      assignment: Assignment
+    ) => {
+      const subcontractor = user?.subcontractors.find(
+        (subcontractor) => subcontractor.subcontractor.id === assignment.assignmentToId
+      );
+      if (subcontractor) {
+        const fullName = `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`;
+        if (acc[fullName]) {
+          acc[fullName] += 1;
+        } else {
+          acc[fullName] = 1;
+        }
       }
-    }
-    return acc;
-  }, {});
+      return acc;
+    },
+    {}
+  );
 
   if (width < 1024) {
     return (
@@ -75,7 +100,7 @@ export default function Page() {
             {isEmpty(poolsByCityAsCompany) ? (
               <div>No pools found</div>
             ) : (
-              Object.entries(poolsByCityAsCompany)
+              Object.entries(poolsByCityAsCompany!)
                 .sort((a, b) => b[1] - a[1])
                 .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
@@ -114,7 +139,7 @@ export default function Page() {
             {isEmpty(poolsByCityAsCompany) ? (
               <div>No pools found</div>
             ) : (
-              Object.entries(poolsByCityAsCompany)
+              Object.entries(poolsByCityAsCompany!)
                 .sort((a, b) => b[1] - a[1])
                 .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}

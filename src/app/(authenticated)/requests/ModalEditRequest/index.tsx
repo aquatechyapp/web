@@ -15,11 +15,11 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories, RequestStatus } from '@/constants';
-import { useUserStore } from '@/store/user';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useUpdateRequest } from '@/hooks/react-query/requests/updateRequest';
 import { Client } from '@/interfaces/Client';
 import { Request } from '@/interfaces/Request';
+import { useUserStore } from '@/store/user';
 import { isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
 
@@ -41,6 +41,8 @@ const schema = z.object({
   })
 });
 
+export type EditRequest = z.infer<typeof schema>;
+
 type Props = {
   request: Request;
 };
@@ -61,7 +63,7 @@ export function ModalEditRequest({ request }: Props) {
     }
   ];
 
-  const form = useForm<z.infer<typeof schema>>({
+  const form = useForm<EditRequest>({
     resolver: zodResolver(schema),
     defaultValues: {
       clientId: request.clientId || '',
@@ -74,13 +76,13 @@ export function ModalEditRequest({ request }: Props) {
       addressedTo: user?.id,
       poolId: request.poolId || '',
       description: request.description || '',
-      photo: request.photo || [],
+      photo: request.photos || [],
       status: request.status || 'Pending',
       outcome: request.outcome || undefined
     }
   });
 
-  function handleSubmit(data) {
+  function handleSubmit(data: EditRequest) {
     if (isEmpty(form.formState.errors)) {
       updateRequest(data);
       setOpen(false);
@@ -110,14 +112,14 @@ export function ModalEditRequest({ request }: Props) {
             <div className="flex gap-4">
               <SelectField
                 data={buildSelectOptions(
-                  clients.filter((client: Client) => client.pools.length > 0),
+                  clients?.filter((client: Client) => client.pools.length > 0),
                   {
                     key: 'id',
                     name: 'name',
                     value: 'id'
                   }
                 )}
-                placeholder={clients.length > 0 ? 'Clients' : 'No clients available'}
+                placeholder={clients?.length || 0 > 0 ? 'Clients' : 'No clients available'}
                 form={form}
                 name="clientId"
                 disabled={disabled}
@@ -157,7 +159,7 @@ export function ModalEditRequest({ request }: Props) {
               handleChange={(images) => form.setValue('photo', images)}
               defaultPhotos={request.photos.map((photo) => ({
                 dataURL: photo,
-                file: new File([], photo.url)
+                file: new File([], photo)
               }))}
               showBorder={false}
             />

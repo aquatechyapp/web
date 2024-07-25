@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -9,13 +10,27 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
 import { Client } from '@/interfaces/Client';
-import { filterChangedFormFields } from '@/utils/formUtils';
+import { defaultSchemas } from '@/schemas/defaultSchemas';
+import { getDirtyValues } from '@/utils/formUtils';
+
+const formSchema = z.object({
+  address: defaultSchemas.address,
+  city: defaultSchemas.city,
+  state: defaultSchemas.state,
+  zip: defaultSchemas.zip,
+  email1: defaultSchemas.email,
+  phone1: defaultSchemas.phone,
+  notes: defaultSchemas.notes,
+  company: defaultSchemas.name,
+  type: defaultSchemas.clientType
+});
+
+type FormData = z.infer<typeof formSchema>;
 
 export default function ClientInfo({ client }: { client: Client }) {
-  const { mutate, isPending } = useUpdateClient();
-  // const form = useForm<z.infer<typeof poolAndClientSchema>>({
-  const form = useForm({
-    // resolver: zodResolver(poolAndClientSchema),
+  const { mutate, isPending } = useUpdateClient<FormData>();
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       city: client.city || '',
       state: client.state || '',
@@ -34,7 +49,7 @@ export default function ClientInfo({ client }: { client: Client }) {
   if (isPending) return <LoadingSpinner />;
 
   const handleSubmit = async () => {
-    let dirtyFields = filterChangedFormFields(form.getValues(), form.formState.dirtyFields);
+    let dirtyFields = getDirtyValues(form.getValues(), form.formState.dirtyFields) as FormData;
     if (phoneChanged) {
       dirtyFields = {
         ...dirtyFields,

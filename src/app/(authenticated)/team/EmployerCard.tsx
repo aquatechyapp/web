@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { SubcontractorStatus } from '@/constants/enums';
+
 import { Button } from '../../../components/ui/button';
 import { Separator } from '../../../components/ui/separator';
 import { useToast } from '../../../components/ui/use-toast';
@@ -12,7 +14,7 @@ type Props = {
   phone: string;
   name: string;
   workRelationId: string;
-  status: string;
+  status: SubcontractorStatus;
 };
 
 export function EmployerCard({ email, phone, name, workRelationId, status }: Props) {
@@ -51,14 +53,16 @@ export function EmployerCard({ email, phone, name, workRelationId, status }: Pro
           <div className="self-stretch text-center text-xs font-normal leading-[18px]  text-gray-500">Company</div>
         </div>
       </div>
-      {status === 'Inactive' && (
+      {status === SubcontractorStatus.Inactive && (
         <ModalAcceptInvite handleSubmit={handleSubmit}>
           <Button className="h-7 animate-bounce rounded-full bg-orange-500 px-2 py-1 text-sm text-gray-50 hover:bg-orange-600">
             Accept invite
           </Button>
         </ModalAcceptInvite>
       )}
-      {status === 'Active' && <div className="rounded-full bg-green-500 px-2 py-1 text-sm text-gray-50">Active</div>}
+      {status === SubcontractorStatus.Active && (
+        <div className="rounded-full bg-green-500 px-2 py-1 text-sm text-gray-50">Active</div>
+      )}
       <Separator />
       <div className="flex h-[46px] flex-col items-center justify-center gap-2.5 self-stretch">
         <div className="inline-flex items-center justify-start gap-1 self-stretch">

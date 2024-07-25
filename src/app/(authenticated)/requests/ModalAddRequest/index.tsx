@@ -14,10 +14,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories } from '@/constants';
-import { useUserStore } from '@/store/user';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useCreateRequest } from '@/hooks/react-query/requests/createRequest';
 import { Client } from '@/interfaces/Client';
+import { useUserStore } from '@/store/user';
 import { isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
 
@@ -36,6 +36,8 @@ const schema = z.object({
     lastName: z.string()
   })
 });
+
+export type CreateRequest = z.infer<typeof schema>;
 
 export function ModalAddRequest() {
   const [open, setOpen] = useState(false);
@@ -61,7 +63,7 @@ export function ModalAddRequest() {
     }
   });
 
-  function handleSubmit(data) {
+  function handleSubmit(data: z.infer<typeof schema>) {
     if (isEmpty(form.formState.errors)) {
       createRequest(data);
       setOpen(false);
@@ -90,14 +92,14 @@ export function ModalAddRequest() {
             <div className="flex gap-4">
               <SelectField
                 data={buildSelectOptions(
-                  clients.filter((client: Client) => client.pools.length > 0),
+                  clients?.filter((client: Client) => client.pools.length > 0),
                   {
                     key: 'id',
                     name: 'name',
                     value: 'id'
                   }
                 )}
-                placeholder={clients.length > 0 ? 'Clients' : 'No clients available'}
+                placeholder={clients?.length || 0 > 0 ? 'Clients' : 'No clients available'}
                 form={form}
                 name="clientId"
               />

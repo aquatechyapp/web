@@ -1,63 +1,53 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import { z } from 'zod';
 
 import InputField from '@/components/InputField';
-import { InputFile } from '@/components/InputFile';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
+import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
 import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 import { Pool } from '@/interfaces/Assignments';
 import { editPoolSchema } from '@/schemas/pool';
-import { filterChangedFormFields } from '@/utils/formUtils';
+import { isEmpty } from '@/utils';
+import { findDifferenceBetweenTwoObjects } from '@/utils/defaulUtils';
 
-import { DialogEditPool } from './DialogEditPool';
 import { ModalDeletePool } from './ModalDeletePool';
-
-const additionalFieldsSchema = z.object({
-  notes: z.string().nullable(),
-  monthlyPayment: z.string().nullable()
-});
-
-const poolAndAdditionalFieldsSchema = editPoolSchema.and(additionalFieldsSchema);
 
 export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: string }) {
   const { mutate, isPending: isPendingUpdatePool } = useUpdatePool();
   const { mutate: deletePool, isPending: isPendingDeletePool } = useDeletePool(['clients', clientId], pool.id);
   const isPending = isPendingUpdatePool || isPendingDeletePool;
-  const form = useForm<z.infer<typeof poolAndAdditionalFieldsSchema>>({
+
+  const form = useForm<z.infer<typeof editPoolSchema>>({
+    resolver: zodResolver(editPoolSchema),
     defaultValues: {
+      poolId: pool.id,
       address: pool.address || '',
       city: pool.city || '',
       state: pool.state || '',
-      monthlyPayment: pool.monthlyPayment || '',
+      monthlyPayment: pool.monthlyPayment || undefined,
       lockerCode: pool.lockerCode || '',
       enterSide: pool.enterSide || '',
-      poolType: pool.poolType || undefined,
-      notes: pool.notes || '',
-      photos: pool.photos || []
+      poolType: pool.poolType,
+      notes: pool.notes || ''
     }
   });
 
-  const monthlyPaymentChanged = form.watch('monthlyPayment') !== pool.monthlyPayment;
+  const changedFields = findDifferenceBetweenTwoObjects(form.formState.defaultValues!, form.watch());
 
   const handleSubmit = () => {
     if (Object.keys(form.formState.errors).length) return;
-    let data = {
-      ...filterChangedFormFields(form.getValues(), form.formState.dirtyFields)
-    };
-    if (monthlyPaymentChanged) {
-      data = {
-        ...data,
-        monthlyPayment: form.watch('monthlyPayment')
-      };
-    }
+
+    const data = changedFields as z.infer<typeof editPoolSchema>;
+    data.poolId = pool.id;
+
     mutate({
-      data,
-      poolId: pool.id
+      data
     });
   };
 
@@ -65,55 +55,43 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
 
   return (
     <Form {...form}>
-      <div className="flex h-5 w-full justify-between text-sm font-medium   text-gray-500">
-        Basic information
-        <div className="flex gap-4 text-lg">
-          <DialogEditPool monthlyPaymentChanged={monthlyPaymentChanged} form={form} handleSubmit={handleSubmit} />
-          <ModalDeletePool deletePool={() => deletePool()} />
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="grid gap-4">
+        <div className="flex h-5 w-full justify-between text-sm font-medium   text-gray-500">
+          Basic information
+          <div className="flex gap-4 text-lg">
+            <ModalDeletePool deletePool={() => deletePool()} />
+          </div>
         </div>
-      </div>
-      <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-        <InputField disabled form={form} name="address" placeholder="Address" />
-        <StateAndCitySelect disabled form={form} cityName="city" stateName="state" />
-        {/* <InputField form={form} placeholder="Number" /> */}
-      </div>
-      <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-        <InputField name="monthlyPayment" form={form} placeholder="Monthly payment" type="currencyValue" disabled />
-        <InputField name="lockerCode" form={form} placeholder="Gate code" disabled />
-        <InputField name="enterSide" form={form} placeholder="Enter side" disabled />
-        <SelectField
-          value={form.watch('poolType')}
-          name="poolType"
-          placeholder="Chemical type"
-          form={form}
-          data={PoolTypes}
-          disabled
-          label="Chemical type"
-        />
-      </div>
-      <div className="Form flex flex-col items-start justify-start gap-4 self-stretch lg:flex-row">
-        <div className="h-44 w-full lg:w-[40%]">
-          <InputField
-            className="h-full"
-            type="textArea"
-            form={form}
-            name="notes"
-            placeholder="Location notes..."
-            disabled
-          />
-        </div>
+        <InputField form={form} name="address" placeholder="Address" />
 
-        <div className="mt-8 flex h-44 w-full items-start justify-between gap-1 lg:w-[60%]">
-          <InputFile
-            handleChange={() => {}}
-            defaultPhotos={form.watch('photos').map((photo) => ({
-              dataURL: photo,
-              file: new File([], photo.url)
-            }))}
-            disabled
+        <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
+          {/* <InputField disabled form={form} name="address" placeholder="Address" /> */}
+          <StateAndCitySelect form={form} cityName="city" stateName="state" />
+        </div>
+        <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
+          <InputField name="monthlyPayment" form={form} placeholder="Monthly payment" type="currencyValue" />
+          <InputField name="lockerCode" form={form} placeholder="Gate code" />
+          <InputField name="enterSide" form={form} placeholder="Enter side" />
+          <SelectField
+            value={form.watch('poolType')}
+            name="poolType"
+            placeholder="Chemical type"
+            form={form}
+            data={PoolTypes}
+            label="Chemical type"
           />
         </div>
-      </div>
+        <div className="Form flex flex-col items-start justify-start gap-4 self-stretch lg:flex-row">
+          <div className="h-40 w-full">
+            <InputField className="h-full" type="textArea" form={form} name="notes" placeholder="Location notes..." />
+          </div>
+        </div>
+        {!isEmpty(changedFields) && (
+          <Button className="mt-4" type="submit">
+            Save
+          </Button>
+        )}
+      </form>
     </Form>
   );
 }

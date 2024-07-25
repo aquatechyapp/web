@@ -31,12 +31,6 @@ const nextConfig = {
   //     }
   //   ]
   // },
-  typescript: {
-    ignoreBuildErrors: true
-  },
-  eslint: {
-    ignoreDuringBuilds: true
-  },
   env: {
     API_URL: process.env.API_URL,
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY

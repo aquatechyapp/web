@@ -86,7 +86,14 @@ export const PoolTypes = [
   }
 ];
 
-export const routes = [
+type Menu = {
+  text: string;
+  href: string;
+  submenu?: Record<string, { text: string; href: string }>;
+  icon: React.FC;
+};
+
+export const routes: Menu[] = [
   {
     text: 'Dashboard',
     href: '/dashboard',

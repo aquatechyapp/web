@@ -1,6 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CellContext } from '@tanstack/react-table';
 
-export default function NamePhoto({ cell }) {
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Client } from '@/interfaces/Client';
+
+export default function NamePhoto(cell: CellContext<Client, unknown>) {
   const { pools, name, email1 } = cell.row.original;
   return (
     <div className="flex">

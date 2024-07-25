@@ -8,11 +8,11 @@ import {
   SelectValue
 } from '../../../components/ui/select';
 import { Weekdays } from '../../../constants';
-import { WeekdaysSelect } from '../../../interfaces/Weekday';
+import { WeekdaysSelect, WeekdaysUppercase } from '../../../interfaces/Weekday';
 
 type Props = {
-  onChange: (value: string) => void;
-  value: string;
+  onChange: (value: WeekdaysUppercase) => void;
+  value: WeekdaysUppercase;
 };
 
 export default function WeekdaySelect({ onChange, value }: Props) {

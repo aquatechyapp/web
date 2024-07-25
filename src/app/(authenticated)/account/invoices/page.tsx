@@ -16,7 +16,7 @@ interface Invoice {
   invoiceNumber: string;
   item: string;
   paymentMethod: string | null;
-  status: string;
+  status: number | string;
   updatedAt: string;
   userId: string;
   value: number;
@@ -33,7 +33,8 @@ const options: Intl.DateTimeFormatOptions = {
 
 export default function Invoices() {
   const user = useUserStore((state) => state.user);
-  const { width } = useWindowDimensions();
+  const { width = 0 } = useWindowDimensions();
+
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loadingInvoices, setLoadingInvoices] = useState<{ [key: string]: boolean }>({});
   const [checkoutInvoiceId, setCheckoutInvoiceId] = useState<string | null>(null);

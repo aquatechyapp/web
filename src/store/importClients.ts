@@ -1,15 +1,17 @@
 import { create } from 'zustand';
 
+import { ImportMultipleClients } from '@/interfaces/Client';
+
 type FormState = {
-  forms: any[];
-  updateFormValues: (index: number, values: any) => void;
+  forms: ImportMultipleClients[];
+  updateFormValues: (index: number, values: ImportMultipleClients) => void;
   removeForm: (index: number) => void;
   cleanForms: () => void;
 };
 
 export const useFormStore = create<FormState>((set) => ({
   forms: [],
-  updateFormValues: (index: number, values: any) =>
+  updateFormValues: (index: number, values: ImportMultipleClients) =>
     set((state) => {
       const newForms = [...state.forms];
       newForms[index] = values;

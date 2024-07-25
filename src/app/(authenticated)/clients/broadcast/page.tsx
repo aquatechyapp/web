@@ -11,12 +11,22 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import useGetClients from '@/hooks/react-query/clients/getClients';
+import { Client } from '@/interfaces/Client';
 import { clientAxios } from '@/lib/clientAxios';
 
+type FormData = {
+  emailType: string;
+  message: string;
+  type: string;
+  startOn: string;
+  time: string;
+  contacts: { name: string; email: string }[];
+};
+
 export default function Page() {
-  const { data: clientsData } = useGetClients();
-  const [selectedCities, setSelectedCities] = React.useState([]);
-  const [selected, setSelect] = React.useState([]);
+  const { data: clientsData = [] } = useGetClients();
+  const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
+  const [selected, setSelect] = React.useState<number | null>(null);
   const { toast } = useToast();
 
   const form = useForm({
@@ -30,32 +40,32 @@ export default function Page() {
     }
   });
 
-  const types = ['All types', ...Array.from(new Set(clientsData?.map((client) => client.type) ?? []))];
-  const typesSelectOptions = types.map((type) => ({ value: type, name: type }));
+  const types = ['All types', ...Array.from(new Set(clientsData?.map((client: Client) => client.type) ?? []))];
+  const typesSelectOptions = types.map((type) => ({ value: type, name: type, key: type }));
 
-  const cities = ['All cities', ...Array.from(new Set(clientsData?.map((client) => client.city) ?? []))];
-  const citysSelectOptions = cities.map((city) => ({ value: city, name: city, label: city }));
+  const cities = ['All cities', ...Array.from(new Set(clientsData?.map((client: Client) => client.city) ?? []))];
+  const citysSelectOptions = cities.map((city) => ({ value: city, name: city, label: city, key: city }));
 
   const generateTimeOptions = () => {
     const times = [];
     for (let i = 0; i < 24; i++) {
       // Formata a hora para dois dígitos (00-23)
       const hour = i.toString().padStart(2, '0');
-      times.push({ value: `${hour}:00 PM`, name: `${hour}:00 PM` });
+      times.push({ value: `${hour}:00 PM`, name: `${hour}:00 PM`, key: `${hour}:00 PM` });
     }
     return times;
   };
 
   const timeOptions = generateTimeOptions();
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (formData: FormData) => {
     try {
       // Filtrar os clientes com base no tipo selecionado
-      const filteredClientsTypes =
+      const filteredClientsTypes: Client[] =
         formData.type === 'All types' ? clientsData : clientsData.filter((client) => client.type === formData.type);
 
       // Filtrar os clientes com base nas cidades selecionadas
-      const filteredClientsCitys = selectedCities.includes('All cities')
+      const filteredClientsCitys: Client[] = selectedCities.includes('All cities')
         ? filteredClientsTypes
         : filteredClientsTypes.filter((client) => selectedCities.includes(client.city));
 
@@ -99,7 +109,9 @@ export default function Page() {
 
       // Combine os dados do formulário com os dados dos clientes selecionados e formate a data corretamente
       const [time, period] = formData.time.split(' ');
-      let [hours, minutes] = time.split(':').map(Number);
+      const splittedTime = time.split(':').map(Number);
+      let hours = splittedTime[0];
+      const minutes = splittedTime[1];
       if (period === 'PM' && hours !== 12) hours += 12;
       if (period === 'AM' && hours === 12) hours = 0;
 
@@ -131,6 +143,7 @@ export default function Page() {
         title: 'Email sent successfully',
         className: 'bg-green-500 text-white'
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error sending email:', error.message);
       // Toast de erro
@@ -142,7 +155,7 @@ export default function Page() {
     }
   };
 
-  const handleCitySelectionChange = (selected) => {
+  const handleCitySelectionChange = (selected: string[]) => {
     setSelectedCities(selected);
     const filteredClientsTypes =
       form.getValues('type') === 'All types'
@@ -170,7 +183,7 @@ export default function Page() {
               placeholder="Cities"
               options={citysSelectOptions}
               selected={selectedCities}
-              onChange={(text) => handleCitySelectionChange(text)}
+              onChange={(text: string[]) => handleCitySelectionChange(text)}
             />
           </div>
 

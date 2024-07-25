@@ -44,7 +44,7 @@ type Props = {
 
 export function AssignmentsList({ handleDragEnd }: Props) {
   const user = useUserStore((state) => state.user);
-  const { assignments, setAssignmentToTransfer } = useAssignmentsContext();
+  const { assignments } = useAssignmentsContext();
   const assignmentToId = useTechniciansStore((state) => state.assignmentToId);
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [openDialogTransfer, setOpenDialogTransfer] = useState(false);
@@ -103,7 +103,6 @@ export function AssignmentsList({ handleDragEnd }: Props) {
                 <DropdownMenuItem
                   onClick={() => {
                     setAssignment(assignment);
-                    setAssignmentToTransfer([assignment]);
                     setOpenDialogTransfer(true);
                   }}
                 >

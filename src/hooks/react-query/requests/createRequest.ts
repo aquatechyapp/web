@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Request } from '@/interfaces/Request';
+import { CreateRequest } from '@/app/(authenticated)/requests/ModalAddRequest';
 import { clientAxios } from '@/lib/clientAxios';
 import { createFormData } from '@/utils/formUtils';
 
@@ -10,7 +10,7 @@ export const useCreateRequest = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: Request) =>
+    mutationFn: async (data: CreateRequest) =>
       await clientAxios.post('/requests', createFormData(data), {
         headers: {
           'Content-Type': 'multipart/form-data'

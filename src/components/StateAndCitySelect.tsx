@@ -1,12 +1,15 @@
 import { City, ICity, State } from 'country-state-city';
 import { useEffect, useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 
 import SelectField from './SelectField';
 
 type Props = {
-  form: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<any>;
   stateName?: string;
   cityName?: string;
+  disabled?: boolean;
 };
 
 const states = State.getStatesOfCountry('US');

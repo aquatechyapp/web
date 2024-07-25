@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { CreatePoolType } from '@/app/(authenticated)/clients/DataTableClients/modal-add-pool';
 import { clientAxios } from '@/lib/clientAxios';
 import { createFormData } from '@/utils/formUtils';
 
@@ -9,7 +10,7 @@ export const useAddPoolToClient = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data) =>
+    mutationFn: async (data: CreatePoolType) =>
       await clientAxios.post('/pools', createFormData(data), {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -23,7 +24,7 @@ export const useAddPoolToClient = () => {
         className: 'bg-green-500 text-gray-50'
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         duration: 2000,
         title: 'Error creating pool',

@@ -8,9 +8,13 @@ import { Label } from './ui/label';
 import { DropdownMenuCheckboxes } from './ui/multiple-select';
 import { Textarea } from './ui/textarea';
 
+type MaskTypes = 'currencyValue' | 'percentValue' | 'phone';
+
 type Props = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
+  className?: string;
+  disabled?: boolean;
   name: string;
   placeholder?: string;
   type?:
@@ -37,7 +41,7 @@ export default function InputField({ form, name, placeholder, type = 'default', 
           placeholder={placeholder}
           type="tel"
           {...field}
-          onInput={(e) => {
+          onChange={(e) => {
             form.setValue(name, e.target.value);
           }}
           {...props}
@@ -57,7 +61,7 @@ export default function InputField({ form, name, placeholder, type = 'default', 
           type="password"
           placeholder={placeholder}
           {...field}
-          onInput={(e) => {
+          onChange={(e) => {
             form.setValue(name, e.target.value);
           }}
         />
@@ -70,7 +74,7 @@ export default function InputField({ form, name, placeholder, type = 'default', 
           placeholder={placeholder}
           {...field}
           {...props}
-          onInput={(e) => {
+          onChange={(e) => {
             form.setValue(name, e.target.value);
           }}
         />
@@ -83,7 +87,7 @@ export default function InputField({ form, name, placeholder, type = 'default', 
           {...props}
           {...field}
           style={{ marginTop: 0 }}
-          onInput={(e) => {
+          onChange={(e) => {
             form.setValue(field.name, e.target.value);
           }}
         />
@@ -112,12 +116,26 @@ export default function InputField({ form, name, placeholder, type = 'default', 
     },
     percentValue: {
       component: (field: ControllerRenderProps) => (
-        <InputMasked mask={type} field={field} placeholder={placeholder || ''} form={form} {...field} {...props} />
+        <InputMasked
+          mask={type as MaskTypes}
+          field={field}
+          placeholder={placeholder || ''}
+          form={form}
+          {...field}
+          {...props}
+        />
       )
     },
     currencyValue: {
       component: (field: ControllerRenderProps) => (
-        <InputMasked mask={type} field={field} placeholder={placeholder || ''} form={form} {...field} {...props} />
+        <InputMasked
+          mask={type as MaskTypes}
+          field={field}
+          placeholder={placeholder || ''}
+          form={form}
+          {...field}
+          {...props}
+        />
       )
     }
   };
@@ -130,7 +148,7 @@ export default function InputField({ form, name, placeholder, type = 'default', 
         return (
           <FormItem className="h-full w-full">
             {!['checkbox'].includes(type) && <Label className="text-nowrap">{label || placeholder}</Label>}
-            <FormControl>{types[type].component(field)}</FormControl>
+            <FormControl>{types[type as keyof typeof types].component(field)}</FormControl>
             <FormMessage />
           </FormItem>
         );

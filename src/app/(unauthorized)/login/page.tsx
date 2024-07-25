@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { isAxiosError } from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -25,6 +26,14 @@ export default function Page() {
   });
 
   const { mutate: handleSubmit, isPending, error } = useLoginUser();
+  let messageError = 'Internal server error';
+  if (
+    isAxiosError(error) &&
+    error?.response?.status === 401 &&
+    error?.response?.data.message === 'Invalid email or password.'
+  ) {
+    messageError = 'E-mail or password incorrect';
+  }
 
   return (
     <div className="inline-flex w-[448px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8">
@@ -45,9 +54,7 @@ export default function Page() {
           <div className="mb-8 flex w-[400px] flex-col gap-[18px]">
             <InputField form={form} name="email" placeholder="E-mail address" />
             <InputField form={form} name="password" placeholder="Password" type="password" />
-            {error && (
-              <p className="text-[0.8rem] font-medium text-red-500 dark:text-red-900">E-mail or password incorrect</p>
-            )}
+            {error && <p className="text-[0.8rem] font-medium text-red-500 dark:text-red-900">{messageError}</p>}
           </div>
           <Button disabled={isPending} type="submit" className="w-full">
             {isPending ? (

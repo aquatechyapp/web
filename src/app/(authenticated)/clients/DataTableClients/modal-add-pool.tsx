@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { ImageListType } from 'react-images-uploading';
 import * as z from 'zod';
 
 import InputField from '@/components/InputField';
@@ -11,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
+import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
 import { isEmpty } from '@/utils';
 
@@ -42,7 +44,7 @@ const createPoolSchema = poolSchema
         .trim()
         // .min(1, { message: 'Notes must be at least 1 character.' })
         .optional(),
-      photo: z.array(z.string()).nullable(),
+      photo: defaultSchemas.imageFile,
       city: z
         .string({
           required_error: 'City is required.',
@@ -68,8 +70,17 @@ const createPoolSchema = poolSchema
     })
   );
 
-export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
-  const form = useForm<z.infer<typeof createPoolSchema>>({
+export type CreatePoolType = z.infer<typeof createPoolSchema>;
+
+type Props = {
+  handleAddPool: (data: CreatePoolType) => void;
+  clientOwnerId: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Props) {
+  const form = useForm<CreatePoolType>({
     resolver: zodResolver(createPoolSchema),
     defaultValues: {
       clientOwnerId,
@@ -90,11 +101,12 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
     form.reset();
   }, [open]);
 
-  function handleImagesChange(images: never[]) {
-    form.setValue('photo', images);
+  function handleImagesChange(images: ImageListType) {
+    form.setValue('photo', images as File[]);
   }
 
   const validateForm = async (): Promise<boolean> => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _ = form.formState.errors; // also works if you read form.formState.isValid
     await form.trigger();
     if (form.formState.isValid) {
@@ -108,7 +120,7 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
     return false;
   };
 
-  async function handleSubmit(data) {
+  async function handleSubmit(data: CreatePoolType) {
     const isValid = await validateForm();
     if (isValid) {
       handleAddPool(data);
@@ -157,7 +169,7 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }) {
                 placeholder="Pool notes"
               />
               <div className="mt-8 h-40">
-                <InputFile handleChange={handleImagesChange} />
+                <InputFile handleChange={(images) => handleImagesChange(images)} />
               </div>
             </div>
             <div className="m-auto flex w-[50%] justify-around">

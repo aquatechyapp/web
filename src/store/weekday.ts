@@ -4,7 +4,7 @@ import { create } from 'zustand';
 import { WeekdaysUppercase } from '@/interfaces/Weekday';
 
 type WeekdayState = {
-  selectedWeekday: WeekdaysUppercase | '';
+  selectedWeekday: WeekdaysUppercase;
   setSelectedWeekday: (weekday: WeekdaysUppercase) => void;
 };
 

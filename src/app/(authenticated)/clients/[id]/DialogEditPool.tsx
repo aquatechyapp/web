@@ -1,14 +1,21 @@
+import { UseFormReturn } from 'react-hook-form';
 import { MdOutlineEdit } from 'react-icons/md';
 
 import InputField from '@/components/InputField';
-import { InputFile } from '@/components/InputFile';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { PoolTypes } from '@/constants';
 
-export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }) {
+type Props = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<any>;
+  handleSubmit: () => void;
+  monthlyPaymentChanged: boolean;
+};
+
+export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }: Props) {
   const isDirty = form.formState.isDirty;
 
   return (
@@ -24,11 +31,11 @@ export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }) {
           <div>
             <InputField form={form} name="address" placeholder="Address" />
           </div>
-          <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
+          <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <StateAndCitySelect form={form} cityName="city" stateName="state" />
             {/* <InputField form={form} placeholder="Number" /> */}
           </div>
-          <div className="Form inline-flex items-start justify-start gap-4 self-stretch">
+          <div className="inline-flex items-start justify-start gap-4 self-stretch">
             <InputField name="monthlyPayment" form={form} placeholder="Monthly payment" type="currencyValue" />
             <InputField name="lockerCode" form={form} placeholder="Gate code" />
             <InputField name="enterSide" form={form} placeholder="Enter side" />
@@ -42,19 +49,8 @@ export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }) {
             />
           </div>
 
-          <div className="inline-flex h-44 items-start justify-start gap-4 self-stretch">
-            <div className="h-full w-[40%]">
-              <InputField className="h-full" type="textArea" form={form} name="notes" placeholder="Location notes..." />
-            </div>
-            <div className="mt-6 flex h-full w-[60%] shrink grow basis-0 items-start justify-between gap-1">
-              <InputFile
-                handleChange={() => {}}
-                defaultPhotos={form.watch('photos').map((photo) => ({
-                  dataURL: photo,
-                  file: new File([], photo.url)
-                }))}
-              />
-            </div>
+          <div className="mb-4 h-full w-full">
+            <InputField className="h-full" type="textArea" form={form} name="notes" placeholder="Location notes..." />
           </div>
           {(isDirty || monthlyPaymentChanged) && (
             <Button className="mt-4" type="submit">

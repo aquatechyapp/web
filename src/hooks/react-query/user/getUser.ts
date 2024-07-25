@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { SubcontractorStatus } from '@/constants/enums';
+import { WorkRelation } from '@/interfaces/User';
 import { clientAxios } from '@/lib/clientAxios';
 import { useTechniciansStore } from '@/store/technicians';
 import { useUserStore } from '@/store/user';
@@ -34,7 +36,7 @@ export default function useGetUser({ userId }: Props) {
             lastName: user.lastName
           }
         },
-        ...user.subcontractors.filter((sub) => sub.status === 'Active')
+        ...user.subcontractors.filter((sub: WorkRelation) => sub.status === SubcontractorStatus.Active)
       ]);
 
       return user;

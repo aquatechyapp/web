@@ -15,14 +15,14 @@ export type OptionType = {
 interface MultiSelectProps {
   options: OptionType[];
   selected: string[];
-  onChange: React.Dispatch<React.SetStateAction<string[]>>;
+  onChange: (selected: string[]) => void;
   className?: string;
   placeholder: string;
 }
 
 // Atualmente não será usado, mas futuramente provavelmente será
 
-function MultiSelect({ options, selected, onChange, className, placeholder, ...props }: MultiSelectProps) {
+function MultiSelect({ options, selected, onChange, placeholder, ...props }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 
   const handleUnselect = (item: string) => {

@@ -1,18 +1,19 @@
+import { UseFormReturn } from 'react-hook-form';
+
 import { DatePicker } from './ui/date-picker';
 import { FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Label } from './ui/label';
 
 type Props = {
-  props?: any;
-  form: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<any>;
   name: string;
   placeholder: string;
-  label: string;
   restrictOnlySelectedDay?: boolean;
   label?: string;
 };
 
-export default function DatePickerField({ form, name, placeholder, restrictOnlySelectedDay = false, label }: Props) {
+export default function DatePickerField({ form, name, placeholder, label }: Props) {
   return (
     <FormField
       control={form.control}
@@ -22,11 +23,7 @@ export default function DatePickerField({ form, name, placeholder, restrictOnlyS
           <FormItem className="flex w-full flex-col">
             <Label>{label}</Label>
             <FormControl>
-              <DatePicker
-                placeholder={placeholder}
-                onChange={field.onChange}
-                restrictOnlySelectedDay={restrictOnlySelectedDay}
-              />
+              <DatePicker placeholder={placeholder} onChange={field.onChange} />
             </FormControl>
             <FormMessage />
           </FormItem>

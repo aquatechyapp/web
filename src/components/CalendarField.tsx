@@ -1,10 +1,12 @@
+import { UseFormReturn } from 'react-hook-form';
+
 import { Calendar } from './ui/calendar';
 import { FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Label } from './ui/label';
 
 type Props = {
-  props?: any;
-  form: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<any>;
   name: string;
   placeholder: string;
   disabledWeekdays?: number[];

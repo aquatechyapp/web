@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -56,8 +57,8 @@ export default function Page() {
   const { toast } = useToast();
   const [showModal, setShowModal] = useState(false);
 
-  const { mutate: createUser, isLoading: isCreatingUser } = useMutation({
-    mutationFn: async (data) => await clientAxios.post('/createuser', data),
+  const { mutate: createUser, isPending } = useMutation({
+    mutationFn: async (data: z.infer<typeof formSchema>) => await clientAxios.post('/createuser', data),
     onSuccess: () => {
       setShowModal(true);
       toast({
@@ -68,7 +69,11 @@ export default function Page() {
       });
     },
     onError: (error) => {
-      const errorMessage = error.response?.data?.message || 'Internal error';
+      let errorMessage = 'Internal error';
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || 'Internal error';
+      }
+
       toast({
         duration: 2000,
         title: 'Internal error',
@@ -90,7 +95,7 @@ export default function Page() {
       state: '',
       city: '',
       company: '',
-      language: ''
+      language: 'English'
     }
   });
 
@@ -100,7 +105,7 @@ export default function Page() {
     key: lang
   }));
 
-  const handleSubmit = async (data) => {
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     const formattedData = {
       ...data,
       name: data.firstName + ' ' + data.lastName
@@ -153,7 +158,7 @@ export default function Page() {
           <InputField form={form} name="password" placeholder="Password" type="password" />
           <InputField form={form} name="confirmPassword" placeholder="Confirm password" type="password" />
         </div>
-        <Button disabled={isCreatingUser} type="submit" className="w-full">
+        <Button disabled={isPending} type="submit" className="w-full">
           Signup
         </Button>
       </form>

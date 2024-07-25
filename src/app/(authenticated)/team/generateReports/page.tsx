@@ -1,24 +1,38 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import DatePickerField from '@/components/DatePickerField';
 import { QuixotePdf } from '@/components/Pdf';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { useUserStore } from '@/store/user';
+import { SubcontractorStatus } from '@/constants/enums';
 import { clientAxios } from '@/lib/clientAxios';
+import { useUserStore } from '@/store/user';
+
+const schema = z.object({
+  fromDate: z.string().min(1),
+  toDate: z.string().min(1),
+  assignmentToId: z.string().min(1)
+});
+
+type FormSchema = z.infer<typeof schema>;
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
   const [pdfData, setPdfData] = useState(null);
 
-  const form = useForm({
-    fromDate: '',
-    toDate: '',
-    assignmentToId: ''
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      fromDate: '',
+      toDate: '',
+      assignmentToId: ''
+    }
   });
 
   const subContractors = useMemo(() => {
@@ -29,7 +43,7 @@ export default function Page() {
       value: user.id
     };
     return user.subcontractors
-      .filter((sub) => sub.status === 'Active')
+      .filter((sub) => sub.status === SubcontractorStatus.Active)
       .map((sub) => ({
         key: sub.subcontractorId,
         name: sub.subcontractor.firstName + ' ' + sub.subcontractor.lastName,
@@ -38,7 +52,7 @@ export default function Page() {
       .concat(userAsSubcontractor);
   }, [user]);
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (formData: FormSchema) => {
     try {
       const { fromDate, toDate, assignmentToId } = formData;
 

@@ -31,14 +31,7 @@ export function MobileSideMenu() {
               {routes.map((route) => {
                 return (
                   <div key={route.href + route.submenu} className="w-full">
-                    <SideMenuNavLink
-                      href={route.href}
-                      Icon={route.icon}
-                      text={route.text}
-                      submenu={route.submenu}
-                      // fechar menu mobile lateral, tentei usar o SheetTrigger mas não funcionou
-                      setOpen={setOpen}
-                    />
+                    <SideMenuNavLink key={route.href + route.text + route.submenu} route={route} />
                   </div>
                 );
               })}
@@ -67,15 +60,7 @@ export function SideMenu() {
         </div>
         <div className="flex shrink grow basis-0 flex-col items-start justify-start gap-2 self-stretch">
           {routes.map((route) => {
-            return (
-              <SideMenuNavLink
-                key={route.href + route.text + route.submenu}
-                href={route.href}
-                Icon={route.icon}
-                text={route.text}
-                submenu={route.submenu}
-              />
-            );
+            return <SideMenuNavLink key={route.href + route.text + route.submenu} route={route} />;
           })}
         </div>
       </div>

@@ -33,7 +33,7 @@ const DateTimePicker = React.forwardRef<HTMLDivElement, DatePickerStateOptions<D
   const { buttonProps } = useButton(_buttonProps, buttonRef);
   useInteractOutside({
     ref: contentRef,
-    onInteractOutside: (e) => {
+    onInteractOutside: () => {
       setOpen(false);
     }
   });
@@ -62,6 +62,7 @@ const DateTimePicker = React.forwardRef<HTMLDivElement, DatePickerStateOptions<D
         </PopoverTrigger>
         <PopoverContent ref={contentRef} className="w-full">
           <div {...dialogProps} className="space-y-3">
+            {/* @ts-expect-error pedir para o jeymes verificar */}
             <Calendar name="startOn" {...calendarProps} />
             <TimeField value={state.timeValue} onChange={state.setTimeValue} />
           </div>

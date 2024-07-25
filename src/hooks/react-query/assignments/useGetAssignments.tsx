@@ -5,14 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useAssignmentsContext } from '@/context/assignments';
 import { Assignment } from '@/interfaces/Assignments';
 import { clientAxios } from '@/lib/clientAxios';
-import { useAssignmentsStore } from '@/store/assignments';
 import { useTechniciansStore } from '@/store/technicians';
 import { useWeekdayStore } from '@/store/weekday';
 
 export default function useGetAssignments() {
   const { push } = useRouter();
   const userId = Cookies.get('userId');
-  const { setAssignments, setAllAssignments } = useAssignmentsContext();
+  const { setAssignments } = useAssignmentsContext();
   const assignmentToId = useTechniciansStore((state) => state.assignmentToId);
   const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
 
@@ -35,7 +34,6 @@ export default function useGetAssignments() {
           initial: [...filteredAssignments],
           current: [...filteredAssignments]
         });
-        setAllAssignments(data);
       }),
     staleTime: 1000 * 60 * 60
   });
