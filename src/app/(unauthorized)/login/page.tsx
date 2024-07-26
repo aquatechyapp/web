@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import imageIcon from '/public/images/logoHor.png';
+import { FieldType } from '@/constants/enums';
 import { useLoginUser } from '@/hooks/react-query/user/loginUser';
 
 import InputField from '../../../components/InputField';
@@ -41,10 +42,10 @@ export default function Page() {
         <Image width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
       </div>
       <div className="relative mt-4 h-[50px] w-[400px]">
-        <div className="left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px]  text-gray-900">Login</div>
-        <div className=" left-0 top-[30px] h-5 w-[400px]">
-          <span className="text-sm font-medium   text-gray-500">Don't you have an account? </span>
-          <Link href="/signup" className="text-sm font-bold   text-gray-500">
+        <div className="left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] text-gray-900">Login</div>
+        <div className="left-0 top-[30px] h-5 w-[400px]">
+          <span className="text-sm font-medium text-gray-500">Don't you have an account? </span>
+          <Link href="/signup" className="text-sm font-bold text-gray-500">
             Signup
           </Link>
         </div>
@@ -53,7 +54,7 @@ export default function Page() {
         <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
           <div className="mb-8 flex w-[400px] flex-col gap-[18px]">
             <InputField form={form} name="email" placeholder="E-mail address" />
-            <InputField form={form} name="password" placeholder="Password" type="password" />
+            <InputField form={form} name="password" placeholder="Password" type={FieldType.Password} />
             {error && <p className="text-[0.8rem] font-medium text-red-500 dark:text-red-900">{messageError}</p>}
           </div>
           <Button disabled={isPending} type="submit" className="w-full">

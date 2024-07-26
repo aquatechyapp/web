@@ -9,7 +9,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { LanguageOptions } from '@/constants/enums';
+import { FieldType, LanguageOptions } from '@/constants/enums';
 import { useUpdateUser } from '@/hooks/react-query/user/updateUser';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
@@ -69,9 +69,9 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="mt-6 text-xl font-semibold leading-[30px]  text-gray-800">My account</div>
+        <div className="mt-6 text-xl font-semibold leading-[30px] text-gray-800">My account</div>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
-          <div className="h-5  text-sm font-medium   text-gray-500">Basic Information</div>
+          <div className="h-5 text-sm font-medium text-gray-500">Basic Information</div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
             <InputField form={form} name="firstName" placeholder="First name" />
             <InputField form={form} name="lastName" placeholder="Last name" />
@@ -82,9 +82,9 @@ export default function Page() {
             <StateAndCitySelect form={form} cityName="city" stateName="state" />
             <InputField form={form} name={'zip'} placeholder="Zip code" />
           </div>
-          <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">Contact information</div>
+          <div className="h-5 w-[213.40px] text-sm font-medium text-gray-500">Contact information</div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField form={form} name="phone" placeholder="Mobile phone" type="phone" />
+            <InputField form={form} name="phone" placeholder="Mobile phone" type={FieldType.Phone} />
             <InputField form={form} name="email" placeholder="E-mail" />
             {/* <SelectField
               data={languageSelectOptions}

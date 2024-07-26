@@ -33,7 +33,7 @@ function PoolCard({ pool, services, clientId }: Props) {
             onClick={() => handleTabChange('pool_info')}
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
-            <div className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'pool_info' && selectedTabStyles}`}>
+            <div className={`text-sm text-gray-500 hover:cursor-pointer ${tab === 'pool_info' && selectedTabStyles}`}>
               Information
             </div>
             {tab === 'pool_info' && <div className="h-0.5 self-stretch bg-gray-800" />}
@@ -42,7 +42,7 @@ function PoolCard({ pool, services, clientId }: Props) {
             onClick={() => handleTabChange('services')}
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
-            <div className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'services' && selectedTabStyles}`}>
+            <div className={`text-sm text-gray-500 hover:cursor-pointer ${tab === 'services' && selectedTabStyles}`}>
               Services
             </div>
             {tab === 'services' && <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />}

@@ -9,12 +9,13 @@ import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
+import { FieldType } from '@/constants/enums';
 import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 import { Pool } from '@/interfaces/Assignments';
 import { editPoolSchema } from '@/schemas/pool';
 import { isEmpty } from '@/utils';
-import { findDifferenceBetweenTwoObjects } from '@/utils/defaulUtils';
+import { findDifferenceBetweenTwoObjects } from '@/utils/others';
 
 import { ModalDeletePool } from './ModalDeletePool';
 
@@ -56,7 +57,7 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="grid gap-4">
-        <div className="flex h-5 w-full justify-between text-sm font-medium   text-gray-500">
+        <div className="flex h-5 w-full justify-between text-sm font-medium text-gray-500">
           Basic information
           <div className="flex gap-4 text-lg">
             <ModalDeletePool deletePool={() => deletePool()} />
@@ -69,7 +70,7 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
           <StateAndCitySelect form={form} cityName="city" stateName="state" />
         </div>
         <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          <InputField name="monthlyPayment" form={form} placeholder="Monthly payment" type="currencyValue" />
+          <InputField name="monthlyPayment" form={form} placeholder="Monthly payment" type={FieldType.CurrencyValue} />
           <InputField name="lockerCode" form={form} placeholder="Gate code" />
           <InputField name="enterSide" form={form} placeholder="Enter side" />
           <SelectField
@@ -83,7 +84,13 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
         </div>
         <div className="Form flex flex-col items-start justify-start gap-4 self-stretch lg:flex-row">
           <div className="h-40 w-full">
-            <InputField className="h-full" type="textArea" form={form} name="notes" placeholder="Location notes..." />
+            <InputField
+              className="h-full"
+              type={FieldType.TextArea}
+              form={form}
+              name="notes"
+              placeholder="Location notes..."
+            />
           </div>
         </div>
         {!isEmpty(changedFields) && (

@@ -57,13 +57,13 @@ export const AssignmentsProvider = ({ children }: { children: React.ReactNode })
   useEffect(() => {
     if (!userId) return;
     if (isError || isLoading) return;
+
     const filteredAssignments = data
       ?.filter(
         (assignment: Assignment) =>
           assignment.weekday === selectedWeekday && assignment.assignmentToId === assignmentToId
       )
       .sort((a: Assignment, b: Assignment) => a.order - b.order);
-
     setAssignments({
       initial: [...filteredAssignments],
       current: [...filteredAssignments]

@@ -6,6 +6,7 @@ import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { paymentType } from '@/constants';
+import { FieldType } from '@/constants/enums';
 import { useEditRelation } from '@/hooks/react-query/edit-relation/editRelation';
 import { WorkRelation } from '@/interfaces/User';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
@@ -82,7 +83,11 @@ export function ModalEdit({ children, workRelationId }: PropsEdit) {
                   name="paymentValue"
                   label="Payment Value"
                   placeholder="US$ / %"
-                  type={form.watch('paymentType') === 'percentageFixedByPool' ? 'percentValue' : 'currencyValue'}
+                  type={
+                    form.watch('paymentType') === 'percentageFixedByPool'
+                      ? FieldType.PercentValue
+                      : FieldType.CurrencyValue
+                  }
                 />
               </div>
               <DialogTrigger asChild>

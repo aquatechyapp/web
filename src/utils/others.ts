@@ -24,3 +24,13 @@ export function findDifferenceBetweenTwoObjects(obj1: AnyObject, obj2: AnyObject
 
   return diffObj;
 }
+
+export function getInitials(name: string): string {
+  const [firstName, lastName] = name.trim().split(' ');
+
+  if (firstName && lastName) {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  }
+
+  return firstName.charAt(0).toUpperCase();
+}

@@ -8,6 +8,7 @@ import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
 import { Frequencies } from '@/constants';
+import { FieldType } from '@/constants/enums';
 import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { Client } from '@/interfaces/Client';
@@ -41,7 +42,7 @@ export const FormNewAssignment = ({ form }: Props) => {
     <Form {...form}>
       <form className="flex w-[90%] flex-col">
         <div className="flex flex-col gap-4">
-          <div className="flex gap-4 ">
+          <div className="flex gap-4">
             <SelectField
               data={buildSelectOptions(
                 data.filter((client: Client) => client.pools.length > 0),
@@ -81,7 +82,7 @@ export const FormNewAssignment = ({ form }: Props) => {
               form={form}
               placeholder="0.00$"
               label="Paid by Service"
-              type="currencyValue"
+              type={FieldType.CurrencyValue}
             />
           </div>
 

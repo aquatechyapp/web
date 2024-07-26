@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { FieldType } from '@/constants/enums';
 import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
 import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
 import { Assignment } from '@/interfaces/Assignments';
@@ -51,8 +52,6 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
       isEntireRoute
     }
   });
-
-  console.log(typeof form.watch('startOn'));
 
   const disabledWeekdays = useDisabledWeekdays(form.watch('weekday'));
 
@@ -176,7 +175,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                     form={form}
                     placeholder="0.00$"
                     label="Paid by Service"
-                    type="currencyValue"
+                    type={FieldType.CurrencyValue}
                   />
                 )}
                 <div className="basis-full">

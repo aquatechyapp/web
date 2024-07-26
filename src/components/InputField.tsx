@@ -1,11 +1,12 @@
 import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
 
+import { FieldType } from '@/constants/enums';
+
 import { InputMasked } from './InputMasked';
 import { Checkbox } from './ui/checkbox';
 import { FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { DropdownMenuCheckboxes } from './ui/multiple-select';
 import { Textarea } from './ui/textarea';
 
 type MaskTypes = 'currencyValue' | 'percentValue' | 'phone';
@@ -17,23 +18,12 @@ type Props = {
   disabled?: boolean;
   name: string;
   placeholder?: string;
-  type?:
-    | 'checkbox'
-    | 'phone'
-    | 'password'
-    | 'default'
-    | 'textArea'
-    | 'file'
-    | 'sameBillingAddress'
-    | 'weekdays'
-    | 'zip'
-    | 'percentValue'
-    | 'currencyValue';
+  type?: FieldType;
   props?: React.HTMLProps<HTMLInputElement>;
   label?: string;
 };
 
-export default function InputField({ form, name, placeholder, type = 'default', label, ...props }: Props) {
+export default function InputField({ form, name, placeholder, type = FieldType.Default, label, ...props }: Props) {
   const types = {
     zip: {
       component: (field: ControllerRenderProps) => (
@@ -107,11 +97,6 @@ export default function InputField({ form, name, placeholder, type = 'default', 
             {placeholder}
           </Label>
         </div>
-      )
-    },
-    weekdays: {
-      component: (field: ControllerRenderProps) => (
-        <DropdownMenuCheckboxes onChange={(weekdays) => field.onChange(weekdays)} />
       )
     },
     percentValue: {

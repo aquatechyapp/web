@@ -120,8 +120,8 @@ export const QuixotePdf = ({ pdfData }: { pdfData: PdfData }) => {
         <div className="mt-8 flex items-center justify-between gap-8">
           <div className="flex-inline justify-center">
             <div className="flex items-center">
-              <p className=" text-xl font-bold">From company:</p>
-              <p className="ml-1  text-lg">Aquatechy Corp</p>
+              <p className="text-xl font-bold">From company:</p>
+              <p className="ml-1 text-lg">Aquatechy Corp</p>
             </div>
             <div className="flex items-center">
               <p className="text-xl font-bold">Technician:</p>
@@ -137,10 +137,10 @@ export const QuixotePdf = ({ pdfData }: { pdfData: PdfData }) => {
             </div>
           </div>
           <div className="flex-inline items-center justify-center text-right">
-            <p className="h-5  text-lg font-semibold">Total services made</p>
-            <p className="h-10  text-4xl font-bold">{pdfData.TotalServicesMade} services</p>
+            <p className="h-5 text-lg font-semibold">Total services made</p>
+            <p className="h-10 text-4xl font-bold">{pdfData.TotalServicesMade} services</p>
             <p className="mt-2 h-5 text-lg font-semibold">Total to be paid</p>
-            <p className="h-10  text-4xl font-bold">US${pdfData.TotalToBePaid ? pdfData.TotalToBePaid : '0.00'}</p>
+            <p className="h-10 text-4xl font-bold">US${pdfData.TotalToBePaid ? pdfData.TotalToBePaid : '0.00'}</p>
           </div>
         </div>
         {/* Services By Weekday Section */}
@@ -151,16 +151,16 @@ export const QuixotePdf = ({ pdfData }: { pdfData: PdfData }) => {
               {services && services.length > 0 && (
                 <div>
                   <div className="flex justify-start py-2">
-                    <h2 className=" text-xl font-semibold">{getWeekdayName(index)}</h2>
+                    <h2 className="text-xl font-semibold">{getWeekdayName(index)}</h2>
                     <p className="ml-1 text-lg">({services.length} services)</p>
                   </div>
                   <table className="w-full border-t-2 border-[#5c5cf4]">
                     <thead>
                       <tr>
-                        <th className="py-2  text-left text-xl">Pool</th>
-                        <th className="px-4  py-2 text-xl">Date</th>
-                        <th className="px-4  py-2 text-xl">Chemicals Spent</th>
-                        <th className="py-2  text-right text-xl">Paid</th>
+                        <th className="py-2 text-left text-xl">Pool</th>
+                        <th className="px-4 py-2 text-xl">Date</th>
+                        <th className="px-4 py-2 text-xl">Chemicals Spent</th>
+                        <th className="py-2 text-right text-xl">Paid</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -169,14 +169,14 @@ export const QuixotePdf = ({ pdfData }: { pdfData: PdfData }) => {
                           <td onli className="py-2 text-left">
                             {service.pool.name}
                           </td>
-                          <td className=" px-4 py-2 text-center">
+                          <td className="px-4 py-2 text-center">
                             {format(new Date(service.createdAt), "EEEE, MMMM do 'at' h:mm aaaa")}
                           </td>
-                          <td className=" px-4 py-2 text-center">
+                          <td className="px-4 py-2 text-center">
                             {services.chlorineSpent} - {services.phosphateSpent} - {services.saltSpent} -{'\n'}
                             {services.shockSpent} - {services.tabletSpent} - {services.acidSpent}
                           </td>
-                          <td className=" py-2 text-right">US${service.paid ? service.paid : '0.00'}</td>
+                          <td className="py-2 text-right">US${service.paid ? service.paid : '0.00'}</td>
                         </tr>
                       ))}
                     </tbody>

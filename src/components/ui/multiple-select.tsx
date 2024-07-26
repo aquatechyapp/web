@@ -23,7 +23,7 @@ export function DropdownMenuCheckboxes({ onChange }: { onChange: (value: string[
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="w-full ">
+        <Button variant="outline" className="w-full">
           {/* {weekdays.some((day) => day.selected === true) ? (
             <div className="text-sm flex flex-col flex-wrap">
               {weekdays

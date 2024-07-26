@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
+import { FieldType } from '@/constants/enums';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { ImportMultipleClients } from '@/interfaces/Client';
 import { clientSchema } from '@/schemas/client';
@@ -118,7 +119,13 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
                       />
                     </div>
                     <StateAndCitySelect form={form} />
-                    <InputField form={form} name="clientZip" label="Zip code" placeholder="Zip code" type="zip" />
+                    <InputField
+                      form={form}
+                      name="clientZip"
+                      label="Zip code"
+                      placeholder="Zip code"
+                      type={FieldType.Zip}
+                    />
                     <SelectField
                       defaultValue="Residential"
                       placeholder="Client Type"
@@ -144,7 +151,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
                   </div>
                   <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                     <InputField
-                      type="phone"
+                      type={FieldType.Phone}
                       form={form}
                       name="phone1"
                       placeholder="Mobile phone"
@@ -159,7 +166,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
                         name="clientNotes"
                         form={form}
                         placeholder="Type clients notes here..."
-                        type="textArea"
+                        type={FieldType.TextArea}
                       />
                     </div>
                   </div>
@@ -167,7 +174,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
                     <InputField
                       form={form}
                       name="animalDanger"
-                      type="checkbox"
+                      type={FieldType.Checkbox}
                       placeholder="It must take care with animals?"
                     />
                   </div>
@@ -180,7 +187,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
                       name="poolZip"
                       label="Pool Zip code"
                       placeholder="Zip code"
-                      type="zip"
+                      type={FieldType.Zip}
                     />
                   </div>
                   <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
@@ -188,7 +195,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
                       form={form}
                       name="monthlyPayment"
                       placeholder="Monthly payment by client"
-                      type="currencyValue"
+                      type={FieldType.CurrencyValue}
                       label="Monthly payment by client"
                     />
                     <InputField form={form} name="lockerCode" placeholder="Gate code" label="Gate code" />
@@ -209,7 +216,7 @@ const ClientBox = ({ data, index, hasErrorInSomeForm, setHasErrorInSomeForm }: P
                         form={form}
                         placeholder="Location notes..."
                         label={isMobile ? 'Notes about location' : "Notes about location (customer won't see that)"}
-                        type="textArea"
+                        type={FieldType.TextArea}
                       />
                     </div>
                   </div>

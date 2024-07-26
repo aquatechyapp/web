@@ -4,8 +4,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 
+import { DropdownTop } from '../../components/DropdownTop';
 import { AccountDropdownMenu } from './AccountDropdownMenu';
-import { DropdownTop } from './DropdownTop';
 import { MobileSideMenu } from './SideMenuNav';
 
 export default function TopBarMenu() {

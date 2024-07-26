@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories, RequestStatus } from '@/constants';
+import { FieldType } from '@/constants/enums';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useUpdateRequest } from '@/hooks/react-query/requests/updateRequest';
 import { Client } from '@/interfaces/Client';
@@ -149,7 +150,7 @@ export function ModalEditRequest({ request }: Props) {
                 form={form}
                 name="description"
                 placeholder="Description"
-                type="textArea"
+                type={FieldType.TextArea}
                 disabled={disabled}
                 label="Description"
               />
@@ -178,7 +179,7 @@ export function ModalEditRequest({ request }: Props) {
               label="Outcome (description of how the problem was fixed)"
               name="outcome"
               placeholder="Outcome"
-              type="textArea"
+              type={FieldType.TextArea}
             />
             <div>
               {CopyToClipboardData.map((item) => (

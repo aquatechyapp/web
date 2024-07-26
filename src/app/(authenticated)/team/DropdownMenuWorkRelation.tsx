@@ -47,7 +47,7 @@ export default function DropdownMenuWorkRelation({ workRelationId }: Props) {
               </div>
             </ModalEdit>
             <DialogTrigger asChild>
-              <div className="flex  w-full items-center rounded p-1 text-red-500 hover:bg-blue-50">
+              <div className="flex w-full items-center rounded p-1 text-red-500 hover:bg-blue-50">
                 Delete
                 <DropdownMenuShortcut>
                   <MdDeleteOutline size={14} />

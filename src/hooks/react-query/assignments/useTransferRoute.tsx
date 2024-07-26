@@ -74,7 +74,7 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
   const { toast } = useToast();
   const { assignments } = useAssignmentsContext();
   const assignmentsToTransfer: Assignment[] = assignmentToTransfer ? [assignmentToTransfer] : assignments.current;
-  console.log(assignmentsToTransfer);
+
   const { mutate, isPending } = useMutation({
     mutationFn: (form: TransferAssignmentsPermanently) => {
       const assignments = assignmentsToTransfer!

@@ -11,6 +11,7 @@ import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient'
 import { useDeactivateClient } from '@/hooks/react-query/clients/deactivateClient';
 import { Client } from '@/interfaces/Client';
 import { calculateTotalAssignmentsOfAllPools, calculateTotalMonthlyOfAllPools } from '@/utils';
+import { getInitials } from '@/utils/others';
 
 import { ModalAddPool } from '../DataTableClients/modal-add-pool';
 import ClientInfo from './ClientInfo';
@@ -41,25 +42,25 @@ export default function ShowClient({ client }: Props) {
 
             <div className="PhotoName flex h-[206px] flex-col items-center justify-start gap-3 self-stretch">
               <Avatar className="h-[140px] w-[140px]">
-                <AvatarImage src={client?.pools[0]?.photos[0] || 'https://via.placeholder.com/140x140'} />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={''} />
+                <AvatarFallback className="text-5xl">{getInitials(client.name)}</AvatarFallback>
               </Avatar>
               <div className="flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
-                <div className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px]  text-gray-800">
+                <div className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px] text-gray-800">
                   {client.name}
                 </div>
-                <div className="text-sm font-medium   text-gray-500">{client.address}</div>
+                <div className="text-sm font-medium text-gray-500">{client.address}</div>
               </div>
             </div>
             <div className="flex flex-row flex-wrap items-start justify-start gap-[18px] self-start lg:flex-col lg:flex-nowrap">
               <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium   text-gray-500">Email</div>
-                  <div className="self-stretch text-sm font-medium   text-gray-800">{client.email1}</div>
+                  <div className="self-stretch text-sm font-medium text-gray-500">Email</div>
+                  <div className="self-stretch text-sm font-medium text-gray-800">{client.email1}</div>
                 </div>
               </div>
               <div className="inline-flex w-fit items-start justify-start gap-2">
-                <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
+                <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="self-stretch text-sm font-medium text-gray-500">Phone Number</div>
                   <div className="self-stretch text-sm font-medium text-gray-800">{client.phone1}</div>
                 </div>
@@ -77,9 +78,9 @@ export default function ShowClient({ client }: Props) {
                 </div>
               </div>
               <div className="inline-flex w-fit items-start justify-start gap-2">
-                <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium   text-gray-500">Last Service</div>
-                  <div className="self-stretch text-sm font-medium   text-gray-800">
+                <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
+                  <div className="self-stretch text-sm font-medium text-gray-500">Last Service</div>
+                  <div className="self-stretch text-sm font-medium text-gray-800">
                     {client.lastServiceDate != undefined
                       ? format(new Date(client.lastServiceDate), 'MMMM, dd, yyyy')
                       : 'No Services'}
@@ -88,8 +89,8 @@ export default function ShowClient({ client }: Props) {
               </div>
               <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className=" text-sm font-medium   text-gray-500">Joined</div>
-                  <div className=" text-sm font-medium   text-gray-800">
+                  <div className="text-sm font-medium text-gray-500">Joined</div>
+                  <div className="text-sm font-medium text-gray-800">
                     {format(new Date(client.createdAt), 'MMMM, dd, yyyy')}
                   </div>
                 </div>
@@ -118,16 +119,16 @@ export default function ShowClient({ client }: Props) {
             </div>
           </div>
         </div>
-        <div className="flex w-full flex-col items-start  gap-7">
+        <div className="flex w-full flex-col items-start gap-7">
           <div className="inline-flex h-full w-full flex-col items-start justify-start gap-7">
             <div className="inline-flex flex-wrap items-start justify-start gap-6 self-stretch text-nowrap md:flex-nowrap">
-              <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <div className=" inline-flex items-start justify-start gap-4 self-stretch ">
-                  <div className=" inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
-                    <div className="self-stretch text-base font-medium leading-normal  text-gray-500">
+              <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
+                <div className="inline-flex items-start justify-start gap-4 self-stretch">
+                  <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
+                    <div className="self-stretch text-base font-medium leading-normal text-gray-500">
                       Monthly payment
                     </div>
-                    <div className="self-stretch text-[28px] font-semibold  text-gray-800">
+                    <div className="self-stretch text-[28px] font-semibold text-gray-800">
                       ${calculateTotalMonthlyOfAllPools(client.pools)}
                     </div>
                   </div>
@@ -139,8 +140,8 @@ export default function ShowClient({ client }: Props) {
               <div className="RightBadgeStatisticCard inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
                 <div className="TitleNumbers inline-flex items-start justify-start gap-4 self-stretch">
                   <div className="TitleNumbers inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
-                    <div className="self-stretch text-base font-medium leading-normal  text-gray-500">Services</div>
-                    <div className="self-stretch text-[28px] font-semibold  text-gray-800">
+                    <div className="self-stretch text-base font-medium leading-normal text-gray-500">Services</div>
+                    <div className="self-stretch text-[28px] font-semibold text-gray-800">
                       {calculateTotalAssignmentsOfAllPools(client.pools)}
                     </div>
                   </div>
@@ -156,14 +157,14 @@ export default function ShowClient({ client }: Props) {
                 className="inline-flex flex-col items-start justify-start gap-2.5"
               >
                 <div
-                  className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'client_info' && selectedTabStyles}`}
+                  className={`text-sm text-gray-500 hover:cursor-pointer ${tab === 'client_info' && selectedTabStyles}`}
                 >
                   Basic Information
                 </div>
                 {tab === 'client_info' && <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />}
               </div>
               <div onClick={() => setTab('pools')} className="inline-flex flex-col items-start justify-start gap-2.5">
-                <div className={`text-sm  text-gray-500 hover:cursor-pointer ${tab === 'pools' && selectedTabStyles}`}>
+                <div className={`text-sm text-gray-500 hover:cursor-pointer ${tab === 'pools' && selectedTabStyles}`}>
                   Pools
                 </div>
                 {tab === 'pools' && <div className="h-0.5 self-stretch bg-gray-800" />}
