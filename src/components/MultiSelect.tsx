@@ -30,7 +30,7 @@ function MultiSelect({ options, selected, onChange, placeholder, ...props }: Mul
   };
 
   return (
-    <div className="w-[100%] ">
+    <div className="w-[100%]">
       <Popover open={open} onOpenChange={setOpen} {...props}>
         <PopoverTrigger asChild>
           <Button

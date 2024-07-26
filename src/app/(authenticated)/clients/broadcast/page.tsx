@@ -10,6 +10,7 @@ import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
+import { FieldType } from '@/constants/enums';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { Client } from '@/interfaces/Client';
 import { clientAxios } from '@/lib/clientAxios';
@@ -195,7 +196,7 @@ export default function Page() {
                 placeholder="Type client notes here..."
                 label="Message"
                 name="message"
-                type="textArea"
+                type={FieldType.TextArea}
               />
             </div>
             <div className="w-full pt-[10px]">

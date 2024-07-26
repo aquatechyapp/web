@@ -170,7 +170,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
       {...attributes}
       {...listeners}
     >
-      <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100  px-1 py-2">
+      <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 px-1 py-2">
         <div className="flex items-center justify-start gap-2">
           {!shouldPermitChangeOrder && (
             <div className="min-w-4">
@@ -178,7 +178,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
             </div>
           )}
           <Image width={11} height={11} alt="location photo" className="h-11 w-11 rounded-lg" src={photo} />
-          <div className="inline-flex flex-col items-start  justify-center gap-1">
+          <div className="inline-flex flex-col items-start justify-center gap-1">
             <div className="text-pretty text-sm font-medium">{name}</div>
             {isOnlyAt ? (
               <div className="text-xs text-red-500">{startsOn}</div>
@@ -190,8 +190,8 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
           </div>
         </div>
       </div>
-      <div className="flex h-8 w-8 items-center justify-center gap-1 rounded-lg border border-gray-100 ">
-        <div className="shrink grow basis-0 text-center text-sm font-semibold   text-gray-800">{assignment.order}</div>
+      <div className="flex h-8 w-8 items-center justify-center gap-1 rounded-lg border border-gray-100">
+        <div className="shrink grow basis-0 text-center text-sm font-semibold text-gray-800">{assignment.order}</div>
       </div>
     </div>
   );

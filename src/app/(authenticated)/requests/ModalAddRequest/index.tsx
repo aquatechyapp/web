@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories } from '@/constants';
+import { FieldType } from '@/constants/enums';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useCreateRequest } from '@/hooks/react-query/requests/createRequest';
 import { Client } from '@/interfaces/Client';
@@ -121,7 +122,13 @@ export function ModalAddRequest() {
               )}
             </div>
             <div>
-              <InputField form={form} name="description" placeholder="Description" type="textArea" label=" " />
+              <InputField
+                form={form}
+                name="description"
+                placeholder="Description"
+                type={FieldType.TextArea}
+                label=" "
+              />
             </div>
             <div>
               <div className="h-44">

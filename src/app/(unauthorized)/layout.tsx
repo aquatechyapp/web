@@ -14,12 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         />
       </div>
 
-      <div
-        className="h flex h-[100%] max-h-[100vh]
-      items-center justify-center"
-      >
-        {children}
-      </div>
+      <div className="h flex h-[100%] max-h-[100vh] items-center justify-center">{children}</div>
     </div>
   );
 }

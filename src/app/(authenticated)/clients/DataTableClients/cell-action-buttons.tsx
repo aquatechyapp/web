@@ -69,7 +69,7 @@ export default function ActionButtons({ ...props }) {
             </DialogTrigger>
             <DialogTrigger asChild className="w-full">
               <DropdownMenuItem onClick={() => setModalType('ModalDeleteClient')}>
-                <div className="flex  w-full items-center text-red-500">
+                <div className="flex w-full items-center text-red-500">
                   Delete
                   <DropdownMenuShortcut>
                     <MdDeleteOutline size={14} />

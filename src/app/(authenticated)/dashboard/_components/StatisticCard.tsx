@@ -56,10 +56,7 @@ export default function StatisticCard({ type, value }: Props) {
           <div className="flex h-6 w-6 items-center justify-center gap-2">
             <Icon color={types[type].colorIcon} size={25} />
           </div>
-          <div
-            className="shrink grow basis-0 text-base font-medium leading-normal
-          tracking-tight text-zinc-600"
-          >
+          <div className="shrink grow basis-0 text-base font-medium leading-normal tracking-tight text-zinc-600">
             {types[type].title}
             <span className="text-xs">{types[type]?.subtitle || ''}</span>
           </div>

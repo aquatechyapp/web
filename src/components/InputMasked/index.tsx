@@ -33,9 +33,14 @@ export const InputMasked = forwardRef<HTMLInputElement, Props>(({ field, placeho
     value = maskitoTransform(insertDot(onlyNumbers(value.toString())).toFixed(2), masks[mask]);
   }
 
+  if (mask === 'percentValue' && value) {
+    // converte o valor recebido do backend (number) pra mascara de percentual
+    value = maskitoTransform(value.toString(), masks[mask]);
+  }
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     let newValue: string | number = e.target.value;
-    if (mask === 'currencyValue') {
+    if (mask === 'currencyValue' || mask === 'percentValue') {
       // quando for um input de moeda, removemos os pontos e virgulas e convertemos pra number
       newValue = onlyNumbers(newValue);
     }

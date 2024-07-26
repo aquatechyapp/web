@@ -118,7 +118,7 @@ export default function Page() {
                   ))}
                 </TabsList>
                 <TechnicianSelect onChange={handleChangeTechnician} />
-                <div className="mt-2 flex flex-col  gap-2 sm:flex-row">
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                   <DialogNewAssignment form={form} />
                   {assignments.current.length > 0 && (
                     <Button
@@ -132,7 +132,7 @@ export default function Page() {
                   )}
                   <DialogTransferRoute open={openTransferDialog} setOpen={setOpenTransferDialog} isEntireRoute={true} />
                 </div>
-                <div className="mt-2 flex flex-col  gap-2 sm:flex-row">
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                   {assignments.current.length > 0 && assignmentToId === user?.id && (
                     <Button
                       type="button"

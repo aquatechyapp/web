@@ -30,7 +30,7 @@ export default function Page() {
     <div>
       <div className="flex flex-col items-start justify-start gap-4 border-b py-3 md:flex-row">
         <Link href="/team/newSubcontractor" className="w-full md:w-fit">
-          <Button className="w-full text-nowrap ">
+          <Button className="w-full text-nowrap">
             <PlusIcon className="mr-1p" />
             Add Sub-contractor
           </Button>

@@ -14,7 +14,7 @@ export function MobileSideMenu() {
     <Sheet open={open} onOpenChange={setOpen}>
       <RiMenu2Fill onClick={() => setOpen(true)} size={32} className="cursor-pointer text-gray-50" />
       <SheetContent side="left" className="w-[253px] bg-gray-900 p-0">
-        <aside className="col-span-1  h-full bg-gray-900">
+        <aside className="col-span-1 h-full bg-gray-900">
           <div className="inline-flex h-[100%] w-full flex-col items-start justify-start gap-4 bg-gray-900 shadow-inner">
             <div className="mt-10 self-center">
               <Image
@@ -45,7 +45,7 @@ export function MobileSideMenu() {
 
 export function SideMenu() {
   return (
-    <aside className="col-span-1  h-full bg-gray-900">
+    <aside className="col-span-1 h-full bg-gray-900">
       <div className="inline-flex h-[100%] w-full flex-col items-start justify-start gap-4 bg-gray-900 shadow-inner">
         <div className="mx-4 mt-6 h-auto self-center">
           <Image

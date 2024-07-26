@@ -8,6 +8,7 @@ import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { FieldType } from '@/constants/enums';
 import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
 import { Client } from '@/interfaces/Client';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
@@ -65,13 +66,13 @@ export default function ClientInfo({ client }: { client: Client }) {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50 p-6"
       >
-        <div className="h-5 w-[213.40px] text-sm font-medium   text-gray-500">Basic information</div>
+        <div className="h-5 w-[213.40px] text-sm font-medium text-gray-500">Basic information</div>
         <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
           <InputField form={form} name="address" placeholder="Billing address" />
           <StateAndCitySelect form={form} cityName="city" stateName="state" />
         </div>
         <div className="flex flex-wrap gap-4 md:flex-nowrap">
-          <InputField form={form} name="zip" placeholder="Zip code" type="zip" />
+          <InputField form={form} name="zip" placeholder="Zip code" type={FieldType.Zip} />
           <InputField form={form} name="company" placeholder="Company" />
           <SelectField
             placeholder="Client Type"
@@ -92,21 +93,18 @@ export default function ClientInfo({ client }: { client: Client }) {
             ]}
           />
         </div>
-        <div className="mt-4 h-5 text-sm font-medium   text-gray-500">Contact information</div>
+        <div className="mt-4 h-5 text-sm font-medium text-gray-500">Contact information</div>
         <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          <InputField type="phone" form={form} name="phone1" placeholder="Mobile phone" />
-          {/* <InputField
-            name="phone2"
-            type="phone"
-            form={form}
-            placeholder="Mobile phone 2"
-          /> */}
+          <InputField type={FieldType.Phone} form={form} name="phone1" placeholder="Mobile phone" />
           <InputField form={form} name="email1" placeholder="E-mail" />
-
-          {/* <InputField form={form} name="email2" placeholder="Invoice e-mail" /> */}
         </div>
         <div className="w-full">
-          <InputField form={form} placeholder="Type client notes here..." name="clientNotes" type="textArea" />
+          <InputField
+            form={form}
+            placeholder="Type client notes here..."
+            name="clientNotes"
+            type={FieldType.TextArea}
+          />
         </div>
         {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium   text-gray-500">
           Notes about client (customer won't see that)

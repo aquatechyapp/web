@@ -48,7 +48,7 @@ export function InputFile({
               <div className="flex gap-8 self-start">
                 {imageList.map((image, index) => (
                   <div key={index} className="group relative mt-2 px-2">
-                    <img src={image.dataURL} alt="" className="h-24 w-24  rounded-md object-cover" />
+                    <img src={image.dataURL} alt="" className="h-24 w-24 rounded-md object-cover" />
                     {!disabled && (
                       <Button
                         size={'sm'}

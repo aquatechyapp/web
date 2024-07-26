@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import imageIcon from '/public/images/logoHor.png';
+import { FieldType } from '@/constants/enums';
 
 import InputField from '../../../components/InputField';
 import SelectField from '../../../components/SelectField';
@@ -140,7 +141,7 @@ export default function Page() {
         </div>
         <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
           <InputField form={form} name="email" placeholder="E-mail address" />
-          <InputField form={form} name="phone" placeholder="Phone number" type="phone" />
+          <InputField form={form} name="phone" placeholder="Phone number" type={FieldType.Phone} />
           <SelectField
             data={languageSelectOptions}
             form={form}
@@ -155,8 +156,8 @@ export default function Page() {
         </div>
         <StateAndCitySelect form={form} stateName="state" cityName="city" />
         <div className="inline-flex items-start justify-start gap-2 self-stretch">
-          <InputField form={form} name="password" placeholder="Password" type="password" />
-          <InputField form={form} name="confirmPassword" placeholder="Confirm password" type="password" />
+          <InputField form={form} name="password" placeholder="Password" type={FieldType.Password} />
+          <InputField form={form} name="confirmPassword" placeholder="Confirm password" type={FieldType.Password} />
         </div>
         <Button disabled={isPending} type="submit" className="w-full">
           Signup

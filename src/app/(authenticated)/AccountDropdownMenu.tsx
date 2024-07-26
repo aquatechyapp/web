@@ -1,24 +1,29 @@
 import Link from 'next/link';
 
-import { Avatar, AvatarImage } from './ui/avatar';
+import { useUserStore } from '@/store/user';
+import { getInitials } from '@/utils/others';
+
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from './ui/dropdown-menu';
+} from '../../components/ui/dropdown-menu';
 
 type Props = {
   handleLogout: () => void;
 };
 
 export function AccountDropdownMenu({ handleLogout }: Props) {
+  const { user } = useUserStore();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="hover:cursor-pointer">
-          <AvatarImage src="https://via.placeholder.com/40x40" />
+        <Avatar className="cursor-pointer">
+          <AvatarImage src={''} />
+          <AvatarFallback>{getInitials(`${user.firstName} ${user.lastName}`)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">

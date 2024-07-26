@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { paymentType } from '@/constants';
+import { FieldType } from '@/constants/enums';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
 
@@ -70,7 +71,7 @@ export default function Page() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
-          <div className="h-5 text-sm font-medium   text-gray-500">Basic information</div>
+          <div className="h-5 text-sm font-medium text-gray-500">Basic information</div>
           <div className="inline-flex flex-wrap justify-start gap-4 self-stretch md:flex-nowrap">
             <InputField form={form} name="emailSubContractor" placeholder="E-mail" />
             <SelectField
@@ -85,7 +86,9 @@ export default function Page() {
               name="paymentValue"
               label="Payment Value"
               placeholder="US$ / %"
-              type={form.watch('paymentType') === 'percentageFixedByPool' ? 'percentValue' : 'currencyValue'}
+              type={
+                form.watch('paymentType') === 'percentageFixedByPool' ? FieldType.PercentValue : FieldType.CurrencyValue
+              }
             />
           </div>
           <Button type="submit">Save</Button>

@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
+import { FieldType } from '@/constants/enums';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
 import { paidByServiceSchema } from '@/schemas/assignments';
@@ -141,7 +142,7 @@ export default function Page() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
-          <div className="h-5 text-sm font-medium   text-gray-500">Basic information</div>
+          <div className="h-5 text-sm font-medium text-gray-500">Basic information</div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField form={form} name="firstName" placeholder="First name" label="First name" />
             <InputField form={form} name="lastName" placeholder="Last name" label="Last name" />
@@ -153,7 +154,7 @@ export default function Page() {
               <InputField form={form} name="clientAddress" placeholder="Billing address" label="Billing address" />
             </div>
             <StateAndCitySelect form={form} />
-            <InputField form={form} name="clientZip" label="Zip code" placeholder="Zip code" type="zip" />
+            <InputField form={form} name="clientZip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
             <SelectField
               defaultValue="Residential"
               placeholder="Client Type"
@@ -178,7 +179,13 @@ export default function Page() {
             <span className="mr-2">Contact information</span>
           </div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-            <InputField type="phone" form={form} name="phone1" placeholder="Mobile phone" label="Mobile phone" />
+            <InputField
+              type={FieldType.Phone}
+              form={form}
+              name="phone1"
+              placeholder="Mobile phone"
+              label="Mobile phone"
+            />
             <InputField form={form} name="email1" placeholder="E-mail" label="E-mail" />
             <InputField form={form} name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
           </div>
@@ -189,7 +196,7 @@ export default function Page() {
                 name="clientNotes"
                 form={form}
                 placeholder="Type clients notes here..."
-                type="textArea"
+                type={FieldType.TextArea}
               />
             </div>
           </div>
@@ -201,12 +208,17 @@ export default function Page() {
             <InputField
               form={form}
               name="sameBillingAddress"
-              type="checkbox"
+              type={FieldType.Checkbox}
               placeholder="Billing address is the same than service address"
             />
           </div>
           <div className="inline-flex items-start justify-start gap-2 self-stretch">
-            <InputField form={form} name="animalDanger" type="checkbox" placeholder="It must take care with animals?" />
+            <InputField
+              form={form}
+              name="animalDanger"
+              type={FieldType.Checkbox}
+              placeholder="It must take care with animals?"
+            />
           </div>
           {!form.watch('sameBillingAddress') && (
             <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
@@ -218,7 +230,7 @@ export default function Page() {
                 name="poolZip"
                 label="Zip code"
                 placeholder="Zip code"
-                type="zip"
+                type={FieldType.Zip}
               />
             </div>
           )}
@@ -227,7 +239,7 @@ export default function Page() {
               form={form}
               name="monthlyPayment"
               placeholder="Monthly payment by client"
-              type="currencyValue"
+              type={FieldType.CurrencyValue}
               label="Monthly payment by client"
             />
             <InputField form={form} name="lockerCode" placeholder="Gate code" label="Gate code" />
@@ -248,7 +260,7 @@ export default function Page() {
                 form={form}
                 placeholder="Location notes..."
                 label={isMobile ? 'Notes about location' : "Notes about location (customer won't see that)"}
-                type="textArea"
+                type={FieldType.TextArea}
               />
             </div>
           </div>
@@ -269,7 +281,7 @@ export default function Page() {
               form={form}
               placeholder="0.00$"
               label="Paid by Service"
-              type="currencyValue"
+              type={FieldType.CurrencyValue}
             />
             <SelectField label="Weekday" name="weekday" placeholder="Weekday" form={form} data={Weekdays} />
             <SelectField label="Frequency" name="frequency" placeholder="Frequency" form={form} data={Frequencies} />

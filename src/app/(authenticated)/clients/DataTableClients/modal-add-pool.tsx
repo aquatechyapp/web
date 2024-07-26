@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
+import { FieldType } from '@/constants/enums';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
 import { isEmpty } from '@/utils';
@@ -139,7 +140,7 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
             <div className="-mt-2 flex gap-4">
               <InputField form={form} name="address" label="Address" placeholder="Pool Address" />
               <StateAndCitySelect form={form} stateName="state" cityName="city" />
-              <InputField form={form} name="zip" label="Zip" placeholder="Pool zip" type="zip" />
+              <InputField form={form} name="zip" label="Zip" placeholder="Pool zip" type={FieldType.Zip} />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -154,7 +155,7 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
                   name="monthlyPayment"
                   label="Monthly payment"
                   placeholder="Monthly payment"
-                  type="currencyValue"
+                  type={FieldType.CurrencyValue}
                 />
                 <SelectField name="poolType" placeholder="Chemical type" form={form} data={PoolTypes} />
               </div>
@@ -162,7 +163,7 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
             <div className="grid grid-cols-2 gap-4">
               <InputField
                 className="h-40"
-                type="textArea"
+                type={FieldType.TextArea}
                 form={form}
                 name="notes"
                 label="Pool notes"

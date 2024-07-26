@@ -24,3 +24,15 @@ export enum PoolType {
   Chlorine = 'Chlorine',
   Other = 'Other'
 }
+
+export enum FieldType {
+  Checkbox = 'checkbox',
+  Phone = 'phone',
+  Password = 'password',
+  Default = 'default',
+  TextArea = 'textArea',
+  File = 'file',
+  Zip = 'zip',
+  PercentValue = 'percentValue',
+  CurrencyValue = 'currencyValue'
+}

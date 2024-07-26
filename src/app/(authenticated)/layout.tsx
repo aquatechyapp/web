@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Suspense, useEffect } from 'react';
 
-import { SideMenu } from '@/components/SideMenuNav';
 import { Colors } from '@/constants/colors';
 import { AssignmentsProvider } from '@/context/assignments';
 import useGetUser from '@/hooks/react-query/user/getUser';
 
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import TopBarMenu from '../../components/TopBarMenu';
+import { SideMenu } from './SideMenuNav';
+import TopBarMenu from './TopBarMenu';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const userId = Cookies.get('userId') as string;
