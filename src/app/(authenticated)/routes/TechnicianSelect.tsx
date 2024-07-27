@@ -1,3 +1,5 @@
+import { useShallow } from 'zustand/react/shallow';
+
 import { useTechniciansStore } from '@/store/technicians';
 
 import {
@@ -16,7 +18,12 @@ type Props = {
 };
 
 export default function TechnicianSelect({ onChange }: Props) {
-  const { assignmentToId, technicians } = useTechniciansStore();
+  const { assignmentToId, technicians } = useTechniciansStore(
+    useShallow((state) => ({
+      assignmentToId: state.assignmentToId,
+      technicians: state.technicians
+    }))
+  );
 
   function handleChange(technicianId: string) {
     onChange(technicianId);
@@ -26,13 +33,13 @@ export default function TechnicianSelect({ onChange }: Props) {
     <div className="mt-2">
       {/* por padrão, o User logado é o tecnico selecionado */}
       <Select onValueChange={handleChange} defaultValue={assignmentToId}>
-        <SelectTrigger>
+        <SelectTrigger data-testid="select-technician">
           <SelectValue placeholder="Technician..." />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
             {technicians.map((technician: WorkRelation) => (
-              <SelectItem key={technician.subcontractor.id} value={technician.subcontractor.id}>
+              <SelectItem key={technician.subcontractorId} value={technician.subcontractorId}>
                 {technician.subcontractor.firstName} {technician.subcontractor.lastName}
               </SelectItem>
             ))}

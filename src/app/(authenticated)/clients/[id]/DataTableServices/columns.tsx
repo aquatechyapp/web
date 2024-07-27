@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Service } from '@/interfaces/Service';
 import { zipImages } from '@/lib/js-zip';
 
-import CellDeleteService from './cell-delete-service';
+import CellDeleteService from './CellDeleteService';
 
 export const columns: ColumnDef<Service>[] = [
   {

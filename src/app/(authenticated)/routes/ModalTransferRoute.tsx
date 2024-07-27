@@ -2,8 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
+import { useShallow } from 'zustand/react/shallow';
 
-import CalendarField from '@/components/CalendarField';
+import DatePickerField from '@/components/DatePickerField';
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
@@ -15,7 +16,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { FieldType } from '@/constants/enums';
 import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
 import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
-import { Assignment } from '@/interfaces/Assignments';
+import { Assignment, TransferAssignment } from '@/interfaces/Assignments';
 import { WeekdaysUppercase } from '@/interfaces/Weekday';
 import { transferAssignmentsSchema } from '@/schemas/assignments';
 import { useTechniciansStore } from '@/store/technicians';
@@ -23,7 +24,7 @@ import { useUserStore } from '@/store/user';
 import { useWeekdayStore } from '@/store/weekday';
 import { isEmpty } from '@/utils';
 
-import WeekdaySelect from './weekday-select';
+import WeekdaySelect from './WeekdaySelect';
 
 type Props = {
   open: boolean;
@@ -35,7 +36,12 @@ type Props = {
 type FormValues = z.infer<typeof transferAssignmentsSchema>;
 
 export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute = false }: Props) {
-  const { technicians, assignmentToId } = useTechniciansStore();
+  const { technicians, assignmentToId } = useTechniciansStore(
+    useShallow((state) => ({
+      technicians: state.technicians,
+      assignmentToId: state.assignmentToId
+    }))
+  );
   const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
   const user = useUserStore((state) => state.user);
 
@@ -133,7 +139,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
       if (shouldTransferOnce) {
         transferOnce(payload as TransferAssignmentsOnce);
       } else {
-        transferPermanently(payload as TransferAssignmentsPermanently);
+        transferPermanently(payload as TransferAssignment);
       }
       form.reset();
       return;
@@ -158,11 +164,10 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                     {/* por padrão, o User logado é o tecnico selecionado */}
                     <SelectField
                       name="assignmentToId"
-                      form={form}
                       placeholder="Technician..."
-                      data={technicians.map((t) => ({
-                        key: t.subcontractor.id,
-                        value: t.subcontractor.id,
+                      options={technicians.map((t) => ({
+                        key: t.subcontractorId,
+                        value: t.subcontractorId,
                         name: `${t.subcontractor.firstName} ${t.subcontractor.lastName}`
                       }))}
                     />
@@ -172,7 +177,6 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                 {!userSelectedAsTechnician && (
                   <InputField
                     name="paidByService"
-                    form={form}
                     placeholder="0.00$"
                     label="Paid by Service"
                     type={FieldType.CurrencyValue}
@@ -189,21 +193,11 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
               <OptionsOnceOrPermanently form={form} />
               <div className="mt-1">
                 {shouldTransferOnce ? (
-                  <CalendarField disabledWeekdays={disabledWeekdays} form={form} name="onlyAt" placeholder="Only at" />
+                  <DatePickerField disabledWeekdays={disabledWeekdays} name="onlyAt" placeholder="Select Date" />
                 ) : (
                   <div className="flex flex-col md:flex-row">
-                    <CalendarField
-                      disabledWeekdays={disabledWeekdays}
-                      form={form}
-                      name="startOn"
-                      placeholder="Start on"
-                    />
-                    <CalendarField
-                      disabledWeekdays={disabledWeekdays}
-                      form={form}
-                      name="endAfter"
-                      placeholder="End after"
-                    />
+                    <DatePickerField disabledWeekdays={disabledWeekdays} name="startOn" placeholder="Start on" />
+                    <DatePickerField disabledWeekdays={disabledWeekdays} name="endAfter" placeholder="End after" />
                   </div>
                 )}
               </div>
@@ -276,6 +270,6 @@ type TransferAssignmentsOnce = TransferAssignments & {
 };
 
 type TransferAssignmentsPermanently = TransferAssignments & {
-  startOn: string;
-  endAfter: string;
+  startOn: Date;
+  endAfter: Date;
 };

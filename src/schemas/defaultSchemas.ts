@@ -18,17 +18,16 @@ export const defaultSchemas = {
       required_error: 'E-mail is required.'
     })
     .email({ message: 'Invalid e-mail.' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
   name: commonStringSchema('Name', 2),
   notes: z.string().trim().optional(),
   phone: z.string().min(1, { message: 'Phone is missing some caracteres' }),
   state: commonStringSchema('State', 2),
-  zip: z
-    .string({
-      required_error: 'Zip is required.',
-      invalid_type_error: 'Zip must be a string.'
-    })
-    .trim()
-    .min(5, { message: 'Zip must be between 5 and 10 (with hifen) digits.' }),
+  zipCode: z
+    .string()
+    .min(5, { message: 'Zip code must be at least 5 characters long' })
+    .regex(/^\d{5}(?:[-\s]?\d{4})?$/, 'Invalid zip code')
+    .min(5, { message: 'Zip code must be at least 5 characters long' }),
   language: z.enum(['English', 'Portuguese', 'Spanish'], {
     required_error: 'Language is required.',
     invalid_type_error: "Language must be 'English', 'Portuguese' or 'Spanish'."

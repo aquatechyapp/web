@@ -36,7 +36,7 @@ describe.skip('InputField', () => {
   it.skip('should render input field with type date', () => {
     const wrapper = render(
       <FormProviderMocked form={form}>
-        <InputField form={form} name={type} type={type} />
+        <InputField name={type} type={type} />
       </FormProviderMocked>
     );
     expect(wrapper).toMatchSnapshot();

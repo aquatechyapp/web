@@ -252,7 +252,7 @@ exports[`SignupPage > should render SignupPage 1`] = `
               id=":r8:-form-item"
               name="zip"
               placeholder="Zip"
-              type="text"
+              type="tel"
               value=""
             />
           </div>
@@ -985,7 +985,7 @@ exports[`SignupPage > should render SignupPage 1`] = `
             id=":r8:-form-item"
             name="zip"
             placeholder="Zip"
-            type="text"
+            type="tel"
             value=""
           />
         </div>

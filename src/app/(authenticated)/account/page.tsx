@@ -21,7 +21,7 @@ const formSchema = z.object({
   phone: defaultSchemas.phone,
   email: defaultSchemas.email,
   address: defaultSchemas.address,
-  zip: defaultSchemas.zip,
+  zip: defaultSchemas.zipCode,
   state: defaultSchemas.state,
   city: defaultSchemas.city,
   language: defaultSchemas.language
@@ -73,22 +73,22 @@ export default function Page() {
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
           <div className="h-5 text-sm font-medium text-gray-500">Basic Information</div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField form={form} name="firstName" placeholder="First name" />
-            <InputField form={form} name="lastName" placeholder="Last name" />
-            <InputField form={form} name="company" placeholder="Company" />
+            <InputField name="firstName" placeholder="First name" />
+            <InputField name="lastName" placeholder="Last name" />
+            <InputField name="company" placeholder="Company" />
           </div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField form={form} name={'address'} placeholder="Address" />
-            <StateAndCitySelect form={form} cityName="city" stateName="state" />
-            <InputField form={form} name={'zip'} placeholder="Zip code" />
+            <InputField name={'address'} placeholder="Address" />
+            <StateAndCitySelect cityName="city" stateName="state" />
+            <InputField name={'zip'} placeholder="Zip code" />
           </div>
           <div className="h-5 w-[213.40px] text-sm font-medium text-gray-500">Contact information</div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField form={form} name="phone" placeholder="Mobile phone" type={FieldType.Phone} />
-            <InputField form={form} name="email" placeholder="E-mail" />
+            <InputField name="phone" placeholder="Mobile phone" type={FieldType.Phone} />
+            <InputField name="email" placeholder="E-mail" />
             {/* <SelectField
               data={languageSelectOptions}
-              form={form}
+
               label="Language"
               name="language"
               placeholder="Language"

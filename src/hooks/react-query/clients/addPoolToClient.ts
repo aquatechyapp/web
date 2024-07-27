@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { CreatePoolType } from '@/app/(authenticated)/clients/DataTableClients/modal-add-pool';
+import { CreatePoolType } from '@/app/(authenticated)/clients/DataTableClients/ModalAddPool';
 import { clientAxios } from '@/lib/clientAxios';
 import { createFormData } from '@/utils/formUtils';
 

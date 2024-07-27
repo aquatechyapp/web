@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useShallow } from 'zustand/react/shallow';
 
 import { FormSchema } from '@/app/(authenticated)/team/ModalEdit';
 import { WorkRelation } from '@/interfaces/User';
@@ -10,7 +11,12 @@ import { clientAxios } from '../../../lib/clientAxios';
 
 export const useEditRelation = () => {
   const { toast } = useToast();
-  const { setUser, user } = useUserStore();
+  const { setUser, user } = useUserStore(
+    useShallow((state) => ({
+      setUser: state.setUser,
+      user: state.user
+    }))
+  );
   const { push } = useRouter();
 
   const { mutate: handleSubmit } = useMutation({
@@ -22,7 +28,7 @@ export const useEditRelation = () => {
     },
     onSuccess: (res) => {
       // Mescla os dados do card editado com os dados existentes do usuário
-      const updatedSubcontractors: WorkRelation[] = user!.subcontractors.map((subcontractor) => {
+      const updatedSubcontractors: WorkRelation[] = user!.workRelationsAsAEmployer.map((subcontractor) => {
         if (subcontractor.id === res.data.id) {
           return res.data; // Substitui os dados do card editado
         }
@@ -32,7 +38,7 @@ export const useEditRelation = () => {
       // Atualiza o usuário com os dados mesclados
       setUser({
         ...user,
-        subcontractors: updatedSubcontractors
+        workRelationsAsAEmployer: updatedSubcontractors
       });
 
       push('/team');

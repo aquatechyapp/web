@@ -14,6 +14,7 @@ import { FieldType } from '@/constants/enums';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { Client } from '@/interfaces/Client';
 import { clientAxios } from '@/lib/clientAxios';
+import { buildSelectOptionsSimple } from '@/utils/formUtils';
 
 type FormData = {
   emailType: string;
@@ -42,7 +43,6 @@ export default function Page() {
   });
 
   const types = ['All types', ...Array.from(new Set(clientsData?.map((client: Client) => client.type) ?? []))];
-  const typesSelectOptions = types.map((type) => ({ value: type, name: type, key: type }));
 
   const cities = ['All cities', ...Array.from(new Set(clientsData?.map((client: Client) => client.city) ?? []))];
   const citysSelectOptions = cities.map((city) => ({ value: city, name: city, label: city, key: city }));
@@ -74,8 +74,8 @@ export default function Page() {
 
       // Atualizar os contatos do formulário com os clientes filtrados
       const contacts = filteredClientsCitys.map((client) => ({
-        name: client.name,
-        email: client.email1
+        name: client.fullName,
+        email: client.email
       }));
 
       // Validar se há mensagem
@@ -179,7 +179,7 @@ export default function Page() {
             Address this message to ({selected} clients selected)
           </div>
           <div className="inline-flex justify-start gap-4 self-stretch">
-            <SelectField data={typesSelectOptions} form={form} name="type" placeholder="Commercial/Residential" />
+            <SelectField options={buildSelectOptionsSimple(types)} name="type" placeholder="Commercial/Residential" />
             <MultiSelect
               placeholder="Cities"
               options={citysSelectOptions}
@@ -192,7 +192,6 @@ export default function Page() {
             <div className="w-full">
               <InputField
                 className="h-44"
-                form={form}
                 placeholder="Type client notes here..."
                 label="Message"
                 name="message"
@@ -201,10 +200,10 @@ export default function Page() {
             </div>
             <div className="w-full pt-[10px]">
               <div className="w-full">
-                <DatePickerField label="When send this message?" form={form} name="startOn" placeholder="Send on" />
+                <DatePickerField label="When send this message?" name="startOn" placeholder="Send on" />
               </div>
               <div className="w-full pt-3">
-                <SelectField label="Select time" data={timeOptions} form={form} name="time" placeholder="Select time" />
+                <SelectField label="Select time" options={timeOptions} name="time" placeholder="Select time" />
               </div>
             </div>
           </div>

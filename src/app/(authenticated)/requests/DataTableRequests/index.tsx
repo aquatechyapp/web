@@ -14,7 +14,6 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Categories, RequestStatus } from '@/constants';
-import { buildSelectOptions } from '@/utils/formUtils';
 
 import { ModalAddRequest } from '../ModalAddRequest';
 import { FilterSelect } from './FilterSelect';
@@ -62,7 +61,7 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
           placeholder="Status"
         />
         <FilterSelect
-          data={buildSelectOptions(Categories, { key: 'value', name: 'name', value: 'value' })}
+          data={Categories}
           value={table.getColumn('category')?.getFilterValue() as string}
           onChange={(value) => {
             table.getColumn('category')?.setFilterValue(value === 'All' ? '' : value);

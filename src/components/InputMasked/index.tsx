@@ -1,7 +1,7 @@
 import { maskitoTransform } from '@maskito/core';
 import { useMaskito } from '@maskito/react';
 import React, { forwardRef } from 'react';
-import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
+import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 
 import { insertDot, onlyNumbers } from '@/utils';
 
@@ -9,22 +9,24 @@ import { Input } from '../ui/input';
 import currencyMask from './currencyMask';
 import percentMask from './percentMask';
 import phoneMask from './phoneMask';
+import zipcodeMask from './zipcodeMask';
 
 const masks = {
   currencyValue: currencyMask,
   percentValue: percentMask,
-  phone: phoneMask
+  phone: phoneMask,
+  zipcode: zipcodeMask
 };
 
 type Props = {
   field: ControllerRenderProps;
   placeholder: string;
   name: string;
-  form: UseFormReturn;
-  mask: 'currencyValue' | 'percentValue' | 'phone';
+  mask: 'currencyValue' | 'percentValue' | 'phone' | 'zipcode';
 };
 
-export const InputMasked = forwardRef<HTMLInputElement, Props>(({ field, placeholder, name, form, mask, ...props }) => {
+export const InputMasked = forwardRef<HTMLInputElement, Props>(({ field, placeholder, name, mask, ...props }) => {
+  const form = useFormContext();
   const inputRef = useMaskito({ options: masks[mask] });
   let value = field.value;
 

@@ -12,9 +12,10 @@ import { Popover, PopoverContent, PopoverTrigger } from './popover';
 type Props = {
   placeholder: string;
   onChange: (date: Date | undefined) => void;
+  disabledWeekdays?: number[];
 };
 
-export function DatePicker({ placeholder, onChange }: Props) {
+export function DatePicker({ placeholder, onChange, disabledWeekdays }: Props) {
   const [date, setDate] = React.useState<Date>();
 
   React.useEffect(() => {
@@ -22,7 +23,7 @@ export function DatePicker({ placeholder, onChange }: Props) {
   }, [date]);
 
   return (
-    <Popover>
+    <Popover modal>
       <PopoverTrigger asChild>
         <Button
           variant={'outline'}
@@ -33,7 +34,7 @@ export function DatePicker({ placeholder, onChange }: Props) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+        <Calendar disabledWeekdays={disabledWeekdays} mode="single" selected={date} onSelect={setDate} initialFocus />
       </PopoverContent>
     </Popover>
   );

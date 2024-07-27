@@ -1,12 +1,10 @@
 import { City, ICity, State } from 'country-state-city';
 import { useEffect, useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import SelectField from './SelectField';
 
 type Props = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<any>;
   stateName?: string;
   cityName?: string;
   disabled?: boolean;
@@ -14,12 +12,12 @@ type Props = {
 
 const states = State.getStatesOfCountry('US');
 
-export default function StateAndCitySelect({
-  form,
-  stateName = 'clientState',
-  cityName = 'clientCity',
-  ...props
-}: Props) {
+export default function StateAndCitySelect({ stateName = 'clientState', cityName = 'clientCity', ...props }: Props) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const form = useFormContext();
+
+  const [hasCities, setHasCities] = useState(true);
+
   const [cities, setCities] = useState<ICity[]>([]);
   const state = form.watch(stateName);
   const city = form.watch(cityName);
@@ -29,6 +27,16 @@ export default function StateAndCitySelect({
     form.setValue(stateName, selectedState);
     const citiesOfSelectedState = City.getCitiesOfState('US', selectedState);
     setCities(citiesOfSelectedState);
+
+    if (citiesOfSelectedState.length === 0) {
+      setHasCities(false);
+      form.setValue(cityName, 'No cities available');
+    } else {
+      setHasCities(true);
+      if (city === 'No cities available') {
+        form.setValue(cityName, '');
+      }
+    }
   };
 
   useEffect(() => {
@@ -38,12 +46,11 @@ export default function StateAndCitySelect({
   return (
     <div className="inline-flex w-full items-start justify-start gap-4 self-stretch">
       <SelectField
-        form={form}
         name={stateName}
         label="State"
         value={state}
         placeholder="State"
-        data={states.map((state) => {
+        options={states.map((state) => {
           return {
             key: state.isoCode,
             value: state.isoCode,
@@ -52,22 +59,23 @@ export default function StateAndCitySelect({
         })}
         {...props}
       />
-      <SelectField
-        // disabled={!state || cities.length === 0}
-        form={form}
-        label="City"
-        name={cityName}
-        value={city}
-        placeholder={'City'}
-        data={cities.map((city) => {
-          return {
-            key: city.name,
-            value: city.name,
-            name: city.name
-          };
-        })}
-        {...props}
-      />
+      {hasCities && (
+        <SelectField
+          // disabled={!state || cities.length === 0}
+          label="City"
+          name={cityName}
+          value={city}
+          placeholder={'City'}
+          options={cities.map((city) => {
+            return {
+              key: city.name,
+              value: city.name,
+              name: city.name
+            };
+          })}
+          {...props}
+        />
+      )}
     </div>
   );
 }

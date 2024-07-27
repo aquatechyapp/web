@@ -16,9 +16,10 @@ import { ModalEdit } from './ModalEdit';
 
 type Props = {
   workRelationId: string;
+  isAccepted: boolean;
 };
 
-export default function DropdownMenuWorkRelation({ workRelationId }: Props) {
+export default function DropdownMenuWorkRelation({ workRelationId, isAccepted }: Props) {
   const { isPending, mutate } = useDeleteRelation();
 
   const handleDelete = () => {
@@ -38,14 +39,16 @@ export default function DropdownMenuWorkRelation({ workRelationId }: Props) {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent>
-            <ModalEdit workRelationId={workRelationId}>
-              <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
-                Edit
-                <DropdownMenuShortcut>
-                  <MdEdit className="ml-1" />
-                </DropdownMenuShortcut>
-              </div>
-            </ModalEdit>
+            {isAccepted && (
+              <ModalEdit workRelationId={workRelationId}>
+                <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
+                  Edit
+                  <DropdownMenuShortcut>
+                    <MdEdit className="ml-1" />
+                  </DropdownMenuShortcut>
+                </div>
+              </ModalEdit>
+            )}
             <DialogTrigger asChild>
               <div className="flex w-full items-center rounded p-1 text-red-500 hover:bg-blue-50">
                 Delete

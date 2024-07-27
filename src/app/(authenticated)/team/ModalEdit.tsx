@@ -38,9 +38,17 @@ export function ModalEdit({ children, workRelationId }: PropsEdit) {
   const user = useUserStore((state) => state.user);
   const { handleSubmit } = useEditRelation();
 
-  const selectedWorkRelation = user.subcontractors.find(
-    (subcontractor: WorkRelation) => subcontractor.id === workRelationId
-  );
+  // search on user.workRelationsAsAEmployer and user.workRelationsAsASubcontractor
+
+  let selectedWorkRelation: WorkRelation | undefined = undefined;
+  selectedWorkRelation = user.workRelationsAsAEmployer.find((relation) => relation.id === workRelationId);
+  if (!selectedWorkRelation) {
+    selectedWorkRelation = user.workRelationsAsASubcontractor.find((relation) => relation.id === workRelationId);
+  }
+
+  // const selectedWorkRelation = user.workRelationsAsAEmployer.find(
+  //   (subcontractor: WorkRelation) => subcontractor.id === workRelationId
+  // );
 
   let selectedPaymentTypeName = undefined;
   if (selectedWorkRelation?.paymentType) {
@@ -71,15 +79,13 @@ export function ModalEdit({ children, workRelationId }: PropsEdit) {
             <div className="inline-flex w-full flex-col items-start justify-start gap-8 bg-white">
               <div className="justify-start self-stretch">
                 <SelectField
-                  data={paymentType}
-                  form={form}
+                  options={paymentType}
                   name="paymentType"
                   label="Payment Type"
                   placeholder={selectedPaymentTypeName || ''}
                 />
                 <div className="h-[10px]" />
                 <InputField
-                  form={form}
                   name="paymentValue"
                   label="Payment Value"
                   placeholder="US$ / %"

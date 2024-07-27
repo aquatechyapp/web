@@ -21,6 +21,7 @@ import { clientAxios } from '@/lib/clientAxios';
 import { paidByServiceSchema } from '@/schemas/assignments';
 import { clientSchema } from '@/schemas/client';
 import { dateSchema } from '@/schemas/date';
+import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
 import { useUserStore } from '@/store/user';
 import { createFormData } from '@/utils/formUtils';
@@ -36,7 +37,7 @@ export default function Page() {
 
   const { mutate: handleSubmit, isPending } = useMutation({
     mutationFn: async (data: PoolAndClientSchema) =>
-      await clientAxios.post('/client-pool', createFormData(data), {
+      await clientAxios.post('/client-pool-assignment', createFormData(data), {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -69,7 +70,7 @@ export default function Page() {
       name: user.firstName + ' ' + user.lastName,
       value: user.id
     };
-    return user.subcontractors
+    return user.workRelationsAsAEmployer
       .filter((sub) => sub.status === 'Active')
       .map((sub) => ({
         key: sub.subcontractorId,
@@ -118,11 +119,13 @@ export default function Page() {
     }
   }
 
-  const sameBillingAddress = form.watch('sameBillingAddress');
-  const clientAddress = form.watch('clientAddress');
-  const clientCity = form.watch('clientCity');
-  const clientState = form.watch('clientState');
-  const clientZip = form.watch('clientZip');
+  const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip] = form.watch([
+    'sameBillingAddress',
+    'clientAddress',
+    'clientCity',
+    'clientState',
+    'clientZip'
+  ]);
 
   const handleCheckboxSameBillingAddress = useMemo(() => {
     return {
@@ -137,31 +140,30 @@ export default function Page() {
   useEffect(() => {
     handleSameBillingAddress();
   }, [handleCheckboxSameBillingAddress]);
-
+  console.log(form.formState.errors);
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
           <div className="h-5 text-sm font-medium text-gray-500">Basic information</div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-            <InputField form={form} name="firstName" placeholder="First name" label="First name" />
-            <InputField form={form} name="lastName" placeholder="Last name" label="Last name" />
-            <InputField form={form} name="clientCompany" placeholder="Company" label="Company" />
-            <InputField form={form} name="customerCode" placeholder="Customer code" label="Customer code" />
+            <InputField name="firstName" placeholder="First name" label="First name" />
+            <InputField name="lastName" placeholder="Last name" label="Last name" />
+            <InputField name="clientCompany" placeholder="Company" label="Company" />
+            <InputField name="customerCode" placeholder="Customer code" label="Customer code" />
           </div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <div className="min-w-fit">
-              <InputField form={form} name="clientAddress" placeholder="Billing address" label="Billing address" />
+              <InputField name="clientAddress" placeholder="Billing address" label="Billing address" />
             </div>
-            <StateAndCitySelect form={form} />
-            <InputField form={form} name="clientZip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
+            <StateAndCitySelect />
+            <InputField name="clientZip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
             <SelectField
               defaultValue="Residential"
               placeholder="Client Type"
-              form={form}
               name="type"
               label="Client Type"
-              data={[
+              options={[
                 {
                   key: 'Residential',
                   name: 'Residential',
@@ -179,22 +181,15 @@ export default function Page() {
             <span className="mr-2">Contact information</span>
           </div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-            <InputField
-              type={FieldType.Phone}
-              form={form}
-              name="phone1"
-              placeholder="Mobile phone"
-              label="Mobile phone"
-            />
-            <InputField form={form} name="email1" placeholder="E-mail" label="E-mail" />
-            <InputField form={form} name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
+            <InputField type={FieldType.Phone} name="phone1" placeholder="Mobile phone" label="Mobile phone" />
+            <InputField name="email1" placeholder="E-mail" label="E-mail" />
+            <InputField name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
           </div>
           <div className="flex w-full items-center gap-4">
             <div className="w-[50%]">
               <InputField
                 label={isMobile ? 'Notes about client' : "Notes about client (customer won't see that)"}
                 name="clientNotes"
-                form={form}
                 placeholder="Type clients notes here..."
                 type={FieldType.TextArea}
               />
@@ -206,27 +201,20 @@ export default function Page() {
           </div>
           <div className="inline-flex items-start justify-start gap-2 self-stretch">
             <InputField
-              form={form}
               name="sameBillingAddress"
               type={FieldType.Checkbox}
               placeholder="Billing address is the same than service address"
             />
           </div>
           <div className="inline-flex items-start justify-start gap-2 self-stretch">
-            <InputField
-              form={form}
-              name="animalDanger"
-              type={FieldType.Checkbox}
-              placeholder="It must take care with animals?"
-            />
+            <InputField name="animalDanger" type={FieldType.Checkbox} placeholder="It must take care with animals?" />
           </div>
           {!form.watch('sameBillingAddress') && (
             <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-              <InputField form={form} name="poolAddress" placeholder="Billing address" label="Billing address" />
-              <StateAndCitySelect form={form} stateName="poolState" cityName="poolCity" />
+              <InputField name="poolAddress" placeholder="Billing address" label="Billing address" />
+              <StateAndCitySelect stateName="poolState" cityName="poolCity" />
               <InputField
                 className="min-w-fit"
-                form={form}
                 name="poolZip"
                 label="Zip code"
                 placeholder="Zip code"
@@ -236,28 +224,20 @@ export default function Page() {
           )}
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField
-              form={form}
               name="monthlyPayment"
               placeholder="Monthly payment by client"
               type={FieldType.CurrencyValue}
               label="Monthly payment by client"
             />
-            <InputField form={form} name="lockerCode" placeholder="Gate code" label="Gate code" />
-            <InputField form={form} name="enterSide" placeholder="Enter side" label="Enter side" />
-            <SelectField
-              name="poolType"
-              label="Chemical type"
-              placeholder="Chemical type"
-              form={form}
-              data={PoolTypes}
-            />
+            <InputField name="lockerCode" placeholder="Gate code" label="Gate code" />
+            <InputField name="enterSide" placeholder="Enter side" label="Enter side" />
+            <SelectField name="poolType" label="Chemical type" placeholder="Chemical type" options={PoolTypes} />
           </div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
               <InputField
                 className="h-44"
                 name="poolNotes"
-                form={form}
                 placeholder="Location notes..."
                 label={isMobile ? 'Notes about location' : "Notes about location (customer won't see that)"}
                 type={FieldType.TextArea}
@@ -273,22 +253,20 @@ export default function Page() {
               name="assignmentToId"
               placeholder="Technician"
               label="Technician"
-              form={form}
-              data={subContractors?.length > 0 ? subContractors : []}
+              options={subContractors?.length > 0 ? subContractors : []}
             />
             <InputField
               name="paidByService"
-              form={form}
               placeholder="0.00$"
               label="Paid by Service"
               type={FieldType.CurrencyValue}
             />
-            <SelectField label="Weekday" name="weekday" placeholder="Weekday" form={form} data={Weekdays} />
-            <SelectField label="Frequency" name="frequency" placeholder="Frequency" form={form} data={Frequencies} />
+            <SelectField label="Weekday" name="weekday" placeholder="Weekday" options={Weekdays} />
+            <SelectField label="Frequency" name="frequency" placeholder="Frequency" options={Frequencies} />
           </div>
           <div className="inline-flex w-full items-start justify-start gap-4">
-            <DatePickerField form={form} name="startOn" label="Start on" placeholder="Start on" />
-            <DatePickerField form={form} name="endAfter" label="End after" placeholder="End after" />
+            <DatePickerField name="startOn" label="Start on" placeholder="Start on" />
+            <DatePickerField name="endAfter" label="End after" placeholder="End after" />
           </div>
           <Button disabled={isPending} type="submit" className="w-full">
             {isPending ? (
@@ -307,16 +285,12 @@ export default function Page() {
 }
 
 const additionalSchemas = z.object({
-  weekday: z.enum(['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'], {
-    required_error: 'Weekday is required.',
-    invalid_type_error: 'Weekday is required.'
-  }),
+  weekday: defaultSchemas.weekday,
   frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
   sameBillingAddress: z.boolean(),
   assignmentToId: z.string().min(1),
-  photo: z.array(z.any()),
   customerCode: z.string().nullable(),
-  monthlyPayment: z.number().nullable(),
+  monthlyPayment: defaultSchemas.monthlyPayment,
   clientCompany: z.string().nullable(),
   clientType: z.enum(['Commercial', 'Residential'])
 });

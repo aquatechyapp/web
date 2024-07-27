@@ -17,11 +17,11 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { format } from 'date-fns';
-import Image from 'next/image';
 import { useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDragIndicator } from 'react-icons/md';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -34,9 +34,10 @@ import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { Assignment } from '@/interfaces/Assignments';
 import { useTechniciansStore } from '@/store/technicians';
 import { useUserStore } from '@/store/user';
+import { getInitials } from '@/utils/others';
 
-import { DialogDeleteAssignment } from './dialog-delete-assignment';
-import { DialogTransferRoute } from './dialog-transfer-route';
+import { DialogDeleteAssignment } from './ModalDeleteAssignment';
+import { DialogTransferRoute } from './ModalTransferRoute';
 
 type Props = {
   handleDragEnd: (event: DragEndEvent, setActive: React.Dispatch<number | null>) => void;
@@ -150,7 +151,6 @@ type AssignmentItemProps = {
 export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: AssignmentItemProps) {
   const name = assignment.pool.name;
 
-  const photo = assignment.pool.photos[0] || 'https://via.placeholder.com/44x44';
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const startsOn = format(new Date(assignment.startOn), 'LLL, do, y');
@@ -177,7 +177,10 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
               <MdDragIndicator size={16} />
             </div>
           )}
-          <Image width={11} height={11} alt="location photo" className="h-11 w-11 rounded-lg" src={photo} />
+          <Avatar className="cursor-pointer text-sm">
+            <AvatarImage src={''} />
+            <AvatarFallback>{getInitials(name)}</AvatarFallback>
+          </Avatar>
           <div className="inline-flex flex-col items-start justify-center gap-1">
             <div className="text-pretty text-sm font-medium">{name}</div>
             {isOnlyAt ? (

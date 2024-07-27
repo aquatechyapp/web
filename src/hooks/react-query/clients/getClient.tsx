@@ -7,7 +7,12 @@ export default function useGetClient(clientId: string) {
     queryKey: ['clients', clientId],
     queryFn: async () => {
       const response = await clientAxios(`/client/${clientId}`);
-      return response.data;
+
+      if (response.data.clientWithLastService) {
+        response.data.clientWithLastService.fullName = `${response.data.clientWithLastService.firstName} ${response.data.clientWithLastService.lastName}`;
+      }
+
+      return { ...response.data.clientWithLastService };
     },
     staleTime: Infinity
   });

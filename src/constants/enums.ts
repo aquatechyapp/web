@@ -36,3 +36,8 @@ export enum FieldType {
   PercentValue = 'percentValue',
   CurrencyValue = 'currencyValue'
 }
+
+export enum ClientType {
+  Residential = 'Residential',
+  Commercial = 'Commercial'
+}

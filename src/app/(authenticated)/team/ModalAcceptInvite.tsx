@@ -21,7 +21,7 @@ export function ModalAcceptInvite({ children, handleSubmit }: { children: React.
             <Button onClick={handleSubmit}>Accept</Button>
           </DialogTrigger>
           <DialogTrigger asChild>
-            <Button>Cancel</Button>
+            <Button variant="outline">Cancel</Button>
           </DialogTrigger>
         </div>
       </DialogContent>

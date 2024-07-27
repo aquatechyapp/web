@@ -2,7 +2,7 @@ import * as z from 'zod';
 
 import { defaultSchemas } from './defaultSchemas';
 
-const { address, city, notes, state, zip, poolType } = defaultSchemas;
+const { address, city, notes, state, zipCode, poolType } = defaultSchemas;
 
 export const poolSchema = z.object({
   poolAddress: address,
@@ -34,7 +34,6 @@ export const poolSchema = z.object({
       invalid_type_error: 'Locker code must be a string.'
     })
     .nullable(),
-  // input is a string but I need to transform into a number
 
   poolNotes: notes,
   poolType: z.enum(['Chlorine', 'Salt', 'Other'], {
@@ -42,7 +41,7 @@ export const poolSchema = z.object({
     invalid_type_error: "Pool type must be 'Chlorine', 'Salt' or 'Other'."
   }),
   poolState: state,
-  poolZip: zip
+  poolZip: zipCode
 });
 
 export const editPoolSchema = z.object({

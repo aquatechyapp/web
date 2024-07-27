@@ -3,8 +3,8 @@ import { z } from 'zod';
 
 export const dateSchema = z
   .object({
-    startOn: z.string().min(1),
-    endAfter: z.string().min(1)
+    startOn: z.coerce.date(),
+    endAfter: z.coerce.date()
   })
   .refine((data) => isBefore(data.startOn, data.endAfter), {
     message: 'Must be before the end date',

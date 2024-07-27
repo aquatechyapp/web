@@ -1,17 +1,23 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 import { WorkRelation } from '../interfaces/User';
 
-type TechniciansState = {
+type Store = {
   assignmentToId: string;
-  setAssignmentToId: (assignmentToId: string) => void;
   technicians: WorkRelation[];
+};
+
+type Actions = {
+  setAssignmentToId: (assignmentToId: string) => void;
   setTechnicians: (data: WorkRelation[]) => void;
 };
 
-export const useTechniciansStore = create<TechniciansState>((set) => ({
-  assignmentToId: '',
-  setAssignmentToId: (assignmentToId: string) => set({ assignmentToId }),
-  technicians: [],
-  setTechnicians: (data: WorkRelation[]) => set({ technicians: data })
-}));
+export const useTechniciansStore = create<Store & Actions>()(
+  devtools((set) => ({
+    assignmentToId: '',
+    setAssignmentToId: (assignmentToId: string) => set({ assignmentToId }),
+    technicians: [],
+    setTechnicians: (data: WorkRelation[]) => set({ technicians: data })
+  }))
+);

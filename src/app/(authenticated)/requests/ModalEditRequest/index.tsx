@@ -55,11 +55,11 @@ export function ModalEditRequest({ request }: Props) {
 
   const CopyToClipboardData = [
     {
-      value: request.client?.email1 || 'Email not available',
+      value: request.client?.email || 'Email not available',
       Icon: IoMdMail
     },
     {
-      value: request.client?.phone1 || 'Phone not available',
+      value: request.client?.phone || 'Phone not available',
       Icon: MdOutlinePhoneAndroid
     }
   ];
@@ -112,7 +112,7 @@ export function ModalEditRequest({ request }: Props) {
             <DialogTitle className="font-semibold">{request ? `Request #${request.id}` : 'New Request'}</DialogTitle>
             <div className="flex gap-4">
               <SelectField
-                data={buildSelectOptions(
+                options={buildSelectOptions(
                   clients?.filter((client: Client) => client.pools.length > 0),
                   {
                     key: 'id',
@@ -121,14 +121,13 @@ export function ModalEditRequest({ request }: Props) {
                   }
                 )}
                 placeholder={clients?.length || 0 > 0 ? 'Clients' : 'No clients available'}
-                form={form}
                 name="clientId"
                 disabled={disabled}
                 label="Client"
               />
               {clientId && (
                 <SelectField
-                  data={buildSelectOptions(
+                  options={buildSelectOptions(
                     // Procura a piscina somente quando seleciona o cliente
                     clients?.find((client: Client) => client.id === clientId)?.pools,
                     {
@@ -138,7 +137,6 @@ export function ModalEditRequest({ request }: Props) {
                     }
                   )}
                   placeholder="Pools"
-                  form={form}
                   name="poolId"
                   disabled={disabled}
                   label="Pool"
@@ -147,7 +145,6 @@ export function ModalEditRequest({ request }: Props) {
             </div>
             <div>
               <InputField
-                form={form}
                 name="description"
                 placeholder="Description"
                 type={FieldType.TextArea}
@@ -166,16 +163,14 @@ export function ModalEditRequest({ request }: Props) {
             />
             <SelectField
               label="Category"
-              form={form}
               name="category"
-              data={Categories}
+              options={Categories}
               placeholder="Category"
               disabled={disabled}
             />
-            <SelectField label="Status" form={form} name="status" data={RequestStatus} placeholder="Status" />
+            <SelectField label="Status" name="status" options={RequestStatus} placeholder="Status" />
 
             <InputField
-              form={form}
               label="Outcome (description of how the problem was fixed)"
               name="outcome"
               placeholder="Outcome"

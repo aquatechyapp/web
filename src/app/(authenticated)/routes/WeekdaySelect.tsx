@@ -1,3 +1,5 @@
+import { SelectOption } from '@/interfaces/Others';
+
 import { Label } from '../../../components/ui/label';
 import {
   Select,
@@ -8,7 +10,7 @@ import {
   SelectValue
 } from '../../../components/ui/select';
 import { Weekdays } from '../../../constants';
-import { WeekdaysSelect, WeekdaysUppercase } from '../../../interfaces/Weekday';
+import { WeekdaysUppercase } from '../../../interfaces/Weekday';
 
 type Props = {
   onChange: (value: WeekdaysUppercase) => void;
@@ -21,12 +23,12 @@ export default function WeekdaySelect({ onChange, value }: Props) {
       {/* por padrão, o User logado é o tecnico selecionado */}
       <Label>Weekday</Label>
       <Select onValueChange={onChange} value={value}>
-        <SelectTrigger className="mt-2">
+        <SelectTrigger data-testid="select-weekday" className="mt-2">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {Weekdays.map((weekday: WeekdaysSelect) => (
+            {Weekdays.map((weekday: SelectOption) => (
               <SelectItem key={weekday.value} value={weekday.value}>
                 {weekday.name}
               </SelectItem>

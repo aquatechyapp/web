@@ -11,6 +11,7 @@ import * as z from 'zod';
 
 import imageIcon from '/public/images/logoHor.png';
 import { FieldType } from '@/constants/enums';
+import { defaultSchemas } from '@/schemas/defaultSchemas';
 
 import InputField from '../../../components/InputField';
 import SelectField from '../../../components/SelectField';
@@ -23,26 +24,18 @@ import { clientAxios } from '../../../lib/clientAxios';
 
 const formSchema = z
   .object({
-    firstName: z.string().min(2, { message: 'First name is required' }),
-    lastName: z.string().min(2, { message: 'Last name is required' }),
-    phone: z
-      .string({
-        required_error: 'Phone is required.',
-        invalid_type_error: 'Phone must be a string.'
-      })
-      .min(1, { message: 'Phone number is required.' }),
-    email: z.string().email({ message: 'Invalid email' }),
-    password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
+    firstName: defaultSchemas.name,
+    lastName: defaultSchemas.name,
+    phone: defaultSchemas.phone,
+    email: defaultSchemas.email,
+    password: defaultSchemas.password,
     confirmPassword: z.string().min(8, { message: 'Password is required' }),
-    address: z.string().min(2, { message: 'Address is required' }),
-    zip: z.string().min(5, { message: 'Zip code is required' }),
-    state: z.string().min(2, { message: 'State is required' }),
-    city: z.string().min(2, { message: 'City is required' }),
+    address: defaultSchemas.address,
+    zip: defaultSchemas.zipCode,
+    state: defaultSchemas.state,
+    city: defaultSchemas.city,
     company: z.string().optional(),
-    language: z.enum(['English', 'Portuguese', 'Spanish'], {
-      required_error: 'Language is required.',
-      invalid_type_error: "Language must be 'English', 'Portuguese' or 'Spanish'."
-    })
+    language: defaultSchemas.language
   })
   .refine(
     (data) => {
@@ -135,29 +128,23 @@ export default function Page() {
           </div>
         </div>
         <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
-          <InputField form={form} name="firstName" placeholder="First name" />
-          <InputField form={form} name="lastName" placeholder="Last name" />
-          <InputField form={form} name="company" placeholder="Company" />
+          <InputField name="firstName" placeholder="First name" />
+          <InputField name="lastName" placeholder="Last name" />
+          <InputField name="company" placeholder="Company" />
         </div>
         <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
-          <InputField form={form} name="email" placeholder="E-mail address" />
-          <InputField form={form} name="phone" placeholder="Phone number" type={FieldType.Phone} />
-          <SelectField
-            data={languageSelectOptions}
-            form={form}
-            label="Language"
-            name="language"
-            placeholder="Language"
-          />
+          <InputField name="email" placeholder="E-mail address" />
+          <InputField name="phone" placeholder="Phone number" type={FieldType.Phone} />
+          <SelectField options={languageSelectOptions} label="Language" name="language" placeholder="Language" />
         </div>
         <div className="inline-flex items-start justify-start gap-2 self-stretch">
-          <InputField form={form} name="address" placeholder="Address" />
-          <InputField form={form} name="zip" placeholder="Zip" />
+          <InputField name="address" placeholder="Address" />
+          <InputField name="zip" placeholder="Zip" type={FieldType.Zip} />
         </div>
-        <StateAndCitySelect form={form} stateName="state" cityName="city" />
+        <StateAndCitySelect stateName="state" cityName="city" />
         <div className="inline-flex items-start justify-start gap-2 self-stretch">
-          <InputField form={form} name="password" placeholder="Password" type={FieldType.Password} />
-          <InputField form={form} name="confirmPassword" placeholder="Confirm password" type={FieldType.Password} />
+          <InputField name="password" placeholder="Password" type={FieldType.Password} />
+          <InputField name="confirmPassword" placeholder="Confirm password" type={FieldType.Password} />
         </div>
         <Button disabled={isPending} type="submit" className="w-full">
           Signup
