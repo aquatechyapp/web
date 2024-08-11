@@ -40,7 +40,7 @@ export function normalizeImportData(data: FormDataImportClients): FormDataImport
     (simpleFuseSearch(['Residential', 'Commercial'], data.clientType || '')[0] as ClientType) || ClientType.Residential;
   data.poolType =
     (simpleFuseSearch(['Chlorine', 'Salt', 'Other'], data.poolType || '')[0] as PoolType) || PoolType.Chlorine;
-  data.phone1 = onlyNumbers(data.phone1 || '').toString();
+  data.phone = onlyNumbers(data.phone || '').toString();
   data.animalDanger = !!data.animalDanger;
   data.monthlyPayment = onlyNumbers(data.monthlyPayment || '');
   return data;

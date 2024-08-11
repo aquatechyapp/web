@@ -87,8 +87,8 @@ export default function Page() {
               options={subContractors?.length > 0 ? subContractors : []}
             />
             <div className="inline-flex w-full items-start justify-start gap-4">
-              <DatePickerField name="fromDate" placeholder="From date:" />
-              <DatePickerField name="toDate" placeholder="To date:" />
+              <DatePickerField disabled={[{ after: new Date() }]} name="fromDate" placeholder="From date:" />
+              <DatePickerField disabled={[{ after: new Date() }]} name="toDate" placeholder="To date:" />
             </div>
           </div>
           <Button className="w-full" type="submit">

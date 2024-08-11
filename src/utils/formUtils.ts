@@ -39,9 +39,6 @@ export function createFormData(data: Record<string, any>) {
       case 'createdBy':
         formData.append(key, JSON.stringify(data[key]));
         break;
-      case 'firstName' || 'lastName':
-        formData.append('clientName', `${data.firstName} ${data.lastName}`);
-        break;
       case 'photo':
         data[key].forEach((photo: { file: string | Blob }) => formData.append(key, photo.file));
         break;

@@ -7,11 +7,11 @@ const { address, city, email, name, notes, phone, state, zipCode } = defaultSche
 export const clientSchema = z.object({
   clientAddress: address,
   clientCity: city,
-  email1: email,
+  email: email,
   firstName: name,
   lastName: name,
   clientNotes: notes,
-  phone1: phone,
+  phone: phone,
   clientState: state,
   clientZip: zipCode
 });

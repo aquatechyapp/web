@@ -44,7 +44,7 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
 
   return (
     <>
-      <div className="mx-2 my-4 flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap">
+      <div className="my-4 flex w-full flex-wrap gap-4 text-nowrap px-2 md:flex-nowrap [&>*]:flex-1">
         <ModalAddRequest />
         <Input
           className="min-w-50"

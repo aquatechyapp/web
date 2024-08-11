@@ -3,6 +3,7 @@
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import * as React from 'react';
+import { Matcher } from 'react-day-picker';
 
 import { cn } from '../../lib/utils';
 import { Button } from './button';
@@ -12,10 +13,10 @@ import { Popover, PopoverContent, PopoverTrigger } from './popover';
 type Props = {
   placeholder: string;
   onChange: (date: Date | undefined) => void;
-  disabledWeekdays?: number[];
+  disabled?: Matcher | Matcher[];
 };
 
-export function DatePicker({ placeholder, onChange, disabledWeekdays }: Props) {
+export function DatePicker({ placeholder, onChange, disabled }: Props) {
   const [date, setDate] = React.useState<Date>();
 
   React.useEffect(() => {
@@ -34,7 +35,7 @@ export function DatePicker({ placeholder, onChange, disabledWeekdays }: Props) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar disabledWeekdays={disabledWeekdays} mode="single" selected={date} onSelect={setDate} initialFocus />
+        <Calendar disabled={disabled} mode="single" selected={date} onSelect={setDate} initialFocus />
       </PopoverContent>
     </Popover>
   );

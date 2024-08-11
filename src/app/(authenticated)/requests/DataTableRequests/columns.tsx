@@ -28,12 +28,11 @@ export const columns: ColumnDef<Request>[] = [
     accessorFn: (row) => row.client.fullName,
     header: 'Client/pool',
     cell: (props) => {
-      const { client } = props.cell.row.original;
+      const { pool } = props.cell.row.original;
       return (
         <div className="flex">
           <div className="flex flex-col">
-            <span>{client.fullName}</span>
-            <span className="text-gray-400">{client.email}</span>
+            <span>{pool.name}</span>
           </div>
         </div>
       );

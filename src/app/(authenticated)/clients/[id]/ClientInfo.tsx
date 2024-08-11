@@ -21,7 +21,7 @@ const formSchema = z.object({
   email: defaultSchemas.email,
   phone: defaultSchemas.phone,
   notes: defaultSchemas.stringOptional,
-  company: defaultSchemas.stringOptional,
+  clientCompany: defaultSchemas.stringOptional,
   type: defaultSchemas.clientType
 });
 
@@ -39,7 +39,7 @@ export default function ClientInfo({ client }: { client: Client }) {
       phone: client.phone || '',
       notes: client.notes || undefined,
       address: client.address || '',
-      company: client.company || '',
+      clientCompany: client.company || '',
       type: client.type || 'Residential'
     }
   });
@@ -63,7 +63,7 @@ export default function ClientInfo({ client }: { client: Client }) {
         </div>
         <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
           <InputField name="zip" placeholder="Zip code" type={FieldType.Zip} />
-          <InputField name="company" placeholder="Company" />
+          <InputField name="clientCompany" placeholder="Company" />
           <SelectField
             placeholder="Client Type"
             name="type"
@@ -88,7 +88,7 @@ export default function ClientInfo({ client }: { client: Client }) {
           <InputField name="email" placeholder="E-mail" />
         </div>
         <div className="w-full">
-          <InputField placeholder="Type client notes here..." name="clientNotes" type={FieldType.TextArea} />
+          <InputField placeholder="Type client notes here..." name="notes" type={FieldType.TextArea} />
         </div>
         {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium   text-gray-500">
           Notes about client (customer won't see that)

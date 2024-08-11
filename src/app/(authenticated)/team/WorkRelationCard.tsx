@@ -26,7 +26,7 @@ export function WorkRelationCard({ email, phone, name, type, status, workRelatio
 
   const { mutate: handleAcceptInvite } = useMutation({
     mutationFn: async () =>
-      await clientAxios.patch('/workrelations', {
+      await clientAxios.patch('/workrelations/accept', {
         workRelationId,
         newStatus: 'Active'
       }),

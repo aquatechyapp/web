@@ -13,7 +13,7 @@ type TransferAssignments = {
 };
 
 type TransferAssignmentsOnce = TransferAssignments & {
-  onlyAt?: string;
+  onlyAt?: Date;
 };
 
 async function transferOnce(data: Partial<Assignment>[]) {

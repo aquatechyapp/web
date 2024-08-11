@@ -2,19 +2,20 @@
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import * as React from 'react';
-import { DayPicker } from 'react-day-picker';
+import { DayPicker, Matcher } from 'react-day-picker';
 
 import { cn } from '../../lib/utils';
 import { buttonVariants } from './button';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
   disabledWeekdays?: number[];
+  disabled?: Matcher | Matcher[];
 };
 
-function Calendar({ className, classNames, showOutsideDays = true, disabledWeekdays = [], ...props }: CalendarProps) {
+function Calendar({ className, classNames, showOutsideDays = true, disabled, ...props }: CalendarProps) {
   return (
     <DayPicker
-      disabled={[{ dayOfWeek: disabledWeekdays }, { before: new Date() }]}
+      disabled={disabled}
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
       classNames={{

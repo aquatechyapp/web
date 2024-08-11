@@ -1,6 +1,5 @@
-import { AvatarIcon } from '@radix-ui/react-icons';
 import { Libraries } from '@react-google-maps/api';
-import { PiCheckSquareOffsetBold } from 'react-icons/pi';
+import { CheckSquare, CircleUser } from 'lucide-react';
 
 import ClientIcon from '@/components/ui/client-icon';
 import RouteIcon from '@/components/ui/route-icon';
@@ -130,7 +129,7 @@ export const routes: Menu[] = [
   {
     text: 'Requests',
     href: '/requests',
-    icon: PiCheckSquareOffsetBold
+    icon: CheckSquare
   },
   {
     text: 'My team',
@@ -164,7 +163,7 @@ export const routes: Menu[] = [
       }
     },
     href: '/account',
-    icon: AvatarIcon
+    icon: CircleUser
   }
 ];
 

@@ -16,6 +16,7 @@ import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
 import { FieldType } from '@/constants/enums';
+import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
 import { paidByServiceSchema } from '@/schemas/assignments';
@@ -34,7 +35,6 @@ export default function Page() {
   const { toast } = useToast();
   const { width } = useWindowDimensions();
   const isMobile = width ? width < 640 : false;
-
   const { mutate: handleSubmit, isPending } = useMutation({
     mutationFn: async (data: PoolAndClientSchema) =>
       await clientAxios.post('/client-pool-assignment', createFormData(data), {
@@ -85,14 +85,14 @@ export default function Page() {
     defaultValues: {
       assignmentToId: '',
       animalDanger: false,
-      phone1: '',
+      phone: '',
       lockerCode: '',
       monthlyPayment: undefined,
       poolNotes: '',
       poolAddress: '',
       poolCity: '',
       enterSide: '',
-      email1: '',
+      email: '',
       firstName: '',
       lastName: '',
       clientAddress: '',
@@ -109,6 +109,8 @@ export default function Page() {
       clientType: 'Residential'
     }
   });
+
+  const disabledWeekdays = useDisabledWeekdays(form.watch('weekday'));
 
   function handleSameBillingAddress() {
     if (form.watch('sameBillingAddress')) {
@@ -181,8 +183,8 @@ export default function Page() {
             <span className="mr-2">Contact information</span>
           </div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-            <InputField type={FieldType.Phone} name="phone1" placeholder="Mobile phone" label="Mobile phone" />
-            <InputField name="email1" placeholder="E-mail" label="E-mail" />
+            <InputField type={FieldType.Phone} name="phone" placeholder="Mobile phone" label="Mobile phone" />
+            <InputField name="email" placeholder="E-mail" label="E-mail" />
             <InputField name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
           </div>
           <div className="flex w-full items-center gap-4">
@@ -265,8 +267,18 @@ export default function Page() {
             <SelectField label="Frequency" name="frequency" placeholder="Frequency" options={Frequencies} />
           </div>
           <div className="inline-flex w-full items-start justify-start gap-4">
-            <DatePickerField name="startOn" label="Start on" placeholder="Start on" />
-            <DatePickerField name="endAfter" label="End after" placeholder="End after" />
+            <DatePickerField
+              disabled={[{ dayOfWeek: disabledWeekdays }]}
+              name="startOn"
+              label="Start on"
+              placeholder="Start on"
+            />
+            <DatePickerField
+              disabled={[{ dayOfWeek: disabledWeekdays }]}
+              name="endAfter"
+              label="End after"
+              placeholder="End after"
+            />
           </div>
           <Button disabled={isPending} type="submit" className="w-full">
             {isPending ? (

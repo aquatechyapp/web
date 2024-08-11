@@ -25,9 +25,9 @@ export function DropdownTop() {
               {routes.map((route) => {
                 const Icon = route.icon;
                 return (
-                  <div className="flex items-center px-2" key={route.href}>
+                  <div className="flex w-full items-center text-nowrap px-2" key={route.href}>
                     <Icon />
-                    <ListItem key={route.href} title={route.text} href={route.href} />
+                    <ListItem className="text-end" key={route.href} title={route.text} href={route.href} />
                   </div>
                 );
               })}
@@ -40,7 +40,7 @@ export function DropdownTop() {
 }
 
 const ListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWithoutRef<'a'>>(
-  ({ className, title, children, ...props }, ref) => {
+  ({ className, title, ...props }, ref) => {
     return (
       <li>
         <NavigationMenuLink asChild>
@@ -52,8 +52,7 @@ const ListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWit
             )}
             {...props}
           >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
+            <div className="ml-auto text-sm font-medium">{title}</div>
           </a>
         </NavigationMenuLink>
       </li>

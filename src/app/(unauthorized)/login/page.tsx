@@ -31,8 +31,8 @@ export default function Page() {
   let messageError = 'Internal server error';
   if (
     isAxiosError(error) &&
-    error?.response?.status === 401 &&
-    error?.response?.data.message === 'Invalid email or password.'
+    error?.response?.status === 404 &&
+    error?.response?.data.message === 'Invalid credentials.'
   ) {
     messageError = 'E-mail or password incorrect';
   }

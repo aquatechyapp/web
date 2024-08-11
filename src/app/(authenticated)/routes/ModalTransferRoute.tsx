@@ -193,11 +193,23 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
               <OptionsOnceOrPermanently form={form} />
               <div className="mt-1">
                 {shouldTransferOnce ? (
-                  <DatePickerField disabledWeekdays={disabledWeekdays} name="onlyAt" placeholder="Select Date" />
+                  <DatePickerField
+                    disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
+                    name="onlyAt"
+                    placeholder="Select Date"
+                  />
                 ) : (
                   <div className="flex flex-col md:flex-row">
-                    <DatePickerField disabledWeekdays={disabledWeekdays} name="startOn" placeholder="Start on" />
-                    <DatePickerField disabledWeekdays={disabledWeekdays} name="endAfter" placeholder="End after" />
+                    <DatePickerField
+                      disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
+                      name="startOn"
+                      placeholder="Start on"
+                    />
+                    <DatePickerField
+                      disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
+                      name="endAfter"
+                      placeholder="End after"
+                    />
                   </div>
                 )}
               </div>
@@ -266,7 +278,7 @@ type TransferAssignments = {
 };
 
 type TransferAssignmentsOnce = TransferAssignments & {
-  onlyAt?: string;
+  onlyAt?: Date;
 };
 
 type TransferAssignmentsPermanently = TransferAssignments & {

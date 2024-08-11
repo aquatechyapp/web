@@ -19,10 +19,10 @@ export const defaultSchemas = {
       required_error: 'E-mail is required.'
     })
     .email({ message: 'Invalid e-mail.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
+  password: z.string().min(1, { message: 'Password is required' }),
   name: commonStringSchema('Name', 2),
   notes: z.string().trim().optional(),
-  phone: z.string().min(1, { message: 'Phone is missing some caracteres' }),
+  phone: z.string().length(17, { message: 'Phone number is incomplete' }),
   state: commonStringSchema('State', 2),
   zipCode: z
     .string()

@@ -78,9 +78,17 @@ export const FormNewAssignment = () => {
           </div>
 
           {/* <div className="mt-4 flex flex-col gap-8 md:flex-row"> */}
-          <DatePickerField disabledWeekdays={disabledWeekdays} name="startOn" placeholder="Start on" />
+          <DatePickerField
+            disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
+            name="startOn"
+            placeholder="Start on"
+          />
 
-          <DatePickerField disabledWeekdays={disabledWeekdays} name="endAfter" placeholder="End after" />
+          <DatePickerField
+            disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
+            name="endAfter"
+            placeholder="End after"
+          />
           {/* </div> */}
         </div>
       </form>

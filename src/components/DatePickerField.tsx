@@ -1,3 +1,4 @@
+import { Matcher } from 'react-day-picker';
 import { useFormContext } from 'react-hook-form';
 
 import { DatePicker } from './ui/date-picker';
@@ -9,10 +10,10 @@ type Props = {
   placeholder: string;
   restrictOnlySelectedDay?: boolean;
   label?: string;
-  disabledWeekdays?: number[];
+  disabled?: Matcher | Matcher[];
 };
 
-export default function DatePickerField({ name, placeholder, label, disabledWeekdays }: Props) {
+export default function DatePickerField({ name, placeholder, label, disabled }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const form = useFormContext<any>();
   return (
@@ -24,7 +25,7 @@ export default function DatePickerField({ name, placeholder, label, disabledWeek
           <FormItem className="flex w-full flex-col">
             <Label>{label}</Label>
             <FormControl>
-              <DatePicker disabledWeekdays={disabledWeekdays} placeholder={placeholder} onChange={field.onChange} />
+              <DatePicker disabled={disabled} placeholder={placeholder} onChange={field.onChange} />
             </FormControl>
             <FormMessage />
           </FormItem>
