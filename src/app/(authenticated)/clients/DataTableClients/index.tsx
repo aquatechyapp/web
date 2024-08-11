@@ -79,22 +79,11 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
     { key: 'inactive', value: 'inactive', name: 'Inactive' }
   ];
 
-  // Use o useForm para gerenciar o estado dos campos do formulário
   const form = useForm({
     defaultValues: {
+      type: 'all',
+      city: 'all',
       filter: 'all'
-    }
-  });
-
-  const formCity = useForm({
-    defaultValues: {
-      city: 'all' // Valor padrão para a cidade
-    }
-  });
-
-  const formType = useForm({
-    defaultValues: {
-      type: 'all' // Valor padrão para a cidade
     }
   });
 
@@ -102,16 +91,16 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
   const cities = Array.from(new Set(sortedData.map((client) => client.city)));
   // Definindo opções para o SelectField da cidade
   const citySelectOptions = [
-    { value: 'all_cities', name: 'All cities', key: 'all_cities' },
+    { value: 'all', name: 'All cities', key: 'all_cities' },
     ...cities.map((city) => ({ value: city, name: city, key: city }))
   ];
 
   const types = Array.from(new Set(sortedData.map((client) => client.type)));
   const typesSelectOptions = [
-    { value: 'all_types', name: 'All types', key: 'all_types' },
+    { value: 'all', name: 'All types', key: 'all_types' },
     ...types.map((type) => ({ value: type, name: type, key: type }))
   ];
-
+  console.log(form.watch());
   return (
     <div className="rounded-md border">
       <div className="flex w-full flex-col items-center justify-between px-2 py-4 md:flex-row">
@@ -131,23 +120,20 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
           <Form {...form}>
             <form className="mb-2 flex w-full flex-col gap-4 md:flex-row">
               <SelectField
-                form={form}
-                name="Filter"
-                data={selectOptions}
+                name="filter"
+                options={selectOptions}
                 placeholder="Status"
                 onValueChange={(value) => table.getColumn('deactivatedAt')?.setFilterValue(value)}
               />
               <SelectField
-                form={formCity}
-                name="City"
-                data={citySelectOptions}
+                name="city"
+                options={citySelectOptions}
                 placeholder="City"
                 onValueChange={(value) => table.getColumn('city')?.setFilterValue(value)}
               />
               <SelectField
-                form={formType}
-                name="Type"
-                data={typesSelectOptions}
+                name="type"
+                options={typesSelectOptions}
                 placeholder="Type"
                 onValueChange={(value) => table.getColumn('type')?.setFilterValue(value)}
               />

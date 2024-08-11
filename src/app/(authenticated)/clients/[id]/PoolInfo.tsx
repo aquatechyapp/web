@@ -63,34 +63,27 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
             <ModalDeletePool deletePool={() => deletePool()} />
           </div>
         </div>
-        <InputField form={form} name="address" placeholder="Address" />
+        <InputField name="address" placeholder="Address" />
 
         <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          {/* <InputField disabled form={form} name="address" placeholder="Address" /> */}
-          <StateAndCitySelect form={form} cityName="city" stateName="state" />
+          {/* <InputField disabled  name="address" placeholder="Address" /> */}
+          <StateAndCitySelect cityName="city" stateName="state" />
         </div>
         <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          <InputField name="monthlyPayment" form={form} placeholder="Monthly payment" type={FieldType.CurrencyValue} />
-          <InputField name="lockerCode" form={form} placeholder="Gate code" />
-          <InputField name="enterSide" form={form} placeholder="Enter side" />
+          <InputField name="monthlyPayment" placeholder="Monthly payment" type={FieldType.CurrencyValue} />
+          <InputField name="lockerCode" placeholder="Gate code" />
+          <InputField name="enterSide" placeholder="Enter side" />
           <SelectField
             value={form.watch('poolType')}
             name="poolType"
             placeholder="Chemical type"
-            form={form}
-            data={PoolTypes}
+            options={PoolTypes}
             label="Chemical type"
           />
         </div>
         <div className="Form flex flex-col items-start justify-start gap-4 self-stretch lg:flex-row">
           <div className="h-40 w-full">
-            <InputField
-              className="h-full"
-              type={FieldType.TextArea}
-              form={form}
-              name="notes"
-              placeholder="Location notes..."
-            />
+            <InputField className="h-full" type={FieldType.TextArea} name="notes" placeholder="Location notes..." />
           </div>
         </div>
         {!isEmpty(changedFields) && (

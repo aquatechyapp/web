@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
@@ -10,11 +10,8 @@ import { isEmpty } from '@/utils';
 import { FormNewAssignment } from './FormNewAssignment';
 import { FormSchema } from './page';
 
-type Props = {
-  form: UseFormReturn<FormSchema>;
-};
-
-export function DialogNewAssignment({ form }: Props) {
+export function DialogNewAssignment() {
+  const form = useFormContext<FormSchema>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const validateForm = async (): Promise<boolean> => {
@@ -69,7 +66,7 @@ export function DialogNewAssignment({ form }: Props) {
       </DialogTrigger>
       <DialogContent className="max-h-screen max-w-fit overflow-y-scroll">
         <DialogTitle>Create Assignment</DialogTitle>
-        {isPending ? <LoadingSpinner /> : <FormNewAssignment form={form} />}
+        {isPending ? <LoadingSpinner /> : <FormNewAssignment />}
         <div className="flex justify-around">
           <Button
             onClick={createNewAssignment}

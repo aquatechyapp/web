@@ -13,7 +13,7 @@ const DatePickerWithUseForm = () => {
   });
   return (
     <FormProviderMocked form={form}>
-      <DatePickerField form={form} name="date" placeholder="Select a date" label="Date" />
+      <DatePickerField name="date" placeholder="Select a date" label="Date" />
     </FormProviderMocked>
   );
 };

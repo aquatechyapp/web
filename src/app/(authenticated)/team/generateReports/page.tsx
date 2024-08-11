@@ -42,7 +42,7 @@ export default function Page() {
       name: user.firstName + ' ' + user.lastName,
       value: user.id
     };
-    return user.subcontractors
+    return user.workRelationsAsAEmployer
       .filter((sub) => sub.status === SubcontractorStatus.Active)
       .map((sub) => ({
         key: sub.subcontractorId,
@@ -84,12 +84,11 @@ export default function Page() {
               disabled={subContractors.length === 0}
               name="assignmentToId"
               placeholder="Technician"
-              form={form}
-              data={subContractors?.length > 0 ? subContractors : []}
+              options={subContractors?.length > 0 ? subContractors : []}
             />
             <div className="inline-flex w-full items-start justify-start gap-4">
-              <DatePickerField form={form} name="fromDate" placeholder="From date:" />
-              <DatePickerField form={form} name="toDate" placeholder="To date:" />
+              <DatePickerField name="fromDate" placeholder="From date:" />
+              <DatePickerField name="toDate" placeholder="To date:" />
             </div>
           </div>
           <Button className="w-full" type="submit">

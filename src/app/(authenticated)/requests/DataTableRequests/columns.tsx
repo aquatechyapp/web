@@ -25,15 +25,15 @@ const statusOptions = {
 export const columns: ColumnDef<Request>[] = [
   {
     accessorKey: 'name',
-    accessorFn: (row) => row.client.name,
+    accessorFn: (row) => row.client.fullName,
     header: 'Client/pool',
     cell: (props) => {
       const { client } = props.cell.row.original;
       return (
         <div className="flex">
           <div className="flex flex-col">
-            <span>{client.name}</span>
-            <span className="text-gray-400">{client.email1}</span>
+            <span>{client.fullName}</span>
+            <span className="text-gray-400">{client.email}</span>
           </div>
         </div>
       );

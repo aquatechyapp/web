@@ -13,7 +13,7 @@ import { Client } from '@/interfaces/Client';
 import { calculateTotalAssignmentsOfAllPools, calculateTotalMonthlyOfAllPools } from '@/utils';
 import { getInitials } from '@/utils/others';
 
-import { ModalAddPool } from '../DataTableClients/modal-add-pool';
+import { ModalAddPool } from '../DataTableClients/ModalAddPool';
 import ClientInfo from './ClientInfo';
 import PoolHeader from './PoolHeader';
 
@@ -32,7 +32,7 @@ export default function ShowClient({ client }: Props) {
   if (isPending) return <LoadingSpinner />;
 
   const selectedTabStyles = 'text-gray-800 font-semibold';
-
+  console.log(client);
   return (
     <div>
       <div className="flex flex-col items-start gap-6 self-stretch pt-2 lg:flex-row lg:pt-0">
@@ -43,11 +43,11 @@ export default function ShowClient({ client }: Props) {
             <div className="PhotoName flex h-[206px] flex-col items-center justify-start gap-3 self-stretch">
               <Avatar className="h-[140px] w-[140px]">
                 <AvatarImage src={''} />
-                <AvatarFallback className="text-5xl">{getInitials(client.name)}</AvatarFallback>
+                <AvatarFallback className="text-5xl">{getInitials(client.fullName)}</AvatarFallback>
               </Avatar>
               <div className="flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
                 <div className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px] text-gray-800">
-                  {client.name}
+                  {client.fullName}
                 </div>
                 <div className="text-sm font-medium text-gray-500">{client.address}</div>
               </div>
@@ -56,13 +56,13 @@ export default function ShowClient({ client }: Props) {
               <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="self-stretch text-sm font-medium text-gray-500">Email</div>
-                  <div className="self-stretch text-sm font-medium text-gray-800">{client.email1}</div>
+                  <div className="self-stretch text-sm font-medium text-gray-800">{client.email}</div>
                 </div>
               </div>
               <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="self-stretch text-sm font-medium text-gray-500">Phone Number</div>
-                  <div className="self-stretch text-sm font-medium text-gray-800">{client.phone1}</div>
+                  <div className="self-stretch text-sm font-medium text-gray-800">{client.phone}</div>
                 </div>
               </div>
               <div className="inline-flex w-fit items-start justify-start gap-2">

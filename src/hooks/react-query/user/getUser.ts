@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+import { useShallow } from 'zustand/react/shallow';
 
 import { SubcontractorStatus } from '@/constants/enums';
-import { WorkRelation } from '@/interfaces/User';
+import { User, WorkRelation } from '@/interfaces/User';
 import { clientAxios } from '@/lib/clientAxios';
 import { useTechniciansStore } from '@/store/technicians';
 import { useUserStore } from '@/store/user';
@@ -12,14 +13,19 @@ type Props = {
 
 export default function useGetUser({ userId }: Props) {
   const setUser = useUserStore((state) => state.setUser);
-  const { setTechnicians, setAssignmentToId } = useTechniciansStore();
+  const { setTechnicians, setAssignmentToId } = useTechniciansStore(
+    useShallow((state) => ({
+      setTechnicians: state.setTechnicians,
+      setAssignmentToId: state.setAssignmentToId
+    }))
+  );
 
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: ['user', userId],
     queryFn: async () => {
-      const response = await clientAxios.get(`/users/${userId}`);
+      const response = (await clientAxios.get(`/users/${userId}`)).data;
 
-      const user = {
+      const user: User = {
         ...response.data.user,
         incomeAsACompany: response.data.incomeAsACompany,
         incomeAsASubcontractor: response.data.incomeAsASubcontractor
@@ -31,12 +37,29 @@ export default function useGetUser({ userId }: Props) {
       setTechnicians([
         {
           subcontractor: {
-            id: user.id,
             firstName: user.firstName,
-            lastName: user.lastName
-          }
+            lastName: user.lastName,
+            email: user.email,
+            phone: user.phone,
+            company: user.company
+          },
+          paymentType: '',
+          paymentValue: 0,
+          status: SubcontractorStatus.Active,
+          companyId: '',
+          id: '',
+          createdAt: '',
+          company: {
+            id: '',
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            company: ''
+          },
+          subcontractorId: user.id
         },
-        ...user.subcontractors.filter((sub: WorkRelation) => sub.status === SubcontractorStatus.Active)
+        ...user.workRelationsAsAEmployer.filter((sub: WorkRelation) => sub.status === SubcontractorStatus.Active)
       ]);
 
       return user;

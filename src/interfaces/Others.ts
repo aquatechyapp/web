@@ -9,3 +9,9 @@ export type ImageFile = {
     webkitRelativePath: string;
   };
 };
+
+export type SelectOption = {
+  value: string;
+  name: string;
+  key: string;
+};

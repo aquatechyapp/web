@@ -2,6 +2,11 @@ import { PoolType } from '@/constants/enums';
 
 import { Service } from './Service';
 
+export type TransferAssignment = Assignment & {
+  endAfter: Date;
+  startOn: Date;
+};
+
 export type Assignment = {
   id: string;
   assignmentOwnerId: string;
@@ -23,8 +28,8 @@ export type CreateAssignment = {
   poolId: string;
   weekday: string;
   frequency: string;
-  startOn: string;
-  endAfter: string;
+  startOn: Date;
+  endAfter: Date;
   paidByService: number;
 };
 
@@ -52,7 +57,7 @@ export type Pool = {
   services: Service[];
 };
 
-export type Coords = {
+type Coords = {
   lat: number;
   lng: number;
 };

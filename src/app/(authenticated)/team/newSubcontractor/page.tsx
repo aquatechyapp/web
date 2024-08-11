@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useShallow } from 'zustand/react/shallow';
 
 import { paymentType } from '@/constants';
 import { FieldType } from '@/constants/enums';
@@ -27,7 +28,12 @@ const schema = z.object({
 type FormSchema = z.infer<typeof schema>;
 
 export default function Page() {
-  const { setUser, user } = useUserStore();
+  const { setUser, user } = useUserStore(
+    useShallow((state) => ({
+      setUser: state.setUser,
+      user: state.user
+    }))
+  );
   const { push } = useRouter();
   const { toast } = useToast();
 
@@ -48,7 +54,7 @@ export default function Page() {
     onSuccess: (res) => {
       setUser({
         ...user,
-        subcontractors: [...user.subcontractors, res.data]
+        workRelationsAsAEmployer: [...user.workRelationsAsAEmployer, res.data.workRelationWithUsersInfo]
       });
 
       push('/team');
@@ -73,16 +79,9 @@ export default function Page() {
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
           <div className="h-5 text-sm font-medium text-gray-500">Basic information</div>
           <div className="inline-flex flex-wrap justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField form={form} name="emailSubContractor" placeholder="E-mail" />
-            <SelectField
-              data={paymentType}
-              form={form}
-              name="paymentType"
-              placeholder="Payment Type"
-              label="Payment Type"
-            />
+            <InputField name="emailSubContractor" placeholder="E-mail" />
+            <SelectField options={paymentType} name="paymentType" placeholder="Payment Type" label="Payment Type" />
             <InputField
-              form={form}
               name="paymentValue"
               label="Payment Value"
               placeholder="US$ / %"

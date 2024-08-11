@@ -14,7 +14,7 @@ const StateAndCitySelectWithUseForm = () => {
   });
   return (
     <FormProviderMocked form={form}>
-      <StateAndCitySelect form={form} />
+      <StateAndCitySelect />
     </FormProviderMocked>
   );
 };

@@ -67,7 +67,7 @@ const createPoolSchema = poolSchema
         })
         .trim()
         .min(1, { message: 'Address must be at least 1 character.' }),
-      monthlyPayment: z.number().nullable()
+      monthlyPayment: defaultSchemas.monthlyPayment
     })
   );
 
@@ -138,33 +138,31 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="grid gap-4">
             <div className="-mt-2 flex gap-4">
-              <InputField form={form} name="address" label="Address" placeholder="Pool Address" />
-              <StateAndCitySelect form={form} stateName="state" cityName="city" />
-              <InputField form={form} name="zip" label="Zip" placeholder="Pool zip" type={FieldType.Zip} />
+              <InputField name="address" label="Address" placeholder="Pool Address" />
+              <StateAndCitySelect stateName="state" cityName="city" />
+              <InputField name="zip" label="Zip" placeholder="Pool zip" type={FieldType.Zip} />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-4">
-                <InputField form={form} name="enterSide" label="Enter side" placeholder="Enter side" />
-                <InputField form={form} name="lockerCode" label="Locker code" placeholder="Locker code" />
+                <InputField name="enterSide" label="Enter side" placeholder="Enter side" />
+                <InputField name="lockerCode" label="Locker code" placeholder="Locker code" />
               </div>
 
               <div className="grid gap-4">
                 <InputField
-                  form={form}
                   name="monthlyPayment"
                   label="Monthly payment"
                   placeholder="Monthly payment"
                   type={FieldType.CurrencyValue}
                 />
-                <SelectField name="poolType" placeholder="Chemical type" form={form} data={PoolTypes} />
+                <SelectField name="poolType" placeholder="Chemical type" options={PoolTypes} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <InputField
                 className="h-40"
                 type={FieldType.TextArea}
-                form={form}
                 name="notes"
                 label="Pool notes"
                 placeholder="Pool notes"

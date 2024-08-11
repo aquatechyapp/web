@@ -3,7 +3,7 @@ import { AxiosError, isAxiosError } from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 
-import { useToast } from '../../../components/ui/use-toast';
+import { toast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
 
 type LoginData = {
@@ -13,7 +13,6 @@ type LoginData = {
 
 export const useLoginUser = () => {
   const { push } = useRouter();
-  const { toast } = useToast();
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: async (data: LoginData) => await clientAxios.post('/sessions', data),

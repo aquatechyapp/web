@@ -69,8 +69,8 @@ export default function Page() {
       },
       assignment: Assignment
     ) => {
-      const subcontractor = user?.subcontractors.find(
-        (subcontractor) => subcontractor.subcontractor.id === assignment.assignmentToId
+      const subcontractor = user?.workRelationsAsAEmployer?.find(
+        (subcontractor) => subcontractor.subcontractorId === assignment.assignmentToId
       );
       if (subcontractor) {
         const fullName = `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`;

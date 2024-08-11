@@ -17,7 +17,7 @@ import {
 import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
 import { useDeleteClient } from '@/hooks/react-query/clients/deleteClient';
 
-import { ModalAddPool } from './modal-add-pool';
+import { ModalAddPool } from './ModalAddPool';
 
 type Props = {
   clientOwnerId: string;

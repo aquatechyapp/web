@@ -1,4 +1,4 @@
-import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
+import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 
 import { FieldType } from '@/constants/enums';
 
@@ -12,8 +12,6 @@ import { Textarea } from './ui/textarea';
 type MaskTypes = 'currencyValue' | 'percentValue' | 'phone';
 
 type Props = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<any>;
   className?: string;
   disabled?: boolean;
   name: string;
@@ -23,26 +21,17 @@ type Props = {
   label?: string;
 };
 
-export default function InputField({ form, name, placeholder, type = FieldType.Default, label, ...props }: Props) {
+export default function InputField({ name, placeholder, type = FieldType.Default, label, ...props }: Props) {
+  const form = useFormContext();
   const types = {
     zip: {
       component: (field: ControllerRenderProps) => (
-        <Input
-          placeholder={placeholder}
-          type="tel"
-          {...field}
-          onChange={(e) => {
-            form.setValue(name, e.target.value);
-          }}
-          {...props}
-        />
+        <InputMasked mask="zipcode" field={field} placeholder={placeholder || ''} {...field} {...props} />
       )
     },
     phone: {
       component: (field: ControllerRenderProps) => {
-        return (
-          <InputMasked mask="phone" field={field} placeholder={placeholder || ''} form={form} {...field} {...props} />
-        );
+        return <InputMasked mask="phone" field={field} placeholder={placeholder || ''} {...field} {...props} />;
       }
     },
     password: {
@@ -101,26 +90,12 @@ export default function InputField({ form, name, placeholder, type = FieldType.D
     },
     percentValue: {
       component: (field: ControllerRenderProps) => (
-        <InputMasked
-          mask={type as MaskTypes}
-          field={field}
-          placeholder={placeholder || ''}
-          form={form}
-          {...field}
-          {...props}
-        />
+        <InputMasked mask={type as MaskTypes} field={field} placeholder={placeholder || ''} {...field} {...props} />
       )
     },
     currencyValue: {
       component: (field: ControllerRenderProps) => (
-        <InputMasked
-          mask={type as MaskTypes}
-          field={field}
-          placeholder={placeholder || ''}
-          form={form}
-          {...field}
-          {...props}
-        />
+        <InputMasked mask={type as MaskTypes} field={field} placeholder={placeholder || ''} {...field} {...props} />
       )
     }
   };

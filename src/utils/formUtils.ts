@@ -21,6 +21,16 @@ export function buildSelectOptions(
   });
 }
 
+export function buildSelectOptionsSimple(data: string[]) {
+  return data.map((item) => {
+    return {
+      key: item,
+      name: item,
+      value: item
+    };
+  });
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createFormData(data: Record<string, any>) {
   const formData = new FormData();
@@ -46,20 +56,6 @@ export function createFormData(data: Record<string, any>) {
   }
   return formData;
 }
-
-export const filterChangedFormFields = <T extends FieldValues>(
-  allFields: T,
-  dirtyFields: Partial<Record<keyof T, boolean>>
-): Partial<T> => {
-  const changedFieldValues = Object.keys(dirtyFields).reduce((acc, currentField) => {
-    return {
-      ...acc,
-      [currentField]: allFields[currentField]
-    };
-  }, {} as Partial<T>);
-
-  return changedFieldValues;
-};
 
 export const getDirtyValues = <T extends FieldValues>(
   allFields: T,

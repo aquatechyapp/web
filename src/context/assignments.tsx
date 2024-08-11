@@ -58,17 +58,18 @@ export const AssignmentsProvider = ({ children }: { children: React.ReactNode })
     if (!userId) return;
     if (isError || isLoading) return;
 
-    const filteredAssignments = data
+    const filteredAssignments = data.assignments
       ?.filter(
         (assignment: Assignment) =>
           assignment.weekday === selectedWeekday && assignment.assignmentToId === assignmentToId
       )
       .sort((a: Assignment, b: Assignment) => a.order - b.order);
+
     setAssignments({
       initial: [...filteredAssignments],
       current: [...filteredAssignments]
     });
-    setAllAssignments(data);
+    setAllAssignments(data.assignments);
   }, [data, isError, isLoading, selectedWeekday, assignmentToId, userId]);
 
   if (isLoading) return <LoadingSpinner />;

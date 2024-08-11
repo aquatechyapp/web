@@ -10,14 +10,15 @@ import * as z from 'zod';
 import imageIcon from '/public/images/logoHor.png';
 import { FieldType } from '@/constants/enums';
 import { useLoginUser } from '@/hooks/react-query/user/loginUser';
+import { defaultSchemas } from '@/schemas/defaultSchemas';
 
 import InputField from '../../../components/InputField';
 import { Button } from '../../../components/ui/button';
 import { Form } from '../../../components/ui/form';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Invalid email' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters long' })
+  email: defaultSchemas.email,
+  password: defaultSchemas.password
 });
 
 export default function Page() {
@@ -53,8 +54,8 @@ export default function Page() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
           <div className="mb-8 flex w-[400px] flex-col gap-[18px]">
-            <InputField form={form} name="email" placeholder="E-mail address" />
-            <InputField form={form} name="password" placeholder="Password" type={FieldType.Password} />
+            <InputField name="email" placeholder="E-mail address" />
+            <InputField name="password" placeholder="Password" type={FieldType.Password} />
             {error && <p className="text-[0.8rem] font-medium text-red-500 dark:text-red-900">{messageError}</p>}
           </div>
           <Button disabled={isPending} type="submit" className="w-full">

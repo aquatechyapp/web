@@ -4,9 +4,9 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { Client } from '@/interfaces/Client';
 
-import ActionButtons from './cell-action-buttons';
-import NamePhoto from './cell-name-photo';
-import Phones from './cell-phone';
+import ActionButtons from './CallActionButtons';
+import NamePhoto from './CellNamePhoto';
+import Phones from './CellPhone';
 
 export const columns: ColumnDef<Client>[] = [
   {
@@ -17,7 +17,13 @@ export const columns: ColumnDef<Client>[] = [
   {
     accessorKey: 'type',
     header: '',
-    cell: ''
+    cell: '',
+    filterFn: (row, _, filter) => {
+      if (filter === 'all') {
+        return true;
+      }
+      return row.original.type.toLowerCase().includes(filter.toLowerCase());
+    }
   },
   {
     accessorKey: 'phone1' || 'phone2',
@@ -33,6 +39,12 @@ export const columns: ColumnDef<Client>[] = [
           {props.row.original.city}, {props.row.original.address}, {props.row.original.state}, {props.row.original.zip}.
         </div>
       );
+    },
+    filterFn: (row, _, filter) => {
+      if (filter === 'all') {
+        return true;
+      }
+      return row.original.city.toLowerCase().includes(filter.toLowerCase());
     }
   },
   {
@@ -42,7 +54,10 @@ export const columns: ColumnDef<Client>[] = [
   {
     id: 'deactivatedAt',
     accessorKey: 'deactivatedAt',
-    filterFn: (row, value, filter) => {
+    filterFn: (row, _, filter) => {
+      if (filter === 'all') {
+        return true;
+      }
       if (filter === 'active') {
         return row.original.isActive;
       }

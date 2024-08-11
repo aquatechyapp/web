@@ -17,9 +17,9 @@ export type BasicData = {
 };
 
 export interface User extends BasicData {
-  employers: WorkRelation[];
+  workRelationsAsAEmployer: WorkRelation[];
   createdAt: string;
-  subcontractors: WorkRelation[];
+  workRelationsAsASubcontractor: WorkRelation[];
 }
 
 export type WorkRelation = {
@@ -30,6 +30,19 @@ export type WorkRelation = {
   subcontractorId: string;
   status: SubcontractorStatus;
   createdAt: string;
-  company: BasicData;
-  subcontractor: BasicData;
+  company: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+    company: string;
+  };
+  subcontractor: {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+    company: string;
+  };
 };

@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -64,6 +64,10 @@ export function ModalAddRequest() {
     }
   });
 
+  useEffect(() => {
+    form.reset();
+  }, [open]);
+
   function handleSubmit(data: z.infer<typeof schema>) {
     if (isEmpty(form.formState.errors)) {
       createRequest(data);
@@ -92,21 +96,20 @@ export function ModalAddRequest() {
             <DialogTitle>New Request</DialogTitle>
             <div className="flex gap-4">
               <SelectField
-                data={buildSelectOptions(
+                options={buildSelectOptions(
                   clients?.filter((client: Client) => client.pools.length > 0),
                   {
                     key: 'id',
-                    name: 'name',
+                    name: 'fullName',
                     value: 'id'
                   }
                 )}
                 placeholder={clients?.length || 0 > 0 ? 'Clients' : 'No clients available'}
-                form={form}
                 name="clientId"
               />
               {clientId && (
                 <SelectField
-                  data={buildSelectOptions(
+                  options={buildSelectOptions(
                     // Procura a piscina somente quando seleciona o cliente
                     clients?.find((client: Client) => client.id === clientId)?.pools,
                     {
@@ -116,19 +119,12 @@ export function ModalAddRequest() {
                     }
                   )}
                   placeholder="Pools"
-                  form={form}
                   name="poolId"
                 />
               )}
             </div>
             <div>
-              <InputField
-                form={form}
-                name="description"
-                placeholder="Description"
-                type={FieldType.TextArea}
-                label=" "
-              />
+              <InputField name="description" placeholder="Description" type={FieldType.TextArea} label=" " />
             </div>
             <div>
               <div className="h-44">
@@ -139,7 +135,7 @@ export function ModalAddRequest() {
                 />
               </div>
             </div>
-            <SelectField form={form} name="category" data={Categories} placeholder="Category" />
+            <SelectField name="category" options={Categories} placeholder="Category" />
 
             <Button className="w-full" type="submit">
               Create

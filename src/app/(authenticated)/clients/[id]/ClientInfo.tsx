@@ -18,9 +18,9 @@ const formSchema = z.object({
   address: defaultSchemas.address,
   city: defaultSchemas.city,
   state: defaultSchemas.state,
-  zip: defaultSchemas.zip,
-  email1: defaultSchemas.email,
-  phone1: defaultSchemas.phone,
+  zip: defaultSchemas.zipCode,
+  email: defaultSchemas.email,
+  phone: defaultSchemas.phone,
   notes: defaultSchemas.notes,
   company: defaultSchemas.name,
   type: defaultSchemas.clientType
@@ -36,8 +36,8 @@ export default function ClientInfo({ client }: { client: Client }) {
       city: client.city || '',
       state: client.state || '',
       zip: client.zip || '',
-      email1: client.email1 || '',
-      phone1: client.phone1 || '',
+      email: client.email || '',
+      phone: client.phone || '',
       notes: client.notes || undefined,
       address: client.address || '',
       company: client.company || '',
@@ -45,7 +45,7 @@ export default function ClientInfo({ client }: { client: Client }) {
     }
   });
 
-  const phoneChanged = form.watch('phone1') !== client.phone1;
+  const phoneChanged = form.watch('phone') !== client.phone;
 
   if (isPending) return <LoadingSpinner />;
 
@@ -54,7 +54,7 @@ export default function ClientInfo({ client }: { client: Client }) {
     if (phoneChanged) {
       dirtyFields = {
         ...dirtyFields,
-        phone1: form.watch('phone1')
+        phone: form.watch('phone')
       };
     }
     mutate(dirtyFields);
@@ -68,18 +68,17 @@ export default function ClientInfo({ client }: { client: Client }) {
       >
         <div className="h-5 w-[213.40px] text-sm font-medium text-gray-500">Basic information</div>
         <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          <InputField form={form} name="address" placeholder="Billing address" />
-          <StateAndCitySelect form={form} cityName="city" stateName="state" />
+          <InputField name="address" placeholder="Billing address" />
+          <StateAndCitySelect cityName="city" stateName="state" />
         </div>
         <div className="flex flex-wrap gap-4 md:flex-nowrap">
-          <InputField form={form} name="zip" placeholder="Zip code" type={FieldType.Zip} />
-          <InputField form={form} name="company" placeholder="Company" />
+          <InputField name="zip" placeholder="Zip code" type={FieldType.Zip} />
+          <InputField name="company" placeholder="Company" />
           <SelectField
             placeholder="Client Type"
-            form={form}
             name="type"
             label="Type"
-            data={[
+            options={[
               {
                 key: 'Residential',
                 name: 'Residential',
@@ -95,16 +94,11 @@ export default function ClientInfo({ client }: { client: Client }) {
         </div>
         <div className="mt-4 h-5 text-sm font-medium text-gray-500">Contact information</div>
         <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          <InputField type={FieldType.Phone} form={form} name="phone1" placeholder="Mobile phone" />
-          <InputField form={form} name="email1" placeholder="E-mail" />
+          <InputField type={FieldType.Phone} name="phone" placeholder="Mobile phone" />
+          <InputField name="email1" placeholder="E-mail" />
         </div>
         <div className="w-full">
-          <InputField
-            form={form}
-            placeholder="Type client notes here..."
-            name="clientNotes"
-            type={FieldType.TextArea}
-          />
+          <InputField placeholder="Type client notes here..." name="clientNotes" type={FieldType.TextArea} />
         </div>
         {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium   text-gray-500">
           Notes about client (customer won't see that)

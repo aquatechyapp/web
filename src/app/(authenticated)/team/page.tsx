@@ -9,20 +9,19 @@ import { WorkRelation } from '@/interfaces/User';
 import { useUserStore } from '@/store/user';
 
 import { Button } from '../../../components/ui/button';
-import { EmployerCard } from './EmployerCard';
-import { SubcontractorCard } from './SubcontractorCard';
+import { WorkRelationCard } from './WorkRelationCard'; // Import the unified component
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredSubcontractors = user?.subcontractors.filter((subcontractor) =>
+  const filteredSubcontractors = user?.workRelationsAsAEmployer.filter((subcontractor) =>
     `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   );
 
-  const filteredEmployers = user?.employers.filter((employee) =>
+  const filteredEmployers = user?.workRelationsAsASubcontractor.filter((employee) =>
     `${employee.company.firstName} ${employee.company.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -51,9 +50,9 @@ export default function Page() {
           {filteredSubcontractors && (
             <div className="flex flex-wrap justify-center gap-2">
               {filteredSubcontractors.map((subcontractor: WorkRelation) => (
-                <SubcontractorCard
-                  type="subcontractor"
+                <WorkRelationCard
                   key={subcontractor.subcontractor.email}
+                  type="subcontractor"
                   name={`${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`}
                   phone={subcontractor.subcontractor.phone}
                   email={subcontractor.subcontractor.email}
@@ -61,20 +60,21 @@ export default function Page() {
                   workRelationId={subcontractor.id}
                 />
               ))}
-              {filteredEmployers && (
-                <div className="flex gap-2">
-                  {filteredEmployers.map((employee) => (
-                    <EmployerCard
-                      key={employee.company.email}
-                      name={`${employee.company.firstName} ${employee.company.lastName}`}
-                      phone={employee.company.phone}
-                      email={employee.company.email}
-                      status={employee.status}
-                      workRelationId={employee.id}
-                    />
-                  ))}
-                </div>
-              )}
+            </div>
+          )}
+          {filteredEmployers && (
+            <div className="flex gap-2">
+              {filteredEmployers.map((employee: WorkRelation) => (
+                <WorkRelationCard
+                  key={employee.company.email}
+                  type="employer"
+                  name={`${employee.company.firstName} ${employee.company.lastName}`}
+                  phone={employee.company.phone}
+                  email={employee.company.email}
+                  status={employee.status}
+                  workRelationId={employee.id}
+                />
+              ))}
             </div>
           )}
         </div>

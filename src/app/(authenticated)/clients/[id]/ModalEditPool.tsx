@@ -27,38 +27,26 @@ export function DialogEditPool({ form, handleSubmit, monthlyPaymentChanged }: Pr
       <DialogContent className="max-h-screen max-w-fit overflow-y-scroll">
         <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(handleSubmit)}>
           <div>
-            <InputField form={form} name="address" placeholder="Address" />
+            <InputField name="address" placeholder="Address" />
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
-            <StateAndCitySelect form={form} cityName="city" stateName="state" />
+            <StateAndCitySelect cityName="city" stateName="state" />
           </div>
           <div className="inline-flex items-start justify-start gap-4 self-stretch">
-            <InputField
-              name="monthlyPayment"
-              form={form}
-              placeholder="Monthly payment"
-              type={FieldType.CurrencyValue}
-            />
-            <InputField name="lockerCode" form={form} placeholder="Gate code" />
-            <InputField name="enterSide" form={form} placeholder="Enter side" />
+            <InputField name="monthlyPayment" placeholder="Monthly payment" type={FieldType.CurrencyValue} />
+            <InputField name="lockerCode" placeholder="Gate code" />
+            <InputField name="enterSide" placeholder="Enter side" />
             <SelectField
               value={form.watch('poolType')}
               name="poolType"
               placeholder="Chemical type"
-              form={form}
-              data={PoolTypes}
+              options={PoolTypes}
               label="Chemical type"
             />
           </div>
 
           <div className="mb-4 h-full w-full">
-            <InputField
-              className="h-full"
-              type={FieldType.TextArea}
-              form={form}
-              name="notes"
-              placeholder="Location notes..."
-            />
+            <InputField className="h-full" type={FieldType.TextArea} name="notes" placeholder="Location notes..." />
           </div>
           {(isDirty || monthlyPaymentChanged) && (
             <Button className="mt-4" type="submit">

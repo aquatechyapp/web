@@ -14,11 +14,10 @@ const SelectFieldWrappedWithForm = () => {
   return (
     <FormProviderMocked form={form}>
       <SelectField
-        form={form}
         name="date"
         placeholder="Select a date"
         label="Date"
-        data={[{ name: 'label', value: 'value', key: 'key' }]}
+        options={[{ name: 'label', value: 'value', key: 'key' }]}
       />
     </FormProviderMocked>
   );

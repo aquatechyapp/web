@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useToast } from '@/components/ui/use-toast';
 import { useAssignmentsContext } from '@/context/assignments';
-import { Assignment } from '@/interfaces/Assignments';
+import { Assignment, TransferAssignment } from '@/interfaces/Assignments';
 import { WeekdaysUppercase } from '@/interfaces/Weekday';
 import { clientAxios } from '@/lib/clientAxios';
 
@@ -14,11 +14,6 @@ type TransferAssignments = {
 
 type TransferAssignmentsOnce = TransferAssignments & {
   onlyAt?: string;
-};
-
-type TransferAssignmentsPermanently = TransferAssignments & {
-  startOn: string;
-  endAfter: string;
 };
 
 async function transferOnce(data: Partial<Assignment>[]) {
@@ -76,7 +71,7 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
   const assignmentsToTransfer: Assignment[] = assignmentToTransfer ? [assignmentToTransfer] : assignments.current;
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (form: TransferAssignmentsPermanently) => {
+    mutationFn: (form: TransferAssignment) => {
       const assignments = assignmentsToTransfer!
         .filter((a) => a.frequency !== 'ONCE')
         .map((assignment) => {
