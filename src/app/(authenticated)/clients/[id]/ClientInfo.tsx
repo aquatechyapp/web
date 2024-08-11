@@ -12,7 +12,6 @@ import { FieldType } from '@/constants/enums';
 import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
 import { Client } from '@/interfaces/Client';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
-import { getDirtyValues } from '@/utils/formUtils';
 
 const formSchema = z.object({
   address: defaultSchemas.address,
@@ -21,8 +20,8 @@ const formSchema = z.object({
   zip: defaultSchemas.zipCode,
   email: defaultSchemas.email,
   phone: defaultSchemas.phone,
-  notes: defaultSchemas.notes,
-  company: defaultSchemas.name,
+  notes: defaultSchemas.stringOptional,
+  company: defaultSchemas.stringOptional,
   type: defaultSchemas.clientType
 });
 
@@ -45,19 +44,10 @@ export default function ClientInfo({ client }: { client: Client }) {
     }
   });
 
-  const phoneChanged = form.watch('phone') !== client.phone;
-
   if (isPending) return <LoadingSpinner />;
 
   const handleSubmit = async () => {
-    let dirtyFields = getDirtyValues(form.getValues(), form.formState.dirtyFields) as FormData;
-    if (phoneChanged) {
-      dirtyFields = {
-        ...dirtyFields,
-        phone: form.watch('phone')
-      };
-    }
-    mutate(dirtyFields);
+    mutate(form.getValues());
   };
 
   return (
@@ -71,7 +61,7 @@ export default function ClientInfo({ client }: { client: Client }) {
           <InputField name="address" placeholder="Billing address" />
           <StateAndCitySelect cityName="city" stateName="state" />
         </div>
-        <div className="flex flex-wrap gap-4 md:flex-nowrap">
+        <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
           <InputField name="zip" placeholder="Zip code" type={FieldType.Zip} />
           <InputField name="company" placeholder="Company" />
           <SelectField
@@ -95,7 +85,7 @@ export default function ClientInfo({ client }: { client: Client }) {
         <div className="mt-4 h-5 text-sm font-medium text-gray-500">Contact information</div>
         <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
           <InputField type={FieldType.Phone} name="phone" placeholder="Mobile phone" />
-          <InputField name="email1" placeholder="E-mail" />
+          <InputField name="email" placeholder="E-mail" />
         </div>
         <div className="w-full">
           <InputField placeholder="Type client notes here..." name="clientNotes" type={FieldType.TextArea} />
@@ -107,11 +97,9 @@ export default function ClientInfo({ client }: { client: Client }) {
           className="h-[100%]"
           placeholder="Type client notes here..."
         /> */}
-        {(form.formState.isDirty || phoneChanged) && (
-          <Button type="submit" className="w-full">
-            Save
-          </Button>
-        )}
+        <Button type="submit" className="w-full">
+          Save
+        </Button>
       </form>
     </Form>
   );

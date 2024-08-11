@@ -120,8 +120,6 @@ export default function Page() {
     return <LoadingSpinner />;
   }
 
-  console.log(form.formState.errors);
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(() => mutate(clients.fields))}>

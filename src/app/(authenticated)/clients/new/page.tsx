@@ -140,7 +140,7 @@ export default function Page() {
   useEffect(() => {
     handleSameBillingAddress();
   }, [handleCheckboxSameBillingAddress]);
-  console.log(form.formState.errors);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>

@@ -100,7 +100,7 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
     { value: 'all', name: 'All types', key: 'all_types' },
     ...types.map((type) => ({ value: type, name: type, key: type }))
   ];
-  console.log(form.watch());
+
   return (
     <div className="rounded-md border">
       <div className="flex w-full flex-col items-center justify-between px-2 py-4 md:flex-row">
