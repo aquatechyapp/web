@@ -156,7 +156,7 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
                   placeholder="Monthly payment"
                   type={FieldType.CurrencyValue}
                 />
-                <SelectField name="poolType" placeholder="Chemical type" options={PoolTypes} />
+                <SelectField name="poolType" label="Chemical type" placeholder="Chemical type" options={PoolTypes} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">

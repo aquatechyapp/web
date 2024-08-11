@@ -13,7 +13,6 @@ type Props = {
 
 export default function Page({ params: { id } }: Props) {
   const { data, isLoading } = useGetClient(id);
-  console.log(data);
   if (isLoading) return <LoadingSpinner />;
 
   return <ShowClient client={data} />;

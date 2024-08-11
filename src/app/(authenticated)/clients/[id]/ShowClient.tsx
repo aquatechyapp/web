@@ -32,7 +32,7 @@ export default function ShowClient({ client }: Props) {
   if (isPending) return <LoadingSpinner />;
 
   const selectedTabStyles = 'text-gray-800 font-semibold';
-  console.log(client);
+
   return (
     <div>
       <div className="flex flex-col items-start gap-6 self-stretch pt-2 lg:flex-row lg:pt-0">

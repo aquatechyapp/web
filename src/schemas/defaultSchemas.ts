@@ -11,6 +11,7 @@ function commonStringSchema(message: string, min: number = 1) {
 }
 
 export const defaultSchemas = {
+  stringOptional: z.string().optional(),
   address: commonStringSchema('Address'),
   city: commonStringSchema('City'),
   email: z
