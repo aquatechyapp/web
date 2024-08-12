@@ -5,8 +5,6 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Categories } from '@/constants';
 import { Request } from '@/interfaces/Request';
 
-import { ModalEditRequest } from '../ModalEditRequest';
-
 const statusOptions = {
   Pending: {
     label: 'Pending',
@@ -58,12 +56,13 @@ export const columns: ColumnDef<Request>[] = [
       );
     }
   },
-  {
-    id: 'actions',
-    cell: ({ row: { original } }) => {
-      return <ModalEditRequest request={original} />;
-    }
-  },
+  // Implementar Delete
+  // {
+  //   id: 'actions',
+  //   cell: ({ row: { original } }) => {
+  //     return ;
+  //   }
+  // },
   {
     id: 'createdAt',
     filterFn: (row, columnId, value) => {

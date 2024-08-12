@@ -8,14 +8,16 @@ import {
   getFilteredRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Categories, RequestStatus } from '@/constants';
+import { Request } from '@/interfaces/Request';
 
 import { ModalAddRequest } from '../ModalAddRequest';
+import { ModalEditRequest } from '../ModalEditRequest';
 import { FilterSelect } from './FilterSelect';
 
 interface DataTableProps<TData, TValue> {
@@ -25,6 +27,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTableRequests<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [open, setOpen] = useState(false);
 
   const table = useReactTable({
     data,
@@ -103,13 +106,23 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow className="cursor-pointer" key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                ))}
-              </TableRow>
-            ))
+            table.getRowModel().rows.map((row) => {
+              return (
+                <React.Fragment key={row.id}>
+                  <ModalEditRequest request={row.original as Request} open={open} setOpen={setOpen} />
+                  <TableRow
+                    onClick={() => setOpen(true)}
+                    className="cursor-pointer"
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    ))}
+                  </TableRow>
+                </React.Fragment>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">

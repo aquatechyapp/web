@@ -1,7 +1,6 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoMdMail } from 'react-icons/io';
 import { MdOutlinePhoneAndroid } from 'react-icons/md';
@@ -12,7 +11,7 @@ import { InputFile } from '@/components/InputFile';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories, RequestStatus } from '@/constants';
 import { FieldType } from '@/constants/enums';
@@ -46,10 +45,11 @@ export type EditRequest = z.infer<typeof schema>;
 
 type Props = {
   request: Request;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 };
 
-export function ModalEditRequest({ request }: Props) {
-  const [open, setOpen] = useState(false);
+export function ModalEditRequest({ request, open, setOpen }: Props) {
   const user = useUserStore((state) => state.user);
   const { mutate: updateRequest, isPending: isPendingUpdate } = useUpdateRequest(request.id);
 
@@ -101,11 +101,6 @@ export function ModalEditRequest({ request }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="link" className="font-semibold">
-          See Details
-        </Button>
-      </DialogTrigger>
       <DialogContent className="">
         <Form {...form}>
           <form className="flex flex-col gap-4" onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
@@ -116,7 +111,7 @@ export function ModalEditRequest({ request }: Props) {
                   clients?.filter((client: Client) => client.pools.length > 0),
                   {
                     key: 'id',
-                    name: 'name',
+                    name: 'fullName',
                     value: 'id'
                   }
                 )}
