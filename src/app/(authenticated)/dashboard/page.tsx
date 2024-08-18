@@ -116,7 +116,7 @@ export default function Page() {
           </InfoCardScrollable>
           <InfoCardScrollable title="My Team">
             {isEmpty(assignmentsBySubcontractors) ? (
-              <div>No pools found</div>
+              <div>No team found</div>
             ) : (
               Object.entries(assignmentsBySubcontractors)
                 .sort((a, b) => b[1] - a[1])
@@ -163,7 +163,7 @@ export default function Page() {
           <ActionButton type="my_team" />
           <InfoCardScrollable title="My Team">
             {isEmpty(assignmentsBySubcontractors) ? (
-              <div>No pools found</div>
+              <div>No team found</div>
             ) : (
               Object.entries(assignmentsBySubcontractors)
                 .sort((a, b) => b[1] - a[1])

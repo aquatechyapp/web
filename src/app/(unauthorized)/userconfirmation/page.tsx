@@ -1,10 +1,10 @@
 'use client';
 
-import Cookies from 'js-cookie';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { clientAxios } from '@/lib/clientAxios';
 
 import { useToast } from '../../../components/ui/use-toast';
@@ -17,59 +17,54 @@ interface PropsToken {
 
 export default function Page({ searchParams }: PropsToken) {
   const router = useRouter();
-  const [confirmationStatus, setConfirmationStatus] = useState<string | null>(null);
   const token = searchParams.token;
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (token) {
-      clientAxios
-        .post(`/userconfirmation/${token}`)
-        .then((response) => {
-          const jwtToken = response.data;
-          if (jwtToken) {
-            Cookies.set('accessToken', jwtToken);
-            setConfirmationStatus('aprovado');
-            toast({
-              variant: 'default',
-              title: 'Success',
-              description: 'User account confirmed successfully.',
-              className: 'bg-green-500 text-gray-50'
-            });
-          } else {
-            setConfirmationStatus('não aprovado');
-            toast({
-              variant: 'default',
-              title: 'Internal error',
-              description: 'Please try again later.',
-              className: 'bg-red-500 text-gray-50'
-            });
-          }
-        })
-        .catch((error) => {
-          console.error('Erro na confirmação de email:', error);
-          setConfirmationStatus('não aprovado');
-        });
-    }
-  }, [token, toast]);
-
-  useEffect(() => {
-    if (confirmationStatus === 'aprovado') {
+  const { mutate, isPending, isError } = useMutation({
+    mutationFn: async () => await clientAxios.post(`/userconfirmation/${token}`),
+    onSuccess: () => {
       router.push('/login');
+      toast({
+        variant: 'default',
+        title: 'Success',
+        description: 'User account confirmed successfully.',
+        className: 'bg-green-500 text-white'
+      });
+    },
+    onError: () => {
+      toast({
+        variant: 'default',
+        title: 'Internal error',
+        description: 'Please try again later.',
+        className: 'bg-red-500'
+      });
     }
-  }, [confirmationStatus, router]);
+  });
 
-  if (confirmationStatus === null) {
-    return <LoadingSpinner />;
-  }
+  useEffect(() => mutate(), [mutate]);
 
   return (
-    <div>
-      {confirmationStatus === 'aprovado' ? (
-        <p className="text-xl font-semibold text-white">Redirecionando...</p>
-      ) : (
-        <p className="font-semibold text-white">Email não aprovado. Verifique o link de confirmação.</p>
-      )}
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Confirming E-mail</CardTitle>
+        <CardDescription>You'll be redirect soon</CardDescription>
+        <CardContent className="flex flex-col items-center justify-center">
+          <div className="mt-4">
+            {isError && (
+              <div>
+                Internal error, please contact us{' '}
+                <span className="font-bold text-blue-500"> contact@aquatechy.com</span>
+              </div>
+            )}
+            {isPending && (
+              <div
+                className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status"
+              />
+            )}
+          </div>
+        </CardContent>
+      </CardHeader>
+    </Card>
   );
 }

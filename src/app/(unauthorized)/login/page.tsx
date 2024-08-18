@@ -18,7 +18,7 @@ import { Form } from '../../../components/ui/form';
 
 const formSchema = z.object({
   email: defaultSchemas.email,
-  password: defaultSchemas.password
+  password: z.string().min(1, { message: 'Password is required' })
 });
 
 export default function Page() {
@@ -40,14 +40,14 @@ export default function Page() {
   return (
     <div className="inline-flex w-[448px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8">
       <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
-        <Image width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
+        <Image priority width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
       </div>
       <div className="relative mt-4 h-[50px] w-[400px]">
         <div className="left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] text-gray-900">Login</div>
         <div className="left-0 top-[30px] h-5 w-[400px]">
           <span className="text-sm font-medium text-gray-500">Don't you have an account? </span>
-          <Link href="/signup" className="text-sm font-bold text-gray-500">
-            Signup
+          <Link href="/signup" className="text-sm font-semibold text-blue-500">
+            Sign Up
           </Link>
         </div>
       </div>
@@ -56,6 +56,9 @@ export default function Page() {
           <div className="mb-8 flex w-[400px] flex-col gap-[18px]">
             <InputField name="email" placeholder="E-mail address" />
             <InputField name="password" placeholder="Password" type={FieldType.Password} />
+            <Link href="/recover" className="text-sm font-semibold text-blue-500">
+              Forgot Password?
+            </Link>
             {error && <p className="text-[0.8rem] font-medium text-red-500 dark:text-red-900">{messageError}</p>}
           </div>
           <Button disabled={isPending} type="submit" className="w-full">

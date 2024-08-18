@@ -12,11 +12,12 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { SubcontractorStatus } from '@/constants/enums';
 import { clientAxios } from '@/lib/clientAxios';
+import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
 
 const schema = z.object({
-  fromDate: z.string().min(1),
-  toDate: z.string().min(1),
+  fromDate: defaultSchemas.date,
+  toDate: defaultSchemas.date,
   assignmentToId: z.string().min(1)
 });
 
@@ -29,8 +30,8 @@ export default function Page() {
   const form = useForm<FormSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
-      fromDate: '',
-      toDate: '',
+      fromDate: undefined,
+      toDate: undefined,
       assignmentToId: ''
     }
   });
@@ -57,15 +58,15 @@ export default function Page() {
       const { fromDate, toDate, assignmentToId } = formData;
 
       const params = new URLSearchParams({
-        from: fromDate,
-        to: toDate,
+        from: fromDate.toString(),
+        to: toDate.toString(),
         technicianId: assignmentToId
       });
 
       const response = await clientAxios.get(`/services/reports?${params}`);
 
       // Manipulando a resposta
-      setPdfData(response.data);
+      setPdfData(response.data.report);
     } catch (error) {
       console.error('Erro ao enviar solicitação:', error);
     }
