@@ -19,7 +19,7 @@ export const defaultSchemas = {
       required_error: 'E-mail is required.'
     })
     .email({ message: 'Invalid e-mail.' }),
-  password: z.string().min(1, { message: 'Password is required' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
   name: commonStringSchema('Name', 2),
   notes: z.string().trim().optional(),
   phone: z.string().length(17, { message: 'Phone number is incomplete' }),
@@ -60,5 +60,6 @@ export const defaultSchemas = {
   poolType: z.enum(['Salt', 'Chlorine', 'Other'], {
     required_error: 'Pool type is required.',
     invalid_type_error: "Pool type must be 'Salt', 'Chlorine' or 'Other'."
-  })
+  }),
+  date: z.coerce.date()
 };

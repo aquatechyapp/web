@@ -1,14 +1,13 @@
 import { jwtVerify } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
+const whitelist = ['/login', '/signup', '/userconfirmation', '/recover', '/resetpassword'];
+
 export async function middleware(req: NextRequest) {
   // for public routes, we don't need to check for a token
   const pathname = req.nextUrl.pathname;
-  if (
-    pathname.startsWith('/login') || // exclude login
-    pathname.startsWith('/signup') || // exclude signup
-    pathname.startsWith('/userconfirmation') // exclude userconfirmation
-  ) {
+
+  if (whitelist.some((path) => path === pathname)) {
     return NextResponse.next();
   }
 

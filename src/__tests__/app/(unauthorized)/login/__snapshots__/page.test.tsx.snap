@@ -16,8 +16,8 @@ exports[`LoginPage > should render LoginPage 1`] = `
             class="h-auto w-80"
             data-nimg="1"
             decoding="async"
+            fetchpriority="high"
             height="0"
-            loading="lazy"
             sizes="100vw"
             src="/_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=3840&q=75"
             srcset="/_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=640&q=75 640w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=750&q=75 750w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=828&q=75 828w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=1080&q=75 1080w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=1200&q=75 1200w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=1920&q=75 1920w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=2048&q=75 2048w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=3840&q=75 3840w"
@@ -42,10 +42,10 @@ exports[`LoginPage > should render LoginPage 1`] = `
               Don't you have an account? 
             </span>
             <a
-              class="text-sm font-bold text-gray-500"
+              class="text-sm font-semibold text-blue-500"
               href="/signup"
             >
-              Signup
+              Sign Up
             </a>
           </div>
         </div>
@@ -91,6 +91,12 @@ exports[`LoginPage > should render LoginPage 1`] = `
                 value=""
               />
             </div>
+            <a
+              class="text-sm font-semibold text-blue-500"
+              href="/recover"
+            >
+              Forgot Password?
+            </a>
           </div>
           <button
             class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2 w-full"
@@ -114,8 +120,8 @@ exports[`LoginPage > should render LoginPage 1`] = `
           class="h-auto w-80"
           data-nimg="1"
           decoding="async"
+          fetchpriority="high"
           height="0"
-          loading="lazy"
           sizes="100vw"
           src="/_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=3840&q=75"
           srcset="/_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=640&q=75 640w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=750&q=75 750w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=828&q=75 828w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=1080&q=75 1080w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=1200&q=75 1200w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=1920&q=75 1920w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=2048&q=75 2048w, /_next/image?url=%2Fpublic%2Fimages%2FlogoHor.png&w=3840&q=75 3840w"
@@ -140,10 +146,10 @@ exports[`LoginPage > should render LoginPage 1`] = `
             Don't you have an account? 
           </span>
           <a
-            class="text-sm font-bold text-gray-500"
+            class="text-sm font-semibold text-blue-500"
             href="/signup"
           >
-            Signup
+            Sign Up
           </a>
         </div>
       </div>
@@ -189,6 +195,12 @@ exports[`LoginPage > should render LoginPage 1`] = `
               value=""
             />
           </div>
+          <a
+            class="text-sm font-semibold text-blue-500"
+            href="/recover"
+          >
+            Forgot Password?
+          </a>
         </div>
         <button
           class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2 w-full"

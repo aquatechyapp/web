@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Client } from '@/interfaces/Client';
@@ -105,10 +106,17 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
     <div className="rounded-md border">
       <div className="flex w-full flex-col items-center justify-between px-2 py-4 md:flex-row">
         <div className="flex w-full flex-col gap-4 text-nowrap md:flex-row">
-          <Button>
-            <PlusIcon className="mr-2" />
-            <Link href={'/clients/new'}>New Client</Link>
-          </Button>
+          <HoverCard>
+            <HoverCardTrigger>
+              <Button>
+                <PlusIcon className="mr-2" />
+                <Link href={'/clients/new'}>New Client</Link>
+              </Button>
+            </HoverCardTrigger>
+            <HoverCardContent side="bottom" className="w-full">
+              Upgrade your plan to add more pools.
+            </HoverCardContent>
+          </HoverCard>
           <Input
             placeholder="Filter clients..."
             value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}

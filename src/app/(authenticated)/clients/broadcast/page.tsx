@@ -49,7 +49,12 @@ export default function Page() {
 
   const generateTimeOptions = () => {
     const times = [];
-    for (let i = 0; i < 24; i++) {
+    for (let i = 1; i <= 12; i++) {
+      // Formata a hora para dois dígitos (00-23)
+      const hour = i.toString().padStart(2, '0');
+      times.push({ value: `${hour}:00 AM`, name: `${hour}:00 AM`, key: `${hour}:00 AM` });
+    }
+    for (let i = 1; i <= 12; i++) {
       // Formata a hora para dois dígitos (00-23)
       const hour = i.toString().padStart(2, '0');
       times.push({ value: `${hour}:00 PM`, name: `${hour}:00 PM`, key: `${hour}:00 PM` });
@@ -187,7 +192,6 @@ export default function Page() {
               onChange={(text: string[]) => handleCitySelectionChange(text)}
             />
           </div>
-
           <div className="inline-flex w-full justify-start gap-4 self-stretch">
             <div className="w-full">
               <InputField

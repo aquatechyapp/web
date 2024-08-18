@@ -41,3 +41,8 @@ export enum ClientType {
   Residential = 'Residential',
   Commercial = 'Commercial'
 }
+
+export enum UserSubscription {
+  Free = 'Free',
+  Premium = 'Premium'
+}

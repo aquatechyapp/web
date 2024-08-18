@@ -56,10 +56,9 @@ export default function Page() {
     onSuccess: () => {
       setShowModal(true);
       toast({
-        duration: 2000,
         title: 'Success',
         description: 'User created successfully. Please check your email to confirm your account.',
-        className: 'bg-green-500'
+        className: 'bg-green-500 text-white'
       });
     },
     onError: (error) => {
@@ -111,18 +110,18 @@ export default function Page() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] overflow-scroll rounded-lg bg-gray-50 px-6 py-8"
+        className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8"
       >
         <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
-          <Image width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
+          <Image priority width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
         </div>
         <div className="relative h-[50px] w-[400px]">
           <div className="absolute left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] text-gray-800">
-            Signup
+            Create your account
           </div>
           <div className="absolute left-0 top-[30px] h-5 w-[400px]">
             <span className="text-sm font-medium text-gray-500">Already have an account? </span>
-            <Link href="/login" className="text-sm font-bold text-gray-500">
+            <Link href="/login" className="text-sm font-bold text-blue-500">
               Login
             </Link>
           </div>

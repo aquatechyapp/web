@@ -1,4 +1,4 @@
-import { LanguageOptions, SubcontractorStatus } from '@/constants/enums';
+import { LanguageOptions, SubcontractorStatus, UserSubscription } from '@/constants/enums';
 
 export type BasicData = {
   id: string;
@@ -20,6 +20,7 @@ export interface User extends BasicData {
   workRelationsAsAEmployer: WorkRelation[];
   createdAt: string;
   workRelationsAsASubcontractor: WorkRelation[];
+  subscription: UserSubscription;
 }
 
 export type WorkRelation = {
