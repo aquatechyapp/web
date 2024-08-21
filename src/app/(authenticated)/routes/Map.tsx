@@ -16,7 +16,7 @@ const mapContainerStyle = {
   borderRadius: '8px'
 };
 const center = {
-  lat: 28.538336,
+  lat: 28.538337,
   lng: -81.379234
 };
 
