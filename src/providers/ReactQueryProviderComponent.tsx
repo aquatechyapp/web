@@ -9,7 +9,8 @@ import pj from '../../package.json';
 export function ReactQueryProviderComponent({ children }: { children: React.ReactNode }) {
   console.log({
     env: process.env.NODE_ENV,
-    version: pj.version
+    version: pj.version,
+    test: 'test'
   });
 
   const [queryClient] = useState(
