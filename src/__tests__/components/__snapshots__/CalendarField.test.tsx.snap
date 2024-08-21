@@ -463,10 +463,10 @@ exports[`CalendarField > should render the CalendarField component 1`] = `
                       role="presentation"
                     >
                       <button
-                        class="rdp-button_reset rdp-button inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-8 w-8 p-0 font-normal aria-selected:opacity-100 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-50"
+                        class="rdp-button_reset rdp-button inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-8 w-8 p-0 font-normal aria-selected:opacity-100"
                         name="day"
                         role="gridcell"
-                        tabindex="0"
+                        tabindex="-1"
                         type="button"
                       >
                         18
@@ -491,10 +491,10 @@ exports[`CalendarField > should render the CalendarField component 1`] = `
                       role="presentation"
                     >
                       <button
-                        class="rdp-button_reset rdp-button inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-8 w-8 p-0 font-normal aria-selected:opacity-100"
+                        class="rdp-button_reset rdp-button inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-8 w-8 p-0 font-normal aria-selected:opacity-100 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-50"
                         name="day"
                         role="gridcell"
-                        tabindex="-1"
+                        tabindex="0"
                         type="button"
                       >
                         20
@@ -1127,10 +1127,10 @@ exports[`CalendarField > should render the CalendarField component 1`] = `
                     role="presentation"
                   >
                     <button
-                      class="rdp-button_reset rdp-button inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-8 w-8 p-0 font-normal aria-selected:opacity-100 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-50"
+                      class="rdp-button_reset rdp-button inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-8 w-8 p-0 font-normal aria-selected:opacity-100"
                       name="day"
                       role="gridcell"
-                      tabindex="0"
+                      tabindex="-1"
                       type="button"
                     >
                       18
@@ -1155,10 +1155,10 @@ exports[`CalendarField > should render the CalendarField component 1`] = `
                     role="presentation"
                   >
                     <button
-                      class="rdp-button_reset rdp-button inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-8 w-8 p-0 font-normal aria-selected:opacity-100"
+                      class="rdp-button_reset rdp-button inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-8 w-8 p-0 font-normal aria-selected:opacity-100 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-50"
                       name="day"
                       role="gridcell"
-                      tabindex="-1"
+                      tabindex="0"
                       type="button"
                     >
                       20

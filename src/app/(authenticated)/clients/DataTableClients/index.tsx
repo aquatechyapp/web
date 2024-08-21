@@ -22,6 +22,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/h
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Client } from '@/interfaces/Client';
+import { useUserStore } from '@/store/user';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -29,6 +30,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTableClients<TValue>({ columns, data }: DataTableProps<Client, TValue>) {
+  const shouldDisableNewPools = useUserStore((state) => state.shouldDisableNewPools);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sortColumn, setSortColumn] = useState<keyof Client | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -108,14 +110,16 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
         <div className="flex w-full flex-col gap-4 text-nowrap md:flex-row">
           <HoverCard>
             <HoverCardTrigger>
-              <Button>
+              <Button disabled={shouldDisableNewPools}>
                 <PlusIcon className="mr-2" />
                 <Link href={'/clients/new'}>New Client</Link>
               </Button>
             </HoverCardTrigger>
-            <HoverCardContent side="bottom" className="w-full">
-              Upgrade your plan to add more pools.
-            </HoverCardContent>
+            {shouldDisableNewPools && (
+              <HoverCardContent side="bottom" className="w-full">
+                Upgrade your plan to add more pools.
+              </HoverCardContent>
+            )}
           </HoverCard>
           <Input
             placeholder="Filter clients..."

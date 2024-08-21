@@ -43,6 +43,7 @@ export enum ClientType {
 }
 
 export enum UserSubscription {
-  Free = 'Free',
-  Premium = 'Premium'
+  FREE = 'FREE',
+  GROW = 'GROW',
+  PRO = 'PRO'
 }

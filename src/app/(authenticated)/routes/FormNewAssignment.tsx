@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { useFormContext } from 'react-hook-form';
 
 import DatePickerField from '@/components/DatePickerField';
@@ -8,9 +7,9 @@ import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { Frequencies } from '@/constants';
 import { FieldType } from '@/constants/enums';
+import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
 import { Client } from '@/interfaces/Client';
-import { clientAxios } from '@/lib/clientAxios';
 import { buildSelectOptions } from '@/utils/formUtils';
 
 import { FormSchema } from './page';
@@ -19,27 +18,21 @@ export const FormNewAssignment = () => {
   const form = useFormContext<FormSchema>();
 
   const disabledWeekdays = useDisabledWeekdays();
-  const { data, isLoading } = useQuery({
-    queryKey: ['clients'],
-    queryFn: async () => {
-      const response = await clientAxios('/clients');
-      return response.data;
-    },
-    staleTime: Infinity
-  });
+  const { data: clients, isLoading } = useGetClients();
 
   if (isLoading) return <LoadingSpinner />;
 
   const clientId = form.watch('client');
-  const hasClients = data.clients.length > 0;
+
+  const hasClients = clients.length > 0;
 
   return (
     <Form {...form}>
       <form className="flex flex-col">
         <div className="flex flex-col gap-4">
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4">
             <SelectField
-              options={data.clients
+              options={clients
                 .filter((c: Client) => c.pools.length > 0)
                 .map((c: Client) => ({
                   key: c.id,
@@ -54,7 +47,7 @@ export const FormNewAssignment = () => {
               <SelectField
                 options={buildSelectOptions(
                   // Procura a piscina somente quando seleciona o cliente
-                  data?.clients.find((c: Client) => c.id === clientId)?.pools,
+                  clients.find((c: Client) => c.id === clientId)?.pools,
                   {
                     key: 'id',
                     name: 'name',
