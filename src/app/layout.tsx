@@ -5,7 +5,6 @@ import localFont from 'next/font/local';
 
 import { ReactQueryProviderComponent } from '@/providers/ReactQueryProviderComponent';
 
-import pj from '../../package.json';
 import { Toaster } from '../components/ui/toaster';
 
 const generalSans = localFont({
@@ -36,11 +35,6 @@ export const metadata: Metadata = {
     }
   ]
 };
-
-console.log({
-  env: process.env.NODE_ENV,
-  version: pj.version
-});
 
 export default function RootLayout({
   children

@@ -4,7 +4,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
 
+import pj from '../../package.json';
+
 export function ReactQueryProviderComponent({ children }: { children: React.ReactNode }) {
+  console.log({
+    env: process.env.NODE_ENV,
+    version: pj.version
+  });
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
