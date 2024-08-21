@@ -11,7 +11,7 @@ export const useChangeSubscription = (subscriptionPlan: UserSubscription) => {
   const user = useUserStore((state) => state.user);
   const { toast } = useToast();
 
-  const { mutate, isPending, error } = useMutation({
+  const { mutate, isPending, data, isSuccess } = useMutation({
     mutationFn: async () =>
       await clientAxios.post('/subscriptions', {
         userId: user.id,
@@ -21,9 +21,6 @@ export const useChangeSubscription = (subscriptionPlan: UserSubscription) => {
         company: user.company,
         subscriptionPlan
       }),
-    onSuccess: async ({ data }) => {
-      window.open(data, '_blank', 'noreferrer');
-    },
     onError: (error): Error | AxiosError => {
       toast({
         title: 'Error on request to change subscription',
@@ -33,5 +30,5 @@ export const useChangeSubscription = (subscriptionPlan: UserSubscription) => {
       return error;
     }
   });
-  return { mutate, isPending, error };
+  return { mutate, isPending, data, isSuccess };
 };

@@ -17,7 +17,11 @@ export function SubscriptionCard({ plan, currentPlan }: Props) {
   const isCurrentPlan = plan.name === currentPlan;
   const currentPlanClass = isCurrentPlan ? 'border-4 border-double border-blue-500 bg-blue-100' : '';
 
-  const { mutate, isPending } = useChangeSubscription(plan.name);
+  const { mutate, isPending, isSuccess, data } = useChangeSubscription(plan.name);
+
+  if (isSuccess && data?.data) {
+    window.open(data.data, '_blank', 'noreferrer');
+  }
 
   if (isPending) return <LoadingSpinner />;
 
