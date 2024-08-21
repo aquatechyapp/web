@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useShallow } from 'zustand/react/shallow';
 
 import DatePickerField from '@/components/DatePickerField';
 import InputField from '@/components/InputField';
@@ -30,7 +31,13 @@ import { createFormData } from '@/utils/formUtils';
 type PoolAndClientSchema = z.infer<typeof poolAndClientSchema>;
 
 export default function Page() {
-  const user = useUserStore((state) => state.user);
+  const { user, shouldDisableNewPools } = useUserStore(
+    useShallow((state) => ({
+      user: state.user,
+      shouldDisableNewPools: state.shouldDisableNewPools
+    }))
+  );
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { width } = useWindowDimensions();
@@ -62,6 +69,17 @@ export default function Page() {
   });
 
   const { push } = useRouter();
+
+  useEffect(() => {
+    if (shouldDisableNewPools) {
+      push('/clients');
+      toast({
+        title: 'You have reached the pool limit',
+        description: 'Upgrade to a paid plan to add more pools',
+        className: 'bg-red-500 text-white'
+      });
+    }
+  }, []);
 
   const subContractors = useMemo(() => {
     if (!user) return [];

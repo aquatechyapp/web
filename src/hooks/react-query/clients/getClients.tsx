@@ -4,7 +4,11 @@ import { Client } from '@/interfaces/Client';
 import { clientAxios } from '@/lib/clientAxios';
 
 export default function useGetClients() {
-  const { data, isLoading, isSuccess } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    isSuccess
+  } = useQuery({
     queryKey: ['clients'],
     queryFn: async () => {
       const response = await clientAxios('/clients');
@@ -13,9 +17,10 @@ export default function useGetClients() {
         client.fullName = `${client.firstName} ${client.lastName}`;
       });
 
-      return response.data?.clients as Client[];
-    },
-    staleTime: Infinity
+      const clients: Client[] | [] = response.data.clients ? response.data.clients : [];
+
+      return clients;
+    }
   });
   return { data, isLoading, isSuccess };
 }

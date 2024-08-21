@@ -18,8 +18,15 @@ type Props = {
 };
 
 function SelectField({ options, name, placeholder, form, field, ...props }: Props & SelectProps & SelectFieldProps) {
+  function onValueChange(data: string) {
+    field.onChange(data);
+    if (props.onValueChange) {
+      props.onValueChange(data);
+    }
+  }
+
   return (
-    <Select defaultValue={form.watch(name)} onValueChange={field.onChange} {...props}>
+    <Select {...props} defaultValue={form.watch(name)} onValueChange={onValueChange}>
       <SelectTrigger className={`${!form.getValues(name) && 'text-slate-500'}`}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

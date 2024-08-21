@@ -26,7 +26,7 @@ export const columns: ColumnDef<Client>[] = [
     }
   },
   {
-    accessorKey: 'phone1' || 'phone2',
+    accessorKey: 'phone',
     header: 'Phone',
     cell: (props) => <Phones {...props} />
   },

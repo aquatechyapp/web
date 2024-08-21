@@ -21,6 +21,7 @@ export interface User extends BasicData {
   createdAt: string;
   workRelationsAsASubcontractor: WorkRelation[];
   subscription: UserSubscription;
+  poolsCount: number;
 }
 
 export type WorkRelation = {
