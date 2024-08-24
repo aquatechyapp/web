@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { SubcontractorStatus } from '@/constants/enums';
+import { SubcontractorStatus } from '@/ts/enums/enums';
 import { getInitials } from '@/utils/others';
 
 import { Button } from '../../../components/ui/button';

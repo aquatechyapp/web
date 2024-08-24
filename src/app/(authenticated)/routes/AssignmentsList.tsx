@@ -31,9 +31,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAssignmentsContext } from '@/context/assignments';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { Assignment } from '@/interfaces/Assignments';
 import { useTechniciansStore } from '@/store/technicians';
 import { useUserStore } from '@/store/user';
+import { Assignment } from '@/ts/interfaces/Assignments';
 import { getInitials } from '@/utils/others';
 
 import { DialogDeleteAssignment } from './ModalDeleteAssignment';

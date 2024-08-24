@@ -14,7 +14,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Categories, RequestStatus } from '@/constants';
-import { Request } from '@/interfaces/Request';
+import { Request } from '@/ts/interfaces/Request';
 
 import { ModalAddRequest } from '../ModalAddRequest';
 import { ModalEditRequest } from '../ModalEditRequest';

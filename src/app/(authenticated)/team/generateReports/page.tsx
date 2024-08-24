@@ -10,10 +10,10 @@ import { QuixotePdf } from '@/components/Pdf';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { SubcontractorStatus } from '@/constants/enums';
 import { clientAxios } from '@/lib/clientAxios';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
+import { SubcontractorStatus } from '@/ts/enums/enums';
 
 const schema = z.object({
   fromDate: defaultSchemas.date,

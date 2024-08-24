@@ -14,11 +14,11 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories } from '@/constants';
-import { FieldType } from '@/constants/enums';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useCreateRequest } from '@/hooks/react-query/requests/createRequest';
-import { Client } from '@/interfaces/Client';
 import { useUserStore } from '@/store/user';
+import { FieldType } from '@/ts/enums/enums';
+import { Client } from '@/ts/interfaces/Client';
 import { isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
 

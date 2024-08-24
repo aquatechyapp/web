@@ -1,4 +1,4 @@
-import { PoolType } from '@/constants/enums';
+import { PoolType } from '@/ts/enums/enums';
 
 import { Service } from './Service';
 

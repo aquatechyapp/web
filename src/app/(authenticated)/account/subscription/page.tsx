@@ -8,9 +8,9 @@ import { useShallow } from 'zustand/react/shallow';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from '@/components/ui/use-toast';
 import { Colors } from '@/constants/colors';
-import { UserSubscription } from '@/constants/enums';
 import { clientAxios } from '@/lib/clientAxios';
 import { useUserStore } from '@/store/user';
+import { UserSubscription } from '@/ts/enums/enums';
 
 import { SubscriptionCard } from './SubscriptionCard';
 

@@ -6,11 +6,11 @@ import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { paymentType } from '@/constants';
-import { FieldType } from '@/constants/enums';
 import { useEditRelation } from '@/hooks/react-query/edit-relation/editRelation';
-import { WorkRelation } from '@/interfaces/User';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
+import { FieldType } from '@/ts/enums/enums';
+import { WorkRelation } from '@/ts/interfaces/User';
 
 import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';

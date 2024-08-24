@@ -47,3 +47,13 @@ export enum UserSubscription {
   GROW = 'GROW',
   PRO = 'PRO'
 }
+
+export enum IanaTimeZones {
+  NY = 'America/New_York',
+  CHICAGO = 'America/Chicago',
+  DENVER = 'America/Denver',
+  LA = 'America/Los_Angeles',
+  ANCHORAGE = 'America/Anchorage',
+  ADAK = 'America/Adak',
+  HONOLULU = 'Pacific/Honolulu'
+}

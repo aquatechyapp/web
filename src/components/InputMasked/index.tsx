@@ -25,25 +25,23 @@ type Props = {
   mask: 'currencyValue' | 'percentValue' | 'phone' | 'zipcode';
 };
 
-export const InputMasked = forwardRef<HTMLInputElement, Props>(({ field, placeholder, name, mask, ...props }) => {
+export const InputMasked = forwardRef<HTMLInputElement, Props>(({ field, placeholder, name, mask, ...props }, ref) => {
   const form = useFormContext();
   const inputRef = useMaskito({ options: masks[mask] });
+
   let value = field.value;
 
   if (mask === 'currencyValue' && value) {
-    // converte o valor recebido do backend (number) pra mascara de moeda
     value = maskitoTransform(insertDot(onlyNumbers(value.toString())).toFixed(2), masks[mask]);
   }
 
   if (mask === 'percentValue' && value) {
-    // converte o valor recebido do backend (number) pra mascara de percentual
     value = maskitoTransform(value.toString(), masks[mask]);
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     let newValue: string | number = e.target.value;
     if (mask === 'currencyValue' || mask === 'percentValue') {
-      // quando for um input de moeda, removemos os pontos e virgulas e convertemos pra number
       newValue = onlyNumbers(newValue);
     }
     form.setValue(name, newValue);
@@ -55,7 +53,14 @@ export const InputMasked = forwardRef<HTMLInputElement, Props>(({ field, placeho
       placeholder={placeholder}
       {...field}
       onInput={handleChange}
-      ref={inputRef}
+      ref={(node) => {
+        inputRef(node);
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
+        }
+      }}
       {...props}
       value={value}
     />

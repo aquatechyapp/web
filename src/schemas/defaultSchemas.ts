@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { IanaTimeZones } from '@/ts/enums/enums';
+
 function commonStringSchema(message: string, min: number = 1) {
   return z
     .string({
@@ -61,5 +63,9 @@ export const defaultSchemas = {
     required_error: 'Pool type is required.',
     invalid_type_error: "Pool type must be 'Salt', 'Chlorine' or 'Other'."
   }),
-  date: z.coerce.date()
+  date: z.coerce.date(),
+  timezone: z.nativeEnum(IanaTimeZones, {
+    required_error: 'Timezone is required.',
+    invalid_type_error: 'Invalid timezone.'
+  })
 };

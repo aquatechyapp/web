@@ -1,4 +1,4 @@
-import { Pool } from '../interfaces/Assignments';
+import { Pool } from '../ts/interfaces/Assignments';
 
 // função para colocar ponto antes dos dois últimos dígitos
 // Ex.: 123 => 1.23

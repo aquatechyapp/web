@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useShallow } from 'zustand/react/shallow';
 
-import { SubcontractorStatus } from '@/constants/enums';
-import { User, WorkRelation } from '@/interfaces/User';
 import { clientAxios } from '@/lib/clientAxios';
 import { useTechniciansStore } from '@/store/technicians';
 import { useUserStore } from '@/store/user';
+import { SubcontractorStatus } from '@/ts/enums/enums';
+import { User, WorkRelation } from '@/ts/interfaces/User';
 
 type Props = {
   userId: string;
@@ -24,14 +24,14 @@ export default function useGetUser({ userId }: Props) {
     queryKey: ['user', userId],
     queryFn: async () => {
       const response = (await clientAxios.get(`/users/${userId}`)).data;
-
-      const user: User = {
-        ...response.data.user,
-        incomeAsACompany: response.data.incomeAsACompany,
-        incomeAsASubcontractor: response.data.incomeAsASubcontractor
+      const user = response.data.user as User;
+      delete response.data.user;
+      const userData: User = {
+        ...user,
+        ...response.data
       };
 
-      setUser(user);
+      setUser(userData);
 
       setAssignmentToId(user.id);
       setTechnicians([

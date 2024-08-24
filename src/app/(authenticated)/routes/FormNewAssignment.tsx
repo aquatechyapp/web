@@ -6,10 +6,10 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { Frequencies } from '@/constants';
-import { FieldType } from '@/constants/enums';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
-import { Client } from '@/interfaces/Client';
+import { FieldType } from '@/ts/enums/enums';
+import { Client } from '@/ts/interfaces/Client';
 import { buildSelectOptions } from '@/utils/formUtils';
 
 import { FormSchema } from './page';

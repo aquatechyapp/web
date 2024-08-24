@@ -9,10 +9,10 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { FieldType, LanguageOptions } from '@/constants/enums';
 import { useUpdateUser } from '@/hooks/react-query/user/updateUser';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
+import { FieldType, LanguageOptions } from '@/ts/enums/enums';
 
 const formSchema = z.object({
   firstName: defaultSchemas.name,

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { expect } from 'vitest';
 
 import InputField from '@/components/InputField';
-import { FieldType } from '@/constants/enums';
+import { FieldType } from '@/ts/enums/enums';
 
 import { FormProviderMocked } from '../providers/formProviderMocked';
 

@@ -14,12 +14,12 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories, RequestStatus } from '@/constants';
-import { FieldType } from '@/constants/enums';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useUpdateRequest } from '@/hooks/react-query/requests/updateRequest';
-import { Client } from '@/interfaces/Client';
-import { Request } from '@/interfaces/Request';
 import { useUserStore } from '@/store/user';
+import { FieldType } from '@/ts/enums/enums';
+import { Client } from '@/ts/interfaces/Client';
+import { Request } from '@/ts/interfaces/Request';
 import { isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
 

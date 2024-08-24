@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useToast } from '@/components/ui/use-toast';
 import { useAssignmentsContext } from '@/context/assignments';
-import { Assignment, TransferAssignment } from '@/interfaces/Assignments';
-import { WeekdaysUppercase } from '@/interfaces/Weekday';
 import { clientAxios } from '@/lib/clientAxios';
+import { Assignment, TransferAssignment } from '@/ts/interfaces/Assignments';
+import { WeekdaysUppercase } from '@/ts/interfaces/Weekday';
 
 type TransferAssignments = {
   assignmentToId: string;

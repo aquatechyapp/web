@@ -1,4 +1,4 @@
-import { LanguageOptions, SubcontractorStatus, UserSubscription } from '@/constants/enums';
+import { LanguageOptions, SubcontractorStatus, UserSubscription } from '@/ts/enums/enums';
 
 export type BasicData = {
   id: string;

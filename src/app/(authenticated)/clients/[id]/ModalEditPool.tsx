@@ -7,7 +7,7 @@ import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { PoolTypes } from '@/constants';
-import { FieldType } from '@/constants/enums';
+import { FieldType } from '@/ts/enums/enums';
 
 type Props = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

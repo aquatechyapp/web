@@ -1,7 +1,7 @@
 import { City, IState, State } from 'country-state-city';
 
-import { ClientType, PoolType } from '@/constants/enums';
 import { fuseSearchStatesAndCities, simpleFuseSearch } from '@/lib/fusejs';
+import { ClientType, PoolType } from '@/ts/enums/enums';
 import { onlyNumbers } from '@/utils';
 
 import { FormDataImportClients } from './page';

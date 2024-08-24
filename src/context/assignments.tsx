@@ -6,8 +6,8 @@ import { useTechniciansStore } from '@/store/technicians';
 import { useWeekdayStore } from '@/store/weekday';
 
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import { Assignment } from '../interfaces/Assignments';
 import { clientAxios } from '../lib/clientAxios';
+import { Assignment } from '../ts/interfaces/Assignments';
 
 type AssignmentsContextType = {
   assignments: {

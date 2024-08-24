@@ -1,7 +1,7 @@
 import { CellContext } from '@tanstack/react-table';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Client } from '@/interfaces/Client';
+import { Client } from '@/ts/interfaces/Client';
 import { getInitials } from '@/utils/others';
 
 export default function NamePhoto(cell: CellContext<Client, unknown>) {

@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useToast } from '@/components/ui/use-toast';
-import { Assignment } from '@/interfaces/Assignments';
 import { clientAxios } from '@/lib/clientAxios';
+import { Assignment } from '@/ts/interfaces/Assignments';
 
 export const useUpdateAssignments = () => {
   const queryClient = useQueryClient();

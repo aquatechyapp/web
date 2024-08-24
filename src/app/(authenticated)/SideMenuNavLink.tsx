@@ -21,10 +21,10 @@ type Props = {
 export default function SideMenuNavLink({ route }: Props) {
   const { icon, text, href, submenu } = route;
   const Icon = icon;
-  const pathname = `/${usePathname().split('/')[1]}`;
+  const pathname = usePathname();
+  const pathResource = `/${pathname.split('/')[1]}`;
 
-  const isActive = href === pathname;
-
+  const isActive = href === pathResource;
   return (
     <div
       className={`flex w-full items-start justify-start px-2 text-gray-300 hover:bg-gray-800 ${isActive && 'border-r-4 border-blue-500 bg-gray-800'} `}
@@ -49,13 +49,20 @@ export default function SideMenuNavLink({ route }: Props) {
                 </div>
                 <div className="flex w-[100%] items-start justify-start text-slate-50">{text}</div>
               </AccordionTrigger>
-              {Object.entries(submenu).map(([key, subItem]) => (
-                <Link href={subItem.href} key={key + subItem.href + subItem.text}>
-                  <AccordionContent className="text-ls font-medium leading-none text-gray-500 hover:font-semibold hover:text-gray-400">
-                    <div className="ml-10 flex w-[50%] items-start justify-start">{subItem.text}</div>
-                  </AccordionContent>
-                </Link>
-              ))}
+              {Object.entries(submenu).map(([key, subItem]) => {
+                return (
+                  <Link href={subItem.href} key={key + subItem.href + subItem.text}>
+                    <AccordionContent
+                      className={
+                        'text-ls font-medium leading-none text-gray-500 hover:font-semibold hover:text-blue-500' +
+                        (pathname === submenu[key].href ? ' font-semibold text-blue-500' : '')
+                      }
+                    >
+                      <div className="ml-10 flex w-[50%] items-start justify-start text-nowrap">{subItem.text}</div>
+                    </AccordionContent>
+                  </Link>
+                );
+              })}
             </AccordionItem>
           </Accordion>
         )}

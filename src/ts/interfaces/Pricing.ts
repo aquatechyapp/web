@@ -1,4 +1,4 @@
-import { UserSubscription } from '@/constants/enums';
+import { UserSubscription } from '@/ts/enums/enums';
 
 export type Plan = {
   name: UserSubscription;

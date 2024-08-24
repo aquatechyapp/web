@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { WorkRelation } from '../interfaces/User';
+import { WorkRelation } from '../ts/interfaces/User';
 
 type Store = {
   assignmentToId: string;

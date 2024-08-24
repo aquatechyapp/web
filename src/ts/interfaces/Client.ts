@@ -1,4 +1,4 @@
-import { ClientType } from '@/constants/enums';
+import { ClientType, IanaTimeZones } from '@/ts/enums/enums';
 
 import { Pool } from './Assignments';
 
@@ -25,4 +25,5 @@ export interface Client {
   pools: Pool[];
   lastServiceDate: string;
   type: ClientType;
+  timezone: IanaTimeZones;
 }

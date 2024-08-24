@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useDeleteAssignment } from '@/hooks/react-query/assignments/useDeleteAssignment';
-import { Assignment } from '@/interfaces/Assignments';
+import { Assignment } from '@/ts/interfaces/Assignments';
 
 type Props = {
   assignment?: Assignment;

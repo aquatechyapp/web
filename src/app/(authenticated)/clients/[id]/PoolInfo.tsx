@@ -9,11 +9,11 @@ import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
-import { FieldType } from '@/constants/enums';
 import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
-import { Pool } from '@/interfaces/Assignments';
 import { editPoolSchema } from '@/schemas/pool';
+import { FieldType } from '@/ts/enums/enums';
+import { Pool } from '@/ts/interfaces/Assignments';
 import { isEmpty } from '@/utils';
 import { findDifferenceBetweenTwoObjects } from '@/utils/others';
 
@@ -56,7 +56,7 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="grid gap-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
         <div className="flex h-5 w-full justify-between text-sm font-medium text-gray-500">
           Basic information
           <div className="flex gap-4 text-lg">
@@ -65,7 +65,7 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
         </div>
         <InputField name="address" placeholder="Address" />
 
-        <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
+        <div className="Form inline-flex flex-wrap items-start justify-start self-stretch md:flex-nowrap">
           {/* <InputField disabled  name="address" placeholder="Address" /> */}
           <StateAndCitySelect cityName="city" stateName="state" />
         </div>
@@ -86,11 +86,9 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
             <InputField className="h-full" type={FieldType.TextArea} name="notes" placeholder="Location notes..." />
           </div>
         </div>
-        {!isEmpty(changedFields) && (
-          <Button className="mt-4" type="submit">
-            Save
-          </Button>
-        )}
+        <Button disabled={isEmpty(changedFields)} className="mt-4" type="submit">
+          Save
+        </Button>
       </form>
     </Form>
   );

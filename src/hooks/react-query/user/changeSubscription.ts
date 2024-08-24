@@ -2,8 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import { useToast } from '@/components/ui/use-toast';
-import { UserSubscription } from '@/constants/enums';
 import { useUserStore } from '@/store/user';
+import { UserSubscription } from '@/ts/enums/enums';
 
 import { clientAxios } from '../../../lib/clientAxios';
 

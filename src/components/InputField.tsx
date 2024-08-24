@@ -1,6 +1,6 @@
 import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 
-import { FieldType } from '@/constants/enums';
+import { FieldType } from '@/ts/enums/enums';
 
 import { InputMasked } from './InputMasked';
 import { Checkbox } from './ui/checkbox';

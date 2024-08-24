@@ -1,5 +1,5 @@
-import { WeekdaysUppercase } from '@/interfaces/Weekday';
 import { useWeekdayStore } from '@/store/weekday';
+import { WeekdaysUppercase } from '@/ts/interfaces/Weekday';
 
 // Return an array of disabled weekdays based on the selected weekday
 // This is a business logic, startOn should match weekday with endAfter

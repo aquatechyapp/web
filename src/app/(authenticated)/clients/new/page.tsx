@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
-import { FieldType } from '@/constants/enums';
 import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
@@ -26,6 +25,7 @@ import { dateSchema } from '@/schemas/date';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
 import { useUserStore } from '@/store/user';
+import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
 import { createFormData } from '@/utils/formUtils';
 
 type PoolAndClientSchema = z.infer<typeof poolAndClientSchema>;
@@ -124,7 +124,8 @@ export default function Page() {
       customerCode: '',
       paidByService: undefined,
       clientCompany: '',
-      clientType: 'Residential'
+      clientType: 'Residential',
+      timezone: IanaTimeZones.NY
     }
   });
 
@@ -173,11 +174,11 @@ export default function Page() {
             <InputField name="customerCode" placeholder="Customer code" label="Customer code" />
           </div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-            <div className="min-w-fit">
-              <InputField name="clientAddress" placeholder="Billing address" label="Billing address" />
-            </div>
+            <InputField name="clientAddress" placeholder="Billing address" label="Billing address" />
             <StateAndCitySelect />
             <InputField name="clientZip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
+          </div>
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row md:w-[50%]">
             <SelectField
               defaultValue="Residential"
               placeholder="Client Type"
@@ -195,6 +196,17 @@ export default function Page() {
                   value: 'Commercial'
                 }
               ]}
+            />
+            <SelectField
+              defaultValue="Residential"
+              placeholder="Select Time Zone"
+              name="timezone"
+              label="Client Time zone"
+              options={Object.values(IanaTimeZones).map((tz) => ({
+                key: tz,
+                name: tz,
+                value: tz
+              }))}
             />
           </div>
           <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
@@ -322,7 +334,8 @@ const additionalSchemas = z.object({
   customerCode: z.string().nullable(),
   monthlyPayment: defaultSchemas.monthlyPayment,
   clientCompany: z.string().nullable(),
-  clientType: z.enum(['Commercial', 'Residential'])
+  clientType: z.enum(['Commercial', 'Residential']),
+  timezone: defaultSchemas.timezone
 });
 
 const poolAndClientSchema = clientSchema

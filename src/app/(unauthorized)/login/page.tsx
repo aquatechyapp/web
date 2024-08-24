@@ -8,9 +8,9 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import imageIcon from '/public/images/logoHor.png';
-import { FieldType } from '@/constants/enums';
 import { useLoginUser } from '@/hooks/react-query/user/loginUser';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
+import { FieldType } from '@/ts/enums/enums';
 
 import InputField from '../../../components/InputField';
 import { Button } from '../../../components/ui/button';

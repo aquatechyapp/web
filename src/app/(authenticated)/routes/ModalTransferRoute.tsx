@@ -13,15 +13,15 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { FieldType } from '@/constants/enums';
 import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
 import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
-import { Assignment, TransferAssignment } from '@/interfaces/Assignments';
-import { WeekdaysUppercase } from '@/interfaces/Weekday';
 import { transferAssignmentsSchema } from '@/schemas/assignments';
 import { useTechniciansStore } from '@/store/technicians';
 import { useUserStore } from '@/store/user';
 import { useWeekdayStore } from '@/store/weekday';
+import { FieldType } from '@/ts/enums/enums';
+import { Assignment, TransferAssignment } from '@/ts/interfaces/Assignments';
+import { WeekdaysUppercase } from '@/ts/interfaces/Weekday';
 import { isEmpty } from '@/utils';
 
 import WeekdaySelect from './WeekdaySelect';

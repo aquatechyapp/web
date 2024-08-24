@@ -1,6 +1,6 @@
 import { CellContext } from '@tanstack/react-table';
 
-import { Client } from '@/interfaces/Client';
+import { Client } from '@/ts/interfaces/Client';
 
 export default function Phones(cell: CellContext<Client, unknown>) {
   const { phone } = cell.row.original;

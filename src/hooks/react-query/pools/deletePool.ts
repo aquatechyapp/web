@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useToast } from '@/components/ui/use-toast';
-import { Client } from '@/interfaces/Client';
+import { Client } from '@/ts/interfaces/Client';
 import { clientAxios } from '@/lib/clientAxios';
 
 export const useDeletePool = (queryKey: string[], poolId: string) => {

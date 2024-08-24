@@ -10,8 +10,8 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import imageIcon from '/public/images/logoHor.png';
-import { FieldType } from '@/constants/enums';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
+import { FieldType } from '@/ts/enums/enums';
 
 import InputField from '../../../components/InputField';
 import SelectField from '../../../components/SelectField';

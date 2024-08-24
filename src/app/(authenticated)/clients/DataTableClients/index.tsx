@@ -21,8 +21,8 @@ import { Form } from '@/components/ui/form';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Client } from '@/interfaces/Client';
 import { useUserStore } from '@/store/user';
+import { Client } from '@/ts/interfaces/Client';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -109,7 +109,7 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
       <div className="flex w-full flex-col items-center justify-between px-2 py-4 md:flex-row">
         <div className="flex w-full flex-col gap-4 text-nowrap md:flex-row">
           <HoverCard>
-            <HoverCardTrigger>
+            <HoverCardTrigger asChild>
               <Button disabled={shouldDisableNewPools}>
                 <PlusIcon className="mr-2" />
                 <Link href={'/clients/new'}>New Client</Link>

@@ -3,10 +3,10 @@ import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 
 import { useAssignmentsContext } from '@/context/assignments';
-import { Assignment } from '@/interfaces/Assignments';
 import { clientAxios } from '@/lib/clientAxios';
 import { useTechniciansStore } from '@/store/technicians';
 import { useWeekdayStore } from '@/store/weekday';
+import { Assignment } from '@/ts/interfaces/Assignments';
 
 export default function useGetAssignments() {
   const { push } = useRouter();

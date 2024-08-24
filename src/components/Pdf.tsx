@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import React, { useRef, useState } from 'react';
 import generatePDF, { Margin, Options } from 'react-to-pdf';
 
-import { Service } from '@/interfaces/Service';
+import { Service } from '@/ts/interfaces/Service';
 
 type PdfData = {
   Technician: string;

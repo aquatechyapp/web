@@ -15,7 +15,6 @@ import { clientAxios } from '@/lib/clientAxios';
 import { clientSchema } from '@/schemas/client';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
-import { isEmpty } from '@/utils';
 
 import ClientBox from './ClientBox';
 import { normalizeImportData } from './normalizeImportData';
@@ -27,16 +26,10 @@ const additionalSchemas = z.object({
   monthlyPayment: defaultSchemas.monthlyPayment,
   clientCompany: z.string().nullable(),
   clientType: z.enum(['Commercial', 'Residential']),
-  clientName: defaultSchemas.name
+  timezone: defaultSchemas.timezone
 });
 
-const poolAndClientSchema = clientSchema
-  .omit({
-    firstName: true,
-    lastName: true
-  })
-  .and(poolSchema)
-  .and(additionalSchemas);
+const poolAndClientSchema = clientSchema.and(poolSchema).and(additionalSchemas);
 
 const schema = z.object({
   csvFile: defaultSchemas.csvFile,
@@ -47,9 +40,8 @@ export type FormData = z.infer<typeof schema>;
 export type FormDataImportClients = z.infer<typeof poolAndClientSchema>;
 
 export default function Page() {
-  // const { forms, updateFormValues, cleanForms } = useFormStore();
   const form = useForm<FormData>({
-    mode: 'onChange',
+    reValidateMode: 'onChange',
     resolver: zodResolver(schema),
     defaultValues: {
       csvFile: undefined,
@@ -65,7 +57,7 @@ export default function Page() {
   const { toast } = useToast();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: FormDataImportClients[]) => await clientAxios.post('/importclientsandpools', data),
+    mutationFn: async (data: FormDataImportClients[]) => await clientAxios.post('/clients/many', data),
     onSuccess: () => {
       toast({
         duration: 2000,
@@ -120,9 +112,18 @@ export default function Page() {
     return <LoadingSpinner />;
   }
 
+  function handleMutate() {
+    const data = clients.fields.map((client) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...rest } = client;
+      return rest;
+    });
+    mutate(data);
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(() => mutate(clients.fields))}>
+      <form onSubmit={form.handleSubmit(() => handleMutate())}>
         <div className="rounded-md border">
           <div className="mx-2 my-4 flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap">
             <Button type="button">
@@ -162,7 +163,8 @@ export default function Page() {
             })}
           </div>
           <div className="w-full p-2">
-            <Button disabled={form.formState.isValid && isEmpty(form.formState.errors)} className="w-full">
+            {/* <Button disabled={!isEmpty(form.formState.errors) || form.watch('clients').length <= 0} className="w-full"> */}
+            <Button disabled={form.watch('clients').length <= 0} className="w-full">
               Import Clients
             </Button>
           </div>

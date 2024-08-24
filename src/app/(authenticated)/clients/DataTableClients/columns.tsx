@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 
-import { Client } from '@/interfaces/Client';
+import { Client } from '@/ts/interfaces/Client';
 
 import ActionButtons from './CallActionButtons';
 import NamePhoto from './CellNamePhoto';

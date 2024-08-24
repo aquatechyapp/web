@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { Categories } from '@/constants';
-import { Request } from '@/interfaces/Request';
+import { Request } from '@/ts/interfaces/Request';
 
 const statusOptions = {
   Pending: {

@@ -10,10 +10,10 @@ import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
-import { FieldType } from '@/constants/enums';
 import useGetClients from '@/hooks/react-query/clients/getClients';
-import { Client } from '@/interfaces/Client';
 import { clientAxios } from '@/lib/clientAxios';
+import { FieldType } from '@/ts/enums/enums';
+import { Client } from '@/ts/interfaces/Client';
 import { buildSelectOptionsSimple } from '@/utils/formUtils';
 
 type FormData = {

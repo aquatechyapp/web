@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { Request } from '@/interfaces/Request';
 import { clientAxios } from '@/lib/clientAxios';
+import { Request } from '@/ts/interfaces/Request';
 
 export default function useGetRequests() {
   const { data, isLoading, isSuccess } = useQuery({

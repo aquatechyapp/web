@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '../../../components/ui/select';
-import { WorkRelation } from '../../../interfaces/User';
+import { WorkRelation } from '../../../ts/interfaces/User';
 
 type Props = {
   onChange: (value: string) => void;

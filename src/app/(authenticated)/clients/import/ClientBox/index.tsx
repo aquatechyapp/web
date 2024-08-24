@@ -1,5 +1,5 @@
 import { Trash } from 'lucide-react';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import InputField from '@/components/InputField';
@@ -8,8 +8,8 @@ import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { PoolTypes } from '@/constants';
-import { FieldType } from '@/constants/enums';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
+import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
 import { isEmpty } from '@/utils';
 
 import { FormData, FormDataImportClients } from '../page';
@@ -20,12 +20,12 @@ type Props = {
   removeClient: (index: number) => void;
 };
 
-const ClientBox = ({ data, index, removeClient }: Props) => {
+const ClientBox = React.memo(({ data, index, removeClient }: Props) => {
   const form = useFormContext<FormData>();
   const { width } = useWindowDimensions();
   const isMobile = width ? width < 640 : false;
 
-  const name = useMemo(() => `${index + 1} - ${data.clientName} - ${data.clientAddress}`, []);
+  const name = useMemo(() => `${index + 1} - ${data.firstName} ${data.lastName} - ${data.clientAddress}`, []);
 
   const hasError = form.formState.errors.clients && !isEmpty(form.formState.errors.clients[index]);
 
@@ -41,7 +41,8 @@ const ClientBox = ({ data, index, removeClient }: Props) => {
             </Button>
             <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                <InputField name={`clients.${index}.clientName`} placeholder="Client Name" label="Client Name" />
+                <InputField name={`clients.${index}.firstName`} placeholder="Client First Name" label="First Name" />
+                <InputField name={`clients.${index}.lastName`} placeholder="Client Last Name" label="Last Name" />
                 <InputField name={`clients.${index}.clientCompany`} placeholder="Company" label="Company" />
                 <InputField name={`clients.${index}.customerCode`} placeholder="Customer code" label="Customer code" />
               </div>
@@ -63,10 +64,12 @@ const ClientBox = ({ data, index, removeClient }: Props) => {
                   placeholder="Zip code"
                   type={FieldType.Zip}
                 />
+              </div>
+              <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row md:w-[50%]">
                 <SelectField
                   defaultValue="Residential"
                   placeholder="Client Type"
-                  name={`clients.${index}.type`}
+                  name={`clients.${index}.clientType`}
                   label="Client Type"
                   options={[
                     {
@@ -81,6 +84,17 @@ const ClientBox = ({ data, index, removeClient }: Props) => {
                     }
                   ]}
                 />
+                <SelectField
+                  defaultValue="Residential"
+                  placeholder="Select Time Zone"
+                  name={`clients.${index}.timezone`}
+                  label="Client Time zone"
+                  options={Object.values(IanaTimeZones).map((tz) => ({
+                    key: tz,
+                    name: tz,
+                    value: tz
+                  }))}
+                />
               </div>
               <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
                 <span className="mr-2">Contact information</span>
@@ -88,11 +102,11 @@ const ClientBox = ({ data, index, removeClient }: Props) => {
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                 <InputField
                   type={FieldType.Phone}
-                  name={`clients.${index}.phone1`}
+                  name={`clients.${index}.phone`}
                   placeholder="Mobile phone"
                   label="Mobile phone"
                 />
-                <InputField name={`clients.${index}.email1`} placeholder="E-mail" label="E-mail" />
+                <InputField name={`clients.${index}.email`} placeholder="E-mail" label="E-mail" />
               </div>
               <div className="flex w-full items-center gap-4">
                 <div className="w-[50%]">
@@ -159,6 +173,6 @@ const ClientBox = ({ data, index, removeClient }: Props) => {
       </AccordionItem>
     </Accordion>
   );
-};
+});
 
 export default ClientBox;

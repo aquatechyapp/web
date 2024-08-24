@@ -3,8 +3,8 @@ import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/react/shallow';
 
 import { FormSchema } from '@/app/(authenticated)/team/ModalEdit';
-import { WorkRelation } from '@/interfaces/User';
 import { useUserStore } from '@/store/user';
+import { WorkRelation } from '@/ts/interfaces/User';
 
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';

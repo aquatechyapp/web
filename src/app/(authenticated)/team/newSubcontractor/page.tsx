@@ -8,9 +8,9 @@ import * as z from 'zod';
 import { useShallow } from 'zustand/react/shallow';
 
 import { paymentType } from '@/constants';
-import { FieldType } from '@/constants/enums';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
+import { FieldType } from '@/ts/enums/enums';
 
 import InputField from '../../../../components/InputField';
 import SelectField from '../../../../components/SelectField';

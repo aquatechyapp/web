@@ -4,8 +4,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
-import { Service } from '@/interfaces/Service';
 import { zipImages } from '@/lib/js-zip';
+import { Service } from '@/ts/interfaces/Service';
 
 import CellDeleteService from './CellDeleteService';
 

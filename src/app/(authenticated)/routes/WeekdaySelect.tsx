@@ -1,4 +1,4 @@
-import { SelectOption } from '@/interfaces/Others';
+import { SelectOption } from '@/ts/interfaces/Others';
 
 import { Label } from '../../../components/ui/label';
 import {
@@ -10,7 +10,7 @@ import {
   SelectValue
 } from '../../../components/ui/select';
 import { Weekdays } from '../../../constants';
-import { WeekdaysUppercase } from '../../../interfaces/Weekday';
+import { WeekdaysUppercase } from '../../../ts/interfaces/Weekday';
 
 type Props = {
   onChange: (value: WeekdaysUppercase) => void;

@@ -9,9 +9,9 @@ import imageIcon from '/public/images/logoHor.png';
 import InputField from '@/components/InputField';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { FieldType } from '@/constants/enums';
 import { useResetPassword } from '@/hooks/react-query/user/resetPassword';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
+import { FieldType } from '@/ts/enums/enums';
 
 interface Props {
   searchParams: {

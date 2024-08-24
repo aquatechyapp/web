@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
 import { useDeactivateClient } from '@/hooks/react-query/clients/deactivateClient';
-import { Client } from '@/interfaces/Client';
+import { Client } from '@/ts/interfaces/Client';
 import { calculateTotalAssignmentsOfAllPools, calculateTotalMonthlyOfAllPools } from '@/utils';
 import { getInitials } from '@/utils/others';
 

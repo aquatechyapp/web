@@ -12,9 +12,9 @@ import { Button } from '@/components/ui/button';
 import { DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
-import { FieldType } from '@/constants/enums';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
+import { FieldType } from '@/ts/enums/enums';
 import { isEmpty } from '@/utils';
 
 const createPoolSchema = poolSchema

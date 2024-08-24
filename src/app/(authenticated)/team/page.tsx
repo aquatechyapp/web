@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { Input } from '@/components/ui/input';
-import { WorkRelation } from '@/interfaces/User';
+import { WorkRelation } from '@/ts/interfaces/User';
 import { useUserStore } from '@/store/user';
 
 import { Button } from '../../../components/ui/button';

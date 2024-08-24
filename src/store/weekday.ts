@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { WeekdaysUppercase } from '@/interfaces/Weekday';
+import { WeekdaysUppercase } from '@/ts/interfaces/Weekday';
 
 type Store = {
   selectedWeekday: WeekdaysUppercase;

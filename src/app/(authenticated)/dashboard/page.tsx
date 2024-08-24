@@ -6,9 +6,9 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useAssignmentsContext } from '@/context/assignments';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { Assignment } from '@/interfaces/Assignments';
-import { Client } from '@/interfaces/Client';
 import { useUserStore } from '@/store/user';
+import { Assignment } from '@/ts/interfaces/Assignments';
+import { Client } from '@/ts/interfaces/Client';
 import { isEmpty } from '@/utils';
 
 import ActionButton from './_components/ActionButton';

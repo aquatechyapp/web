@@ -103,15 +103,15 @@ export const routes: Menu[] = [
     href: '/clients',
     submenu: {
       clients: {
-        text: 'Clients',
+        text: 'My Clients',
         href: '/clients'
       },
       addClients: {
-        text: 'Add Clients',
+        text: 'New Client',
         href: '/clients/new'
       },
       import: {
-        text: 'Import',
+        text: 'Import Clients',
         href: '/clients/import'
       },
       broadcast: {

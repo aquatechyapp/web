@@ -1,5 +1,6 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { RiMenu2Fill } from 'react-icons/ri';
 
 import { Sheet, SheetContent } from '@/components/ui/sheet';
@@ -10,6 +11,12 @@ import SideMenuNavLink from './SideMenuNavLink';
 // Documentation: https://ui.shadcn.com/docs/components/sheet
 export function MobileSideMenu() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <RiMenu2Fill onClick={() => setOpen(true)} size={32} className="cursor-pointer text-gray-50" />

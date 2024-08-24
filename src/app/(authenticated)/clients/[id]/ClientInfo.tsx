@@ -8,10 +8,10 @@ import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { FieldType } from '@/constants/enums';
 import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
-import { Client } from '@/interfaces/Client';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
+import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
+import { Client } from '@/ts/interfaces/Client';
 
 const formSchema = z.object({
   address: defaultSchemas.address,
@@ -22,7 +22,8 @@ const formSchema = z.object({
   phone: defaultSchemas.phone,
   notes: defaultSchemas.stringOptional,
   clientCompany: defaultSchemas.stringOptional,
-  type: defaultSchemas.clientType
+  type: defaultSchemas.clientType,
+  timezone: defaultSchemas.timezone
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -40,7 +41,8 @@ export default function ClientInfo({ client }: { client: Client }) {
       notes: client.notes || undefined,
       address: client.address || '',
       clientCompany: client.company || '',
-      type: client.type || 'Residential'
+      type: client.type || 'Residential',
+      timezone: client.timezone
     }
   });
 
@@ -80,6 +82,17 @@ export default function ClientInfo({ client }: { client: Client }) {
                 value: 'Commercial'
               }
             ]}
+          />
+          <SelectField
+            defaultValue="Residential"
+            placeholder="Select Time Zone"
+            name="timezone"
+            label="Client Time zone"
+            options={Object.values(IanaTimeZones).map((tz) => ({
+              key: tz,
+              name: tz,
+              value: tz
+            }))}
           />
         </div>
         <div className="mt-4 h-5 text-sm font-medium text-gray-500">Contact information</div>

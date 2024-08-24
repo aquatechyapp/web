@@ -5,7 +5,7 @@ import { DirectionsRenderer, GoogleMap, Marker, MarkerClusterer } from '@react-g
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Separator } from '@/components/ui/separator';
 import { Colors } from '@/constants/colors';
-import { Assignment } from '@/interfaces/Assignments';
+import { Assignment } from '@/ts/interfaces/Assignments';
 
 type DirectionsResult = google.maps.DirectionsResult | null;
 
