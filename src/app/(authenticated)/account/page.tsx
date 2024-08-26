@@ -85,7 +85,7 @@ export default function Page() {
           <div className="h-5 w-[213.40px] text-sm font-medium text-gray-500">Contact information</div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
             <InputField name="phone" placeholder="Mobile phone" type={FieldType.Phone} />
-            <InputField name="email" placeholder="E-mail" />
+            <InputField disabled name="email" placeholder="E-mail" />
             {/* <SelectField
               data={languageSelectOptions}
 

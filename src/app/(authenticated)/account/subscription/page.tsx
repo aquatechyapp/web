@@ -119,7 +119,7 @@ export default function Page({ searchParams }: Props) {
           <AlertDescription>{alertData.description}</AlertDescription>
         </Alert>
       )}
-      <div className="grid max-w-6xl grid-cols-1 gap-6 px-4 py-8 md:grid-cols-3">
+      <div className="grid max-w-6xl grid-cols-1 gap-6 px-4 py-8 md:grid-cols-2">
         {Plans.map((p) => (
           <SubscriptionCard key={p.title} plan={p} currentPlan={user.subscription} />
         ))}
@@ -159,21 +159,21 @@ const Plans = [
       { text: 'Email clients after service', include: true },
       { text: 'Optimized routes', include: true }
     ]
-  },
-  {
-    title: 'Pro',
-    name: UserSubscription.PRO,
-    price: 49,
-    description: 'Assign services up to 50 users',
-    features: [
-      { text: 'Unlimited clients', include: true },
-      { text: 'Full access to mobile app', include: true },
-      { text: 'Advanced reports', include: true },
-      { text: 'Advanced support', include: true },
-      { text: 'Create up to 100 pools', include: true },
-      { text: 'Additional pools per $0.39/month', include: true },
-      { text: 'Email clients after service', include: true },
-      { text: 'Optimized routes', include: true }
-    ]
   }
+  // {
+  //   title: 'Pro',
+  //   name: UserSubscription.PRO,
+  //   price: 49,
+  //   description: 'Assign services up to 50 users',
+  //   features: [
+  //     { text: 'Unlimited clients', include: true },
+  //     { text: 'Full access to mobile app', include: true },
+  //     { text: 'Advanced reports', include: true },
+  //     { text: 'Advanced support', include: true },
+  //     { text: 'Create up to 100 pools', include: true },
+  //     { text: 'Additional pools per $0.39/month', include: true },
+  //     { text: 'Email clients after service', include: true },
+  //     { text: 'Optimized routes', include: true }
+  //   ]
+  // }
 ];

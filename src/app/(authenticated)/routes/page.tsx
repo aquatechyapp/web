@@ -17,14 +17,14 @@ import { useAssignmentsContext } from '@/context/assignments';
 import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
 import { useMapUtils } from '@/hooks/useMapUtils';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { Assignment } from '@/ts/interfaces/Assignments';
-import { Weekdays, WeekdaysUppercase } from '@/ts/interfaces/Weekday';
 import { paidByServiceSchema } from '@/schemas/assignments';
 import { dateSchema } from '@/schemas/date';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useTechniciansStore } from '@/store/technicians';
 import { useUserStore } from '@/store/user';
 import { useWeekdayStore } from '@/store/weekday';
+import { Assignment } from '@/ts/interfaces/Assignments';
+import { Weekdays, WeekdaysUppercase } from '@/ts/interfaces/Weekday';
 
 import { AssignmentsList } from './AssignmentsList';
 import Map from './Map';

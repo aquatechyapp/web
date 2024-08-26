@@ -153,8 +153,10 @@ export default function Page() {
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>
           <DialogTitle>Email Confirmation</DialogTitle>
-          <DialogDescription>
-            An email has been sent to you. Please check your email to activate your account.
+          <DialogDescription className="text-center">
+            An email has been sent to you. <br />
+            Please check your e-mail to activate your account. <br />
+            <b> If you can't find the e-mail, please check your spam box.</b>
           </DialogDescription>
         </DialogContent>
       </Dialog>
