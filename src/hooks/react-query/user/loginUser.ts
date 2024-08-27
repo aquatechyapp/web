@@ -28,26 +28,25 @@ export const useLoginUser = () => {
       toast({
         duration: 2000,
         title: 'Login successful!',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     },
     onError: (error): Error | AxiosError => {
       if (isAxiosError(error)) {
         if (error.response?.status === 401 && error.response?.data.message === 'Invalid email or password.') {
           toast({
-            duration: 2000,
-            title: 'Invalid email or password',
-            className: 'bg-red-500 text-gray-50'
+            variant: 'error',
+            duration: 5000,
+            title: 'Invalid email or password'
           });
           return error;
         }
       }
       if (error.message === 'Network Error') {
         toast({
-          duration: 2000,
+          duration: 5000,
           title: 'Internal error',
-          description: 'Please try again later',
-          className: 'bg-red-500 text-gray-50'
+          variant: 'error'
         });
       }
       return error;

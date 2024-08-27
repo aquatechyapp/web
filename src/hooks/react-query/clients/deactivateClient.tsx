@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
 import { useToast } from '@/components/ui/use-toast';
@@ -16,14 +17,19 @@ export const useDeactivateClient = () => {
       toast({
         duration: 2000,
         title: 'Client deactivated successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
         duration: 2000,
+        variant: 'error',
         title: 'Error deactivating client',
-        className: 'bg-red-500 text-gray-50'
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     }
   });

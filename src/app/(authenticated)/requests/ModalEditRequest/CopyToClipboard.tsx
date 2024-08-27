@@ -21,7 +21,7 @@ export function CopyToClipboard({ value, Icon }: Props) {
           navigator.clipboard.writeText(value);
           toast({
             title: 'Copied successfully!',
-            className: 'bg-green-500 text-white',
+            variant: 'success',
             duration: 2000
           });
         }}

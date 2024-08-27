@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import { CreateRequest } from '@/app/(authenticated)/requests/ModalAddRequest';
 import { clientAxios } from '@/lib/clientAxios';
@@ -21,14 +22,19 @@ export const useCreateRequest = () => {
       toast({
         duration: 2000,
         title: 'Request created successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
         duration: 2000,
-        title: 'Error creating Request',
-        className: 'bg-red-500 text-gray-50'
+        variant: 'error',
+        title: 'Error creating request',
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     }
   });

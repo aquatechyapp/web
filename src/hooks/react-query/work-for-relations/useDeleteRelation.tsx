@@ -16,14 +16,14 @@ export const useDeleteRelation = () => {
       toast({
         duration: 2000,
         title: 'Deleted relation successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     },
     onError: () => {
       toast({
-        duration: 2000,
+        duration: 5000,
         title: 'Error deleting relation',
-        className: 'bg-red-500 text-gray-50'
+        variant: 'error'
       });
     }
   });

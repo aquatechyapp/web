@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import { EditRequest } from '@/app/(authenticated)/requests/ModalEditRequest';
 import { useToast } from '@/components/ui/use-toast';
@@ -27,14 +28,19 @@ export const useUpdateRequest = (requestId: string) => {
       toast({
         duration: 2000,
         title: 'Request updated successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
         duration: 2000,
+        variant: 'error',
         title: 'Error updating request',
-        className: 'bg-red-500 text-gray-50'
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     }
   });

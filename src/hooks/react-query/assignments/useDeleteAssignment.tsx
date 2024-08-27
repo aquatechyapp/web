@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import { useToast } from '@/components/ui/use-toast';
 import { clientAxios } from '@/lib/clientAxios';
@@ -12,14 +13,18 @@ export const useDeleteAssignment = () => {
       toast({
         duration: 2000,
         title: 'Assignment deleted successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
-        duration: 2000,
+        variant: 'error',
         title: 'Error deleting assignment',
-        className: 'bg-red-500 text-gray-50'
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     },
     onSettled: () => {

@@ -156,10 +156,6 @@ export const routes: Menu[] = [
       subscription: {
         text: 'Subscription',
         href: '/account/subscription'
-      },
-      invoices: {
-        text: 'Invoices',
-        href: '/account/invoices'
       }
     },
     href: '/account',

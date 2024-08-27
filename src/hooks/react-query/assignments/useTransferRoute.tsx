@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import { useToast } from '@/components/ui/use-toast';
 import { useAssignmentsContext } from '@/context/assignments';
@@ -45,11 +46,16 @@ export const useTransferOnceRoute = (assignmentToTransfer: Assignment | undefine
         });
       return transferOnce(assignments as Partial<Assignment>[]);
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
         duration: 2000,
+        variant: 'error',
         title: 'Error creating assignment',
-        className: 'bg-red-500 text-gray-50'
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     },
     onSuccess: () => {
@@ -57,7 +63,7 @@ export const useTransferOnceRoute = (assignmentToTransfer: Assignment | undefine
       toast({
         duration: 2000,
         title: 'Assignment transferred successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     }
   });
@@ -83,11 +89,16 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
         });
       return transferPermanently(assignments);
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
         duration: 2000,
+        variant: 'error',
         title: 'Error creating assignment',
-        className: 'bg-red-500 text-gray-50'
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     },
     onSuccess: () => {
@@ -95,7 +106,7 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
       toast({
         duration: 2000,
         title: 'Assignment transferred successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     }
   });

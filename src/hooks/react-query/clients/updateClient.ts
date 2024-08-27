@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { usePathname } from 'next/navigation';
 
 import { useToast } from '@/components/ui/use-toast';
@@ -15,14 +16,19 @@ export const useUpdateClient = <T>() => {
       toast({
         duration: 2000,
         title: 'Client updated successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
         duration: 2000,
+        variant: 'error',
         title: 'Error updating client',
-        className: 'bg-red-500 text-gray-50'
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     }
   });

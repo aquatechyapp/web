@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
@@ -56,14 +57,19 @@ export default function Page() {
       toast({
         duration: 2000,
         title: 'Client added successfully',
-        className: 'bg-green-500 text-white'
+        variant: 'success'
       });
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
         duration: 2000,
         title: 'Error adding client',
-        className: 'bg-red-500 text-white'
+        variant: 'error',
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     }
   });
@@ -76,7 +82,7 @@ export default function Page() {
       toast({
         title: 'You have reached the pool limit',
         description: 'Upgrade to a paid plan to add more pools',
-        className: 'bg-red-500 text-white'
+        variant: 'error'
       });
     }
   }, []);

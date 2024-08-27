@@ -58,7 +58,7 @@ export default function Page() {
       toast({
         title: 'Success',
         description: 'User created successfully. Please check your email to confirm your account.',
-        className: 'bg-green-500 text-white'
+        variant: 'success'
       });
     },
     onError: (error) => {
@@ -71,7 +71,7 @@ export default function Page() {
         duration: 2000,
         title: 'Internal error',
         description: errorMessage,
-        className: 'bg-red-500 text-gray-50'
+        variant: 'error'
       });
     }
   });

@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -45,14 +46,19 @@ export const useEditRelation = () => {
       toast({
         duration: 2000,
         title: 'Information updated with success.',
-        className: 'bg-green-500 text-white'
+        variant: 'success'
       });
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
         duration: 2000,
+        variant: 'error',
         title: 'Error adding technician',
-        className: 'bg-red-500 text-white'
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     }
   });

@@ -25,18 +25,16 @@ export default function Page({ searchParams }: PropsToken) {
     onSuccess: () => {
       router.push('/login');
       toast({
-        variant: 'default',
         title: 'Success',
         description: 'User account confirmed successfully.',
-        className: 'bg-green-500 text-white'
+        variant: 'success'
       });
     },
     onError: () => {
       toast({
-        variant: 'default',
+        variant: 'error',
         title: 'Internal error',
-        description: 'Please try again later.',
-        className: 'bg-red-500'
+        description: 'Please try again later.'
       });
     }
   });

@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -61,14 +62,19 @@ export default function Page() {
       toast({
         duration: 2000,
         title: 'Technician added successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     },
-    onError: () => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
       toast({
-        duration: 2000,
+        duration: 5000,
         title: 'Error adding technician',
-        className: 'bg-red-500 text-gray-50'
+        variant: 'error',
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     }
   });

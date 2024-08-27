@@ -35,14 +35,14 @@ export function WorkRelationCard({ email, phone, name, type, status, workRelatio
       toast({
         duration: 2000,
         title: 'Invite accepted successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
     },
     onError: () => {
       toast({
         duration: 2000,
         title: 'Error accepting invite',
-        className: 'bg-red-500 text-gray-50'
+        variant: 'error'
       });
     }
   });

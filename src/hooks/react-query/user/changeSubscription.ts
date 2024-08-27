@@ -23,9 +23,9 @@ export const useChangeSubscription = (subscriptionPlan: UserSubscription) => {
       }),
     onError: (error): Error | AxiosError => {
       toast({
+        variant: 'error',
         title: 'Error on request to change subscription',
-        description: 'Please try again later or contact support',
-        className: 'bg-red-500 text-white'
+        description: 'Please try again later or contact support'
       });
       return error;
     }

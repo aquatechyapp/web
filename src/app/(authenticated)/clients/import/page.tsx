@@ -62,7 +62,7 @@ export default function Page() {
       toast({
         duration: 2000,
         title: 'Clients created successfully',
-        className: 'bg-green-500 text-gray-50'
+        variant: 'success'
       });
       form.setValue('csvFile', undefined);
       form.reset();
@@ -70,8 +70,8 @@ export default function Page() {
     onError: () => {
       toast({
         duration: 2000,
-        title: 'Error creating clients',
-        className: 'bg-red-500 text-gray-50'
+        title: 'Error importing clients',
+        variant: 'error'
       });
     }
   });

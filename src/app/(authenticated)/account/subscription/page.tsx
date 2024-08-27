@@ -87,7 +87,7 @@ export default function Page({ searchParams }: Props) {
               push('/account/subscription?status=cancelled');
               toast({
                 title: 'Failed to process payment',
-                className: 'bg-red-500 text-white'
+                variant: 'error'
               });
               return res;
             }
@@ -97,7 +97,7 @@ export default function Page({ searchParams }: Props) {
               toast({
                 title: 'Payment processed successfully',
                 description: 'You can now enjoy your new subscription',
-                className: 'bg-green-500 text-white'
+                variant: 'success'
               });
               return res;
             }
