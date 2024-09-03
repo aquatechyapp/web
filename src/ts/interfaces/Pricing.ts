@@ -9,4 +9,5 @@ export type Plan = {
     text: string;
     include: boolean;
   }[];
+  extra?: string;
 };

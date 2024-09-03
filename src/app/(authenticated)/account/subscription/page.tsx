@@ -121,7 +121,7 @@ export default function Page({ searchParams }: Props) {
       )}
       <div className="grid max-w-6xl grid-cols-1 gap-6 px-4 py-8 md:grid-cols-2">
         {Plans.map((p) => (
-          <SubscriptionCard key={p.title} plan={p} currentPlan={user.subscription} />
+          <SubscriptionCard key={p.title} plan={p} currentUserPlan={user.subscription} />
         ))}
       </div>
     </div>
@@ -140,8 +140,8 @@ const Plans = [
       { text: 'Basic reports', include: true },
       { text: 'Basic support', include: true },
       { text: 'Create up to 10 pools', include: true },
-      { text: 'Email clients after service', include: false },
-      { text: 'Optimized routes', include: false }
+      { text: 'Optimized routes', include: true },
+      { text: 'Email clients after service', include: false }
     ]
   },
   {
@@ -154,11 +154,11 @@ const Plans = [
       { text: 'Full access to mobile app', include: true },
       { text: 'Basic reports', include: true },
       { text: 'Specialized support', include: true },
-      { text: 'Create up to 100 pools', include: true },
-      { text: 'Additional pools per $0.34/month', include: true },
-      { text: 'Email clients after service', include: true },
-      { text: 'Optimized routes', include: true }
-    ]
+      { text: 'Create up to 150 pools', include: true },
+      { text: 'Optimized routes', include: true },
+      { text: 'Email clients after service', include: true }
+    ],
+    extra: '* Extra pools costs $0.39 each'
   }
   // {
   //   title: 'Pro',

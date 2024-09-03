@@ -9,7 +9,7 @@ exports[`DashboardPage > should render DashboardPage 1`] = `
         <div
           class="my-7 text-2xl font-semibold text-gray-800"
         >
-          August 2024
+          September 2024
         </div>
         <div
           class="flex w-full flex-wrap gap-6 text-nowrap"
@@ -425,7 +425,7 @@ exports[`DashboardPage > should render DashboardPage 1`] = `
       <div
         class="my-7 text-2xl font-semibold text-gray-800"
       >
-        August 2024
+        September 2024
       </div>
       <div
         class="flex w-full flex-wrap gap-6 text-nowrap"

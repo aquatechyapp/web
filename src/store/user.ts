@@ -16,6 +16,11 @@ type Actions = {
   setUser: (user: User) => void;
 };
 
+const poolsLimitBySubscription = {
+  [UserSubscription.FREE]: 30,
+  [UserSubscription.GROW]: 150
+};
+
 export const useUserStore = create<Store & Actions>()(
   devtools((set) => ({
     user: {} as User,
@@ -23,8 +28,8 @@ export const useUserStore = create<Store & Actions>()(
       set({
         user,
         isFreePlan: user.subscription === UserSubscription.FREE,
-        reachedPoolLimit: user.poolsCount >= 10,
-        shouldDisableNewPools: user.subscription === UserSubscription.FREE && user.poolsCount >= 10
+        reachedPoolLimit: user.poolsCount >= poolsLimitBySubscription[user.subscription],
+        shouldDisableNewPools: user.poolsCount >= poolsLimitBySubscription[user.subscription]
       });
     },
     isFreePlan: false,
