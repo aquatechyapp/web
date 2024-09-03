@@ -133,13 +133,12 @@ const Plans = [
     title: 'Starter',
     name: UserSubscription.FREE,
     price: 0,
-    description: 'Only owner as user',
     features: [
       { text: 'Unlimited clients', include: true },
       { text: 'Full access to mobile app', include: true },
       { text: 'Basic reports', include: true },
       { text: 'Basic support', include: true },
-      { text: 'Create up to 10 pools', include: true },
+      { text: 'Create up to 30 pools', include: true },
       { text: 'Optimized routes', include: true },
       { text: 'Email clients after service', include: false }
     ]
@@ -148,7 +147,6 @@ const Plans = [
     title: 'Grow',
     name: UserSubscription.GROW,
     price: 39,
-    description: 'Assign services up to 5 users',
     features: [
       { text: 'Unlimited clients', include: true },
       { text: 'Full access to mobile app', include: true },

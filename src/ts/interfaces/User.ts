@@ -14,6 +14,16 @@ export type BasicData = {
   email: string;
   incomeAsACompany: number;
   incomeAsASubcontractor: number;
+  userPreferences: {
+    serviceEmailPreferences: {
+      sendEmails: boolean;
+      attachChemicalsReadings: boolean;
+      attachChecklist: boolean;
+      attachServiceNotes: boolean;
+      attachServicePhotos: boolean;
+      ccEmail: string;
+    };
+  };
 };
 
 export interface User extends BasicData {

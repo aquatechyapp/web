@@ -156,6 +156,10 @@ export const routes: Menu[] = [
       subscription: {
         text: 'Subscription',
         href: '/account/subscription'
+      },
+      preferences: {
+        text: 'Preferences',
+        href: '/account/preferences'
       }
     },
     href: '/account',

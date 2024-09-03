@@ -7,6 +7,7 @@ import { Checkbox } from './ui/checkbox';
 import { FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Switch } from './ui/switch';
 import { Textarea } from './ui/textarea';
 
 type MaskTypes = 'currencyValue' | 'percentValue' | 'phone';
@@ -96,6 +97,11 @@ export default function InputField({ name, placeholder, type = FieldType.Default
     currencyValue: {
       component: (field: ControllerRenderProps) => (
         <InputMasked mask={type as MaskTypes} field={field} placeholder={placeholder || ''} {...field} {...props} />
+      )
+    },
+    switch: {
+      component: (field: ControllerRenderProps) => (
+        <Switch {...props} checked={field.value} onCheckedChange={field.onChange} />
       )
     }
   };

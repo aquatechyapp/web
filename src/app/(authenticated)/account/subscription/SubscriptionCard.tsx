@@ -13,7 +13,7 @@ type Props = {
 };
 
 export function SubscriptionCard({ plan, currentUserPlan }: Props) {
-  const { title, price, description, features, extra } = plan;
+  const { title, price, features, extra } = plan;
   const isCurrentPlan = plan.name === currentUserPlan;
   const currentPlanClass = isCurrentPlan ? 'border-4 border-double border-blue-500 bg-blue-100' : '';
 
@@ -37,15 +37,14 @@ export function SubscriptionCard({ plan, currentUserPlan }: Props) {
             ${price}
             <span className="text-lg font-normal">/month</span>
           </p>
-          <p className="mb-4 text-gray-500">{description}</p>
           <Button onClick={() => mutate()} disabled={isCurrentPlan} className="text-md w-full">
             {isCurrentPlan ? 'Current Plan' : plan.name !== UserSubscription.GROW ? 'Downgrade' : '30 Days Free'}
           </Button>
           <ul className="mt-6 w-full space-y-2 text-gray-700">
             {features.map((f) => (
               <li key={f.text} className="flex w-full gap-2">
-                <div className="size-6 text-blue-500">
-                  {f.include ? <CheckCircle2 /> : <div className="size-6 rounded-full border border-blue-500" />}
+                <div className="flex size-6 justify-center text-blue-500">
+                  {f.include ? <CheckCircle2 /> : <div className="size-[22px] rounded-full border-2 border-blue-500" />}
                 </div>
                 <span className="text-r">{f.text}</span>
               </li>

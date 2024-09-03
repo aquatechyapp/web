@@ -34,7 +34,8 @@ export enum FieldType {
   File = 'file',
   Zip = 'zip',
   PercentValue = 'percentValue',
-  CurrencyValue = 'currencyValue'
+  CurrencyValue = 'currencyValue',
+  Switch = 'switch'
 }
 
 export enum ClientType {
