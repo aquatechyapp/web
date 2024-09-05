@@ -39,7 +39,7 @@ exports[`SignupPage > should render SignupPage 1`] = `
             <span
               class="text-sm font-medium text-gray-500"
             >
-              Already have an account? 
+              Already have an account?
             </span>
             <a
               class="text-sm font-bold text-blue-500"
@@ -55,11 +55,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
           <div
             class="grid h-full w-full gap-2"
           >
-            <label
-              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-            >
-              First name
-            </label>
             <input
               aria-describedby=":r0:-form-item-description"
               aria-invalid="false"
@@ -74,11 +69,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
           <div
             class="grid h-full w-full gap-2"
           >
-            <label
-              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-            >
-              Last name
-            </label>
             <input
               aria-describedby=":r1:-form-item-description"
               aria-invalid="false"
@@ -93,11 +83,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
           <div
             class="grid h-full w-full gap-2"
           >
-            <label
-              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-            >
-              Company
-            </label>
             <input
               aria-describedby=":r2:-form-item-description"
               aria-invalid="false"
@@ -221,11 +206,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
           <div
             class="grid h-full w-full gap-2"
           >
-            <label
-              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-            >
-              Address
-            </label>
             <input
               aria-describedby=":r7:-form-item-description"
               aria-invalid="false"
@@ -240,11 +220,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
           <div
             class="grid h-full w-full gap-2"
           >
-            <label
-              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-            >
-              Zip
-            </label>
             <input
               aria-describedby=":r8:-form-item-description"
               aria-invalid="false"
@@ -692,11 +667,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
           <div
             class="grid h-full w-full gap-2"
           >
-            <label
-              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-            >
-              Password
-            </label>
             <input
               aria-describedby=":rd:-form-item-description"
               aria-invalid="false"
@@ -772,7 +742,7 @@ exports[`SignupPage > should render SignupPage 1`] = `
           <span
             class="text-sm font-medium text-gray-500"
           >
-            Already have an account? 
+            Already have an account?
           </span>
           <a
             class="text-sm font-bold text-blue-500"
@@ -788,11 +758,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
         <div
           class="grid h-full w-full gap-2"
         >
-          <label
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-          >
-            First name
-          </label>
           <input
             aria-describedby=":r0:-form-item-description"
             aria-invalid="false"
@@ -807,11 +772,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
         <div
           class="grid h-full w-full gap-2"
         >
-          <label
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-          >
-            Last name
-          </label>
           <input
             aria-describedby=":r1:-form-item-description"
             aria-invalid="false"
@@ -826,11 +786,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
         <div
           class="grid h-full w-full gap-2"
         >
-          <label
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-          >
-            Company
-          </label>
           <input
             aria-describedby=":r2:-form-item-description"
             aria-invalid="false"
@@ -954,11 +909,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
         <div
           class="grid h-full w-full gap-2"
         >
-          <label
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-          >
-            Address
-          </label>
           <input
             aria-describedby=":r7:-form-item-description"
             aria-invalid="false"
@@ -973,11 +923,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
         <div
           class="grid h-full w-full gap-2"
         >
-          <label
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-          >
-            Zip
-          </label>
           <input
             aria-describedby=":r8:-form-item-description"
             aria-invalid="false"
@@ -1425,11 +1370,6 @@ exports[`SignupPage > should render SignupPage 1`] = `
         <div
           class="grid h-full w-full gap-2"
         >
-          <label
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
-          >
-            Password
-          </label>
           <input
             aria-describedby=":rd:-form-item-description"
             aria-invalid="false"
