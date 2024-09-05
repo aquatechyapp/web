@@ -10,8 +10,8 @@ import { AssignmentsProvider } from '@/context/assignments';
 import useGetUser from '@/hooks/react-query/user/getUser';
 
 import { LoadingSpinner } from '../../components/LoadingSpinner';
+import PageHeader from './PageHeader';
 import { SideMenu } from './SideMenuNav';
-import TopBarMenu from './TopBarMenu';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const userId = Cookies.get('userId') as string;
@@ -31,10 +31,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <SideMenu />
       </div>
       <div className="col-span-5 bg-gray-50">
-        <TopBarMenu />
+        <PageHeader />
         <main>
           <Suspense fallback={<LoadingSpinner />}>
-            <div className="px-2 py-1 sm:px-4">
+            <div className="mx-2 mt-2 rounded-md border border-gray-200 p-2 shadow-inner lg:mt-0">
               <AssignmentsProvider>{isLoading ? <LoadingSpinner /> : children}</AssignmentsProvider>
             </div>
           </Suspense>

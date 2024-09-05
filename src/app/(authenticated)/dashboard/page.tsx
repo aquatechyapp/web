@@ -3,6 +3,7 @@
 import { format } from 'date-fns';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Typography } from '@/components/Typography';
 import { useAssignmentsContext } from '@/context/assignments';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
@@ -88,7 +89,9 @@ export default function Page() {
   if (width < 1024) {
     return (
       <div>
-        <div className="my-7 text-2xl font-semibold text-gray-800">{format(new Date(), 'LLLL yyyy')}</div>
+        <Typography element="h2" className="my-2">
+          {format(new Date(), 'LLLL yyyy')}
+        </Typography>
         <div className="flex w-full flex-col gap-6 text-nowrap">
           <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />
           <StatisticCard value={user?.incomeAsASubcontractor} type="incomeSubcontractor" />
@@ -130,7 +133,9 @@ export default function Page() {
 
   return (
     <div>
-      <div className="my-7 text-2xl font-semibold text-gray-800">{format(new Date(), 'LLLL yyyy')}</div>
+      <Typography element="h2" className="mb-2">
+        {format(new Date(), 'LLLL yyyy')}
+      </Typography>
       <div className="flex w-full flex-wrap gap-6 text-nowrap">
         <div className="flex flex-1 flex-col items-start gap-6">
           <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />

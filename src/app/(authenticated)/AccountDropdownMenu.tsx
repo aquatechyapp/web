@@ -21,7 +21,7 @@ export function AccountDropdownMenu({ handleLogout }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer">
+        <Avatar className="cursor-pointer border">
           <AvatarImage src={''} />
           <AvatarFallback>{getInitials(`${user.firstName} ${user.lastName}`)}</AvatarFallback>
         </Avatar>

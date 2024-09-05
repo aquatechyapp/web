@@ -124,8 +124,8 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(() => handleMutate())}>
-        <div className="rounded-md border">
-          <div className="mx-2 my-4 flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap">
+        <div className="flex flex-col gap-4">
+          <div className="flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap">
             <Button type="button">
               <a href="/sample-import-aquatechy.csv" download="import-sample-aquatechy">
                 Download Sample File
@@ -162,8 +162,7 @@ export default function Page() {
               return <ClientBox key={data.id} removeClient={clients.remove} data={data} index={index} />;
             })}
           </div>
-          <div className="w-full p-2">
-            {/* <Button disabled={!isEmpty(form.formState.errors) || form.watch('clients').length <= 0} className="w-full"> */}
+          <div className="w-full">
             <Button disabled={form.watch('clients').length <= 0} className="w-full">
               Import Clients
             </Button>

@@ -6,11 +6,11 @@ exports[`DashboardPage > should render DashboardPage 1`] = `
   "baseElement": <body>
     <div>
       <div>
-        <div
-          class="my-7 text-2xl font-semibold text-gray-800"
+        <h2
+          class="text-gray-800 text-lg font-semibold mb-2"
         >
           September 2024
-        </div>
+        </h2>
         <div
           class="flex w-full flex-wrap gap-6 text-nowrap"
         >
@@ -422,11 +422,11 @@ exports[`DashboardPage > should render DashboardPage 1`] = `
   </body>,
   "container": <div>
     <div>
-      <div
-        class="my-7 text-2xl font-semibold text-gray-800"
+      <h2
+        class="text-gray-800 text-lg font-semibold mb-2"
       >
         September 2024
-      </div>
+      </h2>
       <div
         class="flex w-full flex-wrap gap-6 text-nowrap"
       >

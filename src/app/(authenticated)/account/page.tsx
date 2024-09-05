@@ -7,6 +7,7 @@ import { z } from 'zod';
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
+import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useUpdateUser } from '@/hooks/react-query/user/updateUser';
@@ -69,23 +70,22 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="mt-6 text-xl font-semibold leading-[30px] text-gray-800">My account</div>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
-          <div className="h-5 text-sm font-medium text-gray-500">Basic Information</div>
+        <div className="inline-flex w-full flex-col items-start justify-start gap-2">
+          <Typography element="h3">Basic Information</Typography>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField name="firstName" placeholder="First name" />
-            <InputField name="lastName" placeholder="Last name" />
-            <InputField name="company" placeholder="Company" />
+            <InputField name="firstName" label="First Name" placeholder="First Name" />
+            <InputField name="lastName" label="Last Name" placeholder="Last Name" />
+            <InputField name="company" label="Company" placeholder="Company" />
           </div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField name={'address'} placeholder="Address" />
+            <InputField name={'address'} label="Address" placeholder="Address" />
             <StateAndCitySelect cityName="city" stateName="state" />
-            <InputField name={'zip'} placeholder="Zip code" />
+            <InputField name={'zip'} placeholder="Zip code" label="Zip code" />
           </div>
-          <div className="h-5 w-[213.40px] text-sm font-medium text-gray-500">Contact information</div>
+          <Typography element="h3">Contact Information</Typography>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField name="phone" placeholder="Mobile phone" type={FieldType.Phone} />
-            <InputField disabled name="email" placeholder="E-mail" />
+            <InputField name="phone" placeholder="Phone" label="Phone" type={FieldType.Phone} />
+            <InputField disabled name="email" placeholder="E-mail" label="E-mail" />
             {/* <SelectField
               data={languageSelectOptions}
 

@@ -36,8 +36,8 @@ export default function ShowClient({ client }: Props) {
   return (
     <div>
       <div className="flex flex-col items-start gap-6 self-stretch pt-2 lg:flex-row lg:pt-0">
-        <div className="inline-flex w-full flex-col items-start justify-start gap-7 lg:w-[380px]">
-          <div className="relative flex w-full flex-col items-center justify-start gap-6 text-nowrap rounded-lg border border-gray-200 bg-gray-50 px-6 pb-6 pt-16">
+        <div className="lg:max-w-sm">
+          <div className="relative flex w-full flex-col items-center justify-start gap-6 text-nowrap rounded-lg border px-6 pb-6 pt-16">
             <div className="w-[100% - 16px] absolute left-2 right-2 top-2 h-[148px] rounded bg-gradient-to-b from-sky-400 to-teal-400" />
 
             <div className="PhotoName flex h-[206px] flex-col items-center justify-start gap-3 self-stretch">
@@ -119,8 +119,8 @@ export default function ShowClient({ client }: Props) {
             </div>
           </div>
         </div>
-        <div className="flex w-full flex-col items-start gap-7">
-          <div className="inline-flex h-full w-full flex-col items-start justify-start gap-7">
+        <div className="flex w-full flex-col items-start">
+          <div className="inline-flex h-full w-full flex-col items-start justify-start gap-6">
             <div className="inline-flex flex-wrap items-start justify-start gap-6 self-stretch text-nowrap md:flex-nowrap">
               <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
                 <div className="inline-flex items-start justify-start gap-4 self-stretch">

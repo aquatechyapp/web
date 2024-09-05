@@ -6,6 +6,7 @@ import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
+import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
@@ -56,16 +57,15 @@ export default function ClientInfo({ client }: { client: Client }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50 p-6"
+        className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50"
       >
-        <div className="h-5 w-[213.40px] text-sm font-medium text-gray-500">Basic information</div>
         <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          <InputField name="address" placeholder="Billing address" />
+          <InputField name="address" placeholder="Billing address" label="Billing address" />
           <StateAndCitySelect cityName="city" stateName="state" />
         </div>
         <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
-          <InputField name="zip" placeholder="Zip code" type={FieldType.Zip} />
-          <InputField name="clientCompany" placeholder="Company" />
+          <InputField name="zip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
+          <InputField name="clientCompany" label="Company" placeholder="Company" />
           <SelectField
             placeholder="Client Type"
             name="type"
@@ -95,13 +95,20 @@ export default function ClientInfo({ client }: { client: Client }) {
             }))}
           />
         </div>
-        <div className="mt-4 h-5 text-sm font-medium text-gray-500">Contact information</div>
+        <Typography element="h4" className="mt-2">
+          Contact information
+        </Typography>
         <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          <InputField type={FieldType.Phone} name="phone" placeholder="Mobile phone" />
-          <InputField name="email" placeholder="E-mail" />
+          <InputField type={FieldType.Phone} name="phone" placeholder="Phone" label="Phone" />
+          <InputField name="email" placeholder="E-mail" label="E-mail" />
         </div>
-        <div className="w-full">
-          <InputField placeholder="Type client notes here..." name="notes" type={FieldType.TextArea} />
+        <div className="mt-2 w-full">
+          <InputField
+            placeholder="Type client notes here..."
+            label="Client Notes"
+            name="notes"
+            type={FieldType.TextArea}
+          />
         </div>
         {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium   text-gray-500">
           Notes about client (customer won't see that)

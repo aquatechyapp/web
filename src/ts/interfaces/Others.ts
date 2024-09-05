@@ -15,3 +15,12 @@ export type SelectOption = {
   name: string;
   key: string;
 };
+
+export type Menu = {
+  text: string;
+  href: string;
+  submenu?: Record<string, { text: string; href: string; title: string; description?: string; icon?: React.FC }>;
+  icon: React.FC;
+  title: string;
+  description?: string;
+};

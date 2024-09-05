@@ -119,7 +119,7 @@ export default function Page({ searchParams }: Props) {
           <AlertDescription>{alertData.description}</AlertDescription>
         </Alert>
       )}
-      <div className="grid max-w-6xl grid-cols-1 gap-6 px-4 py-8 md:grid-cols-2">
+      <div className="grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2">
         {Plans.map((p) => (
           <SubscriptionCard key={p.title} plan={p} currentUserPlan={user.subscription} />
         ))}

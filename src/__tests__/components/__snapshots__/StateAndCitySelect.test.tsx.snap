@@ -9,7 +9,7 @@ exports[`StateAndCitySelect > should render the StateAndCitySelect component 1`]
         class="inline-flex w-full items-start justify-start gap-4 self-stretch"
       >
         <div
-          class="space-y-2 w-full"
+          class="grid w-full gap-2"
         >
           <label
             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -50,7 +50,7 @@ exports[`StateAndCitySelect > should render the StateAndCitySelect component 1`]
           </button>
         </div>
         <div
-          class="space-y-2 w-full"
+          class="grid w-full gap-2"
         >
           <label
             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -98,7 +98,7 @@ exports[`StateAndCitySelect > should render the StateAndCitySelect component 1`]
       class="inline-flex w-full items-start justify-start gap-4 self-stretch"
     >
       <div
-        class="space-y-2 w-full"
+        class="grid w-full gap-2"
       >
         <label
           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -139,7 +139,7 @@ exports[`StateAndCitySelect > should render the StateAndCitySelect component 1`]
         </button>
       </div>
       <div
-        class="space-y-2 w-full"
+        class="grid w-full gap-2"
       >
         <label
           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

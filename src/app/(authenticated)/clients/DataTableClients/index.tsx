@@ -105,8 +105,8 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
   ];
 
   return (
-    <div className="rounded-md border">
-      <div className="flex w-full flex-col items-center justify-between px-2 py-4 md:flex-row">
+    <>
+      <div className="flex w-full flex-col items-center justify-between md:flex-row">
         <div className="flex w-full flex-col gap-4 text-nowrap md:flex-row">
           <HoverCard>
             <HoverCardTrigger asChild>
@@ -125,12 +125,12 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
             placeholder="Filter clients..."
             value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
             onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
-            className="mb-2 md:mb-0 md:max-w-sm"
+            className="mb-2 mr-2 md:mb-0 md:max-w-xs"
           />
         </div>
         <div className="flex w-full">
           <Form {...form}>
-            <form className="mb-2 flex w-full flex-col gap-4 md:flex-row">
+            <form className="mb-2 flex w-full flex-col gap-4 md:mb-0 md:flex-row">
               <SelectField
                 name="filter"
                 options={selectOptions}
@@ -207,6 +207,6 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
           )}
         </TableBody>
       </Table>
-    </div>
+    </>
   );
 }

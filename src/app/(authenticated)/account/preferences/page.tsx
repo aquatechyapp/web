@@ -1,16 +1,18 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useChangeUserPreferences } from '@/hooks/react-query/user/changeUserPreferences';
+import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect';
+import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
 
@@ -46,8 +48,9 @@ export default function Page() {
   });
 
   const { sendEmails } = form.getValues();
+  useDidUpdateEffect(handleEmailsChange, [sendEmails]);
 
-  useEffect(() => {
+  function handleEmailsChange() {
     if (sendEmails) {
       form.setValue('attachChemicalsReadings', true);
       form.setValue('attachChecklist', true);
@@ -59,7 +62,7 @@ export default function Page() {
       form.setValue('attachServiceNotes', false);
       form.setValue('attachServicePhotos', false);
     }
-  }, [sendEmails]);
+  }
 
   if (isPending) {
     return <LoadingSpinner />;
@@ -68,21 +71,24 @@ export default function Page() {
   return (
     <Form {...form}>
       <form className="w-full flex-col items-center" onSubmit={form.handleSubmit((data) => mutate(data))}>
-        <h1 className="text-2xl font-bold">E-mail Preferences</h1>
-        <h2 className="text-gray-500">Manage your notifications settings.</h2>
-        <div className="mt-4 flex w-full flex-col divide-y rounded-md border border-gray-200 pt-2">
+        <div
+          className={cn('flex w-full flex-col gap-2 divide-y border-gray-200 [&>:nth-child(3)]:pt-2', {
+            'opacity-50': isFreePlan
+          })}
+        >
           {fields.map((field) => (
-            <div
-              key={field.label}
-              className="grid w-full grid-cols-1 items-center space-x-2 space-y-1 px-4 py-4 md:grid-cols-12"
-            >
+            <div key={field.label} className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">
               <div className="col-span-8 row-auto flex flex-col">
-                <label className="flex-1 text-nowrap font-semibold" htmlFor={field.label}>
-                  {field.label}
+                <label htmlFor={field.label}>
+                  <Typography element="h3" className="text-gray-description">
+                    {field.label}
+                  </Typography>
                 </label>
-                <span className="text-gray-500">{field.description}</span>
+                <Typography element="p" className="text-gray-description">
+                  {field.description}
+                </Typography>
               </div>
-              <div className="col-span-4 w-full">
+              <div className="col-span-4 flex w-full flex-col gap-2">
                 {field.itens.map((item) => {
                   const isFieldSendEmails = item.name === 'sendEmails';
 
@@ -98,8 +104,13 @@ export default function Page() {
                         />
                       </div>
                       {field.type === FieldType.Switch && (
-                        <label className="mt-1 text-nowrap font-semibold text-gray-700" htmlFor={item.label}>
-                          {item.label}
+                        <label htmlFor={item.label}>
+                          <Typography element="p">{item.label}</Typography>
+                          {item.subLabel ? (
+                            <Typography element="p" className="text-sm text-gray-500">
+                              {item.subLabel}
+                            </Typography>
+                          ) : null}
                         </label>
                       )}
                     </div>
@@ -108,14 +119,29 @@ export default function Page() {
               </div>
             </div>
           ))}
-          <Button className="mt-2">Save</Button>
+          <Button disabled={!form.formState.isDirty || isFreePlan} className="mt-2">
+            Save
+          </Button>
         </div>
       </form>
     </Form>
   );
 }
 
-const fields = [
+type Fields = {
+  inputClassName?: string;
+  type: FieldType;
+  description: string;
+  label: string;
+  itens: {
+    label: string;
+    subLabel?: string;
+    description: string;
+    name: string;
+  }[];
+}[];
+
+const fields: Fields = [
   {
     inputClassName: 'flex justify-center items-center gap-4',
     type: FieldType.Switch,
@@ -124,6 +150,7 @@ const fields = [
     itens: [
       {
         label: 'Send E-mails',
+        subLabel: '(only on grow plan)',
         description: 'Receive e-mails when a service was done.',
         name: 'sendEmails'
       }
@@ -132,7 +159,7 @@ const fields = [
   {
     inputClassName: 'flex justify-center items-center gap-4',
     type: FieldType.Switch,
-    description: 'Kawan crie uma descricao',
+    description: 'Select the information you want to receive in the e-mails.',
     label: 'Include in e-mails',
     itens: [
       {

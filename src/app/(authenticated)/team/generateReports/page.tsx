@@ -75,16 +75,12 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="text-black-500 text-xl font-semibold">Generate service and payment reports</div>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
-          <div className="h-5 text-sm font-medium text-gray-500">
-            Select who you want to generate a report from and select an interval.
-          </div>
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4">
           <div className="flex flex-col justify-start gap-4 self-stretch md:flex-row">
             <SelectField
               disabled={subContractors.length === 0}
               name="assignmentToId"
-              placeholder="Technician"
+              placeholder="Select Technician"
               options={subContractors?.length > 0 ? subContractors : []}
             />
             <div className="inline-flex w-full items-start justify-start gap-4">

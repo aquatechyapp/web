@@ -1,10 +1,20 @@
 import { Libraries } from '@react-google-maps/api';
-import { CheckSquare, CircleUser } from 'lucide-react';
+import {
+  CheckSquare,
+  CircleDollarSign,
+  CircleUser,
+  FileBarChartIcon,
+  Import,
+  Mails,
+  Settings2,
+  UserPlus,
+  Users
+} from 'lucide-react';
 
-import ClientIcon from '@/components/ui/client-icon';
 import RouteIcon from '@/components/ui/route-icon';
 import TabIcon from '@/components/ui/tab-icon';
 import TeamIcon from '@/components/ui/team-icon';
+import { Menu } from '@/ts/interfaces/Others';
 
 export const Frequencies = [
   {
@@ -85,85 +95,111 @@ export const PoolTypes = [
   }
 ];
 
-type Menu = {
-  text: string;
-  href: string;
-  submenu?: Record<string, { text: string; href: string }>;
-  icon: React.FC;
-};
-
 export const routes: Menu[] = [
   {
     text: 'Dashboard',
     href: '/dashboard',
-    icon: TabIcon
+    icon: TabIcon,
+    title: 'Dashboard',
+    description: 'Overview of your pools as a technician or a manager'
   },
   {
+    title: 'Clients',
     text: 'Clients',
     href: '/clients',
+    description: 'Manage your clients and edit their information',
     submenu: {
       clients: {
         text: 'My Clients',
-        href: '/clients'
+        href: '/clients',
+        title: 'My Clients'
       },
       addClients: {
         text: 'New Client',
-        href: '/clients/new'
+        href: '/clients/new',
+        title: 'New Client',
+        description: 'Create a new client, add a pool and assign a technician to it',
+        icon: UserPlus
       },
       import: {
         text: 'Import Clients',
-        href: '/clients/import'
+        href: '/clients/import',
+        title: 'Import Clients',
+        icon: Import,
+        description: 'Massive import and edit of clients from a CSV file'
       },
       broadcast: {
         text: 'Broadcast',
-        href: '/clients/broadcast'
+        href: '/clients/broadcast',
+        title: 'Broadcast',
+        description: 'Send a message to all clients',
+        icon: Mails
       }
     },
-    icon: ClientIcon
+    icon: Users
   },
   {
     text: 'Routes',
     href: '/routes',
-    icon: RouteIcon
+    icon: RouteIcon,
+    title: 'Routes',
+    description: 'Create assignments, manage your routes and see your schedule'
   },
   {
     text: 'Requests',
     href: '/requests',
-    icon: CheckSquare
+    icon: CheckSquare,
+    title: 'Requests',
+    description: 'Manage your requests and see their status'
   },
   {
     text: 'My team',
     submenu: {
       myAccount: {
         text: 'My team',
-        href: '/team'
+        href: '/team',
+        title: 'My team'
       },
       generateReports: {
         text: 'Generate Reports',
-        href: '/team/generateReports'
+        href: '/team/generateReports',
+        title: 'Generate Service and Payment Reports',
+        description: 'Select who you want to generate a report from and select an interval.',
+        icon: FileBarChartIcon
       }
     },
     href: '/team',
-    icon: TeamIcon
+    icon: TeamIcon,
+    title: 'My team',
+    description: 'Manage your team and add new technicians'
   },
   {
     text: 'My Account',
+    description: 'Edit your profile information',
     submenu: {
       profile: {
         text: 'Profile',
-        href: '/account'
+        href: '/account',
+        title: 'Profile'
       },
       subscription: {
         text: 'Subscription',
-        href: '/account/subscription'
+        href: '/account/subscription',
+        title: 'Subscription',
+        icon: CircleDollarSign,
+        description: 'Manage your subscription and see our plans'
       },
       preferences: {
         text: 'Preferences',
-        href: '/account/preferences'
+        href: '/account/preferences',
+        title: 'Preferences',
+        description: 'Edit your preferences of e-mails and notifications',
+        icon: Settings2
       }
     },
     href: '/account',
-    icon: CircleUser
+    icon: CircleUser,
+    title: 'My Account'
   }
 ];
 

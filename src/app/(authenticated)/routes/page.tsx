@@ -107,7 +107,7 @@ export default function Page() {
   return (
     <FormProvider {...form}>
       <div
-        className={`flex h-[100%] w-full items-start justify-start gap-3 bg-gray-50 px-0 shadow-inner md:p-2.5 ${mdScreen ? 'flex-col' : ''}`}
+        className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 px-0 ${mdScreen ? 'flex-col' : ''}`}
       >
         <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
           <Tabs
@@ -115,9 +115,9 @@ export default function Page() {
             defaultValue={format(new Date(), 'EEEE').toUpperCase()}
             value={selectedWeekday}
           >
-            <div className="inline-flex w-full flex-col items-center justify-start gap-3.5 rounded-lg border border-gray-200 bg-gray-50 py-2">
+            <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
               <Form {...form}>
-                <form className="w-full px-2">
+                <form className="w-full">
                   <TabsList className="w-full">
                     {weekdays.map((weekday, index) => (
                       <TabsTrigger className="flex-1" key={weekday} value={weekday.toUpperCase()}>

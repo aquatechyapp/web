@@ -127,23 +127,28 @@ export default function Page() {
           </div>
         </div>
         <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
-          <InputField name="firstName" placeholder="First name" />
-          <InputField name="lastName" placeholder="Last name" />
-          <InputField name="company" placeholder="Company" />
+          <InputField label="First name" name="firstName" placeholder="First name" />
+          <InputField label="Last name" name="lastName" placeholder="Last name" />
+          <InputField label="Company" name="company" placeholder="Company" />
         </div>
         <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
-          <InputField name="email" placeholder="E-mail address" />
-          <InputField name="phone" placeholder="Phone number" type={FieldType.Phone} />
+          <InputField label="E-mail" name="email" placeholder="E-mail address" />
+          <InputField label="Phone" name="phone" placeholder="Phone number" type={FieldType.Phone} />
           <SelectField options={languageSelectOptions} label="Language" name="language" placeholder="Language" />
         </div>
         <div className="inline-flex items-start justify-start gap-2 self-stretch">
-          <InputField name="address" placeholder="Address" />
-          <InputField name="zip" placeholder="Zip" type={FieldType.Zip} />
+          <InputField label="Address" name="address" placeholder="Address" />
+          <InputField label="Zip" name="zip" placeholder="Zip" type={FieldType.Zip} />
         </div>
         <StateAndCitySelect stateName="state" cityName="city" />
         <div className="inline-flex items-start justify-start gap-2 self-stretch">
-          <InputField name="password" placeholder="Password" type={FieldType.Password} />
-          <InputField name="confirmPassword" placeholder="Confirm password" type={FieldType.Password} />
+          <InputField label="Password" name="password" placeholder="Password" type={FieldType.Password} />
+          <InputField
+            label="Confirm Password"
+            name="confirmPassword"
+            placeholder="Confirm password"
+            type={FieldType.Password}
+          />
         </div>
         <Button disabled={isPending} type="submit" className="w-full">
           Signup

@@ -1,3 +1,6 @@
+import { routes } from '@/constants';
+import { Menu } from '@/ts/interfaces/Others';
+
 import { Pool } from '../ts/interfaces/Assignments';
 
 // função para colocar ponto antes dos dois últimos dígitos
@@ -29,3 +32,25 @@ export const onlyNumbers = (value: string | number) => {
   if (isNaN(parsed)) return 0;
   return parsed;
 };
+
+export function findRouteByHref(href: string): Menu | undefined {
+  for (const route of routes) {
+    if (route.href === href) {
+      return route;
+    }
+
+    if (route.submenu) {
+      for (const key in route.submenu) {
+        if (route.submenu[key].href === href) {
+          return route.submenu[key] as Menu;
+        }
+      }
+    }
+
+    if (href.includes(route.href)) {
+      return route;
+    }
+  }
+
+  return undefined;
+}

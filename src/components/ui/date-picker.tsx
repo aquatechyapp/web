@@ -2,7 +2,7 @@
 
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Matcher } from 'react-day-picker';
 
 import { cn } from '../../lib/utils';
@@ -17,14 +17,20 @@ type Props = {
 };
 
 export function DatePicker({ placeholder, onChange, disabled }: Props) {
-  const [date, setDate] = React.useState<Date>();
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [date, setDate] = useState<Date>();
 
-  React.useEffect(() => {
+  function handleChange(date: Date | undefined) {
+    setDate(date);
+    setIsPopoverOpen(false);
+  }
+
+  useEffect(() => {
     onChange(date);
   }, [date]);
 
   return (
-    <Popover modal>
+    <Popover modal open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={'outline'}
@@ -35,7 +41,7 @@ export function DatePicker({ placeholder, onChange, disabled }: Props) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar disabled={disabled} mode="single" selected={date} onSelect={setDate} initialFocus />
+        <Calendar disabled={disabled} mode="single" selected={date} onSelect={handleChange} initialFocus />
       </PopoverContent>
     </Popover>
   );

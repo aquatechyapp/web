@@ -54,12 +54,12 @@ exports[`LoginPage > should render LoginPage 1`] = `
             class="mb-8 flex w-[400px] flex-col gap-[18px]"
           >
             <div
-              class="space-y-2 h-full w-full"
+              class="grid h-full w-full gap-2"
             >
               <label
                 class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
               >
-                E-mail address
+                E-mail
               </label>
               <input
                 aria-describedby=":r0:-form-item-description"
@@ -73,7 +73,7 @@ exports[`LoginPage > should render LoginPage 1`] = `
               />
             </div>
             <div
-              class="space-y-2 h-full w-full"
+              class="grid h-full w-full gap-2"
             >
               <label
                 class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
@@ -158,12 +158,12 @@ exports[`LoginPage > should render LoginPage 1`] = `
           class="mb-8 flex w-[400px] flex-col gap-[18px]"
         >
           <div
-            class="space-y-2 h-full w-full"
+            class="grid h-full w-full gap-2"
           >
             <label
               class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"
             >
-              E-mail address
+              E-mail
             </label>
             <input
               aria-describedby=":r0:-form-item-description"
@@ -177,7 +177,7 @@ exports[`LoginPage > should render LoginPage 1`] = `
             />
           </div>
           <div
-            class="space-y-2 h-full w-full"
+            class="grid h-full w-full gap-2"
           >
             <label
               class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-nowrap"

@@ -99,8 +99,7 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="text-black-500 text-xl font-semibold">Broadcast messages</div>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50">
           <div className="text-md h-5 font-medium text-gray-500">
             Address this message to <b>{selectedClients.length} clients </b>.
           </div>
@@ -112,16 +111,8 @@ export default function Page() {
               onChange={(text: string[]) => handleCitySelectionChange(text)}
             />
           </div>
-          <div className="inline-flex w-full justify-start gap-4 self-stretch">
-            <div className="w-full">
-              <InputField
-                className="h-44"
-                placeholder="Type client notes here..."
-                label="Message"
-                name="message"
-                type={FieldType.TextArea}
-              />
-            </div>
+          <div className="w-full">
+            <InputField placeholder="Insert a message for your clients" name="message" type={FieldType.TextArea} />
           </div>
           <Button className="w-full" type="submit">
             Schedule broadcast

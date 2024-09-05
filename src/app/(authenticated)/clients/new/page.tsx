@@ -13,6 +13,7 @@ import DatePickerField from '@/components/DatePickerField';
 import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
+import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
@@ -171,8 +172,10 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-white p-6">
-          <div className="h-5 text-sm font-medium text-gray-500">Basic information</div>
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4">
+          <Typography element="h2" className="pb-0 text-base">
+            Basic information
+          </Typography>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField name="firstName" placeholder="First name" label="First name" />
             <InputField name="lastName" placeholder="Last name" label="Last name" />
@@ -215,9 +218,10 @@ export default function Page() {
               }))}
             />
           </div>
-          <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
-            <span className="mr-2">Contact information</span>
-          </div>
+          <Typography element="h2" className="mt-2 text-base">
+            Contact information
+          </Typography>
+
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField type={FieldType.Phone} name="phone" placeholder="Mobile phone" label="Mobile phone" />
             <InputField name="email" placeholder="E-mail" label="E-mail" />
@@ -233,19 +237,20 @@ export default function Page() {
               />
             </div>
           </div>
-
-          <div className="mt-2 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
-            <span className="mr-2">Service information</span>
-          </div>
-          <div className="inline-flex items-start justify-start gap-2 self-stretch">
-            <InputField
-              name="sameBillingAddress"
-              type={FieldType.Checkbox}
-              placeholder="Billing address is the same than service address"
-            />
-          </div>
-          <div className="inline-flex items-start justify-start gap-2 self-stretch">
-            <InputField name="animalDanger" type={FieldType.Checkbox} placeholder="It must take care with animals?" />
+          <Typography element="h2" className="mt-2 text-base">
+            Service Information
+          </Typography>
+          <div className="flex flex-col gap-2">
+            <div className="inline-flex items-start justify-start gap-2">
+              <InputField
+                name="sameBillingAddress"
+                type={FieldType.Checkbox}
+                placeholder="Billing address is the same than service address"
+              />
+            </div>
+            <div className="inline-flex items-start justify-start gap-2">
+              <InputField name="animalDanger" type={FieldType.Checkbox} placeholder="It must take care with animals?" />
+            </div>
           </div>
           {!form.watch('sameBillingAddress') && (
             <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
@@ -260,6 +265,7 @@ export default function Page() {
               />
             </div>
           )}
+
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField
               name="monthlyPayment"
@@ -271,10 +277,11 @@ export default function Page() {
             <InputField name="enterSide" placeholder="Enter side" label="Enter side" />
             <SelectField name="poolType" label="Chemical type" placeholder="Chemical type" options={PoolTypes} />
           </div>
+
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-1 self-stretch">
               <InputField
-                className="h-44"
+                className="h-32"
                 name="poolNotes"
                 placeholder="Location notes..."
                 label={isMobile ? 'Notes about location' : "Notes about location (customer won't see that)"}
@@ -282,9 +289,11 @@ export default function Page() {
               />
             </div>
           </div>
-          <div className="mt-4 flex w-full items-center whitespace-nowrap text-sm font-medium text-gray-500">
-            <span className="mr-2">Assignment information</span>
-          </div>
+
+          <Typography element="h2" className="text-base">
+            Assignment Information
+          </Typography>
+
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <SelectField
               disabled={subContractors.length === 0}
@@ -302,6 +311,7 @@ export default function Page() {
             <SelectField label="Weekday" name="weekday" placeholder="Weekday" options={Weekdays} />
             <SelectField label="Frequency" name="frequency" placeholder="Frequency" options={Frequencies} />
           </div>
+
           <div className="inline-flex w-full items-start justify-start gap-4">
             <DatePickerField
               disabled={[{ dayOfWeek: disabledWeekdays }]}
@@ -316,6 +326,7 @@ export default function Page() {
               placeholder="End after"
             />
           </div>
+
           <Button disabled={isPending} type="submit" className="w-full">
             {isPending ? (
               <div

@@ -11,9 +11,5 @@ export default function Page() {
 
   if (isLoading) return <LoadingSpinner />;
 
-  return (
-    <div className="rounded-md border">
-      <DataTableRequests columns={columns} data={data.requests || []} />
-    </div>
-  );
+  return <DataTableRequests columns={columns} data={data.requests || []} />;
 }

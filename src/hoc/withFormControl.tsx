@@ -18,8 +18,8 @@ export function withFormControl<T extends WithFormControlProps>(Component: React
         name={name}
         render={({ field }) => {
           return (
-            <FormItem className="w-full">
-              <Label>{label}</Label>
+            <FormItem className="grid w-full gap-2">
+              {label && <Label>{label}</Label>}
               <FormControl>
                 <Component {...field} {...props} form={form} field={field} />
               </FormControl>

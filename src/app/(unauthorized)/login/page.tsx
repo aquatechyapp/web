@@ -54,8 +54,8 @@ export default function Page() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
           <div className="mb-8 flex w-[400px] flex-col gap-[18px]">
-            <InputField name="email" placeholder="E-mail address" />
-            <InputField name="password" placeholder="Password" type={FieldType.Password} />
+            <InputField label="E-mail" name="email" placeholder="E-mail address" />
+            <InputField label="Password" name="password" placeholder="Password" type={FieldType.Password} />
             <Link href="/recover" className="text-sm font-semibold text-blue-500">
               Forgot Password?
             </Link>

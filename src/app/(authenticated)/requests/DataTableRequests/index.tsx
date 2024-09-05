@@ -46,8 +46,8 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
   });
 
   return (
-    <>
-      <div className="my-4 flex w-full flex-wrap gap-4 text-nowrap px-2 md:flex-nowrap [&>*]:flex-1">
+    <div className="flex flex-col gap-6">
+      <div className="mb-2 flex w-full flex-col flex-wrap gap-4 text-nowrap md:flex-nowrap lg:mb-0 lg:flex-row [&>*]:flex-1">
         <ModalAddRequest />
         <Input
           className="min-w-50"
@@ -132,6 +132,6 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
           )}
         </TableBody>
       </Table>
-    </>
+    </div>
   );
 }

@@ -22,8 +22,8 @@ export default function DatePickerField({ name, placeholder, label, disabled }: 
       name={name}
       render={({ field }) => {
         return (
-          <FormItem className="flex w-full flex-col">
-            <Label>{label}</Label>
+          <FormItem className="flex w-full flex-col gap-2">
+            {label && <Label>{label}</Label>}
             <FormControl>
               <DatePicker disabled={disabled} placeholder={placeholder} onChange={field.onChange} />
             </FormControl>

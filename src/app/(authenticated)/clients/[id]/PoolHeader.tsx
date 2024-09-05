@@ -24,7 +24,7 @@ function PoolCard({ pool, services, clientId }: Props) {
   const selectedTabStyles = 'text-gray-800 font-semibold border-m border-gray-800';
 
   return (
-    <div className="Form inline-flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-gray-50 p-6">
+    <div className="Form inline-flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-gray-50">
       <div className="inline-flex w-full items-end justify-center gap-4">
         <div className="inline-flex w-full items-start justify-start gap-4 self-stretch border-b border-gray-200">
           <div className="border-none text-sm font-medium">{pool.name}</div>

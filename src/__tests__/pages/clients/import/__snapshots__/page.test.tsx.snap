@@ -7,10 +7,10 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
     <div>
       <form>
         <div
-          class="rounded-md border"
+          class="flex flex-col gap-4"
         >
           <div
-            class="mx-2 my-4 flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap"
+            class="flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap"
           >
             <button
               class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2"
@@ -24,7 +24,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
               </a>
             </button>
             <div
-              class="space-y-2"
+              class=""
             >
               <input
                 accept=".csv"
@@ -42,7 +42,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
             class="flex flex-col gap-4"
           />
           <div
-            class="w-full p-2"
+            class="w-full"
           >
             <button
               class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2 w-full"
@@ -58,10 +58,10 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
   "container": <div>
     <form>
       <div
-        class="rounded-md border"
+        class="flex flex-col gap-4"
       >
         <div
-          class="mx-2 my-4 flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap"
+          class="flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap"
         >
           <button
             class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2"
@@ -75,7 +75,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
             </a>
           </button>
           <div
-            class="space-y-2"
+            class=""
           >
             <input
               accept=".csv"
@@ -93,7 +93,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
           class="flex flex-col gap-4"
         />
         <div
-          class="w-full p-2"
+          class="w-full"
         >
           <button
             class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2 w-full"

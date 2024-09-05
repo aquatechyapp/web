@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { useShallow } from 'zustand/react/shallow';
 
+import { Typography } from '@/components/Typography';
 import { paymentType } from '@/constants';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
@@ -82,10 +83,10 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-6">
-          <div className="h-5 text-sm font-medium text-gray-500">Basic information</div>
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50">
+          <Typography element="h3">Basic information</Typography>
           <div className="inline-flex flex-wrap justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField name="emailSubContractor" placeholder="E-mail" />
+            <InputField name="emailSubContractor" placeholder="E-mail" label="E-mail" />
             <SelectField options={paymentType} name="paymentType" placeholder="Payment Type" label="Payment Type" />
             <InputField
               name="paymentValue"
@@ -96,7 +97,9 @@ export default function Page() {
               }
             />
           </div>
-          <Button type="submit">Save</Button>
+          <Button type="submit" className="w-full">
+            Save
+          </Button>
         </div>
       </form>
     </Form>
