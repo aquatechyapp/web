@@ -112,7 +112,7 @@ export default function InputField({ name, placeholder, type = FieldType.Default
       name={name}
       render={({ field }) => {
         return (
-          <FormItem className="grid h-full w-full gap-2">
+          <FormItem className="flex h-full w-full flex-col gap-2">
             {!['checkbox'].includes(type) && label ? <Label className="text-nowrap">{label}</Label> : null}
             <FormControl>{types[type as keyof typeof types].component(field)}</FormControl>
             <FormMessage />
