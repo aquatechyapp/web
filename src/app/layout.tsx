@@ -1,5 +1,6 @@
 import './globals.css';
 
+import { GoogleTagManager } from '@next/third-parties/google';
 import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
@@ -44,6 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GoogleTagManager gtmId="GTM-KPJ5P65V" />
       <body className={generalSans.className}>
         <Analytics />
         <ReactQueryProviderComponent>{children}</ReactQueryProviderComponent>
