@@ -67,5 +67,6 @@ export const defaultSchemas = {
   timezone: z.nativeEnum(IanaTimeZones, {
     required_error: 'Timezone is required.',
     invalid_type_error: 'Invalid timezone.'
-  })
+  }),
+  frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY']))
 };

@@ -225,7 +225,7 @@ const newAssignmentSchema = z
     assignmentToId: z.string().min(1),
     poolId: z.string(),
     client: z.string(),
-    frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
+    frequency: defaultSchemas.frequency,
     weekday: defaultSchemas.weekday
   })
   .and(dateSchema)

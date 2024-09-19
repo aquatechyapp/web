@@ -345,7 +345,7 @@ export default function Page() {
 
 const additionalSchemas = z.object({
   weekday: defaultSchemas.weekday,
-  frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY'])),
+  frequency: defaultSchemas.frequency,
   sameBillingAddress: z.boolean(),
   assignmentToId: z.string().min(1),
   customerCode: z.string().nullable(),

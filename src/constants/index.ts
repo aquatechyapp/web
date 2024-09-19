@@ -18,17 +18,17 @@ import { Menu } from '@/ts/interfaces/Others';
 
 export const Frequencies = [
   {
-    value: 'MONTHLY',
+    value: 'E4WEEKS',
     name: 'Monthly',
     key: 'Monthly'
   },
   {
-    value: 'TRIWEEKLY',
+    value: 'E3WEEKS',
     name: 'Three-Weeks',
     key: 'Three-Weeks'
   },
   {
-    value: 'BIWEEKLY',
+    value: 'E2WEEKS',
     name: 'Bi-Weekly',
     key: 'Bi-Weekly'
   },
