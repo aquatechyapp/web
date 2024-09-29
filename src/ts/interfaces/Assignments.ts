@@ -1,4 +1,4 @@
-import { PoolType } from '@/ts/enums/enums';
+import { Frequency, PoolType } from '@/ts/enums/enums';
 
 import { Service } from './Service';
 
@@ -13,7 +13,7 @@ export type Assignment = {
   assignmentToId: string;
   createdAt: string;
   endAfter: string;
-  frequency: string;
+  frequency: Frequency;
   order: number;
   poolId: string;
   skipDates: string[];

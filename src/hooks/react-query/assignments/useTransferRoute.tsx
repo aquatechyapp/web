@@ -37,6 +37,7 @@ export const useTransferOnceRoute = (assignmentToTransfer: Assignment | undefine
   const { mutate, isPending } = useMutation({
     mutationFn: (form: TransferAssignmentsOnce) => {
       const assignments = assignmentsToTransfer!
+        // @ts-expect-error frequency pode ser ONCE
         .filter((a) => a.frequency !== 'ONCE')
         .map((assignment) => {
           return {
@@ -79,6 +80,7 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
   const { mutate, isPending } = useMutation({
     mutationFn: (form: TransferAssignment) => {
       const assignments = assignmentsToTransfer!
+        // @ts-expect-error frequency pode ser ONCE
         .filter((a) => a.frequency !== 'ONCE')
         .map((assignment) => {
           return {

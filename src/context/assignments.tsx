@@ -1,13 +1,44 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { differenceInWeeks, isSameDay } from 'date-fns';
 import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { useTechniciansStore } from '@/store/technicians';
 import { useWeekdayStore } from '@/store/weekday';
+import { Frequency } from '@/ts/enums/enums';
 
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { clientAxios } from '../lib/clientAxios';
 import { Assignment } from '../ts/interfaces/Assignments';
+
+function filterAssignmentsByFrequency(assignments: Assignment[], selectedDay: Date): Assignment[] {
+  return assignments.filter((assignment) => {
+    const startOn = new Date(assignment.startOn);
+    const weeksBetween = differenceInWeeks(selectedDay, startOn);
+
+    switch (assignment.frequency) {
+      case Frequency.WEEKLY:
+        return isSameDay(startOn, selectedDay) || (selectedDay > startOn && selectedDay.getDay() === startOn.getDay());
+      case Frequency.E2WEEKS:
+        return (
+          isSameDay(startOn, selectedDay) ||
+          (selectedDay > startOn && selectedDay.getDay() === startOn.getDay() && weeksBetween % 2 === 0)
+        );
+      case Frequency.E3WEEKS:
+        return (
+          isSameDay(startOn, selectedDay) ||
+          (selectedDay > startOn && selectedDay.getDay() === startOn.getDay() && weeksBetween % 3 === 0)
+        );
+      case Frequency.E4WEEKS:
+        return (
+          isSameDay(startOn, selectedDay) ||
+          (selectedDay > startOn && selectedDay.getDay() === startOn.getDay() && weeksBetween % 4 === 0)
+        );
+      default:
+        return false;
+    }
+  });
+}
 
 type AssignmentsContextType = {
   assignments: {
@@ -31,7 +62,7 @@ export const AssignmentsProvider = ({ children }: { children: React.ReactNode })
   const queryClient = useQueryClient();
 
   const assignmentToId = useTechniciansStore((state) => state.assignmentToId);
-  const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
+  const { selectedWeekday, selectedDay } = useWeekdayStore((state) => state);
   const userId = Cookies.get('userId');
 
   const { data, isLoading, isError } = useQuery({
@@ -59,18 +90,15 @@ export const AssignmentsProvider = ({ children }: { children: React.ReactNode })
     if (isError || isLoading) return;
 
     const filteredAssignments = data.assignments
-      ?.filter(
-        (assignment: Assignment) =>
-          assignment.weekday === selectedWeekday && assignment.assignmentToId === assignmentToId
-      )
+      ?.filter((assignment: Assignment) => assignment.assignmentToId === assignmentToId)
       .sort((a: Assignment, b: Assignment) => a.order - b.order);
 
     setAssignments({
       initial: [...filteredAssignments],
-      current: [...filteredAssignments]
+      current: filterAssignmentsByFrequency(filteredAssignments, new Date(selectedDay))
     });
     setAllAssignments(data.assignments);
-  }, [data, isError, isLoading, selectedWeekday, assignmentToId, userId]);
+  }, [data, isError, isLoading, selectedWeekday, assignmentToId, userId, selectedDay]);
 
   if (isLoading) return <LoadingSpinner />;
 

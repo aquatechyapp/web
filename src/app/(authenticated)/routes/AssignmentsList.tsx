@@ -187,7 +187,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
               <div className="text-xs text-red-500">{startsOn}</div>
             ) : (
               <div className="text-xs text-gray-500">
-                {startsOn} - {endsAfter}
+                {startsOn} - {endsAfter} - {assignment.frequency}
               </div>
             )}
           </div>

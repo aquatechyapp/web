@@ -11,7 +11,6 @@ import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useTransferOnceRoute, useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
 import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
@@ -158,20 +157,16 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
             <form className="flex flex-col gap-4">
               <div className="flex gap-4">
                 <div className="basis-full">
-                  {/* -mb-4 pra remover o gap-4. Não coloquei a Label dentro do componente pois não quero aplicar sempre */}
-                  <Label className="-mb-4">Technician</Label>
-                  <div className="mt-2">
-                    {/* por padrão, o User logado é o tecnico selecionado */}
-                    <SelectField
-                      name="assignmentToId"
-                      placeholder="Technician..."
-                      options={technicians.map((t) => ({
-                        key: t.subcontractorId,
-                        value: t.subcontractorId,
-                        name: `${t.subcontractor.firstName} ${t.subcontractor.lastName}`
-                      }))}
-                    />
-                  </div>
+                  <SelectField
+                    name="assignmentToId"
+                    placeholder="Technician..."
+                    label="Technician"
+                    options={technicians.map((t) => ({
+                      key: t.subcontractorId,
+                      value: t.subcontractorId,
+                      name: `${t.subcontractor.firstName} ${t.subcontractor.lastName}`
+                    }))}
+                  />
                 </div>
                 {/* quando for transferir rota inteira, não preciso informar paidByService, ele pega de cada assignment */}
                 {!userSelectedAsTechnician && (
@@ -182,12 +177,10 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                     type={FieldType.CurrencyValue}
                   />
                 )}
-                <div className="basis-full">
-                  <WeekdaySelect
-                    value={form.watch('weekday')}
-                    onChange={(weekday: WeekdaysUppercase) => form.setValue('weekday', weekday)}
-                  />
-                </div>
+                <WeekdaySelect
+                  value={form.watch('weekday')}
+                  onChange={(weekday: WeekdaysUppercase) => form.setValue('weekday', weekday)}
+                />
               </div>
 
               <OptionsOnceOrPermanently form={form} />
@@ -199,7 +192,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                     placeholder="Select Date"
                   />
                 ) : (
-                  <div className="flex flex-col md:flex-row">
+                  <div className="flex flex-col gap-4 md:flex-row">
                     <DatePickerField
                       disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
                       name="startOn"

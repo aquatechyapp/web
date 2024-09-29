@@ -26,7 +26,9 @@ export const FormNewAssignment = () => {
 
   const hasClients = clients.length > 0;
 
-  return (
+  return isLoading ? (
+    <LoadingSpinner />
+  ) : (
     <Form {...form}>
       <form className="flex flex-col">
         <div className="flex flex-col gap-4">
@@ -70,19 +72,19 @@ export const FormNewAssignment = () => {
             />
           </div>
 
-          {/* <div className="mt-4 flex flex-col gap-8 md:flex-row"> */}
-          <DatePickerField
-            disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
-            name="startOn"
-            placeholder="Start on"
-          />
+          <div className="mt-4 flex flex-col gap-8 md:flex-row">
+            <DatePickerField
+              disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
+              name="startOn"
+              placeholder="Start on"
+            />
 
-          <DatePickerField
-            disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
-            name="endAfter"
-            placeholder="End after"
-          />
-          {/* </div> */}
+            <DatePickerField
+              disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
+              name="endAfter"
+              placeholder="End after"
+            />
+          </div>
         </div>
       </form>
     </Form>
