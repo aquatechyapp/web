@@ -11,7 +11,7 @@ exports[`DashboardPage > should render DashboardPage 1`] = `
         <h2
           class="text-gray-800 text-lg font-semibold mb-2"
         >
-          September 2024
+          November 2024
         </h2>
         <div
           class="flex w-full flex-wrap gap-6 text-nowrap"
