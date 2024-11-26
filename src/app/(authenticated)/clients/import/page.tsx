@@ -142,7 +142,7 @@ export default function Page() {
                       <Input
                         {...fieldProps}
                         className="w-fit"
-                        placeholder="Picture"
+                        placeholder="Photo"
                         type="file"
                         accept=".csv"
                         onChange={(event) => {
