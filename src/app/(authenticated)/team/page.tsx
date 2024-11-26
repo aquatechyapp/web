@@ -26,7 +26,7 @@ export default function Page() {
   );
 
   return (
-    <div>
+    <div className="p-2">
       <div className="flex flex-col items-start justify-start gap-4 md:flex-row">
         <Link href="/team/newSubcontractor" className="w-full md:w-fit">
           <Button className="w-full text-nowrap">

@@ -75,7 +75,7 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4">
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4 p-2">
           <div className="flex flex-col justify-start gap-4 self-stretch md:flex-row">
             <SelectField
               disabled={subContractors.length === 0}

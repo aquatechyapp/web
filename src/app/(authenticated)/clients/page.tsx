@@ -13,7 +13,7 @@ export default function Page() {
 
   if (isSuccess) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 p-2">
         <DataTableClients columns={columns} data={clients || []} />
       </div>
     );

@@ -99,7 +99,7 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50">
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-2">
           <div className="text-md h-5 font-medium text-gray-500">
             Address this message to <b>{selectedClients.length} clients </b>.
           </div>

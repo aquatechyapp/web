@@ -124,7 +124,7 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(() => handleMutate())}>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-2">
           <div className="flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap">
             <Button type="button">
               <a href="/sample-import-aquatechy.csv" download="import-sample-aquatechy">
