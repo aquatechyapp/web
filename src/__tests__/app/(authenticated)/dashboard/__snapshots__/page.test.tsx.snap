@@ -5,11 +5,13 @@ exports[`DashboardPage > should render DashboardPage 1`] = `
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <div>
+      <div
+        class="p-2"
+      >
         <h2
           class="text-gray-800 text-lg font-semibold mb-2"
         >
-          October 2024
+          September 2024
         </h2>
         <div
           class="flex w-full flex-wrap gap-6 text-nowrap"
@@ -421,11 +423,13 @@ exports[`DashboardPage > should render DashboardPage 1`] = `
     </div>
   </body>,
   "container": <div>
-    <div>
+    <div
+      class="p-2"
+    >
       <h2
         class="text-gray-800 text-lg font-semibold mb-2"
       >
-        October 2024
+        September 2024
       </h2>
       <div
         class="flex w-full flex-wrap gap-6 text-nowrap"
