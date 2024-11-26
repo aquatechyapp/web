@@ -172,7 +172,7 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4">
+        <div className="inline-flex w-full flex-col items-start justify-start gap-4 p-2">
           <Typography element="h2" className="pb-0 text-base">
             Basic information
           </Typography>
@@ -187,7 +187,7 @@ export default function Page() {
             <StateAndCitySelect />
             <InputField name="clientZip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
           </div>
-          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row md:w-[50%]">
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <SelectField
               defaultValue="Residential"
               placeholder="Client Type"
@@ -228,7 +228,7 @@ export default function Page() {
             <InputField name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
           </div>
           <div className="flex w-full items-center gap-4">
-            <div className="w-[50%]">
+            <div className="w-[100%]">
               <InputField
                 label={isMobile ? 'Notes about client' : "Notes about client (customer won't see that)"}
                 name="clientNotes"

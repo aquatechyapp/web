@@ -88,7 +88,7 @@ export default function Page() {
 
   if (width < 1024) {
     return (
-      <div>
+      <div className="p-2">
         <Typography element="h2" className="my-2">
           {format(new Date(), 'LLLL yyyy')}
         </Typography>
@@ -132,7 +132,7 @@ export default function Page() {
   }
 
   return (
-    <div>
+    <div className="p-2">
       <Typography element="h2" className="mb-2">
         {format(new Date(), 'LLLL yyyy')}
       </Typography>

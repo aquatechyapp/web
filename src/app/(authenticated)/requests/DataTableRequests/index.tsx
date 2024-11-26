@@ -46,7 +46,7 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
   });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 p-2">
       <div className="mb-2 flex w-full flex-col flex-wrap gap-4 text-nowrap md:flex-nowrap lg:mb-0 lg:flex-row [&>*]:flex-1">
         <ModalAddRequest />
         <Input

@@ -111,7 +111,7 @@ export default function Page({ searchParams }: Props) {
   }, []);
 
   return (
-    <div className="flex w-full flex-col items-center">
+    <div className="flex w-full flex-col items-center p-2">
       {alertData && (
         <Alert className={`${alertData.customClassName} w-fit min-w-72`} variant={alertData.variant}>
           <alertData.CustomAlertIcon className={alertData.iconClassName} color={alertData.iconColor} />
@@ -134,12 +134,12 @@ const Plans = [
     name: UserSubscription.FREE,
     price: 0,
     features: [
-      { text: 'Unlimited clients', include: true },
+      { text: '30 clients', include: true },
       { text: 'Full access to mobile app', include: true },
       { text: 'Basic reports', include: true },
       { text: 'Basic support', include: true },
       { text: 'Create up to 30 pools', include: true },
-      { text: 'Optimized routes', include: true },
+      { text: 'Optimize routes', include: true },
       { text: 'Email clients after service', include: false }
     ]
   },
@@ -153,7 +153,7 @@ const Plans = [
       { text: 'Basic reports', include: true },
       { text: 'Specialized support', include: true },
       { text: 'Create up to 150 pools', include: true },
-      { text: 'Optimized routes', include: true },
+      { text: 'Optimize routes', include: true },
       { text: 'Email clients after service', include: true }
     ],
     extra: '* Extra pools costs $0.39 each'

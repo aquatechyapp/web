@@ -133,7 +133,7 @@ export default function Page() {
   return (
     <FormProvider {...form}>
       <div
-        className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 px-0 ${mdScreen ? 'flex-col' : ''}`}
+        className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 p-2 ${mdScreen ? 'flex-col' : ''}`}
       >
         <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
           <Tabs
@@ -157,6 +157,7 @@ export default function Page() {
                       </TabsTrigger>
                     ))}
                   </TabsList>
+                  
                   <Tabs
                     onValueChange={(day) => handleChangeDay(day)}
                     defaultValue={format(new Date(), 'EEEE').toUpperCase()}
@@ -170,6 +171,7 @@ export default function Page() {
                       ))}
                     </TabsList>
                   </Tabs>
+
                   <TechnicianSelect onChange={handleChangeTechnician} />
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                     <DialogNewAssignment />
@@ -271,6 +273,7 @@ const newAssignmentSchema = z
   .and(paidByServiceSchema);
 
 const weekdays: Weekdays[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const days = ['09', '16', '23', '30', '07', '10', '17'];
 
 const weekdaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const weekdaysLetter = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
