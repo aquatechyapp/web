@@ -14,28 +14,29 @@ import {
 import RouteIcon from '@/components/ui/route-icon';
 import TabIcon from '@/components/ui/tab-icon';
 import TeamIcon from '@/components/ui/team-icon';
+import { Frequency } from '@/ts/enums/enums';
 import { Menu } from '@/ts/interfaces/Others';
 
 export const Frequencies = [
   {
-    value: 'E4WEEKS',
-    name: 'Monthly',
-    key: 'Monthly'
-  },
-  {
-    value: 'E3WEEKS',
-    name: 'Three-Weeks',
-    key: 'Three-Weeks'
-  },
-  {
-    value: 'E2WEEKS',
-    name: 'Bi-Weekly',
-    key: 'Bi-Weekly'
-  },
-  {
-    value: 'WEEKLY',
+    value: Frequency.WEEKLY,
     name: 'Weekly',
     key: 'Weekly'
+  },
+  {
+    value: Frequency.E2WEEKS,
+    name: 'Each 2 weeks',
+    key: 'Each2Weeks'
+  },
+  {
+    value: Frequency.E3WEEKS,
+    name: 'Each 3 weeks',
+    key: 'Each3Weeks'
+  },
+  {
+    value: Frequency.E4WEEKS,
+    name: 'Each 4 weeks',
+    key: 'Each4Weeks'
   }
 ];
 

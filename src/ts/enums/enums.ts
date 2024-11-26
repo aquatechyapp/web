@@ -57,3 +57,10 @@ export enum IanaTimeZones {
   ADAK = 'America/Adak',
   HONOLULU = 'Pacific/Honolulu'
 }
+
+export enum Frequency {
+  WEEKLY = 'WEEKLY',
+  E2WEEKS = 'E2WEEKS',
+  E3WEEKS = 'E3WEEKS',
+  E4WEEKS = 'E4WEEKS'
+}

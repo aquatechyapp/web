@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { IanaTimeZones } from '@/ts/enums/enums';
+import { Frequency, IanaTimeZones } from '@/ts/enums/enums';
 
 function commonStringSchema(message: string, min: number = 1) {
   return z
@@ -68,5 +68,5 @@ export const defaultSchemas = {
     required_error: 'Timezone is required.',
     invalid_type_error: 'Invalid timezone.'
   }),
-  frequency: z.string(z.enum(['MONTHLY', 'TRIWEEKLY', 'BIWEEKLY', 'WEEKLY']))
+  frequency: z.string(z.enum([Frequency.WEEKLY, Frequency.E2WEEKS, Frequency.E3WEEKS, Frequency.E4WEEKS]))
 };
