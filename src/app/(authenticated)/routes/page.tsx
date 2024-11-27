@@ -157,7 +157,6 @@ export default function Page() {
                       </TabsTrigger>
                     ))}
                   </TabsList>
-                  
                   <Tabs
                     onValueChange={(day) => handleChangeDay(day)}
                     defaultValue={format(new Date(), 'EEEE').toUpperCase()}
@@ -273,7 +272,7 @@ const newAssignmentSchema = z
   .and(paidByServiceSchema);
 
 const weekdays: Weekdays[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const days = ['09', '16', '23', '30', '07', '10', '17'];
+// const days = ['09', '16', '23', '30', '07', '10', '17'];
 
 const weekdaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const weekdaysLetter = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
