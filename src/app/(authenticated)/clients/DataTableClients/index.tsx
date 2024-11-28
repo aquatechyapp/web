@@ -68,6 +68,7 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
     state: {
       columnFilters
     },
+
     initialState: {
       columnVisibility: {
         deactivatedAt: false
@@ -123,8 +124,8 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
           </HoverCard>
           <Input
             placeholder="Filter clients..."
-            value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-            onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
+            value={table.getState().globalFilter ?? ''}
+            onChange={(event) => table.setGlobalFilter(event.target.value)}
             className="mb-2 mr-2 md:mb-0 md:max-w-xs"
           />
         </div>
