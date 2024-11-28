@@ -38,7 +38,7 @@ export function SubscriptionCard({ plan, currentUserPlan }: Props) {
             <span className="text-lg font-normal">/month</span>
           </p>
           <Button onClick={() => mutate()} disabled={isCurrentPlan} className="text-md w-full">
-            {isCurrentPlan ? 'Current Plan' : plan.name !== UserSubscription.GROW ? 'Downgrade' : '30 Days Free'}
+            {isCurrentPlan ? 'Current Plan' : plan.name !== UserSubscription.GROW ? 'Downgrade' : '7 days free'}
           </Button>
           <ul className="mt-6 w-full space-y-2 text-gray-700">
             {features.map((f) => (
