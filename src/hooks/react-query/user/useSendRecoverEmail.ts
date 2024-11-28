@@ -14,7 +14,7 @@ export const useSendRecoverEmail = () => {
     onSuccess: async () => {
       toast({
         duration: 2000,
-        title: 'Email with instructions for password recovery sent successfully!',
+        title: 'If this user email exists, you will receive an email with instructions to recover your password.',
         variant: 'success'
       });
     },
