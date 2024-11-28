@@ -140,7 +140,8 @@ const Plans = [
       { text: 'Basic support', include: true },
       { text: 'Create up to 30 pools', include: true },
       { text: 'Optimize routes', include: true },
-      { text: 'Email clients after service', include: false }
+      { text: 'Email clients after service', include: false },
+      { text: 'Broadcast e-mails', include: false }
     ]
   },
   {
@@ -154,24 +155,9 @@ const Plans = [
       { text: 'Specialized support', include: true },
       { text: 'Create up to 150 pools', include: true },
       { text: 'Optimize routes', include: true },
-      { text: 'Email clients after service', include: true }
+      { text: 'Email clients after service', include: true },
+      { text: 'Broadcast e-mails', include: true }
     ],
     extra: '* Extra pools costs $0.39 each'
   }
-  // {
-  //   title: 'Pro',
-  //   name: UserSubscription.PRO,
-  //   price: 49,
-  //   description: 'Assign services up to 50 users',
-  //   features: [
-  //     { text: 'Unlimited clients', include: true },
-  //     { text: 'Full access to mobile app', include: true },
-  //     { text: 'Advanced reports', include: true },
-  //     { text: 'Advanced support', include: true },
-  //     { text: 'Create up to 100 pools', include: true },
-  //     { text: 'Additional pools per $0.39/month', include: true },
-  //     { text: 'Email clients after service', include: true },
-  //     { text: 'Optimized routes', include: true }
-  //   ]
-  // }
 ];
