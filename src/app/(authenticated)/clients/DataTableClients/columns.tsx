@@ -10,9 +10,10 @@ import Phones from './CellPhone';
 
 export const columns: ColumnDef<Client>[] = [
   {
-    accessorKey: 'name',
+    accessorKey: 'firstName',
     header: 'Name',
-    cell: (props) => <NamePhoto {...props} />
+    cell: (props) => <NamePhoto {...props} />,
+    filterFn: 'includesString'
   },
   {
     accessorKey: 'type',
