@@ -24,6 +24,15 @@ export const useLoginUser = () => {
       //   incomeAsACompany: data.incomeAsACompany,
       //   incomeAsASubcontractor: data.incomeAsASubcontractor
       // });
+      if (data.user.firstName === '') {
+        push('/account');
+        toast({
+          duration: 5000,
+          title: 'Login successful! Please complete your profile before starting using the platform.',
+          variant: 'success'
+        });
+        return;
+      }
       push('/dashboard');
       toast({
         duration: 2000,

@@ -1,9 +1,8 @@
 'use client';
 
-import { DirectionsRenderer, GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
+import { DirectionsRenderer, GoogleMap, Marker } from '@react-google-maps/api';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { Separator } from '@/components/ui/separator';
 import { Colors } from '@/constants/colors';
 import { Assignment } from '@/ts/interfaces/Assignments';
 
@@ -11,7 +10,7 @@ type DirectionsResult = google.maps.DirectionsResult | null;
 
 const mapContainerStyle = {
   width: '100%',
-  height: '100vh',
+  height: '50vh',
   overflow: 'hidden',
   borderRadius: '8px'
 };
@@ -40,7 +39,17 @@ type Props = {
   loadError: Error | undefined;
 };
 
-const Map = ({ assignments, directions, distance, duration, isLoaded, loadError }: Props) => {
+const weekdayColors: { [key: string]: { iconColor: string; textColor: string } } = {
+  MONDAY: { iconColor: '#FF0000', textColor: '#FFFFFF' }, // Red
+  TUESDAY: { iconColor: '#FFA500', textColor: '#FFFFFF' }, // Orange
+  WEDNESDAY: { iconColor: '#FFE201', textColor: '#000000' }, // Yellow
+  THURSDAY: { iconColor: '#008000', textColor: '#FFFFFF' }, // Green
+  FRIDAY: { iconColor: '#0000FF', textColor: '#FFFFFF' }, // Blue
+  SATURDAY: { iconColor: '#4B0082', textColor: '#FFFFFF' }, // Indigo
+  SUNDAY: { iconColor: '#EE82EE', textColor: '#000000' } // Violet
+};
+
+const Map = ({ assignments, directions, isLoaded, loadError }: Props) => {
   if (loadError) {
     return <div>Error loading maps</div>;
   }
@@ -53,12 +62,6 @@ const Map = ({ assignments, directions, distance, duration, isLoaded, loadError 
 
   return (
     <div className="h-full">
-      <div className="absolute z-10 ml-2.5 mt-16 rounded-sm bg-gray-50 px-2 shadow-lg sm:right-24 sm:mt-2.5">
-        <h3 className="py-1">Distance: {distance}</h3>
-        <Separator />
-        <h3 className="py-1">Duration: {duration}</h3>
-      </div>
-
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         zoom={assignments.length === 0 ? 4 : 10}
@@ -91,26 +94,42 @@ const Map = ({ assignments, directions, distance, duration, isLoaded, loadError 
             }}
           />
         )}
-        <MarkerClusterer>
-          {(clusterer) => (
-            <div>
-              {assignments.map((assignment) => (
-                <Marker
-                  label={{
-                    text: assignment.order.toString(),
-                    color: Colors.gray[50]
-                  }}
-                  key={assignment.id}
-                  position={{
-                    lat: assignment.pool.coords.lat,
-                    lng: assignment.pool.coords.lng
-                  }}
-                  clusterer={clusterer}
-                />
-              ))}
-            </div>
-          )}
-        </MarkerClusterer>
+        {/* <MarkerClusterer> */}
+        {/* {(clusterer) => ( */}
+        <div>
+          {assignments.map((assignment) => {
+            const weekdayColor = weekdayColors[assignment.weekday] || {
+              iconColor: '#808080',
+              textColor: '#000000'
+            };
+
+            return (
+              <Marker
+                // label={{
+                //   text: assignment.order.toString(),
+                //   color: weekdayColor.textColor
+                // }}
+                key={assignment.id}
+                position={{
+                  lat: assignment.pool.coords.lat,
+                  lng: assignment.pool.coords.lng
+                }}
+                // clusterer={clusterer}
+                icon={{
+                  path: google.maps.SymbolPath.CIRCLE, // Custom circle marker
+                  fillColor: weekdayColor.iconColor, // Default color if weekday not found
+
+                  fillOpacity: 1,
+                  scale: 16, // Size of the marker
+                  strokeColor: 'white',
+                  strokeWeight: 2
+                }}
+              />
+            );
+          })}
+        </div>
+        {/* )} */}
+        {/* </MarkerClusterer> */}
       </GoogleMap>
     </div>
   );

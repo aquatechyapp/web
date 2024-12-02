@@ -110,6 +110,14 @@ export default function Page({ searchParams }: Props) {
     }
   }, []);
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user.firstName === '') {
+      router.push('/account');
+    }
+  }, [user]);
+
   return (
     <div className="flex w-full flex-col items-center p-2">
       {alertData && (
