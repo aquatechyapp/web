@@ -2,7 +2,9 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import Papa from 'papaparse';
+import { useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -15,6 +17,7 @@ import { clientAxios } from '@/lib/clientAxios';
 import { clientSchema } from '@/schemas/client';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
+import { useUserStore } from '@/store/user';
 
 import ClientBox from './ClientBox';
 import { normalizeImportData } from './normalizeImportData';
@@ -48,6 +51,16 @@ export default function Page() {
       clients: []
     }
   });
+
+  const user = useUserStore((state) => state.user);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user.firstName === '') {
+      router.push('/account');
+    }
+  }, [user]);
 
   const clients = useFieldArray({
     name: 'clients',

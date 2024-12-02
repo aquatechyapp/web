@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!userId) {
-      router.push('/login');
+      return router.push('/login');
     }
   }, []);
 

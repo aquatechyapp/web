@@ -2,7 +2,8 @@
 
 import { PlusIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { useUserStore } from '@/store/user';
@@ -14,6 +15,7 @@ import { WorkRelationCard } from './WorkRelationCard'; // Import the unified com
 export default function Page() {
   const user = useUserStore((state) => state.user);
   const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
 
   const filteredSubcontractors = user?.workRelationsAsAEmployer.filter((subcontractor) =>
     `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`
@@ -24,6 +26,12 @@ export default function Page() {
   const filteredEmployers = user?.workRelationsAsASubcontractor.filter((employee) =>
     `${employee.company.firstName} ${employee.company.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    if (user.firstName === '') {
+      router.push('/account');
+    }
+  }, [user]);
 
   return (
     <div className="p-2">

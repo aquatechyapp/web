@@ -14,8 +14,6 @@ import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { FieldType } from '@/ts/enums/enums';
 
 import InputField from '../../../components/InputField';
-import SelectField from '../../../components/SelectField';
-import StateAndCitySelect from '../../../components/StateAndCitySelect';
 import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../../components/ui/dialog';
 import { Form } from '../../../components/ui/form';
@@ -24,18 +22,9 @@ import { clientAxios } from '../../../lib/clientAxios';
 
 const formSchema = z
   .object({
-    firstName: defaultSchemas.name,
-    lastName: defaultSchemas.name,
-    phone: defaultSchemas.phone,
     email: defaultSchemas.email,
     password: defaultSchemas.password,
-    confirmPassword: z.string().min(8, { message: 'Password is required' }),
-    address: defaultSchemas.address,
-    zip: defaultSchemas.zipCode,
-    state: defaultSchemas.state,
-    city: defaultSchemas.city,
-    company: z.string().optional(),
-    language: defaultSchemas.language
+    confirmPassword: z.string().min(8, { message: 'Password is required' })
   })
   .refine(
     (data) => {
@@ -55,21 +44,16 @@ export default function Page() {
     mutationFn: async (data: z.infer<typeof formSchema>) => await clientAxios.post('/createuser', data),
     onSuccess: () => {
       setShowModal(true);
-      toast({
-        title: 'Success',
-        description: 'User created successfully. Please check your email to confirm your account.',
-        variant: 'success'
-      });
     },
     onError: (error) => {
-      let errorMessage = 'Internal error';
+      let errorMessage = 'Error';
       if (axios.isAxiosError(error)) {
-        errorMessage = error.response?.data?.message || 'Internal error';
+        errorMessage = error.response?.data?.message || 'Error';
       }
 
       toast({
-        duration: 2000,
-        title: 'Internal error',
+        duration: 5000,
+        title: 'Error',
         description: errorMessage,
         variant: 'error'
       });
@@ -79,29 +63,15 @@ export default function Page() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      phone: '',
       email: '',
       password: '',
-      confirmPassword: '',
-      state: '',
-      city: '',
-      company: '',
-      language: 'English'
+      confirmPassword: ''
     }
   });
 
-  const languageSelectOptions = ['English', 'Portuguese', 'Spanish'].map((lang) => ({
-    value: lang,
-    name: lang,
-    key: lang
-  }));
-
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     const formattedData = {
-      ...data,
-      name: data.firstName + ' ' + data.lastName
+      ...data
     };
     createUser(formattedData);
   };
@@ -112,10 +82,10 @@ export default function Page() {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8"
       >
-        <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
+        <div className="mb-8 inline-flex h-5 items-center justify-center gap-3 self-stretch">
           <Image priority width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
         </div>
-        <div className="relative h-[50px] w-[400px]">
+        <div className="relative mb-4 h-[50px] w-[400px]">
           <div className="absolute left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] text-gray-800">
             Create your account
           </div>
@@ -126,22 +96,9 @@ export default function Page() {
             </Link>
           </div>
         </div>
-        <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
-          <InputField label="First name" name="firstName" placeholder="First name" />
-          <InputField label="Last name" name="lastName" placeholder="Last name" />
-          <InputField label="Company" name="company" placeholder="Company" />
-        </div>
-        <div className="inline-flex items-start justify-start gap-[18px] self-stretch">
+
+        <div className="mb-4 inline-flex flex-col items-start justify-start gap-[18px] self-stretch">
           <InputField label="E-mail" name="email" placeholder="E-mail address" />
-          <InputField label="Phone" name="phone" placeholder="Phone number" type={FieldType.Phone} />
-          <SelectField options={languageSelectOptions} label="Language" name="language" placeholder="Language" />
-        </div>
-        <div className="inline-flex items-start justify-start gap-2 self-stretch">
-          <InputField label="Address" name="address" placeholder="Address" />
-          <InputField label="Zip" name="zip" placeholder="Zip" type={FieldType.Zip} />
-        </div>
-        <StateAndCitySelect stateName="state" cityName="city" />
-        <div className="inline-flex items-start justify-start gap-2 self-stretch">
           <InputField label="Password" name="password" placeholder="Password" type={FieldType.Password} />
           <InputField
             label="Confirm Password"
@@ -150,6 +107,7 @@ export default function Page() {
             type={FieldType.Password}
           />
         </div>
+
         <Button disabled={isPending} type="submit" className="w-full">
           Signup
         </Button>

@@ -64,7 +64,7 @@ export function DialogNewAssignment() {
           New Assignment
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-screen max-w-fit">
+      <DialogContent className="max-h-screen w-2/5">
         <DialogTitle>Create Assignment</DialogTitle>
         {isPending ? <LoadingSpinner /> : <FormNewAssignment />}
         <div className="flex justify-around">

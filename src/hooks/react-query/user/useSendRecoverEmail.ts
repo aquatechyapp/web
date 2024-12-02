@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError, isAxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 
 import { toast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
@@ -9,14 +10,16 @@ type SendRecoverEmail = {
 };
 
 export const useSendRecoverEmail = () => {
+  const router = useRouter();
   const { mutate, isPending, isError } = useMutation({
     mutationFn: async (data: SendRecoverEmail) => await clientAxios.post('/sendrecoverpasswordemail', data),
     onSuccess: async () => {
       toast({
-        duration: 2000,
+        duration: 5000,
         title: 'If this user email exists, you will receive an email with instructions to recover your password.',
         variant: 'success'
       });
+      router.push('/login');
     },
     onError: (error): Error | AxiosError => {
       if (isAxiosError(error)) {

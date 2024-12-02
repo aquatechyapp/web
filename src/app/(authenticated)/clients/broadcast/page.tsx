@@ -1,7 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -12,6 +13,7 @@ import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { clientAxios } from '@/lib/clientAxios';
+import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 
@@ -30,6 +32,16 @@ export default function Page() {
   const [selectedCities, setSelectedCities] = React.useState<string[]>([]);
   const [selectedClients, setSelectedClients] = React.useState<Client[]>([]);
   const { toast } = useToast();
+
+  const user = useUserStore((state) => state.user);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user.firstName === '') {
+      router.push('/account');
+    }
+  }, [user]);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
