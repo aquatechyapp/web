@@ -63,18 +63,7 @@ export default function Page() {
 
   if (isPending) return <LoadingSpinner />;
 
-  // const phoneIsDirty = useMemo(() => form.watch('phone') !== user?.phone, [form.watch('phone'), user?.phone]);
-  // const languageSelectOptions = ['English', 'Portuguese', 'Spanish'].map((lang) => ({ value: lang, name: lang }));
-
-  // const isDirty = useMemo(() => form.formState.isDirty || phoneIsDirty, [form.getValues()]);
-
   function handleSubmit(data: IUserSchema) {
-    // if (phoneIsDirty) {
-    //   newData = {
-    //     ...newData,
-    //     phone: form.getValues().phone
-    //   };
-    // }
     mutate(data);
   }
 
@@ -111,42 +100,6 @@ export default function Page() {
           <ModalDeleteAccount />
         </div>
       </form>
-      {/* <div className="mt-4 flex flex-col gap-4 p-2">
-        <Accordion type="single" collapsible>
-          <AccordionItem value="item-1" className="no-underline" style={{ borderBottom: 'none' }}>
-            <AccordionTrigger style={{ textDecoration: 'none' }}>
-              <p>
-                <Trash className="text-red-500" />
-              </p>
-              <Typography element="h3" className="ml-2 mr-auto font-normal text-red-500 hover:font-semibold">
-                Delete account
-              </Typography>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col items-center gap-2 text-center">
-                <Typography>
-                  Deleting your account will remove all your information from our database. <br />
-                  <b className="font-semibold">This action cannot be undone.</b>
-                </Typography>
-                <Input
-                  onChange={(e) => setInputConfirm(e.target.value)}
-                  className="w-48"
-                  placeholder="Type DELETE to confirm"
-                />
-                <Button
-                  type="button"
-                  onClick={() => deleteUser()}
-                  disabled={inputConfirm !== 'DELETE'}
-                  variant="destructive"
-                  className="h-10w mt-2 w-fit"
-                >
-                  Delete account
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </div> */}
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>

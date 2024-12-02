@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -39,11 +40,18 @@ const formSchema = z
 export default function Page() {
   const { toast } = useToast();
   const [showModal, setShowModal] = useState(false);
+  const { push } = useRouter();
 
   const { mutate: createUser, isPending } = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => await clientAxios.post('/createuser', data),
     onSuccess: () => {
       setShowModal(true);
+      toast({
+        title: 'Success',
+        description: 'User created successfully. Please check your email to confirm your account.',
+        variant: 'success'
+      });
+      push('/login');
     },
     onError: (error) => {
       let errorMessage = 'Error';
