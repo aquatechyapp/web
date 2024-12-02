@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import { Mock } from 'vitest';
 
-import SignupPage from '@/app/(unauthorized)/signup/page';
+import SignupPage from '@/app/(unauthorized)/signup3/page';
 
 vi.mock('@tanstack/react-query');
 

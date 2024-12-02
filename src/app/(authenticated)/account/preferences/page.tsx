@@ -1,6 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
@@ -33,6 +35,9 @@ export default function Page() {
       isFreePlan: state.isFreePlan
     }))
   );
+
+  const user = useUserStore((state) => state.user);
+
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -63,6 +68,14 @@ export default function Page() {
       form.setValue('attachServicePhotos', false);
     }
   }
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user.firstName === '') {
+      router.push('/account');
+    }
+  }, [user]);
 
   if (isPending) {
     return <LoadingSpinner />;

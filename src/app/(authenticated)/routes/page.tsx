@@ -3,7 +3,8 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addWeeks, format, nextDay, startOfDay, subWeeks } from 'date-fns';
-import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
@@ -41,6 +42,8 @@ export default function Page() {
   const { width = 0 } = useWindowDimensions();
   const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } = useUpdateAssignments();
 
+  const router = useRouter();
+
   const nextSixWeeks = useMemo(() => {
     const today = startOfDay(new Date());
     const weekdayIndex = Object.keys(WeekdaysUppercaseEnum).indexOf(selectedWeekday);
@@ -61,6 +64,13 @@ export default function Page() {
       isFreePlan: state.isFreePlan
     }))
   );
+
+  useEffect(() => {
+    if (user.firstName === '') {
+      router.push('/account');
+    }
+  }, [user]);
+
   const { assignmentToId, setAssignmentToId } = useTechniciansStore(
     useShallow((state) => ({
       assignmentToId: state.assignmentToId,

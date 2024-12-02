@@ -77,6 +77,14 @@ export default function Page() {
 
   const { push } = useRouter();
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user.firstName === '') {
+      router.push('/account');
+    }
+  }, [user]);
+
   useEffect(() => {
     if (shouldDisableNewPools) {
       push('/clients');

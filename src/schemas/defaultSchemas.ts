@@ -23,6 +23,10 @@ export const defaultSchemas = {
     .email({ message: 'Invalid e-mail.' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
   name: commonStringSchema('Name', 2),
+  firstName: commonStringSchema('First name', 2),
+  lastName: commonStringSchema('Last name', 2),
+  company: commonStringSchema('Company', 2),
+
   notes: z.string().trim().optional(),
   phone: z.string().length(17, { message: 'Phone number is incomplete' }),
   state: commonStringSchema('State', 2),

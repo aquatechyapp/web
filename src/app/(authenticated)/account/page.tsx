@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -15,12 +16,13 @@ import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
 import { FieldType, LanguageOptions } from '@/ts/enums/enums';
 
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../../components/ui/dialog';
 import { ModalDeleteAccount } from './ModalDeleteAccount';
 
 const formSchema = z.object({
-  firstName: defaultSchemas.name,
-  lastName: defaultSchemas.name,
-  company: defaultSchemas.name,
+  firstName: defaultSchemas.firstName,
+  lastName: defaultSchemas.lastName,
+  company: defaultSchemas.company,
   phone: defaultSchemas.phone,
   email: defaultSchemas.email,
   address: defaultSchemas.address,
@@ -35,6 +37,7 @@ export type IUserSchema = z.infer<typeof formSchema>;
 export default function Page() {
   const user = useUserStore((state) => state.user);
   const { mutate, isPending } = useUpdateUser();
+  const [showModal, setShowModal] = useState(false);
 
   const form = useForm<IUserSchema>({
     defaultValues: {
@@ -51,6 +54,12 @@ export default function Page() {
     },
     resolver: zodResolver(formSchema)
   });
+
+  useEffect(() => {
+    if (user.firstName === '') {
+      setShowModal(true);
+    }
+  }, [user]);
 
   if (isPending) return <LoadingSpinner />;
 
@@ -138,6 +147,15 @@ export default function Page() {
           </AccordionItem>
         </Accordion>
       </div> */}
+
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent>
+          <DialogTitle className="text-center">Welcome to Aquatechy!</DialogTitle>
+          <DialogDescription className="text-center">
+            Before start using the app, <b>you must complete</b> your profile.
+          </DialogDescription>
+        </DialogContent>
+      </Dialog>
     </Form>
   );
 }
