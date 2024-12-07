@@ -1,6 +1,11 @@
 {
   "root": true,
-  "plugins": ["@typescript-eslint/eslint-plugin", "prettier", "@tanstack/eslint-plugin-query", "simple-import-sort"],
+  "plugins": [
+    "@typescript-eslint/eslint-plugin",
+    "prettier",
+    "@tanstack/eslint-plugin-query",
+    "simple-import-sort"
+  ],
   "parser": "@typescript-eslint/parser",
   "extends": [
     "eslint:recommended",
@@ -9,11 +14,22 @@
     "prettier",
     "plugin:react-hooks/recommended"
   ],
-  "ignorePatterns": [".vercel", ".next", "node_modules", "out", "build"],
+  "ignorePatterns": [
+    ".vercel",
+    ".next",
+    "node_modules",
+    "out",
+    "build"
+  ],
   "rules": {
     "simple-import-sort/imports": "error",
-    "no-console": 1, // Means warning
-    "prettier/prettier": "error"
+    "no-console": 1,
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
   },
   "settings": {
     "import/resolver": {
@@ -21,3 +37,34 @@
     }
   }
 }
+
+
+
+
+
+
+
+// {
+//   "root": true,
+//   "plugins": ["@typescript-eslint/eslint-plugin", "prettier", "@tanstack/eslint-plugin-query", "simple-import-sort"],
+//   "parser": "@typescript-eslint/parser",
+//   "extends": [
+//     "eslint:recommended",
+//     "plugin:@typescript-eslint/eslint-recommended",
+//     "plugin:@typescript-eslint/recommended",
+//     "prettier",
+//     "plugin:react-hooks/recommended"
+//   ],
+//   "ignorePatterns": [".vercel", ".next", "node_modules", "out", "build"],
+//   "rules": {
+//     "simple-import-sort/imports": "error",
+//     "no-console": 1, // Means warning
+//     "prettier/prettier": "error"
+//   },
+//   "settings": {
+//     "import/resolver": {
+//       "typescript": {}
+//     }
+//   }
+// }
+

@@ -5,6 +5,7 @@ import {
   CircleUser,
   FileBarChartIcon,
   Import,
+  ListChecks,
   Mails,
   Settings2,
   UserPlus,
@@ -173,6 +174,13 @@ export const routes: Menu[] = [
     icon: TeamIcon,
     title: 'My team',
     description: 'Manage your team and add new technicians'
+  },
+  {
+    text: 'Services',
+    href: '/services',
+    icon: ListChecks,
+    title: 'Services',
+    description: 'Look services made by your company'
   },
   {
     text: 'My Account',
