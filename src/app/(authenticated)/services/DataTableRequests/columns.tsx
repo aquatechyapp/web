@@ -2,8 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 
-import { Categories } from '@/constants';
-import { Request } from '@/ts/interfaces/Request';
+import { Services } from '@/ts/interfaces/Request';
 
 const statusOptions = {
   Pending: {
@@ -20,27 +19,30 @@ const statusOptions = {
   }
 };
 
-export const columns: ColumnDef<Request>[] = [
-  // {
-  //   accessorKey: 'name',
-  //   accessorFn: (row) => row.client.fullName,
-  //   header: 'Client/pool',
-  //   cell: (props) => {
-  //     const { pool } = props.cell.row.original;
-  //     return (
-  //       <div className="flex">
-  //         <div className="flex flex-col">
-  //           <span>{pool.name}</span>
-  //         </div>
-  //       </div>
-  //     );
-  //   }
-  // },
+export const columns: ColumnDef<Services>[] = [
   {
-    accessorKey: 'category',
-    header: 'Category',
+    accessorKey: 'client',
+    header: 'Client',
+    cell: ({ row: { original } }) => <div>{'N/A'}</div>
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Date',
+    cell: ({ row: { original } }) => <div>{new Date(original.createdAt).toLocaleDateString()}</div>
+  },
+  {
+    accessorKey: 'notes',
+    header: 'Notes',
+    cell: ({ row: { original } }) => <div>{'N/A'}</div>
+  },
+  {
+    accessorKey: 'technician',
+    header: 'Technician',
     cell: ({ row: { original } }) => (
-      <div>{Object.values(Categories).find((category) => category.value === original.category)?.name}</div>
+      <div>
+        {' '}
+        {original.doneByUser?.firstName} {original.doneByUser?.lastName}
+      </div>
     )
   },
   {

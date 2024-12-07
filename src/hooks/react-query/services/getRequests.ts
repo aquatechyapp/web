@@ -5,7 +5,7 @@ import { clientAxios } from '@/lib/clientAxios';
 interface UseGetServicesParams {
   from: string;
   to: string;
-  technicianId?: number;
+  technicianId?: number | null; // Permitir null
   clientId?: number;
   page?: number;
 }
@@ -23,8 +23,6 @@ export default function useGetServices({ from, to, technicianId, clientId, page 
           page
         }
       });
-
-      console.log('response', response);
 
       return response.data;
     },
