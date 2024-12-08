@@ -154,7 +154,8 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const startsOn = format(new Date(assignment.startOn), 'LLL, do, y');
-  const endsAfter = format(new Date(assignment.endAfter), 'LLL, do, y');
+  const endsAfter =
+    new Date(assignment.endAfter).getFullYear() > 2100 ? 'No end' : format(new Date(assignment.endAfter), 'LLL, do, y');
 
   const isOnlyAt = startsOn === endsAfter;
 

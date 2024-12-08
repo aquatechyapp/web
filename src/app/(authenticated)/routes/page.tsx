@@ -12,7 +12,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+// import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAssignmentsContext } from '@/context/assignments';
 import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
@@ -202,23 +202,23 @@ export default function Page() {
                   </div>
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                     {assignments.current.length > 0 && assignmentToId === user?.id && (
-                      <HoverCard>
-                        <HoverCardTrigger className="w-full">
-                          <Button
-                            disabled={isFreePlan}
-                            type="button"
-                            className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
-                            onClick={() => getDirectionsFromGoogleMaps(true)}
-                          >
-                            Optimize Route
-                          </Button>
-                        </HoverCardTrigger>
-                        {isFreePlan && (
-                          <HoverCardContent side="bottom" className="w-full">
-                            This feature is not available in Free Plan.
-                          </HoverCardContent>
-                        )}
-                      </HoverCard>
+                      // <HoverCard>
+                      //   <HoverCardTrigger className="w-full">
+                      <Button
+                        disabled={isFreePlan}
+                        type="button"
+                        className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
+                        onClick={() => getDirectionsFromGoogleMaps(true)}
+                      >
+                        Optimize Route
+                      </Button>
+                      //   </HoverCardTrigger>
+                      //   {isFreePlan && (
+                      //     <HoverCardContent side="bottom" className="w-full">
+                      //       This feature is not available in Free Plan.
+                      //     </HoverCardContent>
+                      //   )}
+                      // </HoverCard>
                     )}
                     {getDifference(assignments.initial, assignments.current) && (
                       <Button
