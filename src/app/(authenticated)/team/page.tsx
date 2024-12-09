@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { useUserStore } from '@/store/user';
+import { SubcontractorStatus } from '@/ts/enums/enums';
 import { WorkRelation } from '@/ts/interfaces/User';
 
 import { Button } from '../../../components/ui/button';
@@ -51,9 +52,21 @@ export default function Page() {
       </div>
 
       <div className="mt-3">
-        <div className="flex flex-wrap justify-center gap-6 self-stretch md:justify-normal">
+        <div className="flex flex-wrap justify-center gap-2 self-stretch md:justify-normal">
           {filteredSubcontractors?.length === 0 && filteredEmployers?.length === 0 && (
             <span>No contractors found.</span>
+          )}
+          {user && (
+            <div className="flex flex-wrap justify-center">
+              <WorkRelationCard
+                key={user.email}
+                type="owner"
+                name={`${user.firstName} ${user.lastName}`}
+                phone={user.phone}
+                email={user.email}
+                status={SubcontractorStatus.Active}
+              />
+            </div>
           )}
           {filteredSubcontractors && (
             <div className="flex flex-wrap justify-center gap-2">
@@ -62,7 +75,7 @@ export default function Page() {
                   key={subcontractor.subcontractor.email}
                   type="subcontractor"
                   name={`${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`}
-                  phone={subcontractor.subcontractor.phone}
+                  phone={subcontractor.subcontractor.phone ? subcontractor.subcontractor.phone : 'Pending'}
                   email={subcontractor.subcontractor.email}
                   status={subcontractor.status}
                   workRelationId={subcontractor.id}

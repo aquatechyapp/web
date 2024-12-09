@@ -16,7 +16,7 @@ import { FieldType } from '@/ts/enums/enums';
 
 import InputField from '../../../components/InputField';
 import { Button } from '../../../components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../../components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription } from '../../../components/ui/dialog';
 import { Form } from '../../../components/ui/form';
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
@@ -45,8 +45,8 @@ export default function Page() {
   const { mutate: createUser, isPending } = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => await clientAxios.post('/createuser', data),
     onSuccess: () => {
-      setShowModal(true);
       toast({
+        duration: 8000,
         title: 'Success',
         description: 'User created successfully. Please check your email to confirm your account.',
         variant: 'success'
@@ -60,7 +60,7 @@ export default function Page() {
       }
 
       toast({
-        duration: 5000,
+        duration: 8000,
         title: 'Error',
         description: errorMessage,
         variant: 'error'
@@ -88,7 +88,7 @@ export default function Page() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="inline-flex w-[680px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8"
+        className="inline-flex w-96 flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8 md:w-[680px]"
       >
         <div className="mb-8 inline-flex h-5 items-center justify-center gap-3 self-stretch">
           <Image priority width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
@@ -122,12 +122,13 @@ export default function Page() {
       </form>
       {/* Modal de confirmação de email */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent>
-          <DialogTitle>Email Confirmation</DialogTitle>
-          <DialogDescription className="text-center">
-            An email has been sent to you. <br />
-            Please check your e-mail to activate your account. <br />
-            <b> If you can't find the e-mail, please check your spam box.</b>
+        <DialogContent className="w-96 rounded-md md:w-[680px]">
+          {/* <DialogTitle>Email Confirmation</DialogTitle> */}
+          <DialogDescription>
+            <p>
+              Please <b>check your e-mail</b> to activate your account, if you can't find the e-mail please check your
+              spam box.
+            </p>
           </DialogDescription>
         </DialogContent>
       </Dialog>
