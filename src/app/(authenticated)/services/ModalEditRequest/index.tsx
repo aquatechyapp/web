@@ -1,6 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Icon } from '@radix-ui/react-select';
+import { ListChecks } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { IoMdMail } from 'react-icons/io';
 import { MdOutlinePhoneAndroid } from 'react-icons/md';
@@ -52,17 +54,7 @@ type Props = {
 export function ModalEditRequest({ request, open, setOpen }: Props) {
   const user = useUserStore((state) => state.user);
   const { mutate: updateRequest, isPending: isPendingUpdate } = useUpdateRequest(request.id);
-
-  const CopyToClipboardData = [
-    {
-      value: request.client?.email || 'Email not available',
-      Icon: IoMdMail
-    },
-    {
-      value: request.client?.phone || 'Phone not available',
-      Icon: MdOutlinePhoneAndroid
-    }
-  ];
+  console.log('request', request);
 
   const form = useForm<EditRequest>({
     resolver: zodResolver(schema),
@@ -104,8 +96,10 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
       <DialogContent className="">
         <Form {...form}>
           <form className="flex flex-col gap-4" onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
-            <DialogTitle className="font-semibold">{request ? `Request #${request.id}` : 'New Request'}</DialogTitle>
-            <div className="flex gap-4">
+            <div className="flex">
+              <DialogTitle className="font-semibold">{request ? `Request #${request.id}` : 'New Request'}</DialogTitle>
+            </div>
+            {/* <div className="flex gap-4">
               <SelectField
                 options={buildSelectOptions(
                   clients?.filter((client: Client) => client.pools.length > 0),
@@ -137,8 +131,8 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
                   label="Pool"
                 />
               )}
-            </div>
-            <div>
+            </div> */}
+            {/* <div>
               <InputField
                 name="description"
                 placeholder="Description"
@@ -146,7 +140,7 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
                 disabled={disabled}
                 label="Description"
               />
-            </div>
+            </div> */}
             <InputFile
               disabled={disabled}
               handleChange={(images) => form.setValue('photo', images)}
@@ -156,29 +150,32 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
               }))}
               showBorder={false}
             />
-            <SelectField
+            {/* <SelectField
               label="Category"
               name="category"
               options={Categories}
               placeholder="Category"
               disabled={disabled}
-            />
-            <SelectField label="Status" name="status" options={RequestStatus} placeholder="Status" />
+            /> */}
+            {/* <SelectField label="Status" name="status" options={RequestStatus} placeholder="Status" /> */}
 
-            <InputField
+            {/* <InputField
               label="Outcome (description of how the problem was fixed)"
               name="outcome"
               placeholder="Outcome"
               type={FieldType.TextArea}
-            />
-            <div>
-              {CopyToClipboardData.map((item) => (
-                <CopyToClipboard key={item.value} value={item.value} Icon={item.Icon} />
-              ))}
+            /> */}
+            <div className="flex gap-4">
+              <Button className="w-full" type="submit">
+                Update Request
+              </Button>
+              <Button className="w-full" type="submit">
+                Update Request
+              </Button>
+              <Button className="w-full" type="submit">
+                Update Request
+              </Button>
             </div>
-            <Button className="w-full" type="submit">
-              Update Request
-            </Button>
           </form>
         </Form>
       </DialogContent>

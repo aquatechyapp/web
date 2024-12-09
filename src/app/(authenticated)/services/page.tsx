@@ -36,7 +36,8 @@ export default function Page() {
   const user = useUserStore((state) => state.user);
   const router = useRouter();
 
-  console.log(filters);
+  // console.log('data', data);
+  // console.log('filters', filters);
 
   useEffect(() => {
     if (!user?.firstName) {

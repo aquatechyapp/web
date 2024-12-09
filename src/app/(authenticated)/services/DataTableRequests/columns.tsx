@@ -23,7 +23,16 @@ export const columns: ColumnDef<Services>[] = [
   {
     accessorKey: 'client',
     header: 'Client',
-    cell: ({ row: { original } }) => <div>{'N/A'}</div>
+    cell: ({ row: { original } }) => (
+      <>
+        <div>
+          {original.pool.clientOwner.firstName} {original.pool.clientOwner.lastName}
+        </div>
+        <div>
+          {original.pool.zip}, {original.pool.state},{original.pool.city}, {original.pool.address}
+        </div>
+      </>
+    )
   },
   {
     accessorKey: 'createdAt',
