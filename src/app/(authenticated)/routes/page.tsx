@@ -1,144 +1,144 @@
 'use client';
-import { DragEndEvent } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { addWeeks, format, nextDay, startOfDay, subWeeks } from 'date-fns';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+// import { DragEndEvent } from '@dnd-kit/core';
+// import { arrayMove } from '@dnd-kit/sortable';
+// import { zodResolver } from '@hookform/resolvers/zod';
+// import { addWeeks, format, nextDay, startOfDay, subWeeks } from 'date-fns';
+// import { useRouter } from 'next/navigation';
+// import { useEffect, useMemo, useState } from 'react';
+// import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useShallow } from 'zustand/react/shallow';
 
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
+// import { useShallow } from 'zustand/react/shallow';
+// import { LoadingSpinner } from '@/components/LoadingSpinner';
+// import { Button } from '@/components/ui/button';
+// import { Form } from '@/components/ui/form';
 // import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAssignmentsContext } from '@/context/assignments';
-import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
-import { useMapUtils } from '@/hooks/useMapUtils';
-import useWindowDimensions from '@/hooks/useWindowDimensions';
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// import { useAssignmentsContext } from '@/context/assignments';
+// import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
+// import { useMapUtils } from '@/hooks/useMapUtils';
+// import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { paidByServiceSchema } from '@/schemas/assignments';
 import { dateSchema } from '@/schemas/date';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
-import { useTechniciansStore } from '@/store/technicians';
-import { useUserStore } from '@/store/user';
-import { useWeekdayStore } from '@/store/weekday';
-import { WeekdaysUppercase as WeekdaysUppercaseEnum } from '@/ts/enums/enums';
-import { Assignment } from '@/ts/interfaces/Assignments';
-import { Weekdays, WeekdaysUppercase } from '@/ts/interfaces/Weekday';
+// import { useTechniciansStore } from '@/store/technicians';
+// import { useUserStore } from '@/store/user';
+// import { useWeekdayStore } from '@/store/weekday';
+// import { WeekdaysUppercase as WeekdaysUppercaseEnum } from '@/ts/enums/enums';
+// import { Assignment } from '@/ts/interfaces/Assignments';
+// import { Weekdays, WeekdaysUppercase } from '@/ts/interfaces/Weekday';
 
-import { AssignmentsList } from './AssignmentsList';
-import Map from './Map';
-import { DialogNewAssignment } from './ModalNewAssignment';
-import { DialogTransferRoute } from './ModalTransferRoute';
-import TechnicianSelect from './TechnicianSelect';
+// import { AssignmentsList } from './AssignmentsList';
+// import Map from './Map';
+// import { DialogNewAssignment } from './ModalNewAssignment';
+// import { DialogTransferRoute } from './ModalTransferRoute';
+// import TechnicianSelect from './TechnicianSelect';
 
 export default function Page() {
-  const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapUtils();
-  const [openTransferDialog, setOpenTransferDialog] = useState(false);
-  const { assignments, setAssignments } = useAssignmentsContext();
-  const { selectedWeekday, setSelectedWeekday, setSelectedDay, selectedDay } = useWeekdayStore((state) => state);
-  const { width = 0 } = useWindowDimensions();
-  const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } = useUpdateAssignments();
+  // const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapUtils();
+  // const [openTransferDialog, setOpenTransferDialog] = useState(false);
+  // const { assignments, setAssignments } = useAssignmentsContext();
+  // const { selectedWeekday, setSelectedWeekday, setSelectedDay, selectedDay } = useWeekdayStore((state) => state);
+  // const { width = 0 } = useWindowDimensions();
+  // const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } = useUpdateAssignments();
 
-  const router = useRouter();
+  // const router = useRouter();
 
-  const nextSixWeeks = useMemo(() => {
-    const today = startOfDay(new Date());
-    const weekdayIndex = Object.keys(WeekdaysUppercaseEnum).indexOf(selectedWeekday);
-    const selectedDay =
-      weekdayIndex === today.getDay() ? today : nextDay(today, weekdayIndex as 0 | 1 | 2 | 3 | 4 | 5 | 6);
+  // const nextSixWeeks = useMemo(() => {
+  //   const today = startOfDay(new Date());
+  //   const weekdayIndex = Object.keys(WeekdaysUppercaseEnum).indexOf(selectedWeekday);
+  //   const selectedDay =
+  //     weekdayIndex === today.getDay() ? today : nextDay(today, weekdayIndex as 0 | 1 | 2 | 3 | 4 | 5 | 6);
 
-    return [
-      subWeeks(selectedDay, 2),
-      subWeeks(selectedDay, 1),
-      selectedDay,
-      ...Array.from({ length: 4 }, (_, i) => addWeeks(selectedDay, i + 1))
-    ];
-  }, [selectedWeekday]);
+  //   return [
+  //     subWeeks(selectedDay, 2),
+  //     subWeeks(selectedDay, 1),
+  //     selectedDay,
+  //     ...Array.from({ length: 4 }, (_, i) => addWeeks(selectedDay, i + 1))
+  //   ];
+  // }, [selectedWeekday]);
 
-  const { user, isFreePlan } = useUserStore(
-    useShallow((state) => ({
-      user: state.user,
-      isFreePlan: state.isFreePlan
-    }))
-  );
+  // const { user, isFreePlan } = useUserStore(
+  //   useShallow((state) => ({
+  //     user: state.user,
+  //     isFreePlan: state.isFreePlan
+  //   }))
+  // );
 
-  useEffect(() => {
-    if (user.firstName === '') {
-      router.push('/account');
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user.firstName === '') {
+  //     router.push('/account');
+  //   }
+  // }, [user]);
 
-  const { assignmentToId, setAssignmentToId } = useTechniciansStore(
-    useShallow((state) => ({
-      assignmentToId: state.assignmentToId,
-      setAssignmentToId: state.setAssignmentToId
-    }))
-  );
+  // const { assignmentToId, setAssignmentToId } = useTechniciansStore(
+  //   useShallow((state) => ({
+  //     assignmentToId: state.assignmentToId,
+  //     setAssignmentToId: state.setAssignmentToId
+  //   }))
+  // );
 
-  const form = useForm<z.infer<typeof newAssignmentSchema>>({
-    resolver: zodResolver(newAssignmentSchema),
-    defaultValues: {
-      assignmentToId: assignmentToId,
-      poolId: '',
-      weekday: format(new Date(), 'EEEE').toUpperCase() as WeekdaysUppercase,
-      frequency: '',
-      paidByService: undefined,
-      startOn: undefined,
-      endAfter: undefined
-    }
-  });
+  // const form = useForm<z.infer<typeof newAssignmentSchema>>({
+  //   resolver: zodResolver(newAssignmentSchema),
+  //   defaultValues: {
+  //     assignmentToId: assignmentToId,
+  //     poolId: '',
+  //     weekday: format(new Date(), 'EEEE').toUpperCase() as WeekdaysUppercase,
+  //     frequency: '',
+  //     paidByService: undefined,
+  //     startOn: undefined,
+  //     endAfter: undefined
+  //   }
+  // });
 
-  const mdScreen = width < 900;
+  // const mdScreen = width < 900;
 
-  function getDifference(array1: Assignment[], array2: Assignment[]): boolean {
-    return JSON.stringify(array1) !== JSON.stringify(array2);
-  }
+  // function getDifference(array1: Assignment[], array2: Assignment[]): boolean {
+  //   return JSON.stringify(array1) !== JSON.stringify(array2);
+  // }
 
-  function handleDragEnd(event: DragEndEvent, setActive: React.Dispatch<number | null>) {
-    const { active, over } = event;
-    setActive(null);
-    if (!active || !over) return;
-    if (active.id !== over.id) {
-      const oldIndex = assignments.current.findIndex((item) => item.id === active.id);
-      const newIndex = assignments.current.findIndex((item) => item.id === over.id);
+  // function handleDragEnd(event: DragEndEvent, setActive: React.Dispatch<number | null>) {
+  //   const { active, over } = event;
+  //   setActive(null);
+  //   if (!active || !over) return;
+  //   if (active.id !== over.id) {
+  //     const oldIndex = assignments.current.findIndex((item) => item.id === active.id);
+  //     const newIndex = assignments.current.findIndex((item) => item.id === over.id);
 
-      const changedOrderProperty = arrayMove(assignments.current, oldIndex, newIndex).map((assignment, index) => {
-        return { ...assignment, order: index + 1 };
-      });
+  //     const changedOrderProperty = arrayMove(assignments.current, oldIndex, newIndex).map((assignment, index) => {
+  //       return { ...assignment, order: index + 1 };
+  //     });
 
-      setAssignments({
-        ...assignments,
-        current: changedOrderProperty
-      });
-      getDirectionsFromGoogleMaps();
-    }
-  }
+  //     setAssignments({
+  //       ...assignments,
+  //       current: changedOrderProperty
+  //     });
+  //     getDirectionsFromGoogleMaps();
+  //   }
+  // }
 
-  function handleChangeWeekday(weekday: WeekdaysUppercase) {
-    form.setValue('weekday', weekday);
-    setSelectedWeekday(weekday);
-    const weekdayIndex = Object.keys(WeekdaysUppercaseEnum).indexOf(weekday);
-    const today = startOfDay(new Date());
+  // function handleChangeWeekday(weekday: WeekdaysUppercase) {
+  //   form.setValue('weekday', weekday);
+  //   setSelectedWeekday(weekday);
+  //   const weekdayIndex = Object.keys(WeekdaysUppercaseEnum).indexOf(weekday);
+  //   const today = startOfDay(new Date());
 
-    const selectedDay =
-      weekdayIndex === today.getDay() ? today : nextDay(today, weekdayIndex as 0 | 1 | 2 | 3 | 4 | 5 | 6);
+  //   const selectedDay =
+  //     weekdayIndex === today.getDay() ? today : nextDay(today, weekdayIndex as 0 | 1 | 2 | 3 | 4 | 5 | 6);
 
-    setSelectedDay(selectedDay.toISOString());
-  }
+  //   setSelectedDay(selectedDay.toISOString());
+  // }
 
-  function handleChangeDay(dateString: string) {
-    setSelectedDay(dateString);
-  }
+  // function handleChangeDay(dateString: string) {
+  //   setSelectedDay(dateString);
+  // }
 
-  function handleChangeTechnician(technicianId: string) {
-    setAssignmentToId(technicianId);
-    form.setValue('assignmentToId', technicianId);
-  }
+  // function handleChangeTechnician(technicianId: string) {
+  //   setAssignmentToId(technicianId);
+  //   form.setValue('assignmentToId', technicianId);
+  // }
 
-  if (isUpdateAssignmentsPending) return <LoadingSpinner />;
+  // if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
   return (
     // <FormProvider {...form}>
@@ -284,8 +284,8 @@ const newAssignmentSchema = z
   .and(dateSchema)
   .and(paidByServiceSchema);
 
-const weekdays: Weekdays[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-// const days = ['09', '16', '23', '30', '07', '10', '17'];
+// const weekdays: Weekdays[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+// // const days = ['09', '16', '23', '30', '07', '10', '17'];
 
-const weekdaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const weekdaysLetter = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+// const weekdaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+// const weekdaysLetter = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
