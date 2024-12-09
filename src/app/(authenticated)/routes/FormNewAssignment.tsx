@@ -84,7 +84,7 @@ export const FormNewAssignment = () => {
 
       const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
       const weekdayName = format(nextDate, 'yyyy-MM-dd');
-      const isoDate = String(nextDate); // Get the ISO string for the date
+      const isoDate = String(nextDate);
 
       dates.push({
         name: formattedDate,

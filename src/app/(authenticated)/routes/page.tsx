@@ -141,130 +141,133 @@ export default function Page() {
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
   return (
-    <FormProvider {...form}>
-      <div
-        className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 p-2 ${mdScreen ? 'flex-col' : ''}`}
-      >
-        <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
-          <Tabs
-            onValueChange={(weekday) => handleChangeWeekday(weekday as WeekdaysUppercase)}
-            defaultValue={format(new Date(), 'EEEE').toUpperCase()}
-            value={selectedWeekday}
-          >
-            <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
-              <Form {...form}>
-                <form className="w-full">
-                  <TabsList className="w-full">
-                    {weekdays.map((weekday, index) => (
-                      <TabsTrigger className="flex-1" key={weekday} value={weekday.toUpperCase()}>
-                        {width
-                          ? width < 1440
-                            ? width < 768
-                              ? weekdaysLetter[index]
-                              : weekdaysShort[index]
-                            : weekday
-                          : weekday}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                  <Tabs
-                    onValueChange={(day) => handleChangeDay(day)}
-                    defaultValue={format(new Date(), 'EEEE').toUpperCase()}
-                    value={selectedDay}
-                  >
-                    <TabsList className="mt-2 w-full">
-                      {nextSixWeeks.map((date, index) => (
-                        <TabsTrigger className="flex-1" key={date.toISOString()} value={date.toISOString()}>
-                          {index === 2 ? format(date, 'dd/MM') : format(date, 'dd/MM')}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-                  </Tabs>
+    // <FormProvider {...form}>
+    //   <div
+    //     className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 p-2 ${mdScreen ? 'flex-col' : ''}`}
+    //   >
+    //     <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
+    //       <Tabs
+    //         onValueChange={(weekday) => handleChangeWeekday(weekday as WeekdaysUppercase)}
+    //         defaultValue={format(new Date(), 'EEEE').toUpperCase()}
+    //         value={selectedWeekday}
+    //       >
+    //         <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
+    //           <Form {...form}>
+    //             <form className="w-full">
+    //               <TabsList className="w-full">
+    //                 {weekdays.map((weekday, index) => (
+    //                   <TabsTrigger className="flex-1" key={weekday} value={weekday.toUpperCase()}>
+    //                     {width
+    //                       ? width < 1440
+    //                         ? width < 768
+    //                           ? weekdaysLetter[index]
+    //                           : weekdaysShort[index]
+    //                         : weekday
+    //                       : weekday}
+    //                   </TabsTrigger>
+    //                 ))}
+    //               </TabsList>
+    //               <Tabs
+    //                 onValueChange={(day) => handleChangeDay(day)}
+    //                 defaultValue={format(new Date(), 'EEEE').toUpperCase()}
+    //                 value={selectedDay}
+    //               >
+    //                 <TabsList className="mt-2 w-full">
+    //                   {nextSixWeeks.map((date, index) => (
+    //                     <TabsTrigger className="flex-1" key={date.toISOString()} value={date.toISOString()}>
+    //                       {index === 2 ? format(date, 'dd/MM') : format(date, 'dd/MM')}
+    //                     </TabsTrigger>
+    //                   ))}
+    //                 </TabsList>
+    //               </Tabs>
 
-                  <TechnicianSelect onChange={handleChangeTechnician} />
-                  <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-                    <DialogNewAssignment />
-                    {assignments.current.length > 0 && (
-                      <Button
-                        type="button"
-                        className="w-full"
-                        variant="secondary"
-                        onClick={() => setOpenTransferDialog(true)}
-                      >
-                        Transfer Route
-                      </Button>
-                    )}
-                    <DialogTransferRoute
-                      open={openTransferDialog}
-                      setOpen={setOpenTransferDialog}
-                      isEntireRoute={true}
-                    />
-                  </div>
-                  <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-                    {assignments.current.length > 0 && assignmentToId === user?.id && (
-                      // <HoverCard>
-                      //   <HoverCardTrigger className="w-full">
-                      <Button
-                        disabled={isFreePlan}
-                        type="button"
-                        className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
-                        onClick={() => getDirectionsFromGoogleMaps(true)}
-                      >
-                        Optimize Route
-                      </Button>
-                      //   </HoverCardTrigger>
-                      //   {isFreePlan && (
-                      //     <HoverCardContent side="bottom" className="w-full">
-                      //       This feature is not available in Free Plan.
-                      //     </HoverCardContent>
-                      //   )}
-                      // </HoverCard>
-                    )}
-                    {getDifference(assignments.initial, assignments.current) && (
-                      <Button
-                        type="button"
-                        onClick={() =>
-                          updateAssignments(
-                            assignments.current.map((assignment) => {
-                              return {
-                                assignmentId: assignment.id,
-                                ...assignment
-                              };
-                            })
-                          )
-                        }
-                        className="mt-2 w-full bg-green-500 hover:bg-green-700"
-                      >
-                        Save
-                      </Button>
-                    )}
-                  </div>
-                </form>
-              </Form>
+    //               <TechnicianSelect onChange={handleChangeTechnician} />
+    //               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+    //                 <DialogNewAssignment />
+    //                 {assignments.current.length > 0 && (
+    //                   <Button
+    //                     type="button"
+    //                     className="w-full"
+    //                     variant="secondary"
+    //                     onClick={() => setOpenTransferDialog(true)}
+    //                   >
+    //                     Transfer Route
+    //                   </Button>
+    //                 )}
+    //                 <DialogTransferRoute
+    //                   open={openTransferDialog}
+    //                   setOpen={setOpenTransferDialog}
+    //                   isEntireRoute={true}
+    //                 />
+    //               </div>
+    //               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+    //                 {assignments.current.length > 0 && assignmentToId === user?.id && (
+    //                   // <HoverCard>
+    //                   //   <HoverCardTrigger className="w-full">
+    //                   <Button
+    //                     disabled={isFreePlan}
+    //                     type="button"
+    //                     className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
+    //                     onClick={() => getDirectionsFromGoogleMaps(true)}
+    //                   >
+    //                     Optimize Route
+    //                   </Button>
+    //                   //   </HoverCardTrigger>
+    //                   //   {isFreePlan && (
+    //                   //     <HoverCardContent side="bottom" className="w-full">
+    //                   //       This feature is not available in Free Plan.
+    //                   //     </HoverCardContent>
+    //                   //   )}
+    //                   // </HoverCard>
+    //                 )}
+    //                 {getDifference(assignments.initial, assignments.current) && (
+    //                   <Button
+    //                     type="button"
+    //                     onClick={() =>
+    //                       updateAssignments(
+    //                         assignments.current.map((assignment) => {
+    //                           return {
+    //                             assignmentId: assignment.id,
+    //                             ...assignment
+    //                           };
+    //                         })
+    //                       )
+    //                     }
+    //                     className="mt-2 w-full bg-green-500 hover:bg-green-700"
+    //                   >
+    //                     Save
+    //                   </Button>
+    //                 )}
+    //               </div>
+    //             </form>
+    //           </Form>
 
-              <TabsContent value={selectedWeekday} className="w-full">
-                {/* O filtro dos assignments precisa ser feito dentro de AssignmentsList, por causa
-                do componente TabsContent. Esse componente de Tabs se baseia no value para exibir
-                seus childrens (AssignmentsList). Como na aba tabs o value se baseia somente no weekday,
-                quando eu altero o Technician, ele só vai atualizar o render quando mudar de Weekday
-                A solução foi enviar todos os assignments e fazer o .filter lá dentro */}
-                <AssignmentsList handleDragEnd={handleDragEnd} />
-              </TabsContent>
-            </div>
-          </Tabs>
-        </div>
-        <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
-          <Map
-            assignments={assignments.current}
-            directions={directions}
-            distance={distance}
-            duration={duration}
-            isLoaded={isLoaded}
-            loadError={loadError}
-          />
-        </div>
-      </div>
-    </FormProvider>
+    //           <TabsContent value={selectedWeekday} className="w-full">
+    //             {/* O filtro dos assignments precisa ser feito dentro de AssignmentsList, por causa
+    //             do componente TabsContent. Esse componente de Tabs se baseia no value para exibir
+    //             seus childrens (AssignmentsList). Como na aba tabs o value se baseia somente no weekday,
+    //             quando eu altero o Technician, ele só vai atualizar o render quando mudar de Weekday
+    //             A solução foi enviar todos os assignments e fazer o .filter lá dentro */}
+    //             <AssignmentsList handleDragEnd={handleDragEnd} />
+    //           </TabsContent>
+    //         </div>
+    //       </Tabs>
+    //     </div>
+    //     <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
+    //       <Map
+    //         assignments={assignments.current}
+    //         directions={directions}
+    //         distance={distance}
+    //         duration={duration}
+    //         isLoaded={isLoaded}
+    //         loadError={loadError}
+    //       />
+    //     </div>
+    //   </div>
+    // </FormProvider>
+    <div className="h-full w-full">
+      <p>We are doing a few improvements in this section, try again later.</p>
+    </div>
   );
 }
 
