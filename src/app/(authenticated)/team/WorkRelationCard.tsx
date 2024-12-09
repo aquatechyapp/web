@@ -15,9 +15,9 @@ type Props = {
   email: string;
   phone: string;
   name: string;
-  type: 'employer' | 'subcontractor';
+  type: 'employer' | 'subcontractor' | 'owner';
   status: SubcontractorStatus;
-  workRelationId: string;
+  workRelationId?: string;
 };
 
 export function WorkRelationCard({ email, phone, name, type, status, workRelationId }: Props) {
@@ -48,8 +48,10 @@ export function WorkRelationCard({ email, phone, name, type, status, workRelatio
   });
 
   return (
-    <div className="relative inline-flex w-56 flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4">
-      <DropdownMenuWorkRelation workRelationId={workRelationId} isAccepted={status === SubcontractorStatus.Active} />
+    <div className="relative inline-flex w-96 flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:w-56">
+      {workRelationId ? (
+        <DropdownMenuWorkRelation workRelationId={workRelationId} isAccepted={status === SubcontractorStatus.Active} />
+      ) : null}
       <div className="flex h-[138px] flex-col items-center justify-start gap-4 self-stretch">
         <Avatar className="size-24">
           <AvatarImage src={''} />
@@ -58,7 +60,7 @@ export function WorkRelationCard({ email, phone, name, type, status, workRelatio
         <div className="flex h-[42px] flex-col items-center justify-center gap-1 self-stretch">
           <div className="self-stretch text-center text-sm font-semibold text-gray-800">{name}</div>
           <div className="self-stretch text-center text-xs font-normal leading-[18px] text-gray-500">
-            {type === 'subcontractor' ? 'Technician' : 'Employer'}
+            {type === 'subcontractor' ? 'Technician' : type === 'employer' ? 'Employer' : 'Owner'}
           </div>
         </div>
       </div>
@@ -70,10 +72,10 @@ export function WorkRelationCard({ email, phone, name, type, status, workRelatio
         </ModalAcceptInvite>
       )}
       {status === SubcontractorStatus.Inactive && type === 'subcontractor' && (
-        <div className="rounded-full bg-orange-500 px-2 py-1 text-sm text-white">Pending Approval</div>
+        <div className="mt-2 rounded-full bg-orange-500 px-2 py-1 text-sm text-white">Pending Approval</div>
       )}
       {status === SubcontractorStatus.Active && (
-        <div className="rounded-full bg-green-500 px-2 py-1 text-sm text-gray-50">Active</div>
+        <div className="mt-2 rounded-full bg-green-500 px-2 py-1 text-sm text-gray-50">Active</div>
       )}
       <Separator />
       <div className="flex h-[46px] flex-col items-center justify-center gap-2.5 self-stretch">

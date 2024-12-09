@@ -258,7 +258,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-h-screen max-w-[580px] overflow-y-scroll">
+      <DialogContent className="max-h-screen w-96 max-w-[580px] overflow-y-scroll rounded-md md:w-[580px]">
         <DialogTitle>Transfer Route</DialogTitle>
         {isPending ? (
           <LoadingSpinner />

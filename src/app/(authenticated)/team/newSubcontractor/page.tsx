@@ -54,15 +54,21 @@ export default function Page() {
         ...data
       }),
     onSuccess: (res) => {
+      const description = res.data.newUser
+        ? 'User received an e-mail to activate the account.'
+        : 'The technician was added successfully.';
+
       setUser({
         ...user,
         workRelationsAsAEmployer: [...user.workRelationsAsAEmployer, res.data.workRelationWithUsersInfo]
       });
 
       push('/team');
-      toast({
-        duration: 2000,
+
+      return toast({
+        duration: 8000,
         title: 'Technician added successfully',
+        description,
         variant: 'success'
       });
     },
@@ -71,11 +77,14 @@ export default function Page() {
         message: string;
       }>
     ) => {
+      const title = 'Error adding technician';
+      const description = error.response?.data?.message ? error.response.data.message : 'Internal server error';
+
       toast({
-        duration: 5000,
-        title: 'Error adding technician',
+        duration: 8000,
+        title,
         variant: 'error',
-        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
+        description
       });
     }
   });
@@ -98,7 +107,7 @@ export default function Page() {
             />
           </div>
           <Button type="submit" className="w-full">
-            Save
+            Add
           </Button>
         </div>
       </form>
