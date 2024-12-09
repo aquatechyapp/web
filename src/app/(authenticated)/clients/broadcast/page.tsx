@@ -127,7 +127,7 @@ export default function Page() {
             <InputField placeholder="Insert a message for your clients" name="message" type={FieldType.TextArea} />
           </div>
           <Button className="w-full" type="submit">
-            Schedule broadcast
+            Send
           </Button>
         </div>
       </form>

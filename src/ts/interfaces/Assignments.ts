@@ -29,7 +29,7 @@ export type CreateAssignment = {
   weekday: string;
   frequency: string;
   startOn: Date;
-  endAfter: Date;
+  endAfter: Date | string;
   paidByService: number;
 };
 

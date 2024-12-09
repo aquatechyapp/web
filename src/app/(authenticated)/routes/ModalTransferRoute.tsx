@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useMemo } from 'react';
+import { format, getDay } from 'date-fns';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
@@ -43,6 +44,20 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
   );
   const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
   const user = useUserStore((state) => state.user);
+  const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
+    {
+      name: string;
+      key: string;
+      value: string;
+    }[]
+  >([]);
+  const [next10WeekdaysEndAfter, setNext10WeekdaysEndAfter] = useState<
+    {
+      name: string;
+      key: string;
+      value: string;
+    }[]
+  >([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(transferAssignmentsSchema),
@@ -57,6 +72,8 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
       isEntireRoute
     }
   });
+
+  const [startOn, weekday] = form.watch(['startOn', 'weekday']);
 
   const disabledWeekdays = useDisabledWeekdays(form.watch('weekday'));
 
@@ -146,9 +163,102 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
     setOpen(true);
   }
 
+  function getNext10DatesForStartOnBasedOnWeekday(weekday: string) {
+    // Convert weekday string to a number (0=Sunday, 1=Monday, ..., 6=Saturday)
+
+    if (!weekday) return;
+    const weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const targetWeekday = weekdays.indexOf(weekday.toLowerCase());
+
+    if (targetWeekday === -1) {
+      throw new Error('Invalid weekday. Please use a valid weekday name.');
+    }
+
+    const today = new Date();
+    const todayWeekday = getDay(today); // Get current weekday
+    let daysToNext = (targetWeekday - todayWeekday + 7) % 7; // Calculate days to the next occurrence
+
+    // If today is the target weekday, include today
+    if (daysToNext === 0) {
+      daysToNext = 0; // Set to 0 to include today
+    } else {
+      daysToNext = daysToNext || 7; // Otherwise, find the next week's same weekday
+    }
+    const dates: { name: string; key: string; value: string }[] = [];
+
+    for (let i = 0; i < 10; i++) {
+      const nextDate = new Date(today);
+      nextDate.setDate(today.getDate() + daysToNext + i * 7); // Add weeks
+
+      const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
+      const weekdayName = format(nextDate, 'yyyy-MM-dd');
+      const isoDate = String(nextDate); // Get the ISO string for the date
+
+      dates.push({
+        name: formattedDate,
+        key: weekdayName,
+        value: isoDate
+      });
+    }
+
+    setNext10WeekdaysStartOn(dates);
+  }
+
+  function getNext10DatesForEndAfterBasedOnWeekday(startOn: Date) {
+    // Convert weekday string to a number (0=Sunday, 1=Monday, ..., 6=Saturday)
+
+    if (!startOn) return;
+
+    const startDate = new Date(startOn); // UTC time
+
+    const dates: { name: string; key: string; value: string }[] = [];
+
+    dates.push({
+      name: 'No end',
+      key: 'No end',
+      value: 'No end'
+    });
+
+    for (let i = 1; i <= 10; i++) {
+      const nextDate = new Date(startDate);
+      nextDate.setDate(startDate.getDate() + i * 7); // Add weeks to match the same weekday
+
+      const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
+      const weekdayName = format(nextDate, 'yyyy-MM-dd');
+      // create a key with date ex: 2022-12-31
+
+      const isoDate = String(nextDate); // Get the ISO string for the date
+
+      dates.push({
+        name: formattedDate,
+        key: weekdayName,
+        value: isoDate
+      });
+    }
+
+    setNext10WeekdaysEndAfter(dates);
+  }
+
+  useEffect(() => {
+    form.resetField('startOn');
+    form.resetField('endAfter');
+
+    if (startOn) {
+      getNext10DatesForEndAfterBasedOnWeekday(startOn);
+    }
+
+    getNext10DatesForStartOnBasedOnWeekday(weekday);
+  }, [form.watch('weekday')]);
+
+  useEffect(() => {
+    if (startOn) {
+      getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn')!);
+    }
+  }, [form.watch('startOn')]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-h-screen max-w-[580px] overflow-y-scroll">
+      <DialogContent className="max-h-screen w-96 max-w-[580px] overflow-y-scroll rounded-md md:w-[580px]">
         <DialogTitle>Transfer Route</DialogTitle>
         {isPending ? (
           <LoadingSpinner />
@@ -172,7 +282,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                 {!userSelectedAsTechnician && (
                   <InputField
                     name="paidByService"
-                    placeholder="0.00$"
+                    placeholder="$0.00"
                     label="Paid by Service"
                     type={FieldType.CurrencyValue}
                   />
@@ -193,7 +303,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                   />
                 ) : (
                   <div className="flex flex-col gap-4 md:flex-row">
-                    <DatePickerField
+                    {/* <DatePickerField
                       disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
                       name="startOn"
                       placeholder="Start on"
@@ -202,6 +312,26 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                       disabled={[{ before: new Date() }, { dayOfWeek: disabledWeekdays }]}
                       name="endAfter"
                       placeholder="End after"
+                    /> */}
+                    <SelectField
+                      label="Start on"
+                      name="startOn"
+                      placeholder="Start on"
+                      options={next10WeekdaysStartOn.map((date) => ({
+                        key: date.key,
+                        name: date.name,
+                        value: date.value
+                      }))}
+                    />
+                    <SelectField
+                      label="End after"
+                      name="endAfter"
+                      placeholder="End after"
+                      options={next10WeekdaysEndAfter.map((date) => ({
+                        key: date.key,
+                        name: date.name,
+                        value: date.value
+                      }))}
                     />
                   </div>
                 )}
@@ -276,5 +406,5 @@ type TransferAssignmentsOnce = TransferAssignments & {
 
 type TransferAssignmentsPermanently = TransferAssignments & {
   startOn: Date;
-  endAfter: Date;
+  endAfter: Date | string;
 };
