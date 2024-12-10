@@ -8,9 +8,11 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
+import useGetClients from '@/hooks/react-query/clients/getClients';
 import useGetServices from '@/hooks/react-query/services/getRequests';
 import { useUserStore } from '@/store/user';
 import { SubcontractorStatus } from '@/ts/enums/enums';
+import { buildSelectOptions } from '@/utils/formUtils';
 
 import { DataTableRequests } from './DataTableRequests';
 import { columns } from './DataTableRequests/columns';
@@ -31,7 +33,7 @@ export default function Page() {
     clientId: '',
     page: 1
   });
-  // const { data: clients, isLoading: isLoadingClients } = useGetClients();
+  const { data: clients, isLoading: isLoadingClients } = useGetClients();
 
   const { data } = useGetServices(filters);
   const user = useUserStore((state) => state.user);
@@ -90,10 +92,23 @@ export default function Page() {
         children={
           <div className="flex gap-4">
             <form className="flex w-full gap-4" onSubmit={form.handleSubmit(handleSubmit)}>
-              <Input
+              {/* <Input
                 className="min-w-50"
                 placeholder="Filter clients..."
                 onChange={(e) => handleFilterChange('clientId', e.target.value)}
+              /> */}
+              <SelectField
+                options={buildSelectOptions(
+                  clients?.filter((client: Client) => client.pools.length > 0),
+                  {
+                    key: 'id',
+                    name: 'fullName',
+                    value: 'id'
+                  }
+                )}
+                placeholder={clients?.length || 0 > 0 ? 'Clients' : 'No clients available'}
+                name="clientId"
+                onValueChange={(e) => handleFilterChange('clientId', e)}
               />
               <SelectField
                 disabled={subContractors.length === 0}
