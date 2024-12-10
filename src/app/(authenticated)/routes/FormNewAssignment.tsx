@@ -117,6 +117,7 @@ export const FormNewAssignment = () => {
 
       const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
       const weekdayName = format(nextDate, 'yyyy-MM-dd');
+
       // create a key with date ex: 2022-12-31
 
       const isoDate = String(nextDate); // Get the ISO string for the date
@@ -164,6 +165,17 @@ export const FormNewAssignment = () => {
                 label="Location"
                 placeholder="Location"
                 name="poolId"
+                defaultValue={
+                  buildSelectOptions(
+                    // Procura a piscina somente quando seleciona o cliente
+                    clients.find((c: Client) => c.id === clientId)?.pools,
+                    {
+                      key: 'id',
+                      name: 'name',
+                      value: 'id'
+                    }
+                  )[0].value
+                }
               />
             )}
           </div>
