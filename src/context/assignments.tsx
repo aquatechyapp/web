@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { differenceInWeeks, isAfter, isSameDay, startOfDay } from 'date-fns';
+import { differenceInWeeks, isAfter, isSameDay } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from 'react';
 
@@ -13,8 +14,13 @@ import { Assignment } from '../ts/interfaces/Assignments';
 
 function filterAssignmentsByFrequency(assignments: Assignment[], selectedDay: Date): Assignment[] {
   return assignments.filter((assignment) => {
-    const startOn = startOfDay(new Date(assignment.startOn));
-    const endAfter = startOfDay(new Date(assignment.endAfter));
+    const timezone = 'UTC';
+    const zonedStartOn = toZonedTime(assignment.startOn, timezone);
+    const startOn = zonedStartOn;
+
+    const zonedEndAfter = toZonedTime(assignment.endAfter, timezone);
+    const endAfter = zonedEndAfter;
+
     const weeksBetween = differenceInWeeks(selectedDay, startOn);
 
     if (isAfter(selectedDay, endAfter)) {

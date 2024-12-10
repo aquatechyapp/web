@@ -17,6 +17,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import { useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDragIndicator } from 'react-icons/md';
@@ -47,10 +48,12 @@ export function AssignmentsList({ handleDragEnd }: Props) {
   const user = useUserStore((state) => state.user);
   const { assignments } = useAssignmentsContext();
   const assignmentToId = useTechniciansStore((state) => state.assignmentToId);
+  const { width = 0 } = useWindowDimensions();
+
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [openDialogTransfer, setOpenDialogTransfer] = useState(false);
+
   const [assignment, setAssignment] = useState<Assignment>();
-  const { width = 0 } = useWindowDimensions();
 
   const shouldPermitChangeOrder = assignmentToId !== user?.id || width < 900;
 
@@ -154,9 +157,11 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
-  const startsOn = format(new Date(assignment.startOn), 'LLL, do, y');
-  const endsAfter =
-    new Date(assignment.endAfter).getFullYear() > 2100 ? 'No end' : format(new Date(assignment.endAfter), 'LLL, do, y');
+  const zonedStartOn = toZonedTime(assignment.startOn, 'UTC');
+  const startsOn = format(zonedStartOn, 'LLL, do, y');
+
+  const zonedEndAfter = toZonedTime(assignment.endAfter, 'UTC');
+  const endsAfter = zonedEndAfter.getFullYear() > 2100 ? 'No end' : format(zonedEndAfter, 'LLL, do, y');
 
   const isOnlyAt = startsOn === endsAfter;
 

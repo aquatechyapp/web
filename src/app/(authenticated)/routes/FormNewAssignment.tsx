@@ -165,17 +165,6 @@ export const FormNewAssignment = () => {
                 label="Location"
                 placeholder="Location"
                 name="poolId"
-                defaultValue={
-                  buildSelectOptions(
-                    // Procura a piscina somente quando seleciona o cliente
-                    clients.find((c: Client) => c.id === clientId)?.pools,
-                    {
-                      key: 'id',
-                      name: 'name',
-                      value: 'id'
-                    }
-                  )[0].value
-                }
               />
             )}
           </div>
