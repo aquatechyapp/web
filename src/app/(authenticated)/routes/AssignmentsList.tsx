@@ -47,10 +47,12 @@ export function AssignmentsList({ handleDragEnd }: Props) {
   const user = useUserStore((state) => state.user);
   const { assignments } = useAssignmentsContext();
   const assignmentToId = useTechniciansStore((state) => state.assignmentToId);
+  const { width = 0 } = useWindowDimensions();
+
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [openDialogTransfer, setOpenDialogTransfer] = useState(false);
+
   const [assignment, setAssignment] = useState<Assignment>();
-  const { width = 0 } = useWindowDimensions();
 
   const shouldPermitChangeOrder = assignmentToId !== user?.id || width < 900;
 

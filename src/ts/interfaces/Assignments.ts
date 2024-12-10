@@ -21,6 +21,7 @@ export type Assignment = {
   weekday: string;
   pool: Pool;
   paidByService: number | null;
+  timezone?: string | null | undefined;
 };
 
 export type CreateAssignment = {
