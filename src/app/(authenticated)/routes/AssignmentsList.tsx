@@ -55,6 +55,7 @@ export function AssignmentsList({ handleDragEnd }: Props) {
   const shouldPermitChangeOrder = assignmentToId !== user?.id || width < 900;
 
   const [active, setActive] = useState<number | null>(null);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
