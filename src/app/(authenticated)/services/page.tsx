@@ -31,6 +31,7 @@ export default function Page() {
     clientId: '',
     page: 1
   });
+  // const { data: clients, isLoading: isLoadingClients } = useGetClients();
 
   const { data } = useGetServices(filters);
   const user = useUserStore((state) => state.user);
