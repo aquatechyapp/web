@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { zipImages } from '@/lib/js-zip';
 
 type Props = {
   request: any;
@@ -149,7 +150,20 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
             Download report
           </Button>
           {request?.photos.length > 0 && (
-            <Button variant="outline" className="w-full" type="submit">
+            <Button
+              onClick={() => {
+                zipImages(request.photos).then((zipContent) => {
+                  const url = URL.createObjectURL(zipContent);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = 'images.zip';
+                  link.click();
+                  URL.revokeObjectURL(url);
+                });
+              }}
+              variant="outline"
+              className="w-full"
+            >
               Download photos
             </Button>
           )}

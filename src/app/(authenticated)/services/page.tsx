@@ -4,14 +4,14 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { PaginationDemo } from '@/components/PaginationDemo';
 import SelectField from '@/components/SelectField';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Input } from '@/components/ui/input';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import useGetServices from '@/hooks/react-query/services/getRequests';
 import { useUserStore } from '@/store/user';
 import { SubcontractorStatus } from '@/ts/enums/enums';
+import { Client } from '@/ts/interfaces/Client';
 import { buildSelectOptions } from '@/utils/formUtils';
 
 import { DataTableRequests } from './DataTableRequests';
@@ -31,16 +31,17 @@ export default function Page() {
     to: '',
     technicianId: '',
     clientId: '',
-    page: 1
+    page: 1 // Página inicial como 1
   });
+
   const { data: clients, isLoading: isLoadingClients } = useGetClients();
 
-  const { data } = useGetServices(filters);
+  const { data, isLoading } = useGetServices(filters);
   const user = useUserStore((state) => state.user);
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
 
   // console.log('data', data);
-  // console.log('filters', filters);
 
   useEffect(() => {
     if (!user?.firstName) {
@@ -78,11 +79,19 @@ export default function Page() {
         to: toDate?.toString() || '',
         technicianId: assignmentToId,
         clientId: clientId,
-        page: 1
+        page: 1 // Reseta a página para 1 ao aplicar novos filtros
       });
+
+      setCurrentPage(1); // Atualiza o estado de currentPage para 1
     } catch (error) {
       console.error('Erro ao enviar solicitação:', error);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    // console.log('Changing to page:', page); // Debug
+    setCurrentPage(page); // Atualiza a página atual
+    setFilters((prev) => ({ ...prev, page })); // Atualiza os filtros com a nova página
   };
 
   return (
@@ -92,11 +101,6 @@ export default function Page() {
         children={
           <div className="flex gap-4">
             <form className="flex w-full gap-4" onSubmit={form.handleSubmit(handleSubmit)}>
-              {/* <Input
-                className="min-w-50"
-                placeholder="Filter clients..."
-                onChange={(e) => handleFilterChange('clientId', e.target.value)}
-              /> */}
               <SelectField
                 options={buildSelectOptions(
                   clients?.filter((client: Client) => client.pools.length > 0),
@@ -130,6 +134,8 @@ export default function Page() {
         }
         data={data?.services || []}
       />
+
+      <PaginationDemo currentPage={currentPage} totalItems={data?.services.length} onPageChange={handlePageChange} />
     </FormProvider>
   );
 }
