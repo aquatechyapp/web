@@ -18,7 +18,7 @@ type Props = {
 
 export function DatePicker({ placeholder, onChange, disabled }: Props) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [date, setDate] = useState<Date>(new Date()); // A data de hoje
+  const [date, setDate] = useState<Date>(new Date());
 
   function handleChange(date: Date | undefined) {
     setDate(date);
