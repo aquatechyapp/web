@@ -1,15 +1,16 @@
 'use client';
 
+import 'quill/dist/quill.snow.css';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import InputField from '@/components/InputField';
 import { MultiSelect } from '@/components/MultiSelect';
 import SelectField from '@/components/SelectField';
-import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
@@ -20,6 +21,8 @@ import { FieldType } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 
 import { ModalSend } from './ModalSend';
+import QuillEditor from './QuillEditor/page';
+import TinyMCEEditor from './TinyMCEEditor/page';
 
 type FormData = {
   contacts: { name: string; email: string }[];
@@ -42,7 +45,7 @@ export default function Page() {
   const { toast } = useToast();
   const user = useUserStore((state) => state.user);
   const router = useRouter();
-  const formRef = useRef<HTMLFormElement>(null); // Referência ao formulário principal
+  const formRef = useRef<HTMLFormElement>(null);
 
   console.log('clientsData', clientsData);
 
@@ -223,6 +226,9 @@ export default function Page() {
           <div className="w-full">
             <InputField placeholder="Insert a message for your clients" name="message" type={FieldType.TextArea} />
           </div>
+
+          <TinyMCEEditor />
+
           <ModalSend
             disabled={!form.watch('message')}
             onSubmit={() => {

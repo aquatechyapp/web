@@ -5,6 +5,7 @@ import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
+
 interface ModalSendProps {
   onSubmit: () => void;
   disabled: () => void;
