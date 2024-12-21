@@ -28,6 +28,8 @@ function filterAssignmentsByFrequency(assignments: Assignment[], selectedDay: Da
     }
 
     switch (assignment.frequency) {
+      case Frequency.ONCE:
+        return isSameDay(startOn, selectedDay);
       case Frequency.WEEKLY:
         return isSameDay(startOn, selectedDay) || (selectedDay > startOn && selectedDay.getDay() === startOn.getDay());
       case Frequency.E2WEEKS:
