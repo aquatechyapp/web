@@ -16,7 +16,7 @@ export const transferAssignmentsSchema = z
     isEntireRoute: z.boolean(),
     paidByService: defaultSchemas.monthlyPayment,
     startOn: z.coerce.date().optional(),
-    endAfter: z.coerce.date().optional()
+    endAfter: z.date().optional()
   })
   .refine((data) => (data.type === 'once' ? !!data.onlyAt : true), {
     message: 'Only at is required',
