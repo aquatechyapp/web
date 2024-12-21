@@ -62,5 +62,6 @@ export enum Frequency {
   WEEKLY = 'WEEKLY',
   E2WEEKS = 'E2WEEKS',
   E3WEEKS = 'E3WEEKS',
-  E4WEEKS = 'E4WEEKS'
+  E4WEEKS = 'E4WEEKS',
+  ONCE = 'ONCE'
 }

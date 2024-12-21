@@ -49,19 +49,31 @@ export const defaultSchemas = {
     invalid_type_error: 'Weekday must be a string.'
   }),
   csvFile: z
-    .instanceof(File)
-    .refine((file) => file.size < 7000000, {
-      message: 'Your file must be less than 7MB.'
-    })
-    .refine((file) => ['text/csv'].includes(file?.type), 'Only .csv formats are supported.')
+    .any()
+    .refine(
+      (file) => {
+        if (typeof File !== 'undefined' && file instanceof File) {
+          return file.size < 7000000 && ['text/csv'].includes(file?.type);
+        }
+        return false; // Invalid if not running in the browser or if file is invalid
+      },
+      {
+        message: 'Invalid file or file must be less than 7MB and in .csv format.'
+      }
+    )
     .optional(),
   imageFile: z.array(
-    z
-      .instanceof(File)
-      .refine((file) => file.size < 7000000, {
-        message: 'Your file must be less than 7MB.'
-      })
-      .refine((file) => ['image/jpeg', 'image/png'].includes(file?.type), 'Only .jpeg and .png formats are supported.')
+    z.any().refine(
+      (file) => {
+        if (typeof File !== 'undefined' && file instanceof File) {
+          return file.size < 7000000 && ['image/jpeg', 'image/png'].includes(file?.type);
+        }
+        return false; // Invalid if not running in the browser or if file is invalid
+      },
+      {
+        message: 'Invalid image file or file must be less than 7MB and in .jpeg or .png format.'
+      }
+    )
   ),
   poolType: z.enum(['Salt', 'Chlorine', 'Other'], {
     required_error: 'Pool type is required.',
