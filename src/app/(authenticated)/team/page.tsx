@@ -53,9 +53,6 @@ export default function Page() {
 
       <div className="mt-3">
         <div className="flex flex-wrap justify-center gap-2 self-stretch md:justify-normal">
-          {filteredSubcontractors?.length === 0 && filteredEmployers?.length === 0 && (
-            <span>No contractors found.</span>
-          )}
           {user && (
             <div className="flex flex-wrap justify-center">
               <WorkRelationCard
