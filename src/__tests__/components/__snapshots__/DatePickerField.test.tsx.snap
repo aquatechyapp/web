@@ -76,7 +76,7 @@ exports[`DatePickerField > should render the DatePickerField component 1`] = `
           />
         </svg>
         <span>
-          Select a date
+          Select a date 
         </span>
       </button>
     </div>
