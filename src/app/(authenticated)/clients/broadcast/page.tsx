@@ -1,7 +1,5 @@
 'use client';
 
-import 'quill/dist/quill.snow.css';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
@@ -22,8 +20,6 @@ import { FieldType } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 
 import { ModalSend } from './ModalSend';
-import QuillEditor from './QuillEditor/page';
-import TinyMCEEditor from './TinyMCEEditor/page';
 
 type FormData = {
   contacts: { name: string; email: string }[];
