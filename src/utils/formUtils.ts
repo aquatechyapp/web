@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 
 import { isEmpty } from '.';
 
 export function buildSelectOptions(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[] | undefined,
   { key, name, value }: { key: string; name: string; value: string }
 ) {
