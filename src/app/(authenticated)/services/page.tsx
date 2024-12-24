@@ -60,14 +60,13 @@ export default function Page() {
       name: `${user.firstName} ${user.lastName}`,
       value: user.id
     };
-    return user.workRelationsAsAEmployer
-      .filter((sub) => sub.status === SubcontractorStatus.Active)
+    return user?.workRelationsAsAEmployer?.filter((sub) => sub.status === SubcontractorStatus.Active)
       .map((sub) => ({
         key: sub.subcontractorId,
         name: `${sub.subcontractor.firstName} ${sub.subcontractor.lastName}`,
         value: sub.subcontractorId
-      }))
-      .concat(userAsSubcontractor);
+      })) || []
+        .concat(userAsSubcontractor);
   }, [user]);
 
   const handleSubmit = async (formData: any) => {
