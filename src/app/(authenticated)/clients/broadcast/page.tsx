@@ -11,6 +11,7 @@ import { z } from 'zod';
 import InputField from '@/components/InputField';
 import { MultiSelect } from '@/components/MultiSelect';
 import SelectField from '@/components/SelectField';
+import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
@@ -47,8 +48,6 @@ export default function Page() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
-  console.log('clientsData', clientsData);
-
   useEffect(() => {
     if (user.firstName === '') {
       router.push('/account');
@@ -56,7 +55,7 @@ export default function Page() {
   }, [user]);
 
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+    // resolver: zodResolver(schema),
     defaultValues: {
       contacts: [],
       message: '',
@@ -80,6 +79,7 @@ export default function Page() {
       )
     )
   ];
+
   const daysSelectOptions = daysOfWeek.map((day) => ({ value: day, name: day, label: day, key: day }));
 
   const handleSubmit = async (formData: FormData) => {
@@ -104,9 +104,12 @@ export default function Page() {
         subject: formData.subject,
         contacts
       };
+      console.log('formDataToSend', formDataToSend);
 
       // Enviar os dados para a API
       const response = await clientAxios.post('/clients/broadcast', formDataToSend);
+
+      console.log('response', response);
 
       if (response.status !== 200) {
         throw new Error('Failed to send email');
@@ -163,9 +166,12 @@ export default function Page() {
     const filteredClients = clientsData.filter((client: Client) => {
       const cityMatch = selectedCities.includes('All cities') || selectedCities.includes(client.city);
       const typeMatch = selectedTypes.includes('All types') || selectedTypes.includes(client.type);
+
+      // Match para "All days" ou dias específicos
       const dayMatch =
-        selected.includes('All days') ||
+        selected.includes('All days') || // Inclui todos os dias
         client.pools.some((pool) => pool.assignments.some((assignment: any) => selected.includes(assignment.weekday)));
+
       return cityMatch && typeMatch && dayMatch;
     });
 
@@ -176,15 +182,20 @@ export default function Page() {
     const filteredClients = clientsData.filter((client: Client) => {
       const cityMatch = selectedCities.includes('All cities') || selectedCities.includes(client.city);
       const typeMatch = selectedTypes.includes('All types') || selectedTypes.includes(client.type);
+
+      // Lógica para incluir todos os dias quando "All days" é selecionado
       const dayMatch =
         selectedDays.includes('All days') ||
         client.pools.some((pool) =>
           pool.assignments.some((assignment: any) => selectedDays.includes(assignment.weekday))
         );
+
       return cityMatch && typeMatch && dayMatch;
     });
+
     setSelectedClients(filteredClients);
   };
+  // console.log('selectedClients', selectedClients);
 
   // Chame `applyFilters` após cada mudança de filtro.
   useEffect(() => {
@@ -227,14 +238,11 @@ export default function Page() {
             <InputField placeholder="Insert a message for your clients" name="message" type={FieldType.TextArea} />
           </div>
 
-          <TinyMCEEditor />
-
-          <ModalSend
-            disabled={!form.watch('message')}
-            onSubmit={() => {
-              formRef.current?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-            }}
-          />
+          {/* <TinyMCEEditor /> */}
+          {/* <Button className="w-full" type="submit">
+            Send
+          </Button> */}
+          <ModalSend disabled={!form.watch('message')} onSubmit={() => form.handleSubmit(handleSubmit)()} />
         </div>
       </form>
     </Form>
