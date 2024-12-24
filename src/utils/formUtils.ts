@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 
 import { isEmpty } from '.';
