@@ -4,14 +4,11 @@
   "parser": "@typescript-eslint/parser",
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:react-hooks/recommended"
   ],
   "ignorePatterns": [".vercel", ".next", "node_modules", "out", "build"],
   "rules": {
-    "@typescript-eslint": "off"
   },
   "settings": {
     "import/resolver": {
