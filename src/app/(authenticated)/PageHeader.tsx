@@ -27,20 +27,6 @@ export default function PageHeader() {
         <PageTitle />
       </div>
       <div className="ml-auto flex items-start justify-end gap-2">
-        {/* <Link
-          href="/account"
-          className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 p-3"
-        >
-          <div className="font-['General Sans'] text-center text-sm font-medium leading-[14px] text-gray-50">
-            My account
-          </div>
-        </Link> */}
-        {/* <div className="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
-          <MdNotificationsNone />
-        </div>
-        <div className="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
-          <IoIosSearch />
-        </div> */}
         <AccountDropdownMenu handleLogout={handleLogout} />
       </div>
     </div>
