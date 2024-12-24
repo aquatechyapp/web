@@ -26,7 +26,7 @@ export const columns: ColumnDef<Services>[] = [
     cell: ({ row: { original } }) => (
       <>
         <div>
-          {original.pool.clientOwner.firstName} {original.pool.clientOwner.lastName}
+          {original.pool.clientOwner!.firstName} {original.pool.clientOwner!.lastName}
         </div>
         <div>
           {original.pool.zip}, {original.pool.state},{original.pool.city}, {original.pool.address}

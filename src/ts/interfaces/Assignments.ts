@@ -1,6 +1,7 @@
 import { Frequency, PoolType } from '@/ts/enums/enums';
 
 import { Service } from './Service';
+import { Client } from './Client';
 
 export type TransferAssignment = Assignment & {
   endAfter: Date;
@@ -39,6 +40,7 @@ export type Pool = {
   address: string;
   animalDanger: boolean;
   city: string;
+  clientOwner?: Client;
   clientOwnerId: string;
   createdAt: string;
   deactivatedAt: string;
