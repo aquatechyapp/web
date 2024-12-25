@@ -4,12 +4,14 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import InputField from '@/components/InputField';
 import { MultiSelect } from '@/components/MultiSelect';
 import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import useGetClients from '@/hooks/react-query/clients/getClients';
+import { FieldType } from '@/ts/enums/enums';
 
 import { ModalSend } from './ModalSend';
 
@@ -70,8 +72,13 @@ export default function Page() {
   };
 
   const handleTypeSelectionChange = (selected: string[]) => {
-    // Se "All types" for selecionado, defina como a única opção
-    setSelectedTypes(selected.includes('All types') ? ['All types'] : selected);
+    if (selected.includes('All types')) {
+      // Se "All types" for selecionado, apenas defina isso como valor
+      setSelectedTypes(['All types']);
+    } else {
+      // Caso contrário, defina os tipos selecionados
+      setSelectedTypes(selected);
+    }
   };
 
   const handleDaySelectionChange = (selected: string[]) => {
@@ -139,7 +146,9 @@ export default function Page() {
           </div>
 
           <Input placeholder="Enter subject" {...form.register('subject')} />
-          <Input placeholder="Enter message" {...form.register('message')} />
+          <div className="w-full">
+            <InputField placeholder="Insert a message for your clients" name="message" type={FieldType.TextArea} />
+          </div>
 
           <ModalSend disabled={!form.watch('message')} onSubmit={() => form.handleSubmit(handleSubmit)()} />
         </div>
