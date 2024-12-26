@@ -12,7 +12,6 @@ import { useShallow } from 'zustand/react/shallow';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAssignmentsContext } from '@/context/assignments';
 import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
@@ -84,7 +83,7 @@ export default function Page() {
       assignmentToId: assignmentToId,
       poolId: '',
       weekday: format(new Date(), 'EEEE').toUpperCase() as WeekdaysUppercase,
-      frequency: '',
+      frequency: 'WEEKLY',
       paidByService: undefined,
       startOn: undefined,
       endAfter: undefined
@@ -175,7 +174,7 @@ export default function Page() {
                     <TabsList className="mt-2 w-full">
                       {nextSixWeeks.map((date, index) => (
                         <TabsTrigger className="flex-1" key={date.toISOString()} value={date.toISOString()}>
-                          {index === 2 ? format(date, 'dd/MM') : format(date, 'dd/MM')}
+                          {index === 2 ? format(date, 'MM/dd') : format(date, 'MM/dd')}
                         </TabsTrigger>
                       ))}
                     </TabsList>
@@ -202,23 +201,23 @@ export default function Page() {
                   </div>
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                     {assignments.current.length > 0 && assignmentToId === user?.id && (
-                      <HoverCard>
-                        <HoverCardTrigger className="w-full">
-                          <Button
-                            disabled={isFreePlan}
-                            type="button"
-                            className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
-                            onClick={() => getDirectionsFromGoogleMaps(true)}
-                          >
-                            Optimize Route
-                          </Button>
-                        </HoverCardTrigger>
-                        {isFreePlan && (
-                          <HoverCardContent side="bottom" className="w-full">
-                            This feature is not available in Free Plan.
-                          </HoverCardContent>
-                        )}
-                      </HoverCard>
+                      // <HoverCard>
+                      //   <HoverCardTrigger className="w-full">
+                      <Button
+                        disabled={isFreePlan}
+                        type="button"
+                        className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
+                        onClick={() => getDirectionsFromGoogleMaps(true)}
+                      >
+                        Optimize Route
+                      </Button>
+                      //   </HoverCardTrigger>
+                      //   {isFreePlan && (
+                      //     <HoverCardContent side="bottom" className="w-full">
+                      //       This feature is not available in Free Plan.
+                      //     </HoverCardContent>
+                      //   )}
+                      // </HoverCard>
                     )}
                     {getDifference(assignments.initial, assignments.current) && (
                       <Button
@@ -265,6 +264,9 @@ export default function Page() {
         </div>
       </div>
     </FormProvider>
+    // <div className="h-full w-full">
+    //   <p>We are doing a few improvements in this section, try again later.</p>
+    // </div>
   );
 }
 

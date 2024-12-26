@@ -3,13 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { format, getDay } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { useShallow } from 'zustand/react/shallow';
 
-import DatePickerField from '@/components/DatePickerField';
 import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
@@ -18,7 +18,6 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
-import { useDisabledWeekdays } from '@/hooks/useDisabledWeekdays';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
 import { paidByServiceSchema } from '@/schemas/assignments';
@@ -40,10 +39,26 @@ export default function Page() {
     }))
   );
 
+  const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
+    {
+      name: string;
+      key: string;
+      value: string;
+    }[]
+  >([]);
+  const [next10WeekdaysEndAfter, setNext10WeekdaysEndAfter] = useState<
+    {
+      name: string;
+      key: string;
+      value: string;
+    }[]
+  >([]);
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { width } = useWindowDimensions();
   const isMobile = width ? width < 640 : false;
+
   const { mutate: handleSubmit, isPending } = useMutation({
     mutationFn: async (data: PoolAndClientSchema) =>
       await clientAxios.post('/client-pool-assignment', createFormData(data), {
@@ -116,6 +131,31 @@ export default function Page() {
   const form = useForm<PoolAndClientSchema>({
     resolver: zodResolver(poolAndClientSchema),
     defaultValues: {
+      // assignmentToId: '',
+      // animalDanger: false,
+      // phone: '+19542970632',
+      // lockerCode: '123',
+      // monthlyPayment: 10000,
+      // poolNotes: '',
+      // poolAddress: '4375 SW 10TH PL 205',
+      // poolCity: 'Deerfield Beach',
+      // enterSide: 'Right',
+      // email: 'kawanstrelow@gmail.com',
+      // firstName: 'Kawan',
+      // lastName: 'Strelow',
+      // clientAddress: '4375 SW 10TH PL 205',
+      // clientNotes: '',
+      // clientZip: '33442',
+      // poolState: 'FL',
+      // poolZip: '33442',
+      // sameBillingAddress: false,
+      // clientCity: 'Deerfield Beach',
+      // clientState: 'FL',
+      // customerCode: '',
+      // paidByService: 1200,
+      // clientCompany: '',
+      // clientType: 'Residential',
+      // timezone: IanaTimeZones.NY
       assignmentToId: '',
       animalDanger: false,
       phone: '',
@@ -144,7 +184,7 @@ export default function Page() {
     }
   });
 
-  const disabledWeekdays = useDisabledWeekdays(form.watch('weekday'));
+  // const disabledWeekdays = useDisabledWeekdays(form.watch('weekday'));
 
   function handleSameBillingAddress() {
     if (form.watch('sameBillingAddress')) {
@@ -155,12 +195,90 @@ export default function Page() {
     }
   }
 
-  const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip] = form.watch([
+  function getNext10DatesForStartOnBasedOnWeekday(weekday: string) {
+    // Convert weekday string to a number (0=Sunday, 1=Monday, ..., 6=Saturday)
+
+    if (!weekday) return;
+    const weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const targetWeekday = weekdays.indexOf(weekday.toLowerCase());
+
+    if (targetWeekday === -1) {
+      throw new Error('Invalid weekday. Please use a valid weekday name.');
+    }
+
+    const today = new Date();
+    const todayWeekday = getDay(today); // Get current weekday
+    let daysToNext = (targetWeekday - todayWeekday + 7) % 7; // Calculate days to the next occurrence
+
+    // If today is the target weekday, include today
+    if (daysToNext === 0) {
+      daysToNext = 0; // Set to 0 to include today
+    } else {
+      daysToNext = daysToNext || 7; // Otherwise, find the next week's same weekday
+    }
+    const dates: { name: string; key: string; value: string }[] = [];
+
+    for (let i = 0; i < 10; i++) {
+      const nextDate = new Date(today);
+      nextDate.setDate(today.getDate() + daysToNext + i * 7); // Add weeks
+
+      const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
+      const weekdayName = format(nextDate, 'yyyy-MM-dd');
+      const isoDate = String(nextDate); // Get the ISO string for the date
+
+      dates.push({
+        name: formattedDate,
+        key: weekdayName,
+        value: isoDate
+      });
+    }
+
+    setNext10WeekdaysStartOn(dates);
+  }
+
+  function getNext10DatesForEndAfterBasedOnWeekday(startOn: Date) {
+    // Convert weekday string to a number (0=Sunday, 1=Monday, ..., 6=Saturday)
+
+    if (!startOn) return;
+
+    const startDate = new Date(startOn); // UTC time
+
+    const dates: { name: string; key: string; value: string }[] = [];
+
+    dates.push({
+      name: 'No end',
+      key: 'No end',
+      value: 'No end'
+    });
+
+    for (let i = 1; i <= 10; i++) {
+      const nextDate = new Date(startDate);
+      nextDate.setDate(startDate.getDate() + i * 7); // Add weeks to match the same weekday
+
+      const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
+      const weekdayName = format(nextDate, 'yyyy-MM-dd');
+      // create a key with date ex: 2022-12-31
+
+      const isoDate = String(nextDate); // Get the ISO string for the date
+
+      dates.push({
+        name: formattedDate,
+        key: weekdayName,
+        value: isoDate
+      });
+    }
+
+    setNext10WeekdaysEndAfter(dates);
+  }
+
+  const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip, startOn, weekday] = form.watch([
     'sameBillingAddress',
     'clientAddress',
     'clientCity',
     'clientState',
-    'clientZip'
+    'clientZip',
+    'startOn',
+    'weekday'
   ]);
 
   const handleCheckboxSameBillingAddress = useMemo(() => {
@@ -176,6 +294,17 @@ export default function Page() {
   useEffect(() => {
     handleSameBillingAddress();
   }, [handleCheckboxSameBillingAddress]);
+
+  useEffect(() => {
+    form.resetField('startOn');
+    form.resetField('endAfter');
+    getNext10DatesForEndAfterBasedOnWeekday(startOn);
+    getNext10DatesForStartOnBasedOnWeekday(weekday);
+  }, [form.watch('weekday')]);
+
+  useEffect(() => {
+    getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn'));
+  }, [form.watch('startOn')]);
 
   return (
     <Form {...form}>
@@ -310,18 +439,33 @@ export default function Page() {
               label="Technician"
               options={subContractors?.length > 0 ? subContractors : []}
             />
-            <InputField
-              name="paidByService"
-              placeholder="0.00$"
-              label="Paid by Service"
-              type={FieldType.CurrencyValue}
-            />
+            <InputField name="paidByService" placeholder="$0" label="Paid by Service" type={FieldType.CurrencyValue} />
             <SelectField label="Weekday" name="weekday" placeholder="Weekday" options={Weekdays} />
             <SelectField label="Frequency" name="frequency" placeholder="Frequency" options={Frequencies} />
           </div>
 
           <div className="inline-flex w-full items-start justify-start gap-4">
-            <DatePickerField
+            <SelectField
+              label="Start on"
+              name="startOn"
+              placeholder="Start on"
+              options={next10WeekdaysStartOn.map((date) => ({
+                key: date.key,
+                name: date.name,
+                value: date.value
+              }))}
+            />
+            <SelectField
+              label="End after"
+              name="endAfter"
+              placeholder="End after"
+              options={next10WeekdaysEndAfter.map((date) => ({
+                key: date.key,
+                name: date.name,
+                value: date.value
+              }))}
+            />
+            {/* <DatePickerField
               disabled={[{ dayOfWeek: disabledWeekdays }]}
               name="startOn"
               label="Start on"
@@ -332,7 +476,7 @@ export default function Page() {
               name="endAfter"
               label="End after"
               placeholder="End after"
-            />
+            /> */}
           </div>
 
           <Button disabled={isPending} type="submit" className="w-full">

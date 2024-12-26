@@ -1,4 +1,3 @@
-import { isBefore } from 'date-fns';
 import { z } from 'zod';
 
 import { defaultSchemas } from './defaultSchemas';
@@ -16,7 +15,7 @@ export const transferAssignmentsSchema = z
     isEntireRoute: z.boolean(),
     paidByService: defaultSchemas.monthlyPayment,
     startOn: z.coerce.date().optional(),
-    endAfter: z.coerce.date().optional()
+    endAfter: z.string().optional()
   })
   .refine((data) => (data.type === 'once' ? !!data.onlyAt : true), {
     message: 'Only at is required',
@@ -28,13 +27,5 @@ export const transferAssignmentsSchema = z
   })
   .refine((data) => (data.type === 'permanently' ? !!data.endAfter : true), {
     message: 'End after are required',
-    path: ['endAfter']
-  })
-  .refine((data) => (data.type === 'permanently' ? isBefore(data.startOn!, data.endAfter!) : true), {
-    message: 'Must be before the end date',
-    path: ['startOn']
-  })
-  .refine((data) => (data.type === 'permanently' ? isBefore(data.startOn!, data.endAfter!) : true), {
-    message: 'Must be after the start date',
     path: ['endAfter']
   });

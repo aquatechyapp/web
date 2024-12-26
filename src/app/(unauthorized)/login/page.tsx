@@ -38,13 +38,13 @@ export default function Page() {
   }
 
   return (
-    <div className="inline-flex w-[448px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8">
+    <div className="inline-flex w-96 flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8 md:w-[680px]">
       <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
         <Image priority width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
       </div>
-      <div className="relative mt-4 h-[50px] w-[400px]">
-        <div className="left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] text-gray-900">Login</div>
-        <div className="left-0 top-[30px] h-5 w-[400px]">
+      <div className="relative mt-4 h-[50px] w-full">
+        <div className="left-0 top-0 h-[30px] w-full text-xl font-semibold leading-[30px] text-gray-900">Login</div>
+        <div className="left-0 top-[30px] h-5 w-full">
           <span className="text-sm font-medium text-gray-500">Don't you have an account? </span>
           <Link href="/signup" className="text-sm font-semibold text-blue-500">
             Sign Up
@@ -52,8 +52,8 @@ export default function Page() {
         </div>
       </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
-          <div className="mb-8 flex w-[400px] flex-col gap-[18px]">
+        <form onSubmit={form.handleSubmit((data) => handleSubmit(data))} className="w-full">
+          <div className="mb-8 flex w-full flex-col gap-[18px]">
             <InputField label="E-mail" name="email" placeholder="E-mail address" />
             <InputField label="Password" name="password" placeholder="Password" type={FieldType.Password} />
             <Link href="/recover" className="text-sm font-semibold text-blue-500">
@@ -61,7 +61,7 @@ export default function Page() {
             </Link>
             {error && <p className="text-[0.8rem] font-medium text-red-500 dark:text-red-900">{messageError}</p>}
           </div>
-          <Button disabled={isPending} type="submit" className="w-full">
+          <Button disabled={isPending} type="submit" className="flex w-full">
             {isPending ? (
               <div
                 className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"

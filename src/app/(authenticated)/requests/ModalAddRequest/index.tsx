@@ -90,7 +90,7 @@ export function ModalAddRequest() {
           Add request
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-96 rounded-md md:w-[680px]">
         <Form {...form}>
           <form className="flex flex-col gap-4" onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
             <DialogTitle>New Request</DialogTitle>

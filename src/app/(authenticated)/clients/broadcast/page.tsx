@@ -149,7 +149,6 @@ export default function Page() {
           <div className="w-full">
             <InputField placeholder="Insert a message for your clients" name="message" type={FieldType.TextArea} />
           </div>
-
           <ModalSend disabled={!form.watch('message')} onSubmit={() => form.handleSubmit(handleSubmit)()} />
         </div>
       </form>

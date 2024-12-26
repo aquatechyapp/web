@@ -1,6 +1,7 @@
 import { Frequency, PoolType } from '@/ts/enums/enums';
 
 import { Service } from './Service';
+import { Client } from './Client';
 
 export type TransferAssignment = Assignment & {
   endAfter: Date;
@@ -21,6 +22,7 @@ export type Assignment = {
   weekday: string;
   pool: Pool;
   paidByService: number | null;
+  timezone?: string | null | undefined;
 };
 
 export type CreateAssignment = {
@@ -29,7 +31,7 @@ export type CreateAssignment = {
   weekday: string;
   frequency: string;
   startOn: Date;
-  endAfter: Date;
+  endAfter: Date | string;
   paidByService: number;
 };
 
@@ -38,6 +40,7 @@ export type Pool = {
   address: string;
   animalDanger: boolean;
   city: string;
+  clientOwner?: Client;
   clientOwnerId: string;
   createdAt: string;
   deactivatedAt: string;
