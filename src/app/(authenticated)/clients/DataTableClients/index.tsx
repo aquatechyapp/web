@@ -105,6 +105,8 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
     ...types.map((type) => ({ value: type, name: type, key: type }))
   ];
 
+  // console.log('sortedData', sortedData);
+
   return (
     <>
       <div className="flex w-full flex-col items-center justify-between md:flex-row">
