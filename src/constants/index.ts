@@ -15,6 +15,7 @@ import {
 import RouteIcon from '@/components/ui/route-icon';
 import TabIcon from '@/components/ui/tab-icon';
 import TeamIcon from '@/components/ui/team-icon';
+
 import { Frequency } from '@/ts/enums/enums';
 import { Menu } from '@/ts/interfaces/Others';
 
@@ -123,13 +124,13 @@ export const routes: Menu[] = [
         description: 'Create a new client, add a pool and assign a technician to it',
         icon: UserPlus
       },
-      import: {
-        text: 'Import Clients',
-        href: '/clients/import',
-        title: 'Import Clients',
-        icon: Import,
-        description: 'Massive import and edit of clients from a CSV file'
-      },
+      // import: {
+      //   text: 'Import Clients',
+      //   href: '/clients/import',
+      //   title: 'Import Clients',
+      //   icon: Import,
+      //   description: 'Massive import and edit of clients from a CSV file'
+      // },
       broadcast: {
         text: 'Broadcast',
         href: '/clients/broadcast',
@@ -142,9 +143,24 @@ export const routes: Menu[] = [
   },
   {
     text: 'Routes',
-    href: '/routes',
+    submenu: {
+      routes: {
+        text: 'Assignments',
+        href: '/routes/assignments',
+        title: 'Assignments',
+        description: 'Create assignments, manage your routes and see your schedule'
+      },
+      schedule: {
+        text: 'Schedule',
+        href: '/routes/schedule',
+        title: 'Schedule',
+        description: 'See your schedule and the pools you have to service',
+        icon: UserPlus
+      }
+    },
+    href: '/routes/assignments',
     icon: RouteIcon,
-    title: 'Routes',
+    title: 'Assignments',
     description: 'Create assignments, manage your routes and see your schedule'
   },
   {
@@ -160,7 +176,14 @@ export const routes: Menu[] = [
       myAccount: {
         text: 'My team',
         href: '/team',
-        title: 'My team'
+        title: 'My team',
+        description: 'Manage your team and add new technicians'
+      },
+      myCompanies: {
+        text: 'My companies',
+        href: '/team/myCompanies',
+        title: 'My companies',
+        description: 'Manage your companies and edit their information.'
       },
       generateReports: {
         text: 'Generate Reports',

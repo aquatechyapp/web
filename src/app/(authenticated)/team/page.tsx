@@ -1,96 +1,77 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
-import { PlusIcon } from '@radix-ui/react-icons';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { useUserStore } from '@/store/user';
-import { SubcontractorStatus } from '@/ts/enums/enums';
-import { WorkRelation } from '@/ts/interfaces/User';
 
-import { Button } from '../../../components/ui/button';
-import { WorkRelationCard } from './WorkRelationCard'; // Import the unified component
+import { CompanyMember } from '@/ts/interfaces/Company';
+
+import { CompanyMemberCard } from './CompanyMemberCard';
+import { ModalAddMember } from './ModalAddMember';
+import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
+
+  const { data: members, isLoading } = useGetMembersOfAllCompaniesByUserId(user.id);
+
   const [searchTerm, setSearchTerm] = useState('');
+
   const router = useRouter();
 
-  const filteredSubcontractors = user?.workRelationsAsAEmployer.filter((subcontractor) =>
-    `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
-
-  const filteredEmployers = user?.workRelationsAsASubcontractor.filter((employee) =>
-    `${employee.company.firstName} ${employee.company.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMembers = members?.filter((member: CompanyMember) =>
+    `${member.firstName + member.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   useEffect(() => {
     if (user.firstName === '') {
-      router.push('/account');
+      return router.push('/account');
     }
   }, [user]);
 
   return (
     <div className="p-2">
       <div className="flex flex-col items-start justify-start gap-4 md:flex-row">
-        <Link href="/team/newSubcontractor" className="w-full md:w-fit">
-          <Button className="w-full text-nowrap">
-            <PlusIcon className="mr-1p" />
-            Add Sub-contractor
-          </Button>
-        </Link>
+        <ModalAddMember />
         <Input
-          placeholder="Filter by name..."
+          placeholder="Filter by name"
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
           className="w-full md:max-w-sm"
         />
       </div>
+      {/* <div className="flex gap-4">
+          <SelectField
+            name="companyId"
+            placeholder="Company"
+            options={
+              companies?.map((company: Company) => ({
+                key: company.id,
+                name: company.name,
+                value: company.id
+              }))
+            }
+          />
+      </div> */}
 
       <div className="mt-3">
         <div className="flex flex-wrap justify-center gap-2 self-stretch md:justify-normal">
-          {user && (
-            <div className="flex flex-wrap justify-center">
-              <WorkRelationCard
-                key={user.email}
-                type="owner"
-                name={`${user.firstName} ${user.lastName}`}
-                phone={user.phone}
-                email={user.email}
-                status={SubcontractorStatus.Active}
-              />
-            </div>
-          )}
-          {filteredSubcontractors && (
+          {filteredMembers && (
             <div className="flex flex-wrap justify-center gap-2">
-              {filteredSubcontractors.map((subcontractor: WorkRelation) => (
-                <WorkRelationCard
-                  key={subcontractor.subcontractor.email}
-                  type="subcontractor"
-                  name={`${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`}
-                  phone={subcontractor.subcontractor.phone ? subcontractor.subcontractor.phone : 'Pending'}
-                  email={subcontractor.subcontractor.email}
-                  status={subcontractor.status}
-                  workRelationId={subcontractor.id}
-                />
-              ))}
-            </div>
-          )}
-          {filteredEmployers && (
-            <div className="flex gap-2">
-              {filteredEmployers.map((employee: WorkRelation) => (
-                <WorkRelationCard
-                  key={employee.company.email}
-                  type="employer"
-                  name={`${employee.company.firstName} ${employee.company.lastName}`}
-                  phone={employee.company.phone}
-                  email={employee.company.email}
-                  status={employee.status}
-                  workRelationId={employee.id}
+              {filteredMembers.map((member: CompanyMember) => (
+                <CompanyMemberCard
+                  status={member.status}
+                  key={member.id}
+                  company={member.company}
+                  id={member.id}
+                  firstName={member.firstName}
+                  lastName={member.lastName}
+                  email={member.email}
+                  phone={member.phone}
+                  role={member.role}
                 />
               ))}
             </div>

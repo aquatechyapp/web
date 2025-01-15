@@ -1,4 +1,4 @@
-import { Pool } from './Assignments';
+import { Pool } from './Pool';
 import { Client } from './Client';
 
 export interface Request {

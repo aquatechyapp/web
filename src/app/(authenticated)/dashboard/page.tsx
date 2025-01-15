@@ -8,7 +8,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Typography } from '@/components/Typography';
 import { useAssignmentsContext } from '@/context/assignments';
 import useGetClients from '@/hooks/react-query/clients/getClients';
-import { useMapUtils } from '@/hooks/useMapUtils';
+import { useMapAssignmentsUtils } from '@/hooks/useMapAssignmentsUtils';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { useUserStore } from '@/store/user';
 import { Assignment } from '@/ts/interfaces/Assignments';
@@ -20,11 +20,13 @@ import InfoCardScrollable from './_components/InfoCardScrollable';
 import InfoItem from './_components/InfoItem';
 import StatisticCard from './_components/StatisticCard';
 import Map from './Map';
+import { useServicesContext } from '@/context/services';
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
   const { allAssignments } = useAssignmentsContext();
-  const { directions, distance, duration, isLoaded, loadError } = useMapUtils();
+  const { services } = useServicesContext();
+  const { directions, distance, duration, isLoaded, loadError } = useMapAssignmentsUtils();
 
   const { data: clients, isLoading } = useGetClients();
   const { width = 0 } = useWindowDimensions();
@@ -77,28 +79,28 @@ export default function Page() {
     {}
   );
 
-  const assignmentsBySubcontractors = allAssignments.reduce(
-    (
-      acc: {
-        [key: string]: number;
-      },
-      assignment: Assignment
-    ) => {
-      const subcontractor = user?.workRelationsAsAEmployer?.find(
-        (subcontractor) => subcontractor.subcontractorId === assignment.assignmentToId
-      );
-      if (subcontractor) {
-        const fullName = `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`;
-        if (acc[fullName]) {
-          acc[fullName] += 1;
-        } else {
-          acc[fullName] = 1;
-        }
-      }
-      return acc;
-    },
-    {}
-  );
+  // const assignmentsBySubcontractors = allAssignments.reduce(
+  //   (
+  //     acc: {
+  //       [key: string]: number;
+  //     },
+  //     assignment: Assignment
+  //   ) => {
+  //     const subcontractor = user?.workRelationsAsAEmployer?.find(
+  //       (subcontractor) => subcontractor.subcontractorId === assignment.assignmentToId
+  //     );
+  //     if (subcontractor) {
+  //       const fullName = `${subcontractor.subcontractor.firstName} ${subcontractor.subcontractor.lastName}`;
+  //       if (acc[fullName]) {
+  //         acc[fullName] += 1;
+  //       } else {
+  //         acc[fullName] = 1;
+  //       }
+  //     }
+  //     return acc;
+  //   },
+  //   {}
+  // );
 
   if (width < 1024) {
     return (
@@ -107,12 +109,13 @@ export default function Page() {
           {format(new Date(), 'LLLL yyyy')}
         </Typography>
         <div className="flex w-full flex-col gap-6 text-nowrap">
-          <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />
-          <StatisticCard value={user?.incomeAsASubcontractor} type="incomeSubcontractor" />
-          <StatisticCard value={clients?.length} type="clients" />
           <ActionButton type="add_client" />
           <ActionButton type="route_dashboard" />
           <ActionButton type="my_team" />
+          <StatisticCard value={clients?.length} type="clients" />
+          {/* <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" /> */}
+          {/* <StatisticCard value={user?.incomeAsASubcontractor} type="incomeSubcontractor" /> */}
+
           <InfoCardScrollable title="Pools by city" subtitle=" (as a company)">
             {isEmpty(poolsByCityAsCompany) ? (
               <div>No pools found</div>
@@ -131,7 +134,7 @@ export default function Page() {
                 .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
           </InfoCardScrollable>
-          <InfoCardScrollable title="My Team">
+          {/* <InfoCardScrollable title="My Team">
             {isEmpty(assignmentsBySubcontractors) ? (
               <div>No team found</div>
             ) : (
@@ -139,7 +142,7 @@ export default function Page() {
                 .sort((a, b) => b[1] - a[1])
                 .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
-          </InfoCardScrollable>
+          </InfoCardScrollable> */}
         </div>
       </div>
     );
@@ -152,8 +155,8 @@ export default function Page() {
       </Typography>
       <div className="flex w-full flex-col flex-wrap gap-6 text-nowrap">
         <div className="flex flex-1 flex-row items-start gap-6">
-          <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />
-          <StatisticCard value={user?.incomeAsASubcontractor} type="incomeSubcontractor" />
+          {/* <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />
+          <StatisticCard value={user?.incomeAsASubcontractor} type="incomeSubcontractor" /> */}
           <StatisticCard value={clients?.length} type="clients" />
         </div>
         <div className={'w-full'}>
@@ -172,7 +175,7 @@ export default function Page() {
           <ActionButton type="my_team" />
         </div>
         <div className="flex flex-1 flex-row items-start gap-6">
-          <InfoCardScrollable title="My Team">
+          {/* <InfoCardScrollable title="My Team">
             {isEmpty(assignmentsBySubcontractors) ? (
               <div>No team found</div>
             ) : (
@@ -180,7 +183,7 @@ export default function Page() {
                 .sort((a, b) => b[1] - a[1])
                 .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
-          </InfoCardScrollable>
+          </InfoCardScrollable> */}
           <InfoCardScrollable title="Pools by city" subtitle=" (as a subcontractor)">
             {isEmpty(poolsByCityAsSubcontractor) ? (
               <div>No pools found</div>

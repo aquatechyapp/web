@@ -1,31 +1,41 @@
 import { z } from 'zod';
+import { dateSchema } from '@/schemas/date';
 
 import { defaultSchemas } from './defaultSchemas';
 
-export const paidByServiceSchema = z.object({
-  paidByService: z.number()
+export const transferAssignmentsSchema = z.object({
+  assignmentToId: z
+    .string({
+      required_error: 'assignmentToId is required',
+      invalid_type_error: 'assignmentToId must be a string'
+    })
+    .trim()
+    .min(1, { message: 'assignmentToId must be at least 1 characters' }),
+  weekday: defaultSchemas.weekday,
+  isEntireRoute: z.boolean({
+    required_error: 'isEntireRoute is required',
+    invalid_type_error: 'isEntireRoute must be a boolean'
+  }),
+  startOn: z.coerce
+    .date({
+      required_error: 'startOn is required',
+      invalid_type_error: 'startOn must be a date'
+    })
+    .optional(),
+  endAfter: z
+    .string({
+      required_error: 'endAfter is required',
+      invalid_type_error: 'endAfter must be a string'
+    })
+    .optional()
 });
 
-export const transferAssignmentsSchema = z
+export const newAssignmentSchema = z
   .object({
-    assignmentToId: z.string(),
-    weekday: defaultSchemas.weekday,
-    type: z.enum(['once', 'permanently']),
-    onlyAt: z.coerce.date().optional(),
-    isEntireRoute: z.boolean(),
-    paidByService: defaultSchemas.monthlyPayment,
-    startOn: z.coerce.date().optional(),
-    endAfter: z.string().optional()
+    assignmentToId: z.string().min(1),
+    poolId: z.string(),
+    client: z.string(),
+    frequency: defaultSchemas.frequency,
+    weekday: defaultSchemas.weekday
   })
-  .refine((data) => (data.type === 'once' ? !!data.onlyAt : true), {
-    message: 'Only at is required',
-    path: ['onlyAt']
-  })
-  .refine((data) => (data.type === 'permanently' ? !!data.startOn : true), {
-    message: 'Start on are required',
-    path: ['startOn']
-  })
-  .refine((data) => (data.type === 'permanently' ? !!data.endAfter : true), {
-    message: 'End after are required',
-    path: ['endAfter']
-  });
+  .and(dateSchema);

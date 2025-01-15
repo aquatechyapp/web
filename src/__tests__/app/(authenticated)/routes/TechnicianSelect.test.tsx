@@ -2,8 +2,8 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect } from 'vitest';
 
-import TechnicianSelect from '@/app/(authenticated)/routes/TechnicianSelect';
-import { useTechniciansStore } from '@/store/technicians';
+import TechnicianSelect from '@/app/(authenticated)/routes/assignments/MemberSelect';
+import { useTechniciansStore } from '@/store/members';
 
 vi.mock('@/store/technicians');
 
