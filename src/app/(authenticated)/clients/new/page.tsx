@@ -20,7 +20,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientAxios } from '@/lib/clientAxios';
-import { paidByServiceSchema } from '@/schemas/assignments';
 import { clientSchema } from '@/schemas/client';
 import { dateSchema } from '@/schemas/date';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
@@ -28,6 +27,9 @@ import { poolSchema } from '@/schemas/pool';
 import { useUserStore } from '@/store/user';
 import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
 import { createFormData } from '@/utils/formUtils';
+import { isEmpty } from '@/utils';
+import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
+import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 
 type PoolAndClientSchema = z.infer<typeof poolAndClientSchema>;
 
@@ -39,6 +41,9 @@ export default function Page() {
     }))
   );
 
+  const { data: members, isLoading } = useGetMembersOfAllCompaniesByUserId(user.id);
+  const { data: companies } = useGetCompanies();
+
   const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
     {
       name: string;
@@ -46,6 +51,7 @@ export default function Page() {
       value: string;
     }[]
   >([]);
+
   const [next10WeekdaysEndAfter, setNext10WeekdaysEndAfter] = useState<
     {
       name: string;
@@ -54,12 +60,26 @@ export default function Page() {
     }[]
   >([]);
 
+  const validateForm = async (): Promise<boolean> => {
+    const isValid = await form.trigger();
+
+    if (isValid) {
+      return true;
+    }
+    if (isEmpty(form.formState.errors)) {
+      console.error('Error in the form');
+    } else {
+      console.error(form.formState.errors);
+    }
+    return false;
+  };
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { width } = useWindowDimensions();
   const isMobile = width ? width < 640 : false;
 
-  const { mutate: handleSubmit, isPending } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async (data: PoolAndClientSchema) =>
       await clientAxios.post('/client-pool-assignment', createFormData(data), {
         headers: {
@@ -69,9 +89,10 @@ export default function Page() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
+      queryClient.invalidateQueries({ queryKey: ['schedule'] });
       push('/clients');
       toast({
-        duration: 2000,
+        duration: 5000,
         title: 'Client added successfully',
         variant: 'success'
       });
@@ -82,7 +103,7 @@ export default function Page() {
       }>
     ) => {
       toast({
-        duration: 2000,
+        duration: 5000,
         title: 'Error adding client',
         variant: 'error',
         description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
@@ -118,69 +139,69 @@ export default function Page() {
       name: user.firstName + ' ' + user.lastName,
       value: user.id
     };
-    return user.workRelationsAsAEmployer
-      .filter((sub) => sub.status === 'Active')
-      .map((sub) => ({
-        key: sub.subcontractorId,
-        name: sub.subcontractor.firstName + ' ' + sub.subcontractor.lastName,
-        value: sub.subcontractorId
-      }))
-      .concat(userAsSubcontractor);
+    // return user.workRelationsAsAEmployer
+    //   .filter((sub) => sub.status === 'Active')
+    //   .map((sub) => ({
+    //     key: sub.subcontractorId,
+    //     name: sub.subcontractor.firstName + ' ' + sub.subcontractor.lastName,
+    //     value: sub.subcontractorId
+    //   }))
+    //   .concat(userAsSubcontractor);
+
+    return userAsSubcontractor;
   }, [user]);
 
   const form = useForm<PoolAndClientSchema>({
     resolver: zodResolver(poolAndClientSchema),
     defaultValues: {
-      // assignmentToId: '',
-      // animalDanger: false,
-      // phone: '+19542970632',
-      // lockerCode: '123',
-      // monthlyPayment: 10000,
-      // poolNotes: '',
-      // poolAddress: '4375 SW 10TH PL 205',
-      // poolCity: 'Deerfield Beach',
-      // enterSide: 'Right',
-      // email: 'kawanstrelow@gmail.com',
-      // firstName: 'Kawan',
-      // lastName: 'Strelow',
-      // clientAddress: '4375 SW 10TH PL 205',
-      // clientNotes: '',
-      // clientZip: '33442',
-      // poolState: 'FL',
-      // poolZip: '33442',
-      // sameBillingAddress: false,
-      // clientCity: 'Deerfield Beach',
-      // clientState: 'FL',
-      // customerCode: '',
-      // paidByService: 1200,
-      // clientCompany: '',
-      // clientType: 'Residential',
-      // timezone: IanaTimeZones.NY
       assignmentToId: '',
       animalDanger: false,
-      phone: '',
-      lockerCode: '',
-      monthlyPayment: undefined,
+      phone: '+19542970632',
+      lockerCode: '123',
+      monthlyPayment: 10000,
       poolNotes: '',
-      poolAddress: '',
-      poolCity: '',
-      enterSide: '',
-      email: '',
-      firstName: '',
-      lastName: '',
-      clientAddress: '',
+      poolAddress: '4375 SW 10TH PL 205',
+      poolCity: 'Deerfield Beach',
+      enterSide: 'Right',
+      email: 'kawanstrelow@gmail.com',
+      firstName: 'Kawan',
+      lastName: 'Strelow',
+      clientAddress: '4375 SW 10TH PL 205',
       clientNotes: '',
-      clientZip: '',
-      poolState: '',
-      poolZip: '',
+      clientZip: '33442',
+      poolState: 'FL',
+      poolZip: '33442',
       sameBillingAddress: false,
-      clientCity: '',
-      clientState: '',
+      clientCity: 'Deerfield Beach',
+      clientState: 'FL',
       customerCode: '',
-      paidByService: undefined,
       clientCompany: '',
       clientType: 'Residential',
       timezone: IanaTimeZones.NY
+      // assignmentToId: '',
+      // animalDanger: false,
+      // phone: '',
+      // lockerCode: '',
+      // monthlyPayment: undefined,
+      // poolNotes: '',
+      // poolAddress: '',
+      // poolCity: '',
+      // enterSide: '',
+      // email: '',
+      // firstName: '',
+      // lastName: '',
+      // clientAddress: '',
+      // clientNotes: '',
+      // clientZip: '',
+      // poolState: '',
+      // poolZip: '',
+      // sameBillingAddress: false,
+      // clientCity: '',
+      // clientState: '',
+      // customerCode: '',
+      // clientCompany: '',
+      // clientType: 'Residential',
+      // timezone: IanaTimeZones.NY
     }
   });
 
@@ -271,6 +292,16 @@ export default function Page() {
     setNext10WeekdaysEndAfter(dates);
   }
 
+  async function handleCreateClientPoolAndAssignment(data: PoolAndClientSchema) {
+    const isValid = await validateForm();
+
+    if (isValid) {
+      mutate(data);
+      form.reset();
+      return;
+    }
+  }
+
   const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip, startOn, weekday] = form.watch([
     'sameBillingAddress',
     'clientAddress',
@@ -308,11 +339,25 @@ export default function Page() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
+      <form onSubmit={form.handleSubmit((data) => handleCreateClientPoolAndAssignment(data))}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 p-2">
           <Typography element="h2" className="pb-0 text-base">
             Basic information
           </Typography>
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
+            <SelectField
+              placeholder="Company owner"
+              name="companyOwnerId"
+              label="Company owner"
+              options={
+                companies?.map((c) => ({
+                  key: c.id,
+                  name: c.name,
+                  value: c.id
+                })) || []
+              }
+            />
+          </div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField name="firstName" placeholder="First name" label="First name" />
             <InputField name="lastName" placeholder="Last name" label="Last name" />
@@ -321,6 +366,8 @@ export default function Page() {
           </div>
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <InputField name="clientAddress" placeholder="Billing address" label="Billing address" />
+          </div>
+          <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <StateAndCitySelect />
             <InputField name="clientZip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
           </div>
@@ -433,13 +480,16 @@ export default function Page() {
 
           <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
             <SelectField
-              disabled={subContractors.length === 0}
+              disabled={members.length === 0}
               name="assignmentToId"
               placeholder="Technician"
               label="Technician"
-              options={subContractors?.length > 0 ? subContractors : []}
+              options={members.map((m) => ({
+                key: m.id,
+                name: m.firstName,
+                value: m.id
+              }))}
             />
-            <InputField name="paidByService" placeholder="$0" label="Paid by Service" type={FieldType.CurrencyValue} />
             <SelectField label="Weekday" name="weekday" placeholder="Weekday" options={Weekdays} />
             <SelectField label="Frequency" name="frequency" placeholder="Frequency" options={Frequencies} />
           </div>
@@ -504,11 +554,8 @@ const additionalSchemas = z.object({
   monthlyPayment: defaultSchemas.monthlyPayment,
   clientCompany: z.string().nullable(),
   clientType: z.enum(['Commercial', 'Residential']),
-  timezone: defaultSchemas.timezone
+  timezone: defaultSchemas.timezone,
+  companyOwnerId: z.string().min(1)
 });
 
-const poolAndClientSchema = clientSchema
-  .and(poolSchema)
-  .and(additionalSchemas)
-  .and(dateSchema)
-  .and(paidByServiceSchema);
+const poolAndClientSchema = clientSchema.and(poolSchema).and(additionalSchemas).and(dateSchema);

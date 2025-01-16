@@ -11,7 +11,7 @@ export default function useGetClients() {
   } = useQuery({
     queryKey: ['clients'],
     queryFn: async () => {
-      const response = await clientAxios('/clients');
+      const response = await clientAxios(`/clients`);
       // create a full name for eacth client by combining first and last name
       response.data?.clients.forEach((client: Client) => {
         client.fullName = `${client.firstName} ${client.lastName}`;

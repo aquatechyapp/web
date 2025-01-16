@@ -8,7 +8,6 @@ import { PaginationDemo } from '@/components/PaginationDemo';
 import SelectField from '@/components/SelectField';
 import { DatePicker } from '@/components/ui/date-picker';
 import useGetClients from '@/hooks/react-query/clients/getClients';
-import useGetServices from '@/hooks/react-query/services/getRequests';
 import { useUserStore } from '@/store/user';
 import { SubcontractorStatus } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
@@ -16,32 +15,38 @@ import { buildSelectOptions } from '@/utils/formUtils';
 
 import { DataTableRequests } from './DataTableRequests';
 import { columns } from './DataTableRequests/columns';
+import useGetServices from '@/hooks/react-query/services/getServices';
+import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
+import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 
 export default function Page() {
   const form = useForm({
     defaultValues: {
       fromDate: undefined,
-      toDate: undefined,
-      assignmentToId: ''
+      toDate: undefined
+      // memberId: null,
+      // clientId: null,
+      // companyOwnerId: null
     }
   });
 
   const [filters, setFilters] = useState({
     from: '',
     to: '',
-    technicianId: '',
-    clientId: '',
+    memberId: null,
+    clientId: null,
+    companyOwnerId: null,
     page: 1 // Página inicial como 1
   });
 
   const { data: clients, isLoading: isLoadingClients } = useGetClients();
 
-  const { data, isLoading } = useGetServices(filters);
+  const { data: services } = useGetServices(filters);
   const user = useUserStore((state) => state.user);
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-
-  // console.log('data', data);
+  const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
+  const { data: companies } = useGetCompanies();
 
   useEffect(() => {
     if (!user?.firstName) {
@@ -53,31 +58,16 @@ export default function Page() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const subContractors = useMemo(() => {
-    if (!user) return [];
-    const userAsSubcontractor = {
-      key: user.id,
-      name: `${user.firstName} ${user.lastName}`,
-      value: user.id
-    };
-    return user?.workRelationsAsAEmployer?.filter((sub) => sub.status === SubcontractorStatus.Active)
-      .map((sub) => ({
-        key: sub.subcontractorId,
-        name: `${sub.subcontractor.firstName} ${sub.subcontractor.lastName}`,
-        value: sub.subcontractorId
-      })) || []
-        .concat(userAsSubcontractor);
-  }, [user]);
-
   const handleSubmit = async (formData: any) => {
     try {
-      const { fromDate, toDate, assignmentToId, clientId } = formData;
+      const { fromDate, toDate, memberId, clientId, companyOwnerId } = formData;
 
       setFilters({
         from: fromDate?.toString() || '',
         to: toDate?.toString() || '',
-        technicianId: assignmentToId,
+        memberId: memberId,
         clientId: clientId,
+        companyOwnerId,
         page: 1 // Reseta a página para 1 ao aplicar novos filtros
       });
 
@@ -101,6 +91,40 @@ export default function Page() {
           <div className="flex gap-4">
             <form className="flex w-full gap-4" onSubmit={form.handleSubmit(handleSubmit)}>
               <SelectField
+                disabled={companies.length === 0}
+                name="companyOwnerId"
+                placeholder="Select company"
+                options={
+                  companies.length > 0
+                    ? companies.map((company) => {
+                        return {
+                          key: company.id,
+                          value: company.id,
+                          name: company.name
+                        };
+                      })
+                    : []
+                }
+                onValueChange={(value) => handleFilterChange('companyOwnerId', value)}
+              />
+              <SelectField
+                disabled={members.length === 0}
+                name="memberId"
+                placeholder="Select member"
+                options={
+                  members.length > 0
+                    ? members.map((member) => {
+                        return {
+                          key: member.id,
+                          value: member.id,
+                          name: member.firstName + ' ' + member.lastName
+                        };
+                      })
+                    : []
+                }
+                onValueChange={(value) => handleFilterChange('memberId', value)}
+              />
+              <SelectField
                 options={buildSelectOptions(
                   clients?.filter((client: Client) => client.pools.length > 0),
                   {
@@ -109,32 +133,26 @@ export default function Page() {
                     value: 'id'
                   }
                 )}
-                placeholder={clients?.length || 0 > 0 ? 'Clients' : 'No clients available'}
+                placeholder={clients?.length || 0 > 0 ? 'Select client' : 'No clients available'}
                 name="clientId"
                 onValueChange={(e) => handleFilterChange('clientId', e)}
               />
-              <SelectField
-                disabled={subContractors.length === 0}
-                name="technicianId"
-                placeholder="Select Technician"
-                options={subContractors.length > 0 ? subContractors : []}
-                onValueChange={(value) => handleFilterChange('technicianId', value)}
-              />
+
               <DatePicker
                 placeholder="Created From"
-                onChange={(date) => handleFilterChange('from', date?.toISOString() || '')}
+                onChange={(date) => handleFilterChange('from', date?.toISOString().slice(0, 10) || '')} // Slice is to get only the date part in a format backend can understand
               />
               <DatePicker
                 placeholder="Created To"
-                onChange={(date) => handleFilterChange('to', date?.toISOString() || '')}
+                onChange={(date) => handleFilterChange('to', date?.toISOString().slice(0, 10) || '')} // Slice is to get only the date part in a format backend can understand
               />
             </form>
           </div>
         }
-        data={data?.services || []}
+        data={services || []}
       />
 
-      <PaginationDemo currentPage={currentPage} totalItems={data?.services.length} onPageChange={handlePageChange} />
+      <PaginationDemo currentPage={currentPage} totalItems={services?.length} onPageChange={handlePageChange} />
     </FormProvider>
   );
 }

@@ -16,8 +16,8 @@ type Actions = {
 export const useWeekdayStore = create<Store & Actions>()(
   devtools((set) => ({
     selectedWeekday: format(new Date(), 'EEEE').toUpperCase() as WeekdaysUppercase,
-    selectedDay: startOfDay(new Date()).toISOString(),
+    selectedDay: new Date().toISOString(),
     setSelectedWeekday: (weekday: WeekdaysUppercase) => set({ selectedWeekday: weekday }),
-    setSelectedDay: (day: string) => set({ selectedDay: startOfDay(day).toISOString() })
+    setSelectedDay: (day: string) => set({ selectedDay: day })
   }))
 );

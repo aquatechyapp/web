@@ -1,10 +1,10 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { differenceInWeeks, isAfter, isSameDay } from 'date-fns';
+import { differenceInWeeks, getDay, isAfter, isSameDay } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { useTechniciansStore } from '@/store/technicians';
+import { useMembersStore } from '@/store/members';
 import { useWeekdayStore } from '@/store/weekday';
 import { Frequency } from '@/ts/enums/enums';
 
@@ -12,43 +12,10 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { clientAxios } from '../lib/clientAxios';
 import { Assignment } from '../ts/interfaces/Assignments';
 
-function filterAssignmentsByFrequency(assignments: Assignment[], selectedDay: Date): Assignment[] {
+function filterAssignmentsByWeekday(assignments: Assignment[], selectedWeekday: string): Assignment[] {
   return assignments.filter((assignment) => {
-    const timezone = 'UTC';
-    const zonedStartOn = toZonedTime(assignment.startOn, timezone);
-    const startOn = zonedStartOn;
-
-    const zonedEndAfter = toZonedTime(assignment.endAfter, timezone);
-    const endAfter = zonedEndAfter;
-
-    const weeksBetween = differenceInWeeks(selectedDay, startOn);
-
-    if (isAfter(selectedDay, endAfter)) {
-      return false;
-    }
-
-    switch (assignment.frequency) {
-      case Frequency.ONCE:
-        return isSameDay(startOn, selectedDay);
-      case Frequency.WEEKLY:
-        return isSameDay(startOn, selectedDay) || (selectedDay > startOn && selectedDay.getDay() === startOn.getDay());
-      case Frequency.E2WEEKS:
-        return (
-          isSameDay(startOn, selectedDay) ||
-          (selectedDay > startOn && selectedDay.getDay() === startOn.getDay() && weeksBetween % 2 === 0)
-        );
-      case Frequency.E3WEEKS:
-        return (
-          isSameDay(startOn, selectedDay) ||
-          (selectedDay > startOn && selectedDay.getDay() === startOn.getDay() && weeksBetween % 3 === 0)
-        );
-      case Frequency.E4WEEKS:
-        return (
-          isSameDay(startOn, selectedDay) ||
-          (selectedDay > startOn && selectedDay.getDay() === startOn.getDay() && weeksBetween % 4 === 0)
-        );
-      default:
-        return false;
+    if (assignment.weekday.toUpperCase() === selectedWeekday.toUpperCase()) {
+      return true;
     }
   });
 }
@@ -74,7 +41,7 @@ const AssignmentsContext = createContext<AssignmentsContextType>({
 export const AssignmentsProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
 
-  const assignmentToId = useTechniciansStore((state) => state.assignmentToId);
+  const assignmentToId = useMembersStore((state) => state.assignmentToId);
   const { selectedWeekday, selectedDay } = useWeekdayStore((state) => state);
   const userId = Cookies.get('userId');
 
@@ -108,7 +75,7 @@ export const AssignmentsProvider = ({ children }: { children: React.ReactNode })
 
     setAssignments({
       initial: [...filteredAssignments],
-      current: filterAssignmentsByFrequency(filteredAssignments, new Date(selectedDay))
+      current: filterAssignmentsByWeekday(filteredAssignments, selectedWeekday)
     });
     setAllAssignments(data.assignments);
   }, [data, isError, isLoading, selectedWeekday, assignmentToId, userId, selectedDay]);

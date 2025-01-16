@@ -45,8 +45,8 @@ export const columns: ColumnDef<Services>[] = [
     cell: ({ row: { original } }) => <div>{'N/A'}</div>
   },
   {
-    accessorKey: 'technician',
-    header: 'Technician',
+    accessorKey: 'memberId',
+    header: 'Member',
     cell: ({ row: { original } }) => (
       <div>
         {' '}
