@@ -39,7 +39,7 @@ export default function Page() {
 
   const router = useRouter();
 
-  const { user, isFreePlan } = useUserStore(
+  const { user } = useUserStore(
     useShallow((state) => ({
       user: state.user,
       isFreePlan: state.isFreePlan
