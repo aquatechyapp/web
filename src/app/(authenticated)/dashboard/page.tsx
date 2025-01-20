@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Typography } from '@/components/Typography';
@@ -23,21 +23,25 @@ import Map from './Map';
 import { useServicesContext } from '@/context/services';
 
 export default function Page() {
+  const router = useRouter();
+
   const user = useUserStore((state) => state.user);
-  const { allAssignments } = useAssignmentsContext();
+
   const { services } = useServicesContext();
+  const { allAssignments } = useAssignmentsContext();
   const { directions, distance, duration, isLoaded, loadError } = useMapAssignmentsUtils();
 
   const { data: clients, isLoading } = useGetClients();
+
   const { width = 0 } = useWindowDimensions();
 
-  const router = useRouter();
+  const currentDateFormatted = useMemo(() => format(new Date(), 'yyyy'), []);
 
   useEffect(() => {
     if (user.firstName === '') {
       router.push('/account');
     }
-  }, [user]);
+  }, [user, router]);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -106,7 +110,7 @@ export default function Page() {
     return (
       <div className="p-2">
         <Typography element="h2" className="my-2">
-          {format(new Date(), 'LLLL yyyy')}
+          {currentDateFormatted}
         </Typography>
         <div className="flex w-full flex-col gap-6 text-nowrap">
           <ActionButton type="add_client" />
@@ -151,7 +155,7 @@ export default function Page() {
   return (
     <div className="p-2">
       <Typography element="h2" className="mb-2">
-        {format(new Date(), 'LLLL yyyy')}
+        {currentDateFormatted}
       </Typography>
       <div className="flex w-full flex-col flex-wrap gap-6 text-nowrap">
         <div className="flex flex-1 flex-row items-start gap-6">
