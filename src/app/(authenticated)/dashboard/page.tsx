@@ -120,7 +120,7 @@ export default function Page() {
           {/* <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" /> */}
           {/* <StatisticCard value={user?.incomeAsASubcontractor} type="incomeSubcontractor" /> */}
 
-          <InfoCardScrollable title="Pools by city" subtitle=" (as a company)">
+          {/* <InfoCardScrollable title="Pools by city" subtitle=" (as a company)">
             {isEmpty(poolsByCityAsCompany) ? (
               <div>No pools found</div>
             ) : (
@@ -137,7 +137,7 @@ export default function Page() {
                 .sort((a, b) => b[1] - a[1])
                 .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
-          </InfoCardScrollable>
+          </InfoCardScrollable> */}
           {/* <InfoCardScrollable title="My Team">
             {isEmpty(assignmentsBySubcontractors) ? (
               <div>No team found</div>
@@ -188,7 +188,7 @@ export default function Page() {
                 .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
           </InfoCardScrollable> */}
-          <InfoCardScrollable title="Pools by city" subtitle=" (as a subcontractor)">
+          {/* <InfoCardScrollable title="Pools by city" subtitle=" (as a subcontractor)">
             {isEmpty(poolsByCityAsSubcontractor) ? (
               <div>No pools found</div>
             ) : (
@@ -205,7 +205,7 @@ export default function Page() {
                 .sort((a, b) => b[1] - a[1])
                 .map(([city, pools]) => <InfoItem key={city} title={city} description={`${pools} pools`} />)
             )}
-          </InfoCardScrollable>
+          </InfoCardScrollable> */}
         </div>
       </div>
     </div>
