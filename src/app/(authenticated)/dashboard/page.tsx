@@ -1,11 +1,9 @@
 'use client';
 
-import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { Typography } from '@/components/Typography';
 import { useAssignmentsContext } from '@/context/assignments';
 import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useMapAssignmentsUtils } from '@/hooks/useMapAssignmentsUtils';
@@ -13,11 +11,8 @@ import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { useUserStore } from '@/store/user';
 import { Assignment } from '@/ts/interfaces/Assignments';
 import { Client } from '@/ts/interfaces/Client';
-import { isEmpty } from '@/utils';
 
 import ActionButton from './_components/ActionButton';
-import InfoCardScrollable from './_components/InfoCardScrollable';
-import InfoItem from './_components/InfoItem';
 import StatisticCard from './_components/StatisticCard';
 import Map from './Map';
 import { useServicesContext } from '@/context/services';
@@ -35,8 +30,6 @@ export default function Page() {
 
   const { width = 0 } = useWindowDimensions();
 
-  const currentDateFormatted = useMemo(() => format(new Date(), 'yyyy'), []);
-
   useEffect(() => {
     if (user.firstName === '') {
       router.push('/account');
@@ -45,43 +38,43 @@ export default function Page() {
 
   if (isLoading) return <LoadingSpinner />;
 
-  const poolsByCityAsCompany = clients?.reduce(
-    (
-      acc: {
-        [key: string]: number;
-      },
-      client: Client
-    ) => {
-      client.pools.forEach((pool) => {
-        if (acc[pool.city]) {
-          acc[pool.city] += 1;
-        } else {
-          acc[pool.city] = 1;
-        }
-      });
-      return acc;
-    },
-    {}
-  );
+  // const poolsByCityAsCompany = clients?.reduce(
+  //   (
+  //     acc: {
+  //       [key: string]: number;
+  //     },
+  //     client: Client
+  //   ) => {
+  //     client.pools.forEach((pool) => {
+  //       if (acc[pool.city]) {
+  //         acc[pool.city] += 1;
+  //       } else {
+  //         acc[pool.city] = 1;
+  //       }
+  //     });
+  //     return acc;
+  //   },
+  //   {}
+  // );
 
-  const poolsByCityAsSubcontractor = allAssignments.reduce(
-    (
-      acc: {
-        [key: string]: number;
-      },
-      assignment: Assignment
-    ) => {
-      if (assignment.assignmentToId === user?.id && assignment.assignmentOwnerId !== user.id) {
-        if (acc[assignment.pool.city]) {
-          acc[assignment.pool.city] += 1;
-        } else {
-          acc[assignment.pool.city] = 1;
-        }
-      }
-      return acc;
-    },
-    {}
-  );
+  // const poolsByCityAsSubcontractor = allAssignments.reduce(
+  //   (
+  //     acc: {
+  //       [key: string]: number;
+  //     },
+  //     assignment: Assignment
+  //   ) => {
+  //     if (assignment.assignmentToId === user?.id && assignment.assignmentOwnerId !== user.id) {
+  //       if (acc[assignment.pool.city]) {
+  //         acc[assignment.pool.city] += 1;
+  //       } else {
+  //         acc[assignment.pool.city] = 1;
+  //       }
+  //     }
+  //     return acc;
+  //   },
+  //   {}
+  // );
 
   // const assignmentsBySubcontractors = allAssignments.reduce(
   //   (
@@ -109,9 +102,6 @@ export default function Page() {
   if (width < 1024) {
     return (
       <div className="p-2">
-        <Typography element="h2" className="my-2">
-          {currentDateFormatted}
-        </Typography>
         <div className="flex w-full flex-col gap-6 text-nowrap">
           <ActionButton type="add_client" />
           <ActionButton type="route_dashboard" />
@@ -154,9 +144,6 @@ export default function Page() {
 
   return (
     <div className="p-2">
-      <Typography element="h2" className="mb-2">
-        {currentDateFormatted}
-      </Typography>
       <div className="flex w-full flex-col flex-wrap gap-6 text-nowrap">
         <div className="flex flex-1 flex-row items-start gap-6">
           {/* <StatisticCard value={user?.incomeAsACompany} type="incomeCompany" />
