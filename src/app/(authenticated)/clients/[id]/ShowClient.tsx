@@ -36,7 +36,7 @@ export default function ShowClient({ client }: Props) {
   return (
     <div>
       <div className="flex flex-col items-start gap-6 self-stretch pt-2 lg:flex-row lg:pt-0">
-        <div className="lg:max-w-sm">
+        <div className="w-full lg:max-w-sm">
           <div className="relative flex w-full flex-col items-center justify-start gap-6 text-nowrap rounded-lg border px-6 pb-6 pt-16">
             <div className="w-[100% - 16px] absolute left-2 right-2 top-2 h-[148px] rounded bg-gradient-to-b from-sky-400 to-teal-400" />
 
