@@ -7,7 +7,7 @@ import { clientAxios } from '@/lib/clientAxios';
 export const useDeleteService = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { mutate, isPending } = useMutation({
+  return useMutation({
     mutationFn: async ({ serviceId, assignmentId }: { serviceId: string; assignmentId: string }) =>
       await clientAxios.delete('/services', {
         data: { serviceId, assignmentId }
@@ -33,5 +33,4 @@ export const useDeleteService = () => {
       });
     }
   });
-  return { mutate, isPending };
 };

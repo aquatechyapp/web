@@ -6,8 +6,7 @@ import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { zipImages } from '@/lib/js-zip';
 import { Service } from '@/ts/interfaces/Service';
-
-import CellDeleteService from './CellDeleteService';
+import DeleteServiceDialog from './cancel-dialog';
 
 export const columns: ColumnDef<Service>[] = [
   {
@@ -96,6 +95,8 @@ export const columns: ColumnDef<Service>[] = [
   },
   {
     id: 'actions',
-    cell: (props) => <CellDeleteService {...props} />
+    cell: (props) => (
+      <DeleteServiceDialog serviceId={props.row.original.id} assignmentId={props.row.original.assignmentId} />
+    )
   }
 ];

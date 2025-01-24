@@ -14,6 +14,7 @@ export type Assignment = {
   skipDates: string[];
   startOn: string | Date;
   weekday: string;
+  status: 'Active' | 'Inactive';
   pool: Pool;
   timezone?: string | null | undefined;
 };

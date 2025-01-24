@@ -14,7 +14,8 @@ import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 import { editPoolSchema } from '@/schemas/pool';
 import { FieldType } from '@/ts/enums/enums';
-import { Pool } from '@/ts/interfaces/Assignments';
+import { Pool } from '@/ts/interfaces/Pool';
+
 import { isEmpty } from '@/utils';
 import { findDifferenceBetweenTwoObjects } from '@/utils/others';
 
