@@ -64,7 +64,7 @@ const DateTimePicker = React.forwardRef<HTMLDivElement, DatePickerStateOptions<D
           <div {...dialogProps} className="space-y-3">
             {/* @ts-expect-error pedir para o jeymes verificar */}
             <Calendar name="startOn" {...calendarProps} />
-            <TimeField value={state.timeValue} onChange={state.setTimeValue} />
+            <TimeField value={state.timeValue} onChange={(value) => value && state.setTimeValue(value)} />
           </div>
         </PopoverContent>
       </Popover>

@@ -13,14 +13,14 @@ export const columns: ColumnDef<Service>[] = [
     accessorKey: 'createdAt',
     header: 'Date',
     cell: (props) => {
-      const formattedDate = format(new Date(props.row.original.createdAt), "iiii, MMMM do 'at' h:mm aaaa");
+      const formattedDate = format(new Date(props.row.original.createdAt!), "iiii, MMMM do 'at' h:mm aaaa");
       return <span className="text-nowrap">{formattedDate}</span>;
     }
   },
   {
     header: 'Chemicals read',
     cell: (props) => {
-      const { ph, chlorine, salt, alkalinity, cyanAcid, calcium } = props.row.original;
+      const { ph, chlorine, salt, alkalinity, cyanAcid, calcium } = props.row.original as any;
       return (
         <div className="text-nowrap">
           <div>
@@ -44,7 +44,7 @@ export const columns: ColumnDef<Service>[] = [
     header: 'Chemicals spent',
     cell: (props) => {
       const { saltSpent, chlorineSpent, shockSpent, tabletSpent, phosphateSpent, acidSpent } = props.row
-        .original as Service;
+        .original as any;
 
       return (
         <div className="text-nowrap">

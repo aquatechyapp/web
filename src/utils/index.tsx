@@ -1,7 +1,7 @@
 import { routes } from '@/constants';
 import { Menu } from '@/ts/interfaces/Others';
 
-import { Pool } from '../ts/interfaces/Assignments';
+import { Pool } from '../ts/interfaces/Pool';
 
 // função para colocar ponto antes dos dois últimos dígitos
 // Ex.: 123 => 1.23
@@ -21,7 +21,7 @@ export function calculateTotalMonthlyOfAllPools(pools: Pool[]) {
 }
 
 export function calculateTotalAssignmentsOfAllPools(pools: Pool[]) {
-  return pools.reduce((acc, pool) => acc + pool.services.length, 0);
+  return pools.reduce((acc, pool) => acc + (pool.services?.length || 0), 0);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

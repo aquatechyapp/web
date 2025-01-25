@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 interface ModalSendProps {
   onSubmit: () => void;
-  disabled: () => void;
+  disabled: boolean;
 }
 
 export function ModalSend({ onSubmit, disabled }: ModalSendProps) {

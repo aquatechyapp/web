@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Separator } from '@/components/ui/separator';
-import { Pool } from '@/ts/interfaces/Assignments';
+import { Pool } from '@/ts/interfaces/Pool';
 import { Service } from '@/ts/interfaces/Service';
 
 import { DataTableServices } from './DataTableServices';

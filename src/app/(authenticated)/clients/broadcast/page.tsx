@@ -35,13 +35,15 @@ export default function Page() {
     }
   });
 
-  const cities = ['All cities', ...new Set(clientsData.map((client) => client.city))];
-  const types = ['All types', ...new Set(clientsData.map((client) => client.type))];
+  const cities = ['All cities', ...Array.from(new Set(clientsData.map((client) => client.city)))];
+  const types = ['All types', ...Array.from(new Set(clientsData.map((client) => client.type)))];
   const daysOfWeek = [
     'All days',
-    ...new Set(
-      clientsData.flatMap((client) =>
-        client.pools.flatMap((pool) => pool.assignments.map((assignment) => assignment.weekday))
+    ...Array.from(
+      new Set(
+        clientsData.flatMap((client) =>
+          client.pools.flatMap((pool) => pool.assignments?.map((assignment) => assignment.weekday))
+        )
       )
     )
   ];
@@ -55,7 +57,7 @@ export default function Page() {
       const typeMatch = isAllSelected(selectedTypes, 'All types') || selectedTypes.includes(client.type);
       const dayMatch =
         isAllSelected(selectedDays, 'All days') ||
-        client.pools.some((pool) => pool.assignments.some((assignment) => selectedDays.includes(assignment.weekday)));
+        client.pools.some((pool) => pool.assignments?.some((assignment) => selectedDays.includes(assignment.weekday)));
 
       return cityMatch && typeMatch && dayMatch;
     });
@@ -127,7 +129,7 @@ export default function Page() {
             />
             <MultiSelect
               placeholder="Select Days"
-              options={daysOfWeek.map((day) => ({ value: day, label: day }))}
+              options={daysOfWeek.map((day) => ({ value: day, label: day })) as any}
               selected={selectedDays}
               onChange={handleDaySelectionChange}
             />
@@ -140,7 +142,7 @@ export default function Page() {
                   value: type, // O valor que será enviado ao formulário
                   name: type === 'All types' ? 'All types' : type // Nome que será mostrado para o usuário
                 }))}
-                onValueChange={handleTypeSelectionChange}
+                onValueChange={handleTypeSelectionChange as any}
               />
             </div>
           </div>

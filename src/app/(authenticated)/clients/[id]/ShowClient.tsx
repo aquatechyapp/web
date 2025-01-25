@@ -13,9 +13,9 @@ import { Client } from '@/ts/interfaces/Client';
 import { calculateTotalAssignmentsOfAllPools, calculateTotalMonthlyOfAllPools } from '@/utils';
 import { getInitials } from '@/utils/others';
 
-import { ModalAddPool } from '../DataTableClients/ModalAddPool';
 import ClientInfo from './ClientInfo';
 import PoolHeader from './PoolHeader';
+import { ModalAddPool } from '../DataTableClients/ModalAddPool';
 
 type Props = {
   client: Client;
