@@ -1,3 +1,3 @@
 export const QueryKeys = {
-  ASSIGNMENTS: 'ASSIGNMENTS'
+  ASSIGNMENTS: 'assignments'
 };

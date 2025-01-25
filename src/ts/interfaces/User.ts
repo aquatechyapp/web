@@ -1,4 +1,5 @@
 import { LanguageOptions, UserSubscription } from '@/ts/enums/enums';
+import { Company } from './Company';
 
 export type BasicData = {
   id: string;
@@ -6,6 +7,7 @@ export type BasicData = {
   firstName: string;
   lastName: string;
   company: string;
+  userCompanies?: Company[];
   address: string;
   city: string;
   state: string;
