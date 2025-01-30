@@ -3,18 +3,23 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { Services } from '@/ts/interfaces/Request';
+import { ServiceStatus } from '@/ts/interfaces/Service';
 
-const statusOptions = {
-  Pending: {
-    label: 'Pending',
+const statusOptions: Record<ServiceStatus, { label: string; className: string }> = {
+  Open: {
+    label: 'Open',
     className: 'bg-red-100 text-red-600'
   },
-  Processing: {
-    label: 'Processing',
+  InProgress: {
+    label: 'In progress',
     className: 'bg-yellow-100 text-yellow-600'
   },
-  Done: {
-    label: 'Done',
+  Skipped: {
+    label: 'Skipped',
+    className: 'bg-gray-100 text-gray-600'
+  },
+  Completed: {
+    label: 'Completed',
     className: 'bg-green-100 text-green-600'
   }
 };
@@ -60,7 +65,7 @@ export const columns: ColumnDef<Services>[] = [
     cell: ({ row: { original } }) => {
       return (
         <div
-          className={`max-w-28 rounded-lg px-1 px-2 py-2 text-center font-semibold ${statusOptions[original.status].className}`}
+          className={`max-w-28 rounded-lg px-2 py-2 text-center font-semibold ${statusOptions[original.status].className}`}
         >
           {original.status}
         </div>

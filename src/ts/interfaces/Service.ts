@@ -1,6 +1,8 @@
 import { Client } from './Client';
 import { Pool } from './Pool';
 
+export type ServiceStatus = 'Open' | 'InProgress' | 'Completed' | 'Skipped';
+
 export interface Service {
   id: string;
   chemicalsSpent: ChemicalsSpent | null;
@@ -22,7 +24,7 @@ export interface Service {
   notes: string | null;
   poolId: string;
   pool?: Pool;
-  status: 'Open' | 'InProgress' | 'Completed' | 'Skipped';
+  status: ServiceStatus;
   completedAt: string | null;
   photos: string[];
   companyOwnerId: string;

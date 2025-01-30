@@ -14,6 +14,7 @@ import {
 import { VariantProps } from 'class-variance-authority';
 import { Loader2Icon } from 'lucide-react';
 import { type } from 'os';
+import { open } from 'fs';
 
 export type ConfirmActionDialogProps = {
   open?: boolean;
@@ -23,6 +24,7 @@ export type ConfirmActionDialogProps = {
   confirmText?: string;
   cancelText?: string;
   onConfirm?: () => Promise<void>;
+  onOpenChange?: (open: boolean) => void;
 } & VariantProps<typeof buttonVariants>;
 
 export default function ConfirmActionDialog({
@@ -33,6 +35,7 @@ export default function ConfirmActionDialog({
   cancelText = 'Cancel',
   description,
   onConfirm,
+  onOpenChange,
   variant = 'default',
   size = 'default'
 }: ConfirmActionDialogProps) {
@@ -50,11 +53,17 @@ export default function ConfirmActionDialog({
 
   const handleOpenChange = (open: boolean) => {
     _setOpen(open);
+    if (isLoading) {
+      setIsLoading(false);
+    }
+    if (onOpenChange) {
+      onOpenChange(open);
+    }
   };
 
   return (
-    <AlertDialog open={_open} defaultOpen={_open} onOpenChange={handleOpenChange}>
-      <AlertDialogTrigger asChild>{TriggerElement || <Button variant="ghost">Open</Button>}</AlertDialogTrigger>
+    <AlertDialog open={_open || open} defaultOpen={_open || open} onOpenChange={handleOpenChange}>
+      {TriggerElement ? <AlertDialogTrigger asChild>{TriggerElement}</AlertDialogTrigger> : null}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
@@ -65,7 +74,9 @@ export default function ConfirmActionDialog({
             {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
             <span>{confirmText}</span>
           </Button>
-          <AlertDialogCancel size={size}>{cancelText}</AlertDialogCancel>
+          <Button type="button" variant="outline" size={size} onClick={() => handleOpenChange(false)}>
+            {cancelText}
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -26,7 +26,7 @@ export interface Services {
   poolId: string;
   createdAt: string;
   description: string;
-  status: 'Pending' | 'Processing' | 'Done';
+  status: 'Open' | 'InProgress' | 'Completed' | 'Skipped';
   updatedAt: string;
   outcome: string;
   photos: string[];

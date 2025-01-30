@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { clientAxios } from '@/lib/clientAxios';
+import { useState } from 'react';
 
-interface UseGetServicesParams {
+export interface UseGetServicesParams {
   from: string;
   to: string;
   memberId?: string | null;
@@ -11,33 +12,29 @@ interface UseGetServicesParams {
   page?: number;
 }
 
-export default function useGetServices({
-  from,
-  to,
-  memberId,
-  clientId,
-  companyOwnerId,
-  page = 1
-}: UseGetServicesParams) {
-  const { data, isLoading, isSuccess } = useQuery({
-    queryKey: ['services'],
+export default function useGetServices(initialData: UseGetServicesParams) {
+  const [data, setData] = useState<UseGetServicesParams>({ ...initialData });
+
+  const query = useQuery({
+    queryKey: ['services', data.from, data.to, data.memberId, data.clientId, data.companyOwnerId, data.page],
     queryFn: async () => {
       const response = await clientAxios.get('/services', {
-        params: {
-          from,
-          to,
-          assignedToId: memberId,
-          companyOwnerId,
-          clientId,
-          page
-        }
+        params: data
       });
+
+      console.log(response.data);
 
       return response.data;
     },
-    staleTime: Infinity,
-    enabled: Boolean(from && to) // Ensure the query only runs when required parameters are present
+    enabled: Boolean(data.from && data.to) // Ensure the query only runs when required parameters are present
   });
 
-  return { data, isLoading, isSuccess };
+  const refetch = async (newQueryParams: UseGetServicesParams | undefined = undefined) => {
+    if (newQueryParams) {
+      setData(newQueryParams);
+    }
+    await query.refetch();
+  };
+
+  return { ...query, refetch };
 }

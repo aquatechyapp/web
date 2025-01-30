@@ -18,6 +18,7 @@ import { FieldType, LanguageOptions } from '@/ts/enums/enums';
 
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../../components/ui/dialog';
 import { ModalDeleteAccount } from './ModalDeleteAccount';
+import ChangePasswordDialog from './change-password-modal';
 
 const formSchema = z.object({
   firstName: defaultSchemas.firstName,
@@ -97,9 +98,12 @@ export default function Page() {
           <Button type="submit" className="h-10 w-full">
             Update account
           </Button>
-          <ModalDeleteAccount />
         </div>
       </form>
+      <div className="flex flex-col gap-4 p-2 md:flex-row">
+        <ChangePasswordDialog />
+        <ModalDeleteAccount />
+      </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>

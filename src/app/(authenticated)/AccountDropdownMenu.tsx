@@ -32,7 +32,6 @@ export function AccountDropdownMenu({ handleLogout }: Props) {
         <DropdownMenuItem>
           <Link href="/account">My Account</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>Change Password</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <span className="text-red-500">Log out</span>

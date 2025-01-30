@@ -16,10 +16,9 @@ import { ModalEditRequest } from '../ModalEditRequest';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  children: any;
 }
 
-export function DataTableRequests<TData, TValue>({ columns, data, children }: DataTableProps<TData, TValue>) {
+export function DataTableRequests<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
 
@@ -43,10 +42,6 @@ export function DataTableRequests<TData, TValue>({ columns, data, children }: Da
 
   return (
     <div className="flex flex-col gap-6 p-2">
-      <div className="mb-2 flex w-full flex-col flex-wrap gap-4 text-nowrap md:flex-nowrap lg:mb-0 lg:flex-row [&>*]:flex-1">
-        {children}
-      </div>
-
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
