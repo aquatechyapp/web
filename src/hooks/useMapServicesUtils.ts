@@ -1,5 +1,5 @@
 import { useLoadScript } from '@react-google-maps/api';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { libraries } from '@/constants';
 import { useServicesContext } from '@/context/services';
@@ -23,65 +23,71 @@ export function useMapServicesUtils() {
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
 
-  function getDirectionsFromGoogleMaps(optimizeWaypoints: boolean = false) {
-    if (!services || services.length === 0 || !isLoaded) {
-      setDirections(null);
-      return;
-    }
-    const origin = services[0].pool!.coords;
-    const destination = services[services.length - 1].pool!.coords;
-    const service = new google.maps.DirectionsService();
-    // create a waypoints constant that not contain the origin and destination and get only assignments.pool.coords
-    const waypoints = services
-      .filter((service, index) => index !== 0 && index !== services.length - 1)
-      .map((service) => {
-        return {
-          location: service.pool?.coords
-        };
-      });
-    service.route(
-      {
-        origin,
-        destination,
-        travelMode: google.maps.TravelMode.DRIVING,
-        waypoints,
-        optimizeWaypoints
-      },
-      (result, status) => {
-        if (status === 'OK' && result) {
-          setDirections(result);
+  const getDirectionsFromGoogleMaps = useCallback(
+    (optimizeWaypoints: boolean = false) => {
+      if (!services || services.length === 0 || !isLoaded) {
+        setDirections(null);
+        setDistance('');
+        setDuration('');
+        return;
+      }
+      const origin = services[0].pool!.coords;
+      const destination = services[services.length - 1].pool!.coords;
+      const service = new google.maps.DirectionsService();
+      // create a waypoints constant that not contain the origin and destination and get only assignments.pool.coords
+      const waypoints = services
+        .filter((service, index) => index !== 0 && index !== services.length - 1)
+        .map((service) => {
+          return {
+            location: service.pool?.coords
+          };
+        });
+      service.route(
+        {
+          origin,
+          destination,
+          travelMode: google.maps.TravelMode.DRIVING,
+          waypoints,
+          optimizeWaypoints
+        },
+        (result, status) => {
+          if (status === 'OK' && result) {
+            const totalDuration = result.routes[0].legs.reduce((acc, leg) => acc + (leg.duration?.value ?? 0), 0);
+            const totalDistance = result.routes[0].legs.reduce((acc, leg) => acc + (leg.distance?.value ?? 0), 0);
 
-          const totalDuration = result.routes[0].legs.reduce((acc, leg) => acc + (leg.duration?.value ?? 0), 0);
-          const totalDistance = result.routes[0].legs.reduce((acc, leg) => acc + (leg.distance?.value ?? 0), 0);
-          setDuration(
-            (totalDuration / 60).toLocaleString('pt-br', {
-              style: 'decimal',
-              maximumSignificantDigits: 2
-            }) + ' min'
-          );
-          setDistance((totalDistance * 0.000621371).toFixed(1) + ' mi');
-          if (optimizeWaypoints) {
-            const optimizedWaypoints = [
-              services[0],
-              ...result.routes[0].waypoint_order.map((index) => services[index + 1]),
-              services[services.length - 1]
-            ];
-            // I need to change the order property of each assignment based on the optimizedWaypoints
-            const changedOrderProperty = optimizedWaypoints.map((assignment, index) => {
-              return { ...assignment, order: index + 1 };
-            });
-            setServices({
-              ...changedOrderProperty
-            });
+            setDirections(result);
+            setDuration(
+              (totalDuration / 60).toLocaleString('pt-br', {
+                style: 'decimal',
+                maximumSignificantDigits: 2
+              }) + ' min'
+            );
+            setDistance((totalDistance * 0.000621371).toFixed(1) + ' mi');
+
+            if (optimizeWaypoints) {
+              const optimizedWaypoints = [
+                services[0],
+                ...result.routes[0].waypoint_order.map((index) => services[index + 1]),
+                services[services.length - 1]
+              ];
+              // I need to change the order property of each assignment based on the optimizedWaypoints
+              const changedOrderProperty = optimizedWaypoints.map((assignment, index) => {
+                return { ...assignment, order: index + 1 };
+              });
+              setServices({
+                ...changedOrderProperty
+              });
+            }
           }
         }
-      }
-    );
-  }
+      );
+    },
+    [isLoaded, services, setServices]
+  );
 
   useEffect(() => {
     getDirectionsFromGoogleMaps();
-  }, [services]);
+  }, [getDirectionsFromGoogleMaps]);
 
   return {
     directions,

@@ -15,7 +15,7 @@ import useWindowDimensions from '@/hooks/useWindowDimensions';
 
 import { useMembersStore } from '@/store/members';
 import { useUserStore } from '@/store/user';
-import { useWeekdayStore } from '@/store/weekday';
+import { normalizeToUTC12, useWeekdayStore } from '@/store/weekday';
 
 import Map from './Map';
 
@@ -28,6 +28,7 @@ import { Service } from '@/ts/interfaces/Service';
 import { newServiceSchema } from '@/schemas/service';
 import { useMapServicesUtils } from '@/hooks/useMapServicesUtils';
 import { DialogNewService } from './ModalNewService';
+import { normalize } from 'quill/modules/keyboard';
 
 export default function Page() {
   const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapServicesUtils();
@@ -81,13 +82,13 @@ export default function Page() {
     form.setValue('assignedToId', memberId);
   }
 
-  function getNext7DatesWith12PMUTC(): { date: Date; formatted: string }[] {
+  function getNext7DatesWith12PMUTC(): { date: string; formatted: string }[] {
     const today = new Date();
 
     return Array.from({ length: 7 }, (_, index) => {
-      const dateAt12PMUTC = set(addDays(today, index), { hours: 12, minutes: 0, seconds: 0, milliseconds: 0 });
+      const dateAt12PMUTC = normalizeToUTC12(addDays(today, index).toISOString());
       return {
-        date: dateAt12PMUTC,
+        date: dateAt12PMUTC.toISOString(),
         formatted: format(dateAt12PMUTC, 'MM/dd') // ISO 8601 format in UTC
       };
     });
@@ -97,7 +98,11 @@ export default function Page() {
     setSelectedDay(day);
   }
 
-  const next7days: { date: Date; formatted: string }[] = getNext7DatesWith12PMUTC();
+  const next7days = getNext7DatesWith12PMUTC();
+
+  useEffect(() => {
+    console.log({ selectedDay, sevenDay: getNext7DatesWith12PMUTC() });
+  }, [selectedDay]);
 
   return (
     <FormProvider {...form}>
@@ -106,8 +111,8 @@ export default function Page() {
       >
         <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
           <Tabs
-            onValueChange={(day) => handleChangeDay(day as string)}
-            // defaultValue={format(new Date(), 'EEEE').toUpperCase()}
+            onValueChange={handleChangeDay}
+            defaultValue={selectedDay || getNext7DatesWith12PMUTC()[0].date}
             value={selectedDay}
           >
             <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
@@ -115,7 +120,7 @@ export default function Page() {
                 <form className="w-full">
                   <TabsList className="w-full">
                     {next7days.map((day, index) => (
-                      <TabsTrigger className="flex-1" key={day.formatted} value={String(day.date)}>
+                      <TabsTrigger className="flex-1" key={day.formatted} value={day.date}>
                         {day.formatted}
                       </TabsTrigger>
                     ))}
@@ -126,7 +131,7 @@ export default function Page() {
                 </form>
               </Form>
 
-              <TabsContent value={selectedDay} className="w-full">
+              <TabsContent value={selectedDay || getNext7DatesWith12PMUTC()[0].date} className="w-full">
                 {/* O filtro dos assignments precisa ser feito dentro de AssignmentsList, por causa
                 do componente TabsContent. Esse componente de Tabs se baseia no value para exibir
                 seus childrens (AssignmentsList). Como na aba tabs o value se baseia somente no weekday,
