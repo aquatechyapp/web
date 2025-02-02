@@ -36,8 +36,16 @@ clientAxios.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
+    // Detectando erro de rede (servidor offline ou erro de conexão)
+    if (error.code === 'ECONNABORTED' || error.message.includes('Network Error')) {
+      window.location.href = window.location.protocol + '//' + window.location.host + '/server-offline';
+    }
+
     if (error.response?.status === 401) {
       window.location.href = window.location.protocol + '//' + window.location.host + '/login';
+    }
+    if (error.response?.status >= 500) {
+      window.location.href = window.location.protocol + '//' + window.location.host + '/server-error';
     }
     return Promise.reject(error);
   }
