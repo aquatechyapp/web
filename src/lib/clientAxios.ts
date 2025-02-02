@@ -44,7 +44,7 @@ clientAxios.interceptors.response.use(
     if (error.response?.status === 401) {
       window.location.href = window.location.protocol + '//' + window.location.host + '/login';
     }
-    if (error.response?.status >= 500) {
+    if (error && error.response && error.response.status >= 500) {
       window.location.href = window.location.protocol + '//' + window.location.host + '/server-error';
     }
     return Promise.reject(error);

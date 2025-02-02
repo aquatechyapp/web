@@ -14,19 +14,67 @@ import useGetClients from '@/hooks/react-query/clients/getClients';
 import { FieldType } from '@/ts/enums/enums';
 
 import { ModalSend } from './ModalSend';
+import ConfirmActionDialog from '@/components/confirm-action-dialog';
+import { Button } from '@/components/ui/button';
+import { SendIcon } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { clientAxios } from '@/lib/clientAxios';
+import { AxiosError } from 'axios';
+import { error } from 'console';
 
 const schema = z.object({
   message: z.string().min(1, { message: 'Message is required' }),
   subject: z.string().min(1, { message: 'Subject is required' })
 });
 
+type SendBroadcastInput = {
+  contacts: {
+    name: string;
+    email: string;
+  }[];
+  message: string;
+  subject: string;
+};
+
+async function sendBroadcastFn(data: SendBroadcastInput) {
+  const response = await clientAxios.post('/clients/broadcast', data);
+  return response.data;
+}
+
+const useSendBroadcastService = () => {
+  const { toast } = useToast();
+  return useMutation({
+    mutationFn: sendBroadcastFn,
+    onSuccess: () => {
+      toast({
+        variant: 'success',
+        title: 'Broadcast scheduled',
+        description: 'Your broadcast has been successfully scheduled for your clients.'
+      });
+    },
+    onError: (
+      error: AxiosError<{
+        message: string;
+      }>
+    ) => {
+      toast({
+        variant: 'error',
+        title: 'Error sending broadcast',
+        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
+      });
+    }
+  });
+};
+
 export default function Page() {
   const { data: clientsData = [] } = useGetClients();
   const [selectedCities, setSelectedCities] = useState<string[]>(['All cities']);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>(['All types']);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(['All clients']);
   const [selectedDays, setSelectedDays] = useState<string[]>(['All days']);
   const [filteredClients, setFilteredClients] = useState(clientsData);
   const { toast } = useToast();
+
+  const sendBroadcasService = useSendBroadcastService();
 
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: {
@@ -36,7 +84,7 @@ export default function Page() {
   });
 
   const cities = ['All cities', ...Array.from(new Set(clientsData.map((client) => client.city)))];
-  const types = ['All types', ...Array.from(new Set(clientsData.map((client) => client.type)))];
+  const types = ['All clients', 'Residential', 'Commercial'];
   const daysOfWeek = [
     'All days',
     ...Array.from(
@@ -54,7 +102,7 @@ export default function Page() {
 
     const filtered = clientsData.filter((client) => {
       const cityMatch = isAllSelected(selectedCities, 'All cities') || selectedCities.includes(client.city);
-      const typeMatch = isAllSelected(selectedTypes, 'All types') || selectedTypes.includes(client.type);
+      const typeMatch = isAllSelected(selectedTypes, 'All clients') || selectedTypes.includes(client.type);
       const dayMatch =
         isAllSelected(selectedDays, 'All days') ||
         client.pools.some((pool) => pool.assignments?.some((assignment) => selectedDays.includes(assignment.weekday)));
@@ -74,9 +122,9 @@ export default function Page() {
   };
 
   const handleTypeSelectionChange = (selected: string[]) => {
-    if (selected.includes('All types')) {
-      // Se "All types" for selecionado, apenas defina isso como valor
-      setSelectedTypes(['All types']);
+    if (selected.includes('All clients')) {
+      // Se "All" for selecionado, apenas defina isso como valor
+      setSelectedTypes(['All clients']);
     } else {
       // Caso contrário, defina os tipos selecionados
       setSelectedTypes(selected);
@@ -87,7 +135,7 @@ export default function Page() {
     setSelectedDays(selected.includes('All days') ? ['All days'] : selected);
   };
 
-  const handleSubmit = (formData: { message: string; subject: string }) => {
+  const handleSubmit = async (formData: { message: string; subject: string }) => {
     if (filteredClients.length === 0) {
       toast({
         variant: 'error',
@@ -98,16 +146,18 @@ export default function Page() {
       return;
     }
 
-    // Lógica para envio do formulário
-    console.log('Form data:', {
-      ...formData,
-      recipients: filteredClients.map((client) => ({ name: client.fullName, email: client.email }))
-    });
-
-    toast({
-      variant: 'success',
-      title: 'Message sent successfully!'
-    });
+    try {
+      await sendBroadcasService.mutateAsync({
+        ...formData,
+        contacts: filteredClients.map((client) => ({ name: client.fullName, email: client.email }))
+      });
+      setSelectedCities(['All cities']);
+      setSelectedDays(['All days']);
+      setSelectedTypes(['All clients']);
+      form.reset({ subject: '', message: '' });
+    } catch (error) {
+      return;
+    }
   };
 
   return (
@@ -136,11 +186,12 @@ export default function Page() {
             <div className="mt-2 w-full">
               <SelectField
                 name="type"
-                placeholder="Select Types"
+                placeholder="Select client types"
+                defaultValue="All clients"
                 options={types.map((type) => ({
                   key: type, // Uma chave única para cada item
                   value: type, // O valor que será enviado ao formulário
-                  name: type === 'All types' ? 'All types' : type // Nome que será mostrado para o usuário
+                  name: type === 'All clients' ? 'All clients' : type // Nome que será mostrado para o usuário
                 }))}
                 onValueChange={handleTypeSelectionChange as any}
               />
@@ -151,7 +202,24 @@ export default function Page() {
           <div className="w-full">
             <InputField placeholder="Insert a message for your clients" name="message" type={FieldType.TextArea} />
           </div>
-          <ModalSend disabled={!form.watch('message')} onSubmit={() => form.handleSubmit(handleSubmit)()} />
+          <ConfirmActionDialog
+            trigger={
+              <Button
+                className="w-full"
+                disabled={
+                  form.getValues('subject').length < 3 ||
+                  form.getValues('message').length < 3 ||
+                  filteredClients.length === 0
+                }
+              >
+                <SendIcon className="mr-2 h-4 w-4" />
+                Schedule broadcast
+              </Button>
+            }
+            title="Do you want to confirm shipping?"
+            description="You are about to send an email to your selected customers"
+            onConfirm={form.handleSubmit(handleSubmit)}
+          />
         </div>
       </form>
     </Form>
