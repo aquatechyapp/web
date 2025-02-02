@@ -15,7 +15,7 @@ import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
+import { Form, FormDescription, FormItem } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
@@ -155,7 +155,7 @@ export default function Page() {
     }
   }
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: async (data: PoolAndClientSchema) =>
       await clientAxios.post('/client-pool-assignment', createFormData(data), {
         headers: {
@@ -371,9 +371,15 @@ export default function Page() {
   async function handleCreateClientPoolAndAssignment(data: PoolAndClientSchema) {
     const isValid = await validateForm();
 
-    if (isValid) {
-      mutate(data);
+    if (!isValid) {
+      return;
+    }
+    try {
+      await mutateAsync(data);
+      steps.goToStep(0);
       form.reset();
+      return;
+    } catch (error) {
       return;
     }
   }
@@ -413,6 +419,10 @@ export default function Page() {
     getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn'));
   }, [form.watch('startOn')]);
 
+  useEffect(() => {
+    console.log({ userCompanies: user.userCompanies, companies });
+  }, [user, companies]);
+
   return (
     <Form {...form}>
       <div className="p-5 lg:p-8">
@@ -431,6 +441,9 @@ export default function Page() {
                   placeholder="Company owner"
                   name="companyOwnerId"
                   label="Company owner"
+                  defaultValue={
+                    user.userCompanies && user.userCompanies.length === 1 ? user.userCompanies[0].companyId : ''
+                  }
                   options={
                     companies?.map((c) => ({
                       key: c.id,
@@ -438,7 +451,6 @@ export default function Page() {
                       value: c.id
                     })) || []
                   }
-                  defaultValue={user.userCompanies && user.userCompanies.length === 1 ? user.userCompanies[0].id : ''}
                 />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
@@ -474,7 +486,6 @@ export default function Page() {
                   ]}
                 />
                 <SelectField
-                  defaultValue="Residential"
                   placeholder="Select Time Zone"
                   name="timezone"
                   label="Client Time zone"
@@ -597,43 +608,53 @@ export default function Page() {
               </Typography>
 
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                <SelectField
-                  disabled={members.length === 0}
-                  name="assignmentToId"
-                  placeholder="Technician"
-                  label="Technician"
-                  options={members.map((m) => ({
-                    key: m.id,
-                    name: m.firstName,
-                    value: m.id
-                  }))}
-                />
+                <FormItem className="w-full">
+                  <SelectField
+                    disabled={members.length === 0}
+                    name="assignmentToId"
+                    placeholder="Technician"
+                    label="Technician"
+                    options={members.map((m) => ({
+                      key: m.id,
+                      name: m.firstName,
+                      value: m.id
+                    }))}
+                    defaultValue={members && members.length === 1 ? members[0].id : undefined}
+                  />
+                  {members.length === 0 && <FormDescription>No technicians available</FormDescription>}
+                </FormItem>
                 <SelectField label="Weekday" name="weekday" placeholder="Weekday" options={Weekdays} />
-                <SelectField label="Frequency" name="frequency" placeholder="Frequency" options={Frequencies} />
+                <SelectField
+                  label="Frequency"
+                  name="frequency"
+                  placeholder="Frequency"
+                  defaultValue={Frequency.WEEKLY}
+                  options={Frequencies}
+                />
               </div>
-
-              <div className="inline-flex w-full items-start justify-start gap-4">
-                <SelectField
-                  label="Start on"
-                  name="startOn"
-                  placeholder="Start on"
-                  options={next10WeekdaysStartOn.map((date) => ({
-                    key: date.key,
-                    name: date.name,
-                    value: date.value
-                  }))}
-                />
-                <SelectField
-                  label="End after"
-                  name="endAfter"
-                  placeholder="End after"
-                  options={next10WeekdaysEndAfter.map((date) => ({
-                    key: date.key,
-                    name: date.name,
-                    value: date.value
-                  }))}
-                />
-                {/* <DatePickerField
+              {form.watch('weekday') && form.watch('frequency') && (
+                <div className="inline-flex w-full items-start justify-start gap-4">
+                  <SelectField
+                    label="Start on"
+                    name="startOn"
+                    placeholder="Start on"
+                    options={next10WeekdaysStartOn.map((date) => ({
+                      key: date.key,
+                      name: date.name,
+                      value: date.value
+                    }))}
+                  />
+                  <SelectField
+                    label="End after"
+                    name="endAfter"
+                    placeholder="End after"
+                    options={next10WeekdaysEndAfter.map((date) => ({
+                      key: date.key,
+                      name: date.name,
+                      value: date.value
+                    }))}
+                  />
+                  {/* <DatePickerField
               disabled={[{ dayOfWeek: disabledWeekdays }]}
               name="startOn"
               label="Start on"
@@ -645,7 +666,8 @@ export default function Page() {
               label="End after"
               placeholder="End after"
             /> */}
-              </div>
+                </div>
+              )}
               <div className="flex w-full flex-1 flex-row items-center justify-between">
                 <Button type="button" className="" onClick={steps.prevStep}>
                   <ArrowLeftIcon className="mr-2 h-4 w-4" />
