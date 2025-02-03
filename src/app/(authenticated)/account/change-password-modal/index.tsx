@@ -21,6 +21,7 @@ import { useUserStore } from '@/store/user';
 import { AxiosError } from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 import { title } from 'process';
+import { X } from 'lucide-react';
 
 type ChangePasswordInput = typeof ChangePasswordSchema._input;
 type ChangePasswordOutput = typeof ChangePasswordSchema._output;
@@ -132,7 +133,13 @@ export default function ChangePasswordDialog() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Change password</AlertDialogTitle>
-            <AlertDialogDescription className="text-start">Change your account password</AlertDialogDescription>
+            <AlertDialogDescription>Change your account password</AlertDialogDescription>
+
+            <div className="fixed right-4 top-2">
+              <AlertDialogTrigger asChild>
+                <X className="h-4 w-4 text-zinc-700 transition-all hover:cursor-pointer hover:text-zinc-950" />
+              </AlertDialogTrigger>
+            </div>
           </AlertDialogHeader>
           <Form {...changePasswordForm}>
             <form onSubmit={changePasswordForm.handleSubmit(onSubmit)} className="space-y-2">
@@ -141,7 +148,7 @@ export default function ChangePasswordDialog() {
                 name="currentPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Current passowrd</FormLabel>
+                    <FormLabel>Current password</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="Your current password" {...field} />
                     </FormControl>
@@ -154,7 +161,7 @@ export default function ChangePasswordDialog() {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New passowrd</FormLabel>
+                    <FormLabel>New password</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="New password" {...field} />
                     </FormControl>
@@ -167,7 +174,7 @@ export default function ChangePasswordDialog() {
                 name="newPasswordConfirmation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm new passowrd</FormLabel>
+                    <FormLabel>Confirm new password</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="Confirm new password" {...field} />
                     </FormControl>
@@ -179,11 +186,6 @@ export default function ChangePasswordDialog() {
                 <Button type="submit" variant="default" size="default">
                   Change
                 </Button>
-                <AlertDialogTrigger asChild>
-                  <Button type="button" variant="outline" size="default">
-                    Close
-                  </Button>
-                </AlertDialogTrigger>
               </AlertDialogFooter>
             </form>
           </Form>
