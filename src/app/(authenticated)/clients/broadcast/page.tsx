@@ -118,7 +118,11 @@ export default function Page() {
   }, [selectedCities, selectedTypes, selectedDays]);
 
   const handleCitySelectionChange = (selected: string[]) => {
-    setSelectedCities(selected.includes('All cities') ? ['All cities'] : selected);
+    if (selected.includes('All cities') && !selectedCities.includes('All cities')) {
+      setSelectedCities(['All cities']);
+    } else {
+      setSelectedCities(selected.filter((city) => city !== 'All cities'));
+    }
   };
 
   const handleTypeSelectionChange = (selected: string[]) => {
@@ -132,7 +136,11 @@ export default function Page() {
   };
 
   const handleDaySelectionChange = (selected: string[]) => {
-    setSelectedDays(selected.includes('All days') ? ['All days'] : selected);
+    if (selected.includes('All days') && !selectedDays.includes('All days')) {
+      setSelectedDays(['All days']);
+    } else {
+      setSelectedDays(selected.filter((city) => city !== 'All days'));
+    }
   };
 
   const handleSubmit = async (formData: { message: string; subject: string }) => {
@@ -163,14 +171,14 @@ export default function Page() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-2">
+        <div className="flex w-full flex-col items-start justify-start gap-4 bg-gray-50 p-2">
           <div>
             <p>
               Address this message to <b>{filteredClients.length} clients</b>.
             </p>
           </div>
 
-          <div className="inline-flex justify-start gap-4 self-stretch">
+          <div className="mb-5 flex w-full flex-col gap-1 md:flex-row md:gap-4">
             <MultiSelect
               placeholder="Select Cities"
               options={cities.map((city) => ({ value: city, label: city }))}
@@ -187,7 +195,7 @@ export default function Page() {
               <SelectField
                 name="type"
                 placeholder="Select client types"
-                defaultValue="All clients"
+                value={selectedTypes[0] || 'All clients'}
                 options={types.map((type) => ({
                   key: type, // Uma chave única para cada item
                   value: type, // O valor que será enviado ao formulário
@@ -207,9 +215,7 @@ export default function Page() {
               <Button
                 className="w-full"
                 disabled={
-                  form.getValues('subject').length < 3 ||
-                  form.getValues('message').length < 3 ||
-                  filteredClients.length === 0
+                  form.watch('subject').length < 3 || form.watch('message').length < 3 || filteredClients.length === 0
                 }
               >
                 <SendIcon className="mr-2 h-4 w-4" />
