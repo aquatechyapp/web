@@ -42,7 +42,7 @@ export const columns: ColumnDef<Services>[] = [
   {
     accessorKey: 'createdAt',
     header: 'Date',
-    cell: ({ row: { original } }) => <div>{new Date(original.createdAt).toLocaleDateString()}</div>
+    cell: ({ row: { original } }) => <div>{new Date(original.completedAt!).toLocaleDateString()}</div>
   },
   {
     accessorKey: 'notes',
@@ -54,8 +54,7 @@ export const columns: ColumnDef<Services>[] = [
     header: 'Member',
     cell: ({ row: { original } }) => (
       <div>
-        {' '}
-        {original.doneByUser?.firstName} {original.doneByUser?.lastName}
+        {original.completedByUser?.firstName} {original.completedByUser?.lastName}
       </div>
     )
   },

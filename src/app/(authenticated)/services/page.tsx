@@ -34,7 +34,7 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 import { X } from 'lucide-react';
 
 const defaultValues: UseGetServicesParams = {
-  from: sub(new Date(), { months: 1 }).toISOString(),
+  from: new Date().toISOString(),
   to: new Date().toISOString(),
   memberId: null,
   clientId: null,
@@ -258,7 +258,7 @@ export default function Page() {
                 </FormItem>
 
                 <DialogFooter>
-                  <Button type="submit">
+                  <Button type="button" onClick={() => filtersForm.handleSubmit(onSubmit)()}>
                     {servicesQuery.isPending && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
                     Apply
                   </Button>

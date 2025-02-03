@@ -32,6 +32,7 @@ export interface Services {
   photos: string[];
   pool: Pool;
   client: Client;
+  completedAt?: string;
 
   // Novos campos que você mencionou
   acidSpent: string | 'N/A'; // Para valores de string ou 'N/A'
@@ -53,6 +54,10 @@ export interface Services {
   shockSpent: string | 'N/A';
   tabletSpent: string | 'N/A';
 
+  completedByUser: {
+    firstName: string;
+    lastName: string;
+  };
   // Dados adicionais
   doneByUser: {
     id: string;
