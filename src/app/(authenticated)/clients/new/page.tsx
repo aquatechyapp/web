@@ -226,33 +226,33 @@ export default function Page() {
   const form = useForm<PoolAndClientSchema>({
     resolver: zodResolver(poolAndClientSchema),
     defaultValues: {
-      assignmentToId: '',
+      // assignmentToId: '',
       animalDanger: false,
-      phone: '+19542970632',
-      lockerCode: '123',
-      monthlyPayment: 10000,
-      poolNotes: '',
-      poolAddress: '4375 SW 10TH PL 205',
-      poolCity: 'Deerfield Beach',
-      enterSide: 'Right',
-      email: 'kawanstrelow@gmail.com',
-      firstName: 'Kawan',
-      lastName: 'Strelow',
-      clientAddress: '4375 SW 10TH PL 205',
-      clientNotes: '',
-      clientZip: '33442',
-      poolState: 'FL',
-      poolZip: '33442',
-      sameBillingAddress: false,
-      clientCity: 'Deerfield Beach',
-      clientState: user.state ?? 'FL',
-      frequency: Frequency.WEEKLY,
+      // phone: '+19542970632',
+      // lockerCode: '123',
+      // monthlyPayment: 10000,
+      // poolNotes: '',
+      // poolAddress: '4375 SW 10TH PL 205',
+      // poolCity: 'Deerfield Beach',
+      // enterSide: 'Right',
+      // email: 'kawanstrelow@gmail.com',
+      // firstName: 'Kawan',
+      // lastName: 'Strelow',
+      // clientAddress: '4375 SW 10TH PL 205',
+      // clientNotes: '',
+      // clientZip: '33442',
+      // poolState: 'FL',
+      // poolZip: '33442',
+      sameBillingAddress: false
+      // clientCity: 'Deerfield Beach',
+      // clientState: user.state ?? 'FL',
+      // frequency: Frequency.WEEKLY,
       // endAfter: "No end",
 
-      customerCode: '',
-      clientCompany: '',
-      clientType: 'Residential',
-      timezone: IanaTimeZones.NY
+      // customerCode: '',
+      // clientCompany: '',
+      // clientType: 'Residential',
+      // timezone: IanaTimeZones.NY
       // assignmentToId: '',
       // animalDanger: false,
       // phone: '',
@@ -463,7 +463,7 @@ export default function Page() {
                 <InputField name="clientAddress" placeholder="Billing address" label="Billing address" />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                <StateAndCitySelect />
+                <StateAndCitySelect defaultStateValue={user.state} />
                 <InputField name="clientZip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
