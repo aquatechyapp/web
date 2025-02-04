@@ -54,3 +54,14 @@ export interface InviteMember {
   companyId: string;
   role: 'Owner' | 'Admin' | 'Office' | 'Technician' | 'Cleaner';
 }
+
+export interface AcceptInvitation {
+  userCompanyId: string;
+  status: Status;
+}
+
+export interface CompanyWithMyRole extends Company {
+  role?: 'Owner' | 'Admin' | 'Office' | 'Technician' | 'Cleaner';
+  status: Status;
+  userCompanyId: string;
+}

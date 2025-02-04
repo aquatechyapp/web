@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { clientAxios } from '@/lib/clientAxios';
-import { Company } from '@/ts/interfaces/Company';
+import { CompanyWithMyRole } from '@/ts/interfaces/Company';
 
 export default function useGetCompanies() {
   const {
@@ -13,7 +13,7 @@ export default function useGetCompanies() {
     queryFn: async () => {
       const response = await clientAxios.get(`/companies`);
 
-      const companies: Company[] | [] = response.data.companies ? response.data.companies : [];
+      const companies: CompanyWithMyRole[] | [] = response.data.companies ? response.data.companies : [];
 
       return companies;
     }

@@ -44,14 +44,13 @@ export default function Page() {
 
   const isMobile = width ? width < 640 : false;
 
-  const { user, shouldDisableNewPools } = useUserStore(
+  const { user } = useUserStore(
     useShallow((state) => ({
-      user: state.user,
-      shouldDisableNewPools: state.shouldDisableNewPools
+      user: state.user
     }))
   );
 
-  const { data: members, isLoading } = useGetMembersOfAllCompaniesByUserId(user.id);
+  const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
   const { data: companies } = useGetCompanies();
 
   const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
@@ -191,36 +190,6 @@ export default function Page() {
     if (user.firstName === '') {
       router.push('/account');
     }
-  }, [user]);
-
-  useEffect(() => {
-    if (shouldDisableNewPools) {
-      router.push('/clients');
-      toast({
-        title: 'You have reached the pool limit',
-        description: 'Upgrade to a paid plan to add more pools',
-        variant: 'error'
-      });
-    }
-  }, []);
-
-  const subContractors = useMemo(() => {
-    if (!user) return [];
-    const userAsSubcontractor = {
-      key: user.id,
-      name: user.firstName + ' ' + user.lastName,
-      value: user.id
-    };
-    // return user.workRelationsAsAEmployer
-    //   .filter((sub) => sub.status === 'Active')
-    //   .map((sub) => ({
-    //     key: sub.subcontractorId,
-    //     name: sub.subcontractor.firstName + ' ' + sub.subcontractor.lastName,
-    //     value: sub.subcontractorId
-    //   }))
-    //   .concat(userAsSubcontractor);
-
-    return userAsSubcontractor;
   }, [user]);
 
   const form = useForm<PoolAndClientSchema>({
@@ -419,10 +388,6 @@ export default function Page() {
     getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn'));
   }, [form.watch('startOn')]);
 
-  useEffect(() => {
-    console.log({ userCompanies: user.userCompanies, companies });
-  }, [user, companies]);
-
   return (
     <Form {...form}>
       <div className="p-5 lg:p-8">
@@ -445,11 +410,13 @@ export default function Page() {
                     user.userCompanies && user.userCompanies.length === 1 ? user.userCompanies[0].companyId : ''
                   }
                   options={
-                    companies?.map((c) => ({
-                      key: c.id,
-                      name: c.name,
-                      value: c.id
-                    })) || []
+                    companies
+                      .filter((c) => c.role === 'Owner' || c.role === 'Admin' || c.role === 'Office')
+                      .map((c) => ({
+                        key: c.id,
+                        name: c.name,
+                        value: c.id
+                      })) || []
                   }
                 />
               </div>
@@ -668,7 +635,7 @@ export default function Page() {
             /> */}
                 </div>
               )}
-              <div className="flex w-full flex-1 flex-row items-center justify-between">
+              {/* <div className="flex w-full flex-1 flex-row items-center justify-between">
                 <Button type="button" className="" onClick={steps.prevStep}>
                   <ArrowLeftIcon className="mr-2 h-4 w-4" />
                   Previous
@@ -677,7 +644,7 @@ export default function Page() {
                   {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
                   Add client
                 </Button>
-              </div>
+              </div> */}
             </>
           )}
         </div>

@@ -12,9 +12,11 @@ type Props = {
   name: string;
   email: string;
   phone: string;
+  role?: string;
+  status: string;
 };
 
-export function CompanyCard({ companyId, name, email, phone }: Props) {
+export function CompanyCard({ companyId, name, email, phone, role, status }: Props) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -32,7 +34,15 @@ export function CompanyCard({ companyId, name, email, phone }: Props) {
       </div>
 
       <Separator />
-      <div className="flex h-[46px] flex-col items-center justify-center gap-2.5 self-stretch">
+      <div className="flex h-[52px] flex-col items-center justify-center gap-2.5 self-stretch">
+        {role && (
+          <div className="inline-flex items-center justify-start gap-1 self-stretch">
+            <div className="w-14 text-xs font-normal leading-[18px] text-gray-500">My role</div>
+            <div className="h-[18px] w-fit max-w-36 shrink grow basis-0 overflow-hidden text-ellipsis text-right text-xs font-medium leading-[18px] text-gray-400">
+              {role}
+            </div>
+          </div>
+        )}
         <div className="inline-flex items-center justify-start gap-1 self-stretch">
           <div className="w-14 text-xs font-normal leading-[18px] text-gray-500">E-mail</div>
           <div className="h-[18px] w-fit max-w-36 shrink grow basis-0 overflow-hidden text-ellipsis text-right text-xs font-medium leading-[18px] text-gray-400">

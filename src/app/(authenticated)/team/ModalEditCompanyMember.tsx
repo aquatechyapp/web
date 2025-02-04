@@ -5,8 +5,6 @@ import * as z from 'zod';
 import InputField from '@/components/InputField';
 import { Form } from '@/components/ui/form';
 
-import { FieldType } from '@/ts/enums/enums';
-
 import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 

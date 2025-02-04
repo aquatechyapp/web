@@ -8,7 +8,8 @@ export const useDeleteCompany = () => {
   const { toast } = useToast();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async ({ companyId }: { companyId: string }) => await clientAxios.delete(`/companies/${companyId}`),
+    mutationFn: async ({ companyId }: { companyId: string }) =>
+      await clientAxios.delete(`/companies/`, { data: { companyId } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });
       toast({

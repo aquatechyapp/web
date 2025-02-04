@@ -33,7 +33,6 @@ export default function useGetUser({ userId }: Props) {
       };
 
       setUser(userData);
-
       setAssignmentToId(user.id);
       setAssignedToId(user.id);
 

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { useUserStore } from '@/store/user';
 
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
-import { Company } from '@/ts/interfaces/Company';
+import { Company, CompanyWithMyRole } from '@/ts/interfaces/Company';
 import { CompanyCard } from '../CompanyCard';
 import { ModalAddCompany } from '../ModalAddCompany';
 
@@ -20,7 +20,7 @@ export default function Page() {
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
 
-  const filteredCompanies = companies?.filter((company: Company) =>
+  const filteredCompanies = companies?.filter((company: CompanyWithMyRole) =>
     `${company.name}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -47,13 +47,15 @@ export default function Page() {
         <div className="flex flex-wrap justify-center gap-2 self-stretch md:justify-normal">
           {filteredCompanies && (
             <div className="flex flex-wrap justify-center gap-2">
-              {filteredCompanies.map((company: Company) => (
+              {filteredCompanies.map((company: CompanyWithMyRole) => (
                 <CompanyCard
                   key={company.id}
                   name={company.name}
                   email={company.email}
                   phone={company.phone}
                   companyId={company.id}
+                  role={company.role}
+                  status={company.status}
                 />
               ))}
             </div>

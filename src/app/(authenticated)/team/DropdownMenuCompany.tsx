@@ -13,6 +13,10 @@ import {
 } from '../../../components/ui/dropdown-menu';
 import { useDeleteCompany } from '@/hooks/react-query/companies/deleteCompany';
 import { ModalEditCompany } from './ModalEditCompany';
+import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
+import { ModalViewCompany } from './ModalViewCompany';
+import { EyeOpenIcon } from '@radix-ui/react-icons';
+import { ModalEditCompanyRelation } from './ModalEditCompanyRelation';
 
 type Props = {
   companyId: string;
@@ -20,6 +24,9 @@ type Props = {
 
 export default function DropdownMenuCompany({ companyId }: Props) {
   const { isPending, mutate } = useDeleteCompany();
+  const { data: companies } = useGetCompanies();
+
+  const userRole = companies?.find((company) => company.id === companyId)?.role;
 
   const handleDelete = () => {
     mutate({ companyId });
@@ -38,23 +45,45 @@ export default function DropdownMenuCompany({ companyId }: Props) {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent>
-            <ModalEditCompany companyId={companyId}>
-              <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
-                Edit
-                <DropdownMenuShortcut>
-                  <MdEdit className="ml-1" />
-                </DropdownMenuShortcut>
-              </div>
-            </ModalEditCompany>
-
-            <DialogTrigger asChild>
-              <div className="flex w-full items-center rounded p-1 text-red-500 hover:bg-blue-50">
-                Delete
-                <DropdownMenuShortcut>
-                  <MdDeleteOutline size={14} />
-                </DropdownMenuShortcut>
-              </div>
-            </DialogTrigger>
+            {userRole === 'Owner' ? (
+              <>
+                <ModalEditCompany companyId={companyId}>
+                  <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
+                    Edit
+                    <DropdownMenuShortcut>
+                      <MdEdit className="ml-1" />
+                    </DropdownMenuShortcut>
+                  </div>
+                </ModalEditCompany>
+                <DialogTrigger asChild>
+                  <div className="flex w-full items-center rounded p-1 text-red-500 hover:bg-blue-50">
+                    Delete
+                    <DropdownMenuShortcut>
+                      <MdDeleteOutline size={14} />
+                    </DropdownMenuShortcut>
+                  </div>
+                </DialogTrigger>
+              </>
+            ) : (
+              <>
+                <ModalViewCompany companyId={companyId}>
+                  <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
+                    View
+                    <DropdownMenuShortcut>
+                      <EyeOpenIcon className="ml-1" />
+                    </DropdownMenuShortcut>
+                  </div>
+                </ModalViewCompany>
+                <ModalEditCompanyRelation companyId={companyId}>
+                  <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
+                    Edit relation
+                    <DropdownMenuShortcut>
+                      <MdEdit className="ml-1" />
+                    </DropdownMenuShortcut>
+                  </div>
+                </ModalEditCompanyRelation>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
 
