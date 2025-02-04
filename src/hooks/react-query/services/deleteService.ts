@@ -13,7 +13,7 @@ export const useDeleteService = () => {
         data: { serviceId, assignmentId }
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['services', 'clients'] });
+      queryClient.invalidateQueries({ queryKey: ['services', 'clients', 'schedule'] });
       toast({
         duration: 2000,
         title: 'Deleted service successfully',
