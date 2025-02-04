@@ -84,6 +84,7 @@ export default function ClientInfo({ client }: { client: Client }) {
             ]}
           />
           <SelectField
+            defaultValue="Residential"
             placeholder="Select Time Zone"
             name="timezone"
             label="Client Time zone"
@@ -109,13 +110,7 @@ export default function ClientInfo({ client }: { client: Client }) {
             type={FieldType.TextArea}
           />
         </div>
-        {/* <div className="NotesAboutClientCustomerWonTSeeThat font-['Public Sans'] h-5 self-stretch text-sm font-medium   text-gray-500">
-          Notes about client (customer won't see that)
-        </div>
-        <Textarea
-          className="h-[100%]"
-          placeholder="Type client notes here..."
-        /> */}
+
         <Button type="submit" className="w-full">
           Save
         </Button>

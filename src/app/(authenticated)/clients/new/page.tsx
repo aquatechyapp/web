@@ -464,7 +464,7 @@ export default function Page() {
                 Contact information
               </Typography>
 
-              {/* <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
+              <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                 <InputField type={FieldType.Phone} name="phone" placeholder="Mobile phone" label="Mobile phone" />
                 <InputField name="email" placeholder="E-mail" label="E-mail" />
                 <InputField name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
@@ -487,10 +487,10 @@ export default function Page() {
               >
                 {form.formState.isValidating && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
                 Next
-              </Button> */}
+              </Button>
             </>
           )}
-          {/* {steps.currentStepIndex === 1 && (
+          {steps.currentStepIndex === 1 && (
             <>
               <Typography element="h2" className="mt-2 text-base">
                 Service Information
@@ -564,7 +564,7 @@ export default function Page() {
                 </Button>
               </div>
             </>
-          )} */}
+          )}
           {steps.currentStepIndex === 2 && (
             <>
               <Typography element="h2" className="text-base">
