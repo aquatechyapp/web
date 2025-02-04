@@ -31,6 +31,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTableClients<TValue>({ columns, data }: DataTableProps<Client, TValue>) {
   const shouldDisableNewPools = useUserStore((state) => state.shouldDisableNewPools);
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sortColumn, setSortColumn] = useState<keyof Client | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');

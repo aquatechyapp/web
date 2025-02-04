@@ -18,7 +18,7 @@ type Actions = {
 
 const poolsLimitBySubscription = {
   [UserSubscription.FREE]: 30,
-  [UserSubscription.GROW]: 150
+  [UserSubscription.GROW]: 1000
 };
 
 export const useUserStore = create<Store & Actions>()(
