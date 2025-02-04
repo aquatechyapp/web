@@ -102,10 +102,10 @@ export function ModalEditCompanyRelation({ children, companyId }: PropsView) {
             <div className="inline-flex w-full flex-col items-start justify-start gap-8 bg-white">
               <div className="justify-start self-stretch">
                 <div className="mb-4">
-                  <InputField name="name" label="Name" placeholder="name" />
+                  <InputField name="name" disabled label="Name" placeholder="name" />
                 </div>
                 <div className="mb-4">
-                  <InputField name="role" label="Role" placeholder="role" />
+                  <InputField name="role" disabled label="Role" placeholder="role" />
                 </div>
               </div>
               <DialogTrigger asChild>

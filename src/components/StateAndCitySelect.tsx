@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import SelectField from './SelectField';
+import { useUserStore } from '@/store/user';
+import { useShallow } from 'zustand/react/shallow';
 
 type Props = {
   stateName?: string;

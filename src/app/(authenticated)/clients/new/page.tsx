@@ -212,15 +212,15 @@ export default function Page() {
       // clientZip: '33442',
       // poolState: 'FL',
       // poolZip: '33442',
-      sameBillingAddress: false
+      sameBillingAddress: false,
       // clientCity: 'Deerfield Beach',
-      // clientState: user.state ?? 'FL',
+      clientState: user?.state,
       // frequency: Frequency.WEEKLY,
       // endAfter: "No end",
 
       // customerCode: '',
       // clientCompany: '',
-      // clientType: 'Residential',
+      clientType: 'Residential'
       // timezone: IanaTimeZones.NY
       // assignmentToId: '',
       // animalDanger: false,
@@ -249,8 +249,6 @@ export default function Page() {
       // frequency: Frequency.WEEKLY,
     }
   });
-
-  // const disabledWeekdays = useDisabledWeekdays(form.watch('weekday'));
 
   function handleSameBillingAddress() {
     if (form.watch('sameBillingAddress')) {
@@ -406,9 +404,9 @@ export default function Page() {
                   placeholder="Company owner"
                   name="companyOwnerId"
                   label="Company owner"
-                  defaultValue={
-                    user.userCompanies && user.userCompanies.length === 1 ? user.userCompanies[0].companyId : ''
-                  }
+                  // defaultValue={
+                  //   user.userCompanies && user.userCompanies.length === 1 ? user.userCompanies[0].companyId : ''
+                  // }
                   options={
                     companies
                       .filter((c) => c.role === 'Owner' || c.role === 'Admin' || c.role === 'Office')
@@ -430,12 +428,11 @@ export default function Page() {
                 <InputField name="clientAddress" placeholder="Billing address" label="Billing address" />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                <StateAndCitySelect defaultStateValue={user.state} />
+                <StateAndCitySelect />
                 <InputField name="clientZip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                 <SelectField
-                  defaultValue="Residential"
                   placeholder="Client Type"
                   name="clientType"
                   label="Client Type"
@@ -467,7 +464,7 @@ export default function Page() {
                 Contact information
               </Typography>
 
-              <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
+              {/* <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                 <InputField type={FieldType.Phone} name="phone" placeholder="Mobile phone" label="Mobile phone" />
                 <InputField name="email" placeholder="E-mail" label="E-mail" />
                 <InputField name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
@@ -490,10 +487,10 @@ export default function Page() {
               >
                 {form.formState.isValidating && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
                 Next
-              </Button>
+              </Button> */}
             </>
           )}
-          {steps.currentStepIndex === 1 && (
+          {/* {steps.currentStepIndex === 1 && (
             <>
               <Typography element="h2" className="mt-2 text-base">
                 Service Information
@@ -567,7 +564,7 @@ export default function Page() {
                 </Button>
               </div>
             </>
-          )}
+          )} */}
           {steps.currentStepIndex === 2 && (
             <>
               <Typography element="h2" className="text-base">
@@ -621,21 +618,10 @@ export default function Page() {
                       value: date.value
                     }))}
                   />
-                  {/* <DatePickerField
-              disabled={[{ dayOfWeek: disabledWeekdays }]}
-              name="startOn"
-              label="Start on"
-              placeholder="Start on"
-            />
-            <DatePickerField
-              disabled={[{ dayOfWeek: disabledWeekdays }]}
-              name="endAfter"
-              label="End after"
-              placeholder="End after"
-            /> */}
                 </div>
               )}
-              {/* <div className="flex w-full flex-1 flex-row items-center justify-between">
+
+              <div className="flex w-full flex-1 flex-row items-center justify-between">
                 <Button type="button" className="" onClick={steps.prevStep}>
                   <ArrowLeftIcon className="mr-2 h-4 w-4" />
                   Previous
@@ -644,7 +630,7 @@ export default function Page() {
                   {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
                   Add client
                 </Button>
-              </div> */}
+              </div>
             </>
           )}
         </div>
