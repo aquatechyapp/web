@@ -84,7 +84,6 @@ export default function ClientInfo({ client }: { client: Client }) {
             ]}
           />
           <SelectField
-            defaultValue="Residential"
             placeholder="Select Time Zone"
             name="timezone"
             label="Client Time zone"
