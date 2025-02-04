@@ -98,7 +98,6 @@ export function ModalAddMember() {
             </div>
             <SelectField
               name="role"
-              defaultValue="Member"
               placeholder="Select role"
               options={[
                 {
