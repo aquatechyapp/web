@@ -10,15 +10,14 @@ import React, { useState } from 'react';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Request } from '@/ts/interfaces/Request';
-
-import { ModalEditRequest } from '../ModalEditRequest';
+import { ModalViewService } from '../ModalViewService';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTableRequests<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTableServices<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
 
@@ -81,7 +80,7 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
 
       {/* Modal fora do loop */}
       {selectedRequest && (
-        <ModalEditRequest request={selectedRequest} open={!!selectedRequest} setOpen={() => setSelectedRequest(null)} />
+        <ModalViewService request={selectedRequest} open={!!selectedRequest} setOpen={() => setSelectedRequest(null)} />
       )}
     </div>
   );
