@@ -43,19 +43,6 @@ export default function Page() {
           className="w-full md:max-w-sm"
         />
       </div>
-      {/* <div className="flex gap-4">
-          <SelectField
-            name="companyId"
-            placeholder="Company"
-            options={
-              companies?.map((company: Company) => ({
-                key: company.id,
-                name: company.name,
-                value: company.id
-              }))
-            }
-          />
-      </div> */}
 
       <div className="mt-3">
         <div className="flex flex-wrap justify-center gap-2 self-stretch md:justify-normal">
