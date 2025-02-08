@@ -24,7 +24,7 @@ export const useInviteMemberToACompany = () => {
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['companies', 'companyMembers'] });
       toast({
         variant: 'success',
         duration: 5000,

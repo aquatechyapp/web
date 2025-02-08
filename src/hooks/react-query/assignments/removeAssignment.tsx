@@ -21,7 +21,7 @@ export const useRemoveAssignmentService = () => {
   return useMutation({
     mutationFn: (assignmentId: RemoveAssignmentInput) => removeAssignmentFn(assignmentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.ASSIGNMENTS, 'schedule'] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule', 'services'] });
       toast({
         variant: 'success',
         duration: 2000,
