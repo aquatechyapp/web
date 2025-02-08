@@ -26,7 +26,7 @@ export const useCreateAssignment = () => {
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', userId, 'schedule'] });
       toast({
         variant: 'success',
         duration: 2000,
