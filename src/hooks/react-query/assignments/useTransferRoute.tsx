@@ -5,6 +5,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useAssignmentsContext } from '@/context/assignments';
 import { clientAxios } from '@/lib/clientAxios';
 import { Assignment, TransferAssignment } from '@/ts/interfaces/Assignments';
+import Cookies from 'js-cookie';
 
 async function transferPermanently(data: Partial<Assignment>[]) {
   const response = await clientAxios.post('/assignments/transferpermanently', data);
@@ -15,6 +16,8 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { assignments } = useAssignmentsContext();
+  const userId = Cookies.get('userId');
+
   const assignmentsToTransfer: Assignment[] = assignmentToTransfer ? [assignmentToTransfer] : assignments.current;
 
   const { mutate, isPending } = useMutation({
@@ -41,7 +44,7 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule', 'services'] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule', 'services', userId] });
       toast({
         duration: 2000,
         title: 'Assignment transferred successfully',
