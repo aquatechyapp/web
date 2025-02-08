@@ -20,7 +20,7 @@ export default function useGetAssignments() {
   }
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['assignments', userId, 'services'],
+    queryKey: ['assignments', userId],
     queryFn: async () =>
       await clientAxios.get('/assignments').then((res) => {
         const filteredAssignments = res.data
@@ -34,6 +34,8 @@ export default function useGetAssignments() {
           initial: [...filteredAssignments],
           current: [...filteredAssignments]
         });
+
+        return filteredAssignments;
       }),
     staleTime: 1000 * 60 * 60
   });
