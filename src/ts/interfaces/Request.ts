@@ -68,20 +68,14 @@ export interface Services {
 }
 
 export interface CreateRequest {
-  createdBy: CreatedBy;
+  createdByUserId: string;
   id: string;
   category: string;
-  clientId: string;
-  addressedTo: string;
   poolId: string;
-  createdAt: string;
   description: string;
-  status: 'Pending' | 'Processing' | 'Done';
-  updatedAt: string;
-  outcome: string;
   photo: string[];
   pool: Pool;
-  client: Client;
+  clientId: string;
 }
 
 export interface CreatedBy {

@@ -109,16 +109,16 @@ export function ModalEditCompany({ children, companyId }: PropsEdit) {
     }
   });
 
-  function handleEditCompany(data: FormSchema) {
+  function handleEditCompany() {
     const a = {
       companyId: companyId,
-      name: data.name,
-      phone: data.phone,
-      address: data.address,
-      city: data.city,
-      state: data.state,
-      zip: data.zip,
-      status: data.status
+      name: form.getValues('name'),
+      phone: form.getValues('phone'),
+      address: form.getValues('address'),
+      city: form.getValues('city'),
+      state: form.getValues('state'),
+      zip: form.getValues('zip'),
+      status: form.getValues('status')
     };
 
     handleSubmit(a);
@@ -132,7 +132,7 @@ export function ModalEditCompany({ children, companyId }: PropsEdit) {
         <DialogTitle>Edit company</DialogTitle>
         <DialogHeader></DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit((data) => handleEditCompany(data))}>
+          <form onSubmit={handleEditCompany}>
             <div className="inline-flex w-full flex-col items-start justify-start gap-8 bg-white">
               <div className="justify-start self-stretch">
                 <div className="mb-4">

@@ -54,3 +54,13 @@ export function findRouteByHref(href: string): Menu | undefined {
 
   return undefined;
 }
+
+export function formatCamelCase(str: string) {
+  // Insert a space before all uppercase letters (except the first one)
+  let result = str.replace(/([A-Z])/g, ' $1');
+
+  // Trim any leading space and capitalize the first letter of the entire string
+  result = result.trim().replace(/^./, (char) => char.toUpperCase());
+
+  return result;
+}

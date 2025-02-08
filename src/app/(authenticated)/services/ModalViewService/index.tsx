@@ -13,7 +13,7 @@ type Props = {
   setOpen: (open: boolean) => void;
 };
 
-export function ModalEditRequest({ request, open, setOpen }: Props) {
+export function ModalViewService({ request, open, setOpen }: Props) {
   console.log('request', request);
 
   // Map para transformar o checklist do request em um array

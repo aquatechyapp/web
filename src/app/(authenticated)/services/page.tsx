@@ -13,23 +13,15 @@ import { SubcontractorStatus } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 import { buildSelectOptions } from '@/utils/formUtils';
 
-import { DataTableRequests } from './DataTableRequests';
-import { columns } from './DataTableRequests/columns';
+import { DataTableServices } from './DataTableServices';
+import { columns } from './DataTableServices/columns';
 import useGetServices, { UseGetServicesParams } from '@/hooks/react-query/services/getServices';
 import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import DataTableRequestsSkeleton from './DataTableRequests/skeleton';
+import DataTableServicesSkeleton from './DataTableServices/skeleton';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { X } from 'lucide-react';
 
@@ -284,10 +276,10 @@ export default function Page() {
       </Form>
 
       {servicesQuery.isPending || servicesQuery.isLoading ? (
-        <DataTableRequestsSkeleton />
+        <DataTableServicesSkeleton />
       ) : (
         <>
-          <DataTableRequests columns={columns} data={servicesQuery.data.services || []} />
+          <DataTableServices columns={columns} data={servicesQuery.data.services || []} />
 
           <PaginationDemo
             currentPage={filtersForm.watch('page') || 1}
