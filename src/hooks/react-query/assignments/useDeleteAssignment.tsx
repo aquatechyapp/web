@@ -28,7 +28,7 @@ export const useDeleteAssignment = () => {
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule'] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule', 'services'] });
     }
   });
   return { mutate, isPending };

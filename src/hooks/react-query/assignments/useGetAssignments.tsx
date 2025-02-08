@@ -20,7 +20,7 @@ export default function useGetAssignments() {
   }
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['assignments', userId],
+    queryKey: ['assignments', userId, 'services'],
     queryFn: async () =>
       await clientAxios.get('/assignments').then((res) => {
         const filteredAssignments = res.data

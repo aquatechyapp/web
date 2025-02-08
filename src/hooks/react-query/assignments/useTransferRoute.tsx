@@ -41,7 +41,7 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule'] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule', 'services'] });
       toast({
         duration: 2000,
         title: 'Assignment transferred successfully',
