@@ -6,6 +6,7 @@ import { clientAxios } from '../../../lib/clientAxios';
 import { CreateAssignment } from '../../../ts/interfaces/Assignments';
 import { z } from 'zod';
 import { QueryKeys } from '@/constants/query-keys';
+import Cookies from 'js-cookie';
 
 export type RemoveAssignmentInput = {
   assignmentId: string;
@@ -18,10 +19,12 @@ export async function removeAssignmentFn({ assignmentId }: RemoveAssignmentInput
 export const useRemoveAssignmentService = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const userId = Cookies.get('userId');
+
   return useMutation({
     mutationFn: (assignmentId: RemoveAssignmentInput) => removeAssignmentFn(assignmentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule', 'services'] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule', 'services', userId] });
       toast({
         variant: 'success',
         duration: 2000,
