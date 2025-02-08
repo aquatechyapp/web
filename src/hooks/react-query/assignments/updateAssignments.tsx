@@ -14,7 +14,8 @@ export const useUpdateAssignments = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: Assignment[]) => await clientAxios.patch('/assignments', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule', 'services', userId] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       toast({
         duration: 2000,
         title: 'Updated assignments successfully',

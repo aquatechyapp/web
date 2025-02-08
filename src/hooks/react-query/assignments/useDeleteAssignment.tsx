@@ -13,6 +13,8 @@ export const useDeleteAssignment = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: async (assignmentId: string) => await clientAxios.delete('/assignments', { data: { assignmentId } }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       toast({
         duration: 2000,
         title: 'Assignment deleted successfully',
@@ -31,7 +33,8 @@ export const useDeleteAssignment = () => {
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments', 'schedule', 'services', userId] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
     }
   });
   return { mutate, isPending };
