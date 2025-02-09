@@ -22,6 +22,8 @@ import { AxiosError } from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 import { title } from 'process';
 import { X } from 'lucide-react';
+import InputField from '@/components/InputField';
+import { FieldType } from '@/ts/enums/enums';
 
 type ChangePasswordInput = typeof ChangePasswordSchema._input;
 type ChangePasswordOutput = typeof ChangePasswordSchema._output;
@@ -150,7 +152,7 @@ export default function ChangePasswordDialog() {
                   <FormItem>
                     <FormLabel>Current password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Your current password" {...field} />
+                      <InputField placeholder="Your current password" type={FieldType.Password} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -163,7 +165,7 @@ export default function ChangePasswordDialog() {
                   <FormItem>
                     <FormLabel>New password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="New password" {...field} />
+                      <InputField type={FieldType.Password} placeholder="New password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -176,7 +178,7 @@ export default function ChangePasswordDialog() {
                   <FormItem>
                     <FormLabel>Confirm new password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Confirm new password" {...field} />
+                      <InputField type={FieldType.Password} placeholder="Confirm new password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
