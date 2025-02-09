@@ -32,6 +32,7 @@ import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/g
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { Stepper, useSteps } from '@/components/stepper';
 import { ArrowLeftIcon, Loader2Icon } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 type PoolAndClientSchema = z.infer<typeof poolAndClientSchema>;
 
@@ -52,6 +53,13 @@ export default function Page() {
 
   const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
   const { data: companies } = useGetCompanies();
+  const [showNoCompaniesDialog, setShowNoCompaniesDialog] = useState(false);
+
+  useEffect(() => {
+    if (companies && companies.length === 0) {
+      setShowNoCompaniesDialog(true);
+    }
+  }, [companies]);
 
   const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
     {
@@ -635,6 +643,15 @@ export default function Page() {
           )}
         </div>
       </form>
+      <Dialog open={showNoCompaniesDialog} onOpenChange={setShowNoCompaniesDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-center">No Companies Available</DialogTitle>
+            <DialogDescription>Please create a company before adding a client.</DialogDescription>
+          </DialogHeader>
+          <Button onClick={() => router.push('/team/myCompanies')}>Create Company</Button>
+        </DialogContent>
+      </Dialog>
     </Form>
   );
 }
