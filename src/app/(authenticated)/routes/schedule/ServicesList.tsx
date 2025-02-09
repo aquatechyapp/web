@@ -16,6 +16,8 @@ import { useMembersStore } from '@/store/members';
 import { useUserStore } from '@/store/user';
 import { getInitials } from '@/utils/others';
 import { Service } from '@/ts/interfaces/Service';
+import { DialogDeleteService } from './ModalDeleteService';
+import { DialogTransferService } from './ModalTransferService';
 
 export function ServicesList() {
   const user = useUserStore((state) => state.user);
@@ -32,8 +34,6 @@ export function ServicesList() {
   const [service, setService] = useState<Service>();
 
   const shouldPermitChangeOrder = assignedToId !== user?.id || width < 900;
-
-  // const [ active, setActive ] = useState<number | null>(null);
 
   if (services.length === 0) {
     return (
@@ -81,9 +81,8 @@ export function ServicesList() {
           </DropdownMenu>
         </div>
       ))}
-      {/* <DialogDeleteService open={openDialogDelete} setOpen={setOpenDialogDelete} service={service} /> */}
-
-      {/* <DialogTransferRoute open={openDialogTransfer} setOpen={setOpenDialogTransfer} service={service} /> */}
+      <DialogDeleteService open={openDialogDelete} setOpen={setOpenDialogDelete} service={service} />
+      <DialogTransferService open={openDialogTransfer} setOpen={setOpenDialogTransfer} service={service!} />
     </>
   );
 }

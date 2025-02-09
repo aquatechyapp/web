@@ -66,3 +66,8 @@ export type CreateService = {
   poolId: string;
   scheduledTo: string;
 };
+
+export type TransferService = {
+  assignedToId: string;
+  scheduledTo: string;
+};
