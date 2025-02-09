@@ -11,6 +11,7 @@ import {
   SelectValue
 } from '../../../../components/ui/select';
 import { CompanyMember } from '@/ts/interfaces/Company';
+import { useUserStore } from '@/store/user';
 
 type Props = {
   onChange: (value: string) => void;
@@ -24,6 +25,8 @@ export default function MemberSelect({ onChange }: Props) {
       members: state.members
     }))
   );
+
+  const user = useUserStore((state) => state.user);
 
   function handleChange(memberId: string) {
     onChange(memberId);
@@ -42,6 +45,14 @@ export default function MemberSelect({ onChange }: Props) {
                 {member.firstName} {member.lastName}
               </SelectItem>
             ))}
+            {
+              // If user has no company, add the user to the members array.
+              members.length === 0 && (
+                <SelectItem value={user.id}>
+                  {user.firstName} {user.lastName}
+                </SelectItem>
+              )
+            }
           </SelectGroup>
         </SelectContent>
       </Select>

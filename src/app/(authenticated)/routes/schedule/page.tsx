@@ -100,10 +100,6 @@ export default function Page() {
 
   const next7days = getNext7DatesWith12PMUTC();
 
-  useEffect(() => {
-    console.log({ selectedDay, sevenDay: getNext7DatesWith12PMUTC() });
-  }, [selectedDay]);
-
   return (
     <FormProvider {...form}>
       <div
