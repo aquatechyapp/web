@@ -35,6 +35,8 @@ import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/g
 
 import { newAssignmentSchema } from '@/schemas/assignments';
 import { DialogTransferRoute } from './ModalTransferRoute';
+import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function Page() {
   const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapAssignmentsUtils();
@@ -42,6 +44,7 @@ export default function Page() {
 
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayStore((state) => state);
+
   const { width = 0 } = useWindowDimensions();
   const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } = useUpdateAssignments();
 
