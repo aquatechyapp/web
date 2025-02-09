@@ -18,7 +18,7 @@ export function DialogDeleteAssignment({ assignment, open, setOpen }: Props) {
         <DialogTitle>{assignment.pool.name}</DialogTitle>
         <DialogDescription>Are you sure you want to delete this assignment?</DialogDescription>
         <div className="flex justify-around">
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button
               variant="destructive"
               onClick={() => {
@@ -29,7 +29,7 @@ export function DialogDeleteAssignment({ assignment, open, setOpen }: Props) {
               Delete
             </Button>
           </DialogTrigger>
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
           </DialogTrigger>
         </div>

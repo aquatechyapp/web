@@ -110,6 +110,7 @@ export function AssignmentsList({ handleDragEnd }: Props) {
               <DropdownMenuContent>
                 <DropdownMenuItem
                   onClick={() => {
+                    // setMenuOpen(false);
                     setAssignment(assignment);
                     setOpenDialogTransfer(true);
                   }}
@@ -119,6 +120,7 @@ export function AssignmentsList({ handleDragEnd }: Props) {
                 <DropdownMenuItem
                   className="text-red-500"
                   onClick={() => {
+                    // setMenuOpen(false);
                     setAssignment(assignment);
                     setOpenDialogDelete(true);
                   }}
@@ -130,7 +132,6 @@ export function AssignmentsList({ handleDragEnd }: Props) {
           </div>
         ))}
         <DialogDeleteAssignment open={openDialogDelete} setOpen={setOpenDialogDelete} assignment={assignment} />
-
         <DialogTransferRoute open={openDialogTransfer} setOpen={setOpenDialogTransfer} assignment={assignment} />
       </SortableContext>
       <DragOverlay className="w-full">
