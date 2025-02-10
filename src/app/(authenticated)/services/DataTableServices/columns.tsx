@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { Services } from '@/ts/interfaces/Request';
 import { ServiceStatus } from '@/ts/interfaces/Service';
+import { format } from 'date-fns';
 
 const statusOptions: Record<ServiceStatus, { label: string; className: string }> = {
   Open: {
@@ -42,7 +43,7 @@ export const columns: ColumnDef<Services>[] = [
   {
     accessorKey: 'completedAt',
     header: 'Date',
-    cell: ({ row: { original } }) => <div>{new Date(original.completedAt!).toLocaleDateString()}</div>
+    cell: ({ row: { original } }) => <div>{format(new Date(original.completedAt!), "EEEE, MMMM do 'at' h:mm a")}</div>
   },
   {
     accessorKey: 'notes',
@@ -79,9 +80,9 @@ export const columns: ColumnDef<Services>[] = [
   //   }
   // },
   {
-    id: 'createdAt',
+    id: 'completedAt',
     filterFn: (row, columnId, value) => {
-      let date: string | Date = row.original.createdAt;
+      let date: string | Date = row.original.completedAt!;
 
       const [start, end] = value; // value => two date input values
       //If one filter defined and date is null filter it

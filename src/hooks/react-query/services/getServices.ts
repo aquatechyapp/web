@@ -10,6 +10,7 @@ export interface UseGetServicesParams {
   clientId?: string | null;
   companyOwnerId?: string | null;
   page?: number;
+  limit: number;
 }
 
 export default function useGetServices(initialData: UseGetServicesParams) {

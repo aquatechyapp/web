@@ -6,49 +6,39 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination';
+import { Button } from '@/components/ui/button';
 
-type PaginationDemoProps = {
+interface PaginationDemoProps {
   currentPage: number;
   totalItems: number;
+  itemsPerPage: number;
   onPageChange: (page: number) => void;
-};
+}
 
-export function PaginationDemo({ currentPage, totalItems, onPageChange }: PaginationDemoProps) {
-  // Calcular se há mais itens para exibir
-  const itemsPerPage = 19;
-  const hasNextPage = totalItems > currentPage * itemsPerPage;
+export function PaginationDemo({ currentPage, totalItems, itemsPerPage, onPageChange }: PaginationDemoProps) {
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
   return (
-    <div className="flex items-center justify-between">
-      <p className="w-[85%] text-sm text-gray-500">
-        Showing {currentPage}
-        {totalItems > currentPage * 19 && ` from ${currentPage + 1}`}
-      </p>
-      <Pagination className="w-auto">
-        <PaginationContent className="flex items-center gap-2">
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`${currentPage === 1 ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-200'}`}
-            ></PaginationPrevious>
-          </PaginationItem>
-
-          <PaginationItem key={currentPage}>
-            <PaginationLink isActive className="bg-blue-500 text-white">
-              {currentPage}
-            </PaginationLink>
-          </PaginationItem>
-
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => hasNextPage && onPageChange(currentPage + 1)}
-              disabled={!hasNextPage}
-              className={`${!hasNextPage ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-200'}`}
-            ></PaginationNext>
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+    <div className="flex items-center justify-center space-x-6 py-6">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage <= 1}
+      >
+        Previous
+      </Button>
+      <span className="text-sm">
+        Page {currentPage} of {totalPages}
+      </span>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage >= totalPages}
+      >
+        Next
+      </Button>
     </div>
   );
 }

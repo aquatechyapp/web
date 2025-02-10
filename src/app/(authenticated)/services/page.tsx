@@ -25,13 +25,22 @@ import DataTableServicesSkeleton from './DataTableServices/skeleton';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { X } from 'lucide-react';
 
+interface PaginatedResponse {
+  services: any[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+}
+
 const defaultValues: UseGetServicesParams = {
   from: new Date().toISOString(),
   to: new Date().toISOString(),
   completedByUserId: null,
   clientId: null,
   companyOwnerId: null,
-  page: 1 // Página inicial como 1
+  page: 1,
+  limit: 20 // Add limit to match backend pagination
 };
 
 const countAppliedFilters = (filters: UseGetServicesParams): number => {
@@ -64,10 +73,9 @@ export default function Page() {
   });
 
   const formValuesListner = filtersForm.watch();
-
   const appliedFilters = useMemo(() => countAppliedFilters(formValuesListner), [formValuesListner]);
 
-  const servicesQuery = useGetServices(defaultValues);
+  const servicesQuery = useGetServices(filtersForm.getValues());
 
   useEffect(() => {
     if (!user?.firstName) {
@@ -75,19 +83,20 @@ export default function Page() {
     }
   }, [user, router]);
 
-  const onSubmit = async (formData: any) => {
-    filtersForm.setValue('page', 1);
-    await servicesQuery.refetch({ ...formData, page: 1 });
+  const onSubmit = async (formData: UseGetServicesParams) => {
+    filtersForm.setValue('page', 1); // Reset to first page on new search
+    await servicesQuery.refetch({ ...formData, page: 1, limit: 20 });
   };
 
   const handlePageChange = async (page: number) => {
     filtersForm.setValue('page', page);
-    await servicesQuery.refetch({ ...filtersForm.getValues(), page });
+    const currentFilters = filtersForm.getValues();
+    await servicesQuery.refetch({ ...currentFilters, page, limit: 20 });
   };
 
   const handleClearFilters = async () => {
     filtersForm.reset(defaultValues);
-    await servicesQuery.refetch({ ...defaultValues, page: 1 });
+    await servicesQuery.refetch(defaultValues);
   };
 
   return (
@@ -279,13 +288,15 @@ export default function Page() {
         <DataTableServicesSkeleton />
       ) : (
         <>
-          <DataTableServices columns={columns} data={servicesQuery.data.services || []} />
-
-          <PaginationDemo
-            currentPage={filtersForm.watch('page') || 1}
-            totalItems={servicesQuery.data?.length}
-            onPageChange={handlePageChange}
-          />
+          <DataTableServices columns={columns} data={servicesQuery.data?.services || []} />
+          {servicesQuery.data && servicesQuery.data.totalCount > 0 && (
+            <PaginationDemo
+              currentPage={servicesQuery.data.currentPage || filtersForm.watch('page') || 1}
+              totalItems={servicesQuery.data.totalCount}
+              itemsPerPage={servicesQuery.data.itemsPerPage || 20}
+              onPageChange={handlePageChange}
+            />
+          )}
         </>
       )}
     </div>
