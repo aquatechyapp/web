@@ -145,9 +145,7 @@ export function ModalViewService({ request, open, setOpen }: Props) {
           <Button variant="outline" className="w-full" type="submit">
             Send e-mail
           </Button>
-          <Button className="w-full" type="submit">
-            Download report
-          </Button>
+
           {request?.photos.length > 0 && (
             <Button
               onClick={() => {
