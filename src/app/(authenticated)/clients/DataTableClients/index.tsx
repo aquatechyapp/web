@@ -24,13 +24,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useUserStore } from '@/store/user';
 import { Client } from '@/ts/interfaces/Client';
 import { ModalAddCompany } from '../../team/ModalAddCompany';
+import { PaginationDemo } from '@/components/PaginationDemo';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  totalCount: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  itemsPerPage: number;
 }
 
-export function DataTableClients<TValue>({ columns, data }: DataTableProps<Client, TValue>) {
+export function DataTableClients<TValue>({
+  columns,
+  data,
+  totalCount,
+  currentPage,
+  onPageChange,
+  itemsPerPage
+}: DataTableProps<Client, TValue>) {
   const shouldDisableNewPools = useUserStore((state) => state.shouldDisableNewPools);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -212,6 +224,14 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
           )}
         </TableBody>
       </Table>
+      {totalCount > 0 && (
+        <PaginationDemo
+          currentPage={currentPage}
+          totalItems={totalCount}
+          itemsPerPage={itemsPerPage}
+          onPageChange={onPageChange}
+        />
+      )}
     </>
   );
 }

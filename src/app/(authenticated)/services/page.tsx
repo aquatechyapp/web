@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import DataTableServicesSkeleton from './DataTableServices/skeleton';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { X } from 'lucide-react';
+import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 
 interface PaginatedResponse {
   services: any[];
@@ -64,7 +65,7 @@ const countAppliedFilters = (filters: UseGetServicesParams): number => {
 export default function Page() {
   const router = useRouter();
   const { data: companies } = useGetCompanies();
-  const { data: clients, isLoading: isLoadingClients } = useGetClients();
+  const { data: clients, isLoading: isLoadingClients } = useGetAllClients();
   const user = useUserStore((state) => state.user);
   const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
 

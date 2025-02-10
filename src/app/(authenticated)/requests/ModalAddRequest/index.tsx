@@ -21,6 +21,7 @@ import { FieldType } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 import { isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
+import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 
 const schema = z.object({
   category: z.string().min(1, { message: 'Category is required' }),
@@ -63,7 +64,7 @@ export function ModalAddRequest() {
     }
   }
 
-  const { data: clients, isLoading: isLoadingClients } = useGetClients();
+  const { data: clients, isLoading: isLoadingClients } = useGetAllClients();
   const isLoading = isLoadingClients || isPendingCreate;
 
   if (isLoading) return <LoadingSpinner />;

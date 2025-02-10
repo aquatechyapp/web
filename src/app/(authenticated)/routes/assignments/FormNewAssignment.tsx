@@ -14,6 +14,7 @@ import { Client } from '@/ts/interfaces/Client';
 
 import { buildSelectOptions } from '@/utils/formUtils';
 import { FormSchema } from './page';
+import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 
 export const FormNewAssignment = () => {
   const form = useFormContext<FormSchema>();
@@ -35,7 +36,7 @@ export const FormNewAssignment = () => {
   >([]);
 
   // const disabledWeekdays = useDisabledWeekdays();
-  const { data: clients, isLoading } = useGetClients();
+  const { data: clients, isLoading } = useGetAllClients();
 
   useEffect(() => {
     form.resetField('startOn');
