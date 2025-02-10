@@ -34,13 +34,13 @@ export const columns: ColumnDef<Services>[] = [
           {original.pool.clientOwner!.firstName} {original.pool.clientOwner!.lastName}
         </div>
         <div>
-          {original.pool.zip}, {original.pool.state},{original.pool.city}, {original.pool.address}
+          {original.pool.address}, {original.pool.city}, {original.pool.state}, {original.pool.zip}
         </div>
       </>
     )
   },
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'completedAt',
     header: 'Date',
     cell: ({ row: { original } }) => <div>{new Date(original.completedAt!).toLocaleDateString()}</div>
   },
@@ -50,7 +50,7 @@ export const columns: ColumnDef<Services>[] = [
     cell: ({ row: { original } }) => <div>{'N/A'}</div>
   },
   {
-    accessorKey: 'memberId',
+    accessorKey: 'completedByUserId',
     header: 'Member',
     cell: ({ row: { original } }) => (
       <div>

@@ -28,7 +28,7 @@ import { X } from 'lucide-react';
 const defaultValues: UseGetServicesParams = {
   from: new Date().toISOString(),
   to: new Date().toISOString(),
-  memberId: null,
+  completedByUserId: null,
   clientId: null,
   companyOwnerId: null,
   page: 1 // Página inicial como 1
@@ -195,7 +195,7 @@ export default function Page() {
                   <FormLabel>Member</FormLabel>
                   <FormControl>
                     <FormField
-                      name="memberId"
+                      name="completedByUserId"
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
