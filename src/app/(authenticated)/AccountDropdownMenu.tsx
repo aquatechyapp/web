@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 import { useUserStore } from '@/store/user';
 import { getInitials } from '@/utils/others';
@@ -18,13 +19,25 @@ type Props = {
 
 export function AccountDropdownMenu({ handleLogout }: Props) {
   const { user } = useUserStore();
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    if (user.firstName && user.lastName) {
+      setIsLoaded(true);
+    }
+  }, [user.firstName, user.lastName]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer border">
-          <AvatarImage src={''} />
-          <AvatarFallback>{getInitials(`${user.firstName} ${user.lastName}`)}</AvatarFallback>
-        </Avatar>
+        {isLoaded ? (
+          <Avatar className="cursor-pointer border">
+            <AvatarImage src={''} />
+            <AvatarFallback>{getInitials(`${user.firstName} ${user.lastName}`)}</AvatarFallback>
+          </Avatar>
+        ) : (
+          <div className="h-10 w-10 animate-pulse rounded-full bg-gray-200" />
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         {/* <DropdownMenuLabel>Menu</DropdownMenuLabel> */}
