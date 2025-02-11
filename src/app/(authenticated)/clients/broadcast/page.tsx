@@ -10,7 +10,6 @@ import SelectField from '@/components/SelectField';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import useGetClients from '@/hooks/react-query/clients/getClients';
 import { FieldType } from '@/ts/enums/enums';
 
 import { ModalSend } from './ModalSend';
@@ -21,6 +20,7 @@ import { useMutation } from '@tanstack/react-query';
 import { clientAxios } from '@/lib/clientAxios';
 import { AxiosError } from 'axios';
 import { error } from 'console';
+import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 
 const schema = z.object({
   message: z.string().min(1, { message: 'Message is required' }),
@@ -67,7 +67,7 @@ const useSendBroadcastService = () => {
 };
 
 export default function Page() {
-  const { data: clientsData = [] } = useGetClients();
+  const { data: clientsData = [] } = useGetAllClients();
   const [selectedCities, setSelectedCities] = useState<string[]>(['All cities']);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['All clients']);
   const [selectedDays, setSelectedDays] = useState<string[]>(['All days']);

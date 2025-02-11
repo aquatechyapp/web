@@ -12,7 +12,9 @@ export default function useGetAllClients() {
         client.fullName = `${client.firstName} ${client.lastName}`;
       });
 
-      return response.data.clients;
+      const res: Client[] = response.data.clients;
+
+      return res;
     }
   });
 }
