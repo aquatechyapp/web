@@ -9,23 +9,6 @@ import { ReactQueryProviderComponent } from '@/providers/ReactQueryProviderCompo
 
 import { Toaster } from '../components/ui/toaster';
 
-// const generalSans = localFont({
-//   src: [
-//     {
-//       path: '../../public/fonts/GeneralSans-Bold.woff2',
-//       weight: '700'
-//     },
-//     {
-//       path: '../../public/fonts/GeneralSans-Semibold.woff2',
-//       weight: '600'
-//     },
-//     {
-//       path: '../../public/fonts/GeneralSans-Regular.woff2',
-//       weight: '400'
-//     }
-//   ]
-// });
-
 const poppins = localFont({
   src: [
     {

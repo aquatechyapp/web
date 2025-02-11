@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
 
 import DatePickerField from '@/components/DatePickerField';
 import { QuixotePdf } from '@/components/Pdf';
@@ -19,6 +20,7 @@ import { SubcontractorStatus } from '@/ts/enums/enums';
 import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 import { DatePicker } from '@/components/ui/date-picker';
 import type { DateRange } from 'react-day-picker';
+import { PdfViewer } from '@/components/PdfViewer';
 
 const schema = z.object({
   fromDate: z.date(),
@@ -30,8 +32,7 @@ type FormSchema = z.infer<typeof schema>;
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
-  const [pdfData, setPdfData] = useState(null);
-  const { data: members, isLoading: isLoadingMembers } = useGetMembersOfAllCompaniesByUserId(user.id);
+  const { data: members = [], isLoading: isLoadingMembers } = useGetMembersOfAllCompaniesByUserId(user.id);
   const [isLoadingReport, setIsLoadingReport] = useState(false);
 
   const isLoading = isLoadingMembers || isLoadingReport;
@@ -61,79 +62,107 @@ export default function Page() {
       const params = new URLSearchParams({
         from: fromDate.toISOString(),
         to: toDate.toISOString(),
-        completedByUserId: memberId
+        completedByUserId: memberId,
+        format: 'pdf'
       });
 
-      const response = await clientAxios.get(`/services/reports?${params}`);
-      setPdfData(response.data.report);
+      const response = await clientAxios.get(`/services/reports`, {
+        params,
+        responseType: 'blob',
+        headers: {
+          Accept: 'application/pdf',
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      });
+
+      console.log('r => ', response);
+
+      // Create blob from response
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `services-report-${format(fromDate, 'yyyy-MM-dd')}.pdf`;
+
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error sending request:', error);
+      console.error('Error generating report:', error);
     } finally {
       setIsLoadingReport(false);
     }
   };
 
+  const isFormValid =
+    form.formState.isValid &&
+    form.watch('memberId') &&
+    form.watch('fromDate') &&
+    form.watch('toDate') &&
+    new Date(form.watch('fromDate')) <= new Date(form.watch('toDate'));
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <div className="inline-flex w-full flex-col items-start justify-start gap-4 p-2">
-          <div className="flex flex-col justify-start gap-4 self-stretch md:flex-row">
-            <SelectField
-              disabled={members.length === 0}
-              name="memberId"
-              placeholder="Select member"
-              options={
-                members?.length > 0
-                  ? members.map((member) => {
-                      return {
-                        key: member.id,
-                        value: member.id,
-                        name: member.firstName + ' ' + member.lastName
-                      };
-                    })
-                  : []
-              }
-            />
-            <div className="inline-flex w-full items-start justify-start gap-4">
-              <FormItem className="flex w-full flex-row items-center gap-2">
-                <FormControl>
-                  <DatePicker
-                    className="w-full"
-                    placeholder="From date:"
-                    disabled={[{ from: new Date() }]}
-                    value={form.watch('fromDate') ? new Date(form.watch('fromDate')) : undefined}
-                    onChange={(date: Date | undefined) => form.setValue('fromDate', date as Date)}
-                  />
-                </FormControl>
-              </FormItem>
+    <div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <div className="inline-flex w-full flex-col items-start justify-start gap-4 p-2">
+            <div className="flex flex-col justify-start gap-4 self-stretch md:flex-row">
+              <SelectField
+                disabled={members.length === 0}
+                name="memberId"
+                placeholder="Select member"
+                options={members.map((member) => ({
+                  key: member.id,
+                  value: member.id,
+                  name: `${member.firstName} ${member.lastName}`
+                }))}
+              />
+              <div className="inline-flex w-full items-start justify-start gap-4">
+                <FormItem className="flex w-full flex-row items-center gap-2">
+                  <FormControl>
+                    <DatePicker
+                      className="w-full"
+                      placeholder="From date:"
+                      disabled={[{ from: new Date() }]}
+                      value={form.watch('fromDate') ? new Date(form.watch('fromDate')) : undefined}
+                      onChange={(date: Date | undefined) => form.setValue('fromDate', date as Date)}
+                    />
+                  </FormControl>
+                </FormItem>
 
-              <FormItem className="flex w-full flex-row items-center gap-2">
-                <FormControl>
-                  <DatePicker
-                    className="w-full"
-                    placeholder="To date:"
-                    disabled={[{ after: new Date() }]}
-                    value={form.watch('toDate') ? new Date(form.watch('toDate')) : undefined}
-                    onChange={(date: Date | undefined) => form.setValue('toDate', date as Date)}
-                  />
-                </FormControl>
-              </FormItem>
+                <FormItem className="flex w-full flex-row items-center gap-2">
+                  <FormControl>
+                    <DatePicker
+                      className="w-full"
+                      placeholder="To date:"
+                      disabled={[{ after: new Date() }]}
+                      value={form.watch('toDate') ? new Date(form.watch('toDate')) : undefined}
+                      onChange={(date: Date | undefined) => form.setValue('toDate', date as Date)}
+                    />
+                  </FormControl>
+                </FormItem>
+              </div>
             </div>
+            <Button className="w-full" type="submit" disabled={isLoading || !isFormValid}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                'Generate report'
+              )}
+            </Button>
           </div>
-          <Button className="w-full" type="submit" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              'Generate report'
-            )}
-          </Button>
-        </div>
-      </form>
-
-      {pdfData && <QuixotePdf pdfData={pdfData} />}
-    </Form>
+        </form>
+      </Form>
+    </div>
   );
 }

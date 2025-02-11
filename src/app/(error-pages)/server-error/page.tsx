@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-export default function ServerErrroPage() {
+export default function ServerErrorPage() {
   return (
     <div className="flex h-screen flex-col bg-white">
       <div className="border-b px-4 py-2">

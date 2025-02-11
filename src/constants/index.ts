@@ -184,14 +184,14 @@ export const routes: Menu[] = [
         href: '/team/myCompanies',
         title: 'My companies',
         description: 'Manage your companies and edit their information.'
-      },
-      generateReports: {
-        text: 'Generate Reports',
-        href: '/team/generateReports',
-        title: 'Generate Service and Payment Reports',
-        description: 'Select who you want to generate a report from and select an interval.',
-        icon: FileBarChartIcon
       }
+      // generateReports: {
+      //   text: 'Generate Reports',
+      //   href: '/team/generateReports',
+      //   title: 'Generate Service and Payment Reports',
+      //   description: 'Select who you want to generate a report from and select an interval.',
+      //   icon: FileBarChartIcon
+      // }
     },
     href: '/team',
     icon: TeamIcon,
