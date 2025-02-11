@@ -58,6 +58,8 @@ export default function Page() {
   useEffect(() => {
     if (companies && companies.length === 0) {
       setShowNoCompaniesDialog(true);
+    } else {
+      setShowNoCompaniesDialog(false);
     }
   }, [companies]);
 
@@ -203,58 +205,10 @@ export default function Page() {
   const form = useForm<PoolAndClientSchema>({
     resolver: zodResolver(poolAndClientSchema),
     defaultValues: {
-      // assignmentToId: '',
       animalDanger: false,
-      // phone: '+19542970632',
-      // lockerCode: '123',
-      // monthlyPayment: 10000,
-      // poolNotes: '',
-      // poolAddress: '4375 SW 10TH PL 205',
-      // poolCity: 'Deerfield Beach',
-      // enterSide: 'Right',
-      // email: 'kawanstrelow@gmail.com',
-      // firstName: 'Kawan',
-      // lastName: 'Strelow',
-      // clientAddress: '4375 SW 10TH PL 205',
-      // clientNotes: '',
-      // clientZip: '33442',
-      // poolState: 'FL',
-      // poolZip: '33442',
       sameBillingAddress: false,
-      // clientCity: 'Deerfield Beach',
       clientState: user?.state,
-      // frequency: Frequency.WEEKLY,
-      // endAfter: "No end",
-
-      // customerCode: '',
-      // clientCompany: '',
       clientType: 'Residential'
-      // timezone: IanaTimeZones.NY
-      // assignmentToId: '',
-      // animalDanger: false,
-      // phone: '',
-      // lockerCode: '',
-      // monthlyPayment: undefined,
-      // poolNotes: '',
-      // poolAddress: '',
-      // poolCity: '',
-      // enterSide: '',
-      // email: '',
-      // firstName: '',
-      // lastName: '',
-      // clientAddress: '',
-      // clientNotes: '',
-      // clientZip: '',
-      // poolState: '',
-      // poolZip: '',
-      // sameBillingAddress: false,
-      // clientCity: '',
-      // clientState: user.state ?? "",
-      // customerCode: '',
-      // clientCompany: '',
-      // clientType: 'Residential',
-      // timezone: IanaTimeZones.NY
-      // frequency: Frequency.WEEKLY,
     }
   });
 
