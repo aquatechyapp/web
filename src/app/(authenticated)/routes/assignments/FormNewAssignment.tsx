@@ -36,7 +36,7 @@ export const FormNewAssignment = () => {
   >([]);
 
   // const disabledWeekdays = useDisabledWeekdays();
-  const { data: clients, isLoading } = useGetAllClients();
+  const { data: clients = [], isLoading } = useGetAllClients();
 
   useEffect(() => {
     form.resetField('startOn');

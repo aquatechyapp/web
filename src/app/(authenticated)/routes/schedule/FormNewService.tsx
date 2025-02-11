@@ -29,7 +29,7 @@ export const FormNewService = () => {
   >([]);
 
   // const disabledWeekdays = useDisabledWeekdays();
-  const { data: clients, isLoading } = useGetAllClients();
+  const { data: clients = [], isLoading } = useGetAllClients();
 
   useEffect(() => {
     getNext10Dates();
