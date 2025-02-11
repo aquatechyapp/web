@@ -52,16 +52,14 @@ export default function Page() {
   );
 
   const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
-  const { data: companies } = useGetCompanies();
+  const { data: companies, isLoading: isCompaniesLoading, isSuccess: isCompaniesSuccess } = useGetCompanies();
   const [showNoCompaniesDialog, setShowNoCompaniesDialog] = useState(false);
 
   useEffect(() => {
-    if (companies && companies.length === 0) {
-      setShowNoCompaniesDialog(true);
-    } else {
-      setShowNoCompaniesDialog(false);
+    if (user && user.id && user.id !== undefined && isCompaniesSuccess) {
+      setShowNoCompaniesDialog(companies.length === 0);
     }
-  }, [companies]);
+  }, [companies, user, isCompaniesSuccess]);
 
   const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
     {
@@ -597,7 +595,10 @@ export default function Page() {
           )}
         </div>
       </form>
-      <Dialog open={showNoCompaniesDialog} onOpenChange={setShowNoCompaniesDialog}>
+      <Dialog
+        open={!isCompaniesLoading && isCompaniesSuccess && showNoCompaniesDialog}
+        onOpenChange={setShowNoCompaniesDialog}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-center">No Companies Available</DialogTitle>
@@ -615,9 +616,9 @@ const additionalSchemas = z.object({
   frequency: defaultSchemas.frequency,
   sameBillingAddress: z.boolean(),
   assignmentToId: z.string().min(1),
-  customerCode: z.string().nullable(),
+  customerCode: z.string().nullable().optional(),
   monthlyPayment: defaultSchemas.monthlyPayment,
-  clientCompany: z.string().nullable(),
+  clientCompany: z.string().nullable().optional(),
   clientType: z.enum(['Commercial', 'Residential']),
   timezone: defaultSchemas.timezone,
   companyOwnerId: z.string().min(1)
