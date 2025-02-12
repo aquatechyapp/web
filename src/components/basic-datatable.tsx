@@ -1,21 +1,50 @@
 'use client';
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  isLoading?: boolean;
 }
 
-export function BasicDataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function BasicDataTable<TData, TValue>({ columns, data, isLoading = false }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel()
   });
+
+  if (isLoading) {
+    return (
+      <div className="w-full rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {columns.map((column, index) => (
+                <TableHead key={index}>
+                  <Skeleton className="h-4 w-[100px]" />
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 4 }).map((_, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {columns.map((_, colIndex) => (
+                  <TableCell key={colIndex}>
+                    <Skeleton className="h-4 w-full" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full rounded-md border">

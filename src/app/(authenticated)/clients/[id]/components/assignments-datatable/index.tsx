@@ -3,9 +3,11 @@ import { columns, PoolAssignmentsPopulated } from './columns';
 import { Assignment } from '@/ts/interfaces/Assignments';
 import { clientAxios } from '@/lib/clientAxios';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 export type AssignmentsDatatableProps = {
   data: Assignment[];
+  onLoadingComplete?: () => void;
 };
 
 const getUserByIdFn = async (userId: string) => {
@@ -13,8 +15,10 @@ const getUserByIdFn = async (userId: string) => {
   return response.data.data.user;
 };
 
-const getPopulatedData = async (data: Assignment[]) =>
-  await Promise.all(
+const getPopulatedData = async (data: Assignment[]) => {
+  if (!data || data.length === 0) return [];
+
+  return await Promise.all(
     data.map(async (assignment) => {
       const user = await getUserByIdFn(assignment.assignmentToId);
       return {
@@ -23,12 +27,27 @@ const getPopulatedData = async (data: Assignment[]) =>
       };
     })
   );
+};
 
-export default function AssignmentsDatatable({ data }: AssignmentsDatatableProps) {
-  const { data: populatedData } = useQuery<PoolAssignmentsPopulated[]>({
-    queryKey: ['assignments-populated'],
-    queryFn: () => getPopulatedData(data)
+export default function AssignmentsDatatable({ data, onLoadingComplete }: AssignmentsDatatableProps) {
+  const {
+    data: populatedData,
+    isLoading,
+    isSuccess,
+    isError
+  } = useQuery<PoolAssignmentsPopulated[]>({
+    queryKey: ['assignments-populated', data.map((a) => a.id)],
+    queryFn: () => getPopulatedData(data),
+    enabled: true,
+    retry: false,
+    staleTime: 30000
   });
 
-  return <BasicDataTable columns={columns} data={populatedData || []} />;
+  useEffect(() => {
+    if (!isLoading) {
+      onLoadingComplete?.();
+    }
+  }, [isLoading, onLoadingComplete]);
+
+  return <BasicDataTable columns={columns} data={populatedData || []} isLoading={isLoading} />;
 }

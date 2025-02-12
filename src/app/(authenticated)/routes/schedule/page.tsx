@@ -89,7 +89,7 @@ export default function Page() {
       const dateAt12PMUTC = normalizeToUTC12(addDays(today, index).toISOString());
       return {
         date: dateAt12PMUTC.toISOString(),
-        formatted: format(dateAt12PMUTC, 'MM/dd') // ISO 8601 format in UTC
+        formatted: format(dateAt12PMUTC, 'EEE, do') // 'Mon, 7th'
       };
     });
   }
