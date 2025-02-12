@@ -81,7 +81,12 @@ export function ServicesList() {
           </DropdownMenu>
         </div>
       ))}
-      <DialogDeleteService open={openDialogDelete} setOpen={setOpenDialogDelete} service={service} />
+      <DialogDeleteService
+        open={openDialogDelete}
+        setOpen={setOpenDialogDelete}
+        service={service}
+        clientId={service!.clientOwnerId}
+      />
       <DialogTransferService open={openDialogTransfer} setOpen={setOpenDialogTransfer} service={service!} />
     </>
   );

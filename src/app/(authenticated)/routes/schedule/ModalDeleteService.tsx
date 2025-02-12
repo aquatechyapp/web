@@ -7,10 +7,11 @@ type Props = {
   service?: Service;
   open: boolean;
   setOpen: (open: boolean) => void;
+  clientId: string;
 };
 
-export function DialogDeleteService({ service, open, setOpen }: Props) {
-  const { mutate } = useDeleteService();
+export function DialogDeleteService({ service, open, setOpen, clientId }: Props) {
+  const { mutate } = useDeleteService(clientId);
   if (!service) return null;
   return (
     <Dialog open={open} onOpenChange={setOpen}>
