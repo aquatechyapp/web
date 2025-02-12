@@ -26,4 +26,5 @@ export interface Client {
   lastServiceDate: string;
   type: ClientType;
   timezone: IanaTimeZones;
+  status: string;
 }

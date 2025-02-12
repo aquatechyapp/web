@@ -29,20 +29,10 @@ import { PaginationDemo } from '@/components/PaginationDemo';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  totalCount: number;
-  currentPage: number;
-  onPageChange: (page: number) => void;
-  itemsPerPage: number;
+  onFiltersChange: (filters: any) => void;
 }
 
-export function DataTableClients<TValue>({
-  columns,
-  data,
-  totalCount,
-  currentPage,
-  onPageChange,
-  itemsPerPage
-}: DataTableProps<Client, TValue>) {
+export function DataTableClients<TValue>({ columns, data, onFiltersChange }: DataTableProps<Client, TValue>) {
   const shouldDisableNewPools = useUserStore((state) => state.shouldDisableNewPools);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -224,14 +214,6 @@ export function DataTableClients<TValue>({
           )}
         </TableBody>
       </Table>
-      {totalCount > 0 && (
-        <PaginationDemo
-          currentPage={currentPage}
-          totalItems={totalCount}
-          itemsPerPage={itemsPerPage}
-          onPageChange={onPageChange}
-        />
-      )}
     </>
   );
 }
