@@ -1,26 +1,21 @@
-import { Frequency, PoolType } from '@/ts/enums/enums';
+import { Frequency } from '@/ts/enums/enums';
 
-import { Service } from './Service';
-
-export type TransferAssignment = Assignment & {
-  endAfter: Date;
-  startOn: Date;
-};
+import { Pool } from './Pool';
 
 export type Assignment = {
   id: string;
   assignmentOwnerId: string;
   assignmentToId: string;
   createdAt: string;
-  endAfter: string;
+  endAfter: string | Date;
   frequency: Frequency;
   order: number;
   poolId: string;
   skipDates: string[];
-  startOn: string;
+  startOn: string | Date;
   weekday: string;
+  status: 'Active' | 'Inactive';
   pool: Pool;
-  paidByService: number | null;
   timezone?: string | null | undefined;
 };
 
@@ -31,34 +26,12 @@ export type CreateAssignment = {
   frequency: string;
   startOn: Date;
   endAfter: Date | string;
-  paidByService: number;
 };
 
-export type Pool = {
-  id: string;
-  address: string;
-  animalDanger: boolean;
-  city: string;
-  clientOwnerId: string;
-  createdAt: string;
-  deactivatedAt: string;
-  enterSide: string;
-  isActive: boolean;
-  lockerCode: string;
-  monthlyPayment: number;
-  name: string;
-  notes: string;
-  poolType: PoolType;
-  state: string;
-  updatedAt: string;
-  userOwnerId: string;
-  zip: string;
-  photos: string[];
-  coords: Coords;
-  services: Service[];
-};
-
-type Coords = {
-  lat: number;
-  lng: number;
+export type TransferAssignment = {
+  assignmentId: string;
+  assignmentToId: string;
+  startOn: Date;
+  endAfter: Date | string;
+  weekday: string;
 };

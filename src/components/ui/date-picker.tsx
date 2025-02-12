@@ -2,7 +2,7 @@
 
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { Component, ComponentProps, useState } from 'react';
 import { Matcher } from 'react-day-picker';
 
 import { cn } from '../../lib/utils';
@@ -12,36 +12,37 @@ import { Popover, PopoverContent, PopoverTrigger } from './popover';
 
 type Props = {
   placeholder: string;
+  value?: Date;
   onChange: (date: Date | undefined) => void;
   disabled?: Matcher | Matcher[];
+  className?: ComponentProps<'div'>['className'];
 };
 
-export function DatePicker({ placeholder, onChange, disabled }: Props) {
+export function DatePicker({ className, placeholder, onChange, disabled, value = new Date() }: Props) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [date, setDate] = useState<Date>();
 
   function handleChange(date: Date | undefined) {
-    setDate(date);
+    onChange(date);
     setIsPopoverOpen(false);
   }
-
-  useEffect(() => {
-    onChange(date);
-  }, [date]);
 
   return (
     <Popover modal open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={'outline'}
-          className={cn('w-full justify-start text-left font-normal', !date && 'text-muted-foreground')}
+          className={cn(
+            'w-fit shrink-0 justify-start text-left font-normal',
+            !value && 'text-muted-foreground',
+            className
+          )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, 'PPP') : <span>{placeholder}</span>}
+          {value ? format(value, 'PPP') : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar disabled={disabled} mode="single" selected={date} onSelect={handleChange} initialFocus />
+        <Calendar disabled={disabled} mode="single" selected={value} onSelect={handleChange} initialFocus />
       </PopoverContent>
     </Popover>
   );

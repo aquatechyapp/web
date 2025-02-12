@@ -13,7 +13,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
             class="flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap"
           >
             <button
-              class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2"
+              class="inline-flex items-center justify-center gray-50 space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2"
               type="button"
             >
               <a
@@ -23,9 +23,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
                 Download Sample File
               </a>
             </button>
-            <div
-              class=""
-            >
+            <div>
               <input
                 accept=".csv"
                 aria-describedby=":r0:-form-item-description"
@@ -45,7 +43,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
             class="w-full"
           >
             <button
-              class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2 w-full"
+              class="inline-flex items-center justify-center gray-50 space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2 w-full"
               disabled=""
             >
               Import Clients
@@ -64,7 +62,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
           class="flex w-fit flex-wrap gap-4 text-nowrap md:flex-nowrap"
         >
           <button
-            class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2"
+            class="inline-flex items-center justify-center gray-50 space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2"
             type="button"
           >
             <a
@@ -74,9 +72,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
               Download Sample File
             </a>
           </button>
-          <div
-            class=""
-          >
+          <div>
             <input
               accept=".csv"
               aria-describedby=":r0:-form-item-description"
@@ -96,7 +92,7 @@ exports[`/clients/import > should render the ImportClientsPage component 1`] = `
           class="w-full"
         >
           <button
-            class="inline-flex items-center justify-center gray-50space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2 w-full"
+            class="inline-flex items-center justify-center gray-50 space-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-9 px-4 py-2 w-full"
             disabled=""
           >
             Import Clients

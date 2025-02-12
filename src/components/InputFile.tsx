@@ -47,7 +47,7 @@ export function InputFile({
             {imageList.length > 0 && (
               <div className="flex gap-8 self-start">
                 {imageList.map((image, index) => (
-                  <div key={index} className="group relative mt-2 px-2">
+                  <div key={index} className="group relative mt-2 pr-2">
                     <img src={image.dataURL} alt="" className="h-24 w-24 rounded-md object-cover" />
                     {!disabled && (
                       <Button

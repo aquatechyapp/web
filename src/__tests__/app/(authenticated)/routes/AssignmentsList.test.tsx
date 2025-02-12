@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { AssignmentsList } from '@/app/(authenticated)/routes/AssignmentsList';
+import { AssignmentsList } from '@/app/(authenticated)/routes/assignments/AssignmentsList';
 import { useAssignmentsContext } from '@/context/assignments';
 
 vi.mock('@/context/assignments');

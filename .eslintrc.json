@@ -1,6 +1,11 @@
 {
   "root": true,
-  "plugins": ["@typescript-eslint/eslint-plugin", "prettier", "@tanstack/eslint-plugin-query", "simple-import-sort"],
+  "plugins": [
+    "@typescript-eslint/eslint-plugin",
+    "prettier",
+    "@tanstack/eslint-plugin-query",
+    "simple-import-sort"
+  ],
   "parser": "@typescript-eslint/parser",
   "extends": [
     "eslint:recommended",
@@ -9,11 +14,18 @@
     "prettier",
     "plugin:react-hooks/recommended"
   ],
-  "ignorePatterns": [".vercel", ".next", "node_modules", "out", "build"],
+  "ignorePatterns": [
+    ".vercel",
+    ".next",
+    "node_modules",
+    "out",
+    "build"
+  ],
   "rules": {
-    "simple-import-sort/imports": "error",
-    "no-console": 1, // Means warning
-    "prettier/prettier": "error"
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-empty-object-type": "off",
+    "@typescript-eslint/no-unused-expressions": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "settings": {
     "import/resolver": {

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { useAssignmentsContext } from '@/context/assignments';
 import { clientAxios } from '@/lib/clientAxios';
-import { useTechniciansStore } from '@/store/technicians';
+import { useMembersStore } from '@/store/members';
 import { useWeekdayStore } from '@/store/weekday';
 import { Assignment } from '@/ts/interfaces/Assignments';
 
@@ -12,7 +12,7 @@ export default function useGetAssignments() {
   const { push } = useRouter();
   const userId = Cookies.get('userId');
   const { setAssignments } = useAssignmentsContext();
-  const assignmentToId = useTechniciansStore((state) => state.assignmentToId);
+  const assignmentToId = useMembersStore((state) => state.assignmentToId);
   const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
 
   if (!userId) {
@@ -34,6 +34,8 @@ export default function useGetAssignments() {
           initial: [...filteredAssignments],
           current: [...filteredAssignments]
         });
+
+        return filteredAssignments;
       }),
     staleTime: 1000 * 60 * 60
   });

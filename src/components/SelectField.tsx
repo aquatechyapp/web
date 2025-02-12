@@ -1,5 +1,5 @@
 import { SelectProps } from '@radix-ui/react-select';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { ControllerRenderProps, FieldValues, UseFormReturn } from 'react-hook-form';
 
 import { withFormControl } from '@/hoc/withFormControl';
@@ -19,7 +19,13 @@ type Props = {
 };
 
 const SelectField = forwardRef<HTMLDivElement, Props & SelectFieldProps>(
-  ({ options, name, placeholder, form, field, ...props }, ref) => {
+  ({ options, name, placeholder, form, field, defaultValue, ...props }, ref) => {
+    useEffect(() => {
+      if (defaultValue) {
+        field.onChange(defaultValue);
+      }
+    }, [defaultValue, field]);
+
     function onValueChange(data: string) {
       field.onChange(data);
       if (props.onValueChange) {
@@ -28,7 +34,7 @@ const SelectField = forwardRef<HTMLDivElement, Props & SelectFieldProps>(
     }
 
     return (
-      <Select {...props} defaultValue={form.watch(name)} onValueChange={onValueChange}>
+      <Select {...props} value={form.watch(name)} onValueChange={onValueChange}>
         <SelectTrigger className={`${!form.getValues(name) && 'text-slate-500'}`}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

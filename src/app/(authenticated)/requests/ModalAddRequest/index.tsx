@@ -21,21 +21,16 @@ import { FieldType } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 import { isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
+import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 
 const schema = z.object({
-  clientId: z.string().min(1, { message: 'Client is required' }),
-  addressedTo: z.string().min(1),
-  poolId: z.string().min(1, { message: 'Pool is required' }),
   category: z.string().min(1, { message: 'Category is required' }),
+  createdByUserId: z.string().min(1, { message: 'createdByUserId is required' }),
+  poolId: z.string().min(1, { message: 'Pool is required' }),
+  clientId: z.string().min(1, { message: 'Client is required' }),
   description: z.string().min(1, { message: 'Description is required' }),
-  photo: z.array(z.any()),
-  status: z.enum(['Pending', 'Processing', 'Done']),
   outcome: z.string().optional(),
-  createdBy: z.object({
-    id: z.string(),
-    firstName: z.string(),
-    lastName: z.string()
-  })
+  photo: z.array(z.any())
 });
 
 export type CreateRequest = z.infer<typeof schema>;
@@ -50,16 +45,10 @@ export function ModalAddRequest() {
     defaultValues: {
       clientId: '',
       category: '',
-      createdBy: {
-        id: user?.id,
-        firstName: user?.firstName,
-        lastName: user?.lastName
-      },
-      addressedTo: user?.id,
+      createdByUserId: user?.id,
       poolId: '',
       description: '',
       photo: [],
-      status: 'Pending',
       outcome: undefined
     }
   });
@@ -75,7 +64,7 @@ export function ModalAddRequest() {
     }
   }
 
-  const { data: clients, isLoading: isLoadingClients } = useGetClients();
+  const { data: clients, isLoading: isLoadingClients } = useGetAllClients();
   const isLoading = isLoadingClients || isPendingCreate;
 
   if (isLoading) return <LoadingSpinner />;

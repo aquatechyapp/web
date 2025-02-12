@@ -35,7 +35,7 @@ export const useLoginUser = () => {
       }
       push('/dashboard');
       toast({
-        duration: 2000,
+        duration: 5000,
         title: 'Login successful!',
         variant: 'success'
       });

@@ -12,6 +12,7 @@ import useGetUser from '@/hooks/react-query/user/getUser';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import PageHeader from './PageHeader';
 import { SideMenu } from './SideMenuNav';
+import { ServicesProvider } from '@/context/services';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const userId = Cookies.get('userId') as string;
@@ -35,7 +36,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <main>
           <Suspense fallback={<LoadingSpinner />}>
             <div className="mx-2 mt-2 rounded-md border border-gray-200 p-2 shadow-inner lg:mt-0">
-              <AssignmentsProvider>{isLoading ? <LoadingSpinner /> : children}</AssignmentsProvider>
+              <AssignmentsProvider>
+                <ServicesProvider>{isLoading ? <LoadingSpinner /> : children}</ServicesProvider>
+              </AssignmentsProvider>
             </div>
           </Suspense>
           <ProgressBar height="6px" color={Colors.blue[500]} options={{ showSpinner: false }} shallowRouting />

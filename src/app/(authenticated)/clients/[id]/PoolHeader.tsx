@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 import { Separator } from '@/components/ui/separator';
-import { Pool } from '@/ts/interfaces/Assignments';
+import { Pool } from '@/ts/interfaces/Pool';
 import { Service } from '@/ts/interfaces/Service';
 
-import { DataTableServices } from './DataTableServices';
-import { columns } from './DataTableServices/columns';
 import BasicInformation from './PoolInfo';
+import ServicesDatatable from './components/services-datatable';
+import AssignmentsDatatable from './components/assignments-datatable';
 
 type Props = {
   services: Service[];
@@ -14,10 +14,12 @@ type Props = {
   clientId: string;
 };
 
-function PoolCard({ pool, services, clientId }: Props) {
-  const [tab, setTab] = useState<'pool_info' | 'services'>('pool_info');
+export type PoolTabOptions = 'pool_info' | 'services' | 'pool_assignments';
 
-  const handleTabChange = (tab: 'pool_info' | 'services') => {
+function PoolCard({ pool, services, clientId }: Props) {
+  const [tab, setTab] = useState<PoolTabOptions>('pool_info');
+
+  const handleTabChange = (tab: PoolTabOptions) => {
     setTab(tab);
   };
 
@@ -47,13 +49,22 @@ function PoolCard({ pool, services, clientId }: Props) {
             </div>
             {tab === 'services' && <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />}
           </div>
+          <div
+            onClick={() => handleTabChange('pool_assignments')}
+            className="inline-flex flex-col items-start justify-start gap-2.5"
+          >
+            <div
+              className={`text-sm text-gray-500 hover:cursor-pointer ${tab === 'pool_assignments' && selectedTabStyles}`}
+            >
+              Assignments
+            </div>
+            {tab === 'pool_assignments' && <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />}
+          </div>
         </div>
       </div>
-      {tab === 'pool_info' ? (
-        <BasicInformation clientId={clientId} pool={pool} />
-      ) : (
-        <DataTableServices data={services} columns={columns} />
-      )}
+      {tab === 'pool_info' && <BasicInformation clientId={clientId} pool={pool} />}
+      {tab === 'services' && <ServicesDatatable data={services} />}
+      {tab === 'pool_assignments' && <AssignmentsDatatable data={pool.assignments || []} />}
     </div>
   );
 }

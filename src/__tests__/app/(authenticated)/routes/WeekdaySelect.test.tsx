@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import WeekdaySelect from '@/app/(authenticated)/routes/WeekdaySelect';
+import WeekdaySelect from '@/app/(authenticated)/routes/assignments/WeekdaySelect';
 
 class MockPointerEvent extends Event {
   button: number;

@@ -149,23 +149,25 @@ const Plans = [
       { text: 'Create up to 30 pools', include: true },
       { text: 'Optimize routes', include: true },
       { text: 'Email clients after service', include: false },
+      { text: 'SMS clients after service', include: false },
       { text: 'Broadcast e-mails', include: false }
     ]
   },
   {
     title: 'Grow',
     name: UserSubscription.GROW,
-    price: 39,
+    price: 19,
     features: [
       { text: 'Unlimited clients', include: true },
       { text: 'Full access to mobile app', include: true },
       { text: 'Basic reports', include: true },
       { text: 'Specialized support', include: true },
-      { text: 'Create up to 150 pools', include: true },
+      { text: 'Create up to 100 pools', include: true },
       { text: 'Optimize routes', include: true },
       { text: 'Email clients after service', include: true },
+      { text: 'SMS clients after service', include: true },
       { text: 'Broadcast e-mails', include: true }
     ],
-    extra: '* Extra pools costs $0.39 each'
+    extra: '* Extra pools costs $0.19 each'
   }
 ];

@@ -6,9 +6,8 @@ const baseUrl = process.env.API_URL;
 export const clientAxios = axios.create({
   baseURL: baseUrl + '/api/v1',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': ['application/json']
   }
-  // withCredentials: true
 });
 
 clientAxios.interceptors.request.use(
@@ -36,9 +35,17 @@ clientAxios.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      window.location.href = window.location.protocol + '//' + window.location.host + '/login';
-    }
+    // Detectando erro de rede (servidor offline ou erro de conexão)
+    // if (error.code === 'ECONNABORTED' || error.message.includes('Network Error')) {
+    //   window.location.href = window.location.protocol + '//' + window.location.host + '/server-offline';
+    // }
+
+    // if (error.response?.status === 401) {
+    //   window.location.href = window.location.protocol + '//' + window.location.host + '/login';
+    // }
+    // if (error && error.response && error.response.status >= 500) {
+    //   window.location.href = window.location.protocol + '//' + window.location.host + '/server-error';
+    // }
     return Promise.reject(error);
   }
 );

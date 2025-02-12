@@ -13,6 +13,8 @@ import { columns } from './DataTableRequests/columns';
 export default function Page() {
   const { data, isLoading } = useGetRequests();
 
+  console.log('data', data?.requests);
+
   const user = useUserStore((state) => state.user);
 
   const router = useRouter();

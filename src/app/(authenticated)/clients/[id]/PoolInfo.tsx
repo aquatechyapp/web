@@ -14,7 +14,8 @@ import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 import { editPoolSchema } from '@/schemas/pool';
 import { FieldType } from '@/ts/enums/enums';
-import { Pool } from '@/ts/interfaces/Assignments';
+import { Pool } from '@/ts/interfaces/Pool';
+
 import { isEmpty } from '@/utils';
 import { findDifferenceBetweenTwoObjects } from '@/utils/others';
 
@@ -57,7 +58,7 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-2">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex w-full flex-col gap-2">
         <div className="flex h-5 w-full justify-between text-sm font-medium">
           <Typography element="h3" className="text-md">
             Basic information

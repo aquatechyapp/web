@@ -20,10 +20,16 @@ import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 import { Request } from '@/ts/interfaces/Request';
-import { isEmpty } from '@/utils';
+import { formatCamelCase, isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
 
 import { CopyToClipboard } from './CopyToClipboard';
+import { Heading } from 'lucide-react';
+import { Typography } from '@/components/Typography';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getInitials } from '@/utils/others';
+import { format } from 'date-fns';
+import { useDeleteRequest } from '@/hooks/react-query/requests/deleteRequest';
 
 const schema = z.object({
   clientId: z.string().min(1, { message: 'Client is required' }),
@@ -42,6 +48,9 @@ const schema = z.object({
 });
 
 export type EditRequest = z.infer<typeof schema>;
+export type DeleteRequest = {
+  id: string;
+};
 
 type Props = {
   request: Request;
@@ -52,17 +61,7 @@ type Props = {
 export function ModalEditRequest({ request, open, setOpen }: Props) {
   const user = useUserStore((state) => state.user);
   const { mutate: updateRequest, isPending: isPendingUpdate } = useUpdateRequest(request.id);
-
-  const CopyToClipboardData = [
-    {
-      value: request.client?.email || 'Email not available',
-      Icon: IoMdMail
-    },
-    {
-      value: request.client?.phone || 'Phone not available',
-      Icon: MdOutlinePhoneAndroid
-    }
-  ];
+  const { mutate: deleteRequest, isPending: isPendingDelete } = useDeleteRequest(request.id);
 
   const form = useForm<EditRequest>({
     resolver: zodResolver(schema),
@@ -90,95 +89,119 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
     }
   }
 
-  const { data: clients, isLoading: isLoadingClients } = useGetClients();
-  const isLoading = isLoadingClients || isPendingUpdate;
+  function handleDelete() {
+    deleteRequest({ id: request.id });
+    setOpen(false);
+  }
+
+  const isLoading = isPendingUpdate || isPendingDelete;
 
   if (isLoading) return <LoadingSpinner />;
 
-  const clientId = form.watch('clientId');
-  const isOnlyDetailModal = !!request;
-  const disabled = isOnlyDetailModal;
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="">
+      <DialogContent className="w-full p-0 lg:max-w-sm">
         <Form {...form}>
-          <form className="flex flex-col gap-4" onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
-            <DialogTitle className="font-semibold">{request ? `Request #${request.id}` : 'New Request'}</DialogTitle>
-            <div className="flex gap-4">
-              <SelectField
-                options={buildSelectOptions(
-                  clients?.filter((client: Client) => client.pools.length > 0),
-                  {
-                    key: 'id',
-                    name: 'fullName',
-                    value: 'id'
-                  }
-                )}
-                placeholder={clients?.length || 0 > 0 ? 'Clients' : 'No clients available'}
-                name="clientId"
-                disabled={disabled}
-                label="Client"
-              />
-              {clientId && (
-                <SelectField
-                  options={buildSelectOptions(
-                    // Procura a piscina somente quando seleciona o cliente
-                    clients?.find((client: Client) => client.id === clientId)?.pools,
-                    {
-                      key: 'id',
-                      name: 'name',
-                      value: 'id'
-                    }
-                  )}
-                  placeholder="Pools"
-                  name="poolId"
-                  disabled={disabled}
-                  label="Pool"
-                />
-              )}
-            </div>
-            <div>
-              <InputField
-                name="description"
-                placeholder="Description"
-                type={FieldType.TextArea}
-                disabled={disabled}
-                label="Description"
-              />
-            </div>
-            <InputFile
-              disabled={disabled}
-              handleChange={(images) => form.setValue('photo', images)}
-              defaultPhotos={request.photos.map((photo) => ({
-                dataURL: photo,
-                file: new File([], photo)
-              }))}
-              showBorder={false}
-            />
-            <SelectField
-              label="Category"
-              name="category"
-              options={Categories}
-              placeholder="Category"
-              disabled={disabled}
-            />
-            <SelectField label="Status" name="status" options={RequestStatus} placeholder="Status" />
+          <form className="w-full lg:max-w-sm" onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
+            <div className="w-full lg:max-w-sm">
+              <div className="relative flex w-full flex-col items-center justify-start gap-6 text-nowrap rounded-lg border px-6 pb-6 pt-8">
+                <div className="flex w-full flex-col flex-wrap items-start justify-start gap-[4px] self-start lg:flex-col lg:flex-nowrap">
+                  <div className="flex w-full flex-row flex-wrap items-start justify-start gap-[4px] self-start border-b border-gray-200 pb-4 lg:flex-col lg:flex-nowrap">
+                    <div className="inline-flex w-fit items-start justify-start">
+                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
+                        <div className="self-stretch text-sm font-medium text-gray-500">Client name</div>
+                        <div className="self-stretch text-sm font-medium text-gray-800">{request.client.fullName}</div>
+                      </div>
+                    </div>
+                    <div className="inline-flex w-fit items-start justify-start">
+                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
+                        <div className="self-stretch text-sm font-medium text-gray-500">Email</div>
+                        <div className="self-stretch text-sm font-medium text-gray-800">{request.client.email}</div>
+                      </div>
+                    </div>
+                    <div className="inline-flex w-fit items-start justify-start">
+                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
+                        <div className="self-stretch text-sm font-medium text-gray-500">Phone Number</div>
+                        <div className="self-stretch text-sm font-medium text-gray-800">{request.client.phone}</div>
+                      </div>
+                    </div>
+                    <div className="inline-flex w-fit items-start justify-start">
+                      <div className="Text inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
+                        <div className="self-stretch text-sm font-medium text-gray-500">Location</div>
+                        <div className="self-stretch text-sm font-medium text-gray-800">{request.pool.address}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex w-full flex-row flex-wrap items-start justify-start gap-[4px] self-start border-b border-gray-200 pb-4 lg:flex-col lg:flex-nowrap">
+                    <div className="inline-flex w-fit items-start justify-start gap-2">
+                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
+                        <div className="self-stretch text-sm font-medium text-gray-500">Opened</div>
+                        <div className="self-stretch text-sm font-medium text-gray-800">
+                          {format(new Date(request.createdAt), "MMMM, dd, yyyy 'at' h:mm a")}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="inline-flex w-fit items-start justify-start gap-2">
+                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
+                        <div className="self-stretch text-sm font-medium text-gray-500">Category</div>
+                        <div className="self-stretch text-sm font-medium text-gray-800">
+                          {formatCamelCase(request.category)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="inline-flex w-fit items-start justify-start gap-2">
+                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
+                        <div className="self-stretch text-sm font-medium text-gray-500">Description</div>
+                        <div className="self-stretch text-sm font-medium text-gray-800">{request.description}</div>
+                      </div>
+                    </div>
+                    <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
+                      <div className="self-stretch text-sm font-medium text-gray-500">Photos</div>
+                      <div className="self-stretch text-sm font-bold text-gray-800">See photos</div>
+                      {/* <div className="self-stretch text-sm font-medium text-gray-800">
+                        <InputFile
+                          disabled={disabled}
+                          handleChange={(images) => form.setValue('photo', images)}
+                          defaultPhotos={request.photos.map((photo) => ({
+                            dataURL: photo,
+                            file: new File([], photo)
+                          }))}
+                          showBorder={false}
+                        />
+                        </div> */}
+                    </div>
 
-            <InputField
-              label="Outcome (description of how the problem was fixed)"
-              name="outcome"
-              placeholder="Outcome"
-              type={FieldType.TextArea}
-            />
-            <div>
-              {CopyToClipboardData.map((item) => (
-                <CopyToClipboard key={item.value} value={item.value} Icon={item.Icon} />
-              ))}
+                    <div className="inline-flex w-fit items-start justify-start gap-2">
+                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
+                        <div className="self-stretch text-sm font-medium text-gray-500">Resolution</div>
+                        <div className="self-stretch text-sm font-medium text-gray-800">
+                          {request.outcome || 'No resolution yet'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex w-full flex-row flex-wrap items-start justify-start gap-[4px] self-start border-b border-gray-200 pb-4 lg:flex-col lg:flex-nowrap">
+                    <InputField
+                      name="outcome"
+                      placeholder="How was the outcome?"
+                      className="mb-2 w-full"
+                      type={FieldType.TextArea}
+                    />
+                    <SelectField name="status" options={RequestStatus} placeholder="Status" />
+                  </div>
+                </div>
+                <div className="flex w-full flex-col items-center gap-2">
+                  <div className="flex w-full justify-center gap-2">
+                    <Button className="w-full" variant={'default'} type="submit">
+                      Update
+                    </Button>
+                    <Button className="w-full" variant={'destructive'} type="button" onClick={() => handleDelete()}>
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <Button className="w-full" type="submit">
-              Update Request
-            </Button>
           </form>
         </Form>
       </DialogContent>

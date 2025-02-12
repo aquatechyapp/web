@@ -3,16 +3,24 @@ import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import SelectField from './SelectField';
+import { useUserStore } from '@/store/user';
+import { useShallow } from 'zustand/react/shallow';
 
 type Props = {
   stateName?: string;
   cityName?: string;
   disabled?: boolean;
+  defaultStateValue?: string;
 };
 
 const states = State.getStatesOfCountry('US');
 
-export default function StateAndCitySelect({ stateName = 'clientState', cityName = 'clientCity', ...props }: Props) {
+export default function StateAndCitySelect({
+  stateName = 'clientState',
+  cityName = 'clientCity',
+  defaultStateValue,
+  ...props
+}: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const form = useFormContext();
 
@@ -50,6 +58,7 @@ export default function StateAndCitySelect({ stateName = 'clientState', cityName
         label="State"
         value={state}
         placeholder="State"
+        defaultValue={defaultStateValue}
         options={states.map((state) => {
           return {
             key: state.isoCode,

@@ -23,14 +23,18 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useUserStore } from '@/store/user';
 import { Client } from '@/ts/interfaces/Client';
+import { ModalAddCompany } from '../../team/ModalAddCompany';
+import { PaginationDemo } from '@/components/PaginationDemo';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onFiltersChange: (filters: any) => void;
 }
 
-export function DataTableClients<TValue>({ columns, data }: DataTableProps<Client, TValue>) {
+export function DataTableClients<TValue>({ columns, data, onFiltersChange }: DataTableProps<Client, TValue>) {
   const shouldDisableNewPools = useUserStore((state) => state.shouldDisableNewPools);
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sortColumn, setSortColumn] = useState<keyof Client | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -104,6 +108,8 @@ export function DataTableClients<TValue>({ columns, data }: DataTableProps<Clien
     { value: 'all', name: 'All types', key: 'all_types' },
     ...types.map((type) => ({ value: type, name: type, key: type }))
   ];
+
+  // console.log('sortedData', sortedData);
 
   return (
     <>
