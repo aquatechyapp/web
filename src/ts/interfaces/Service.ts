@@ -20,6 +20,13 @@ export interface Service {
     lastName: string;
     company: string;
   };
+  completedByUser:
+    | {
+        firstName: string;
+        lastName: string;
+      }
+    | null
+    | undefined;
   scheduledTo: string;
   notes: string | null;
   poolId: string;

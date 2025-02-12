@@ -11,70 +11,32 @@ import DeleteServiceDialog from './cancel-dialog';
 export const columns: ColumnDef<Service>[] = [
   {
     accessorKey: 'scheduledTo',
-    header: 'Date',
+    header: 'Scheduled to',
     cell: (props) => {
       const formattedDate = format(new Date(props.row.original.scheduledTo!), "iiii, MMMM do 'at' h:mm aaaa");
       return <span className="text-nowrap">{formattedDate}</span>;
     }
   },
   {
-    header: 'Chemicals readings',
+    header: 'Status',
     cell: (props) => {
-      const chemicalsReading = props.row.original.chemicalsReading;
-
-      if (!chemicalsReading) return <div>N/A</div>;
-
-      const { ph, chlorine, salt, alkalinity, cyanuricAcid, hardness } = chemicalsReading;
-      return (
-        <div className="text-nowrap">
-          <div>
-            <span>
-              PH {ph ?? 'N/A'} - Chlorine {chlorine ?? 'N/A'}
-            </span>
-          </div>
-          <div>
-            <span>
-              Salt {salt ?? 'N/A'} - Alkalinity {alkalinity ?? 'N/A'}
-            </span>
-          </div>
-          <span>
-            Cyan. Acid {cyanuricAcid ?? 'N/A'} - Hardness {hardness ?? 'N/A'}
-          </span>
-        </div>
-      );
+      const status = props.row.original.status;
+      return <span className="text-nowrap capitalize">{status.toLowerCase()}</span>;
     }
   },
   {
-    header: 'Chemicals spent',
+    header: 'Completed',
     cell: (props) => {
-      const chemicalsSpent = props.row.original.chemicalsSpent;
+      const { completedAt, completedByUser } = props.row.original;
 
-      if (!chemicalsSpent) return <div>N/A</div>;
+      if (!completedAt || !completedByUser) return <div>N/A</div>;
 
-      const { salt, liquidChlorine, calcium, tablet, phosphateRemover, muriaticAcid, cyanuricAcid, shock } =
-        chemicalsSpent;
-
+      const formattedDate = format(new Date(completedAt), "iiii, MMMM do 'at' h:mm aaaa");
       return (
         <div className="text-nowrap">
-          <div>
-            <span>
-              Liq. Chlorine {liquidChlorine ?? 'N/A'} - Salt {salt ?? 'N/A'}
-            </span>
-          </div>
-          <div>
-            <span>
-              Calcium {calcium ?? 'N/A'} - Tablet {tablet ?? 'N/A'}
-            </span>
-          </div>
-          <div>
-            <span>
-              Phosphate Remover {phosphateRemover ?? 'N/A'} - MuriaticAcid {muriaticAcid ?? 'N/A'}
-            </span>
-          </div>
-          <div>
-            <span>
-              Cyan. Acid {cyanuricAcid ?? 'N/A'} - Shock {shock ?? 'N/A'}
-            </span>
+          <div>{formattedDate}</div>
+          <div className="text-muted-foreground text-sm">
+            by {completedByUser.firstName} {completedByUser.lastName}
           </div>
         </div>
       );
