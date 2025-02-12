@@ -36,9 +36,6 @@ const calculateMapCenter = (assignments: Assignment[]) => {
 
 type Props = {
   assignments: Assignment[];
-  directions: DirectionsResult | undefined;
-  distance: string;
-  duration: string;
   isLoaded: boolean;
   loadError: Error | undefined;
 };
@@ -53,7 +50,7 @@ const weekdayOptions: { [key: string]: { iconColor: string; textColor: string; l
   SUNDAY: { iconColor: '#EE82EE', textColor: '#000000', label: 'Sunday' } // Violet
 };
 
-const Map = ({ assignments, directions, isLoaded, loadError }: Props) => {
+const Map = ({ assignments, isLoaded, loadError }: Props) => {
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
 
   if (loadError) {
@@ -88,21 +85,6 @@ const Map = ({ assignments, directions, isLoaded, loadError }: Props) => {
           ]
         }}
       >
-        {directions && (
-          <DirectionsRenderer
-            directions={directions}
-            options={{
-              suppressMarkers: true,
-              polylineOptions: {
-                zIndex: 50,
-                strokeColor: Colors.blue[500],
-                strokeWeight: 5
-              }
-            }}
-          />
-        )}
-        {/* <MarkerClusterer> */}
-        {/* {(clusterer) => ( */}
         <div>
           {assignments.map((assignment) => {
             const weekdayColor = weekdayOptions[assignment.weekday] || {
@@ -112,24 +94,19 @@ const Map = ({ assignments, directions, isLoaded, loadError }: Props) => {
 
             return (
               <Marker
-                // label={{
-                //   text: assignment.order.toString(),
-                //   color: weekdayColor.textColor
-                // }}
                 onClick={() => setSelectedAssignment(assignment)}
                 key={assignment.id}
                 position={{
                   lat: assignment.pool.coords.lat,
                   lng: assignment.pool.coords.lng
                 }}
-                // clusterer={clusterer}
                 icon={{
-                  path: google.maps.SymbolPath.CIRCLE, // Custom circle marker
-                  fillColor: weekdayColor.iconColor, // Default color if weekday not found
+                  path: google.maps.SymbolPath.CIRCLE,
+                  fillColor: weekdayColor.iconColor,
                   fillOpacity: 1,
-                  scale: 16, // Size of the marker
+                  scale: 10,
                   strokeColor: 'white',
-                  strokeWeight: 2
+                  strokeWeight: 1.5
                 }}
               />
             );
@@ -190,8 +167,6 @@ const Map = ({ assignments, directions, isLoaded, loadError }: Props) => {
             </div>
           </InfoBox>
         )}
-        {/* )} */}
-        {/* </MarkerClusterer> */}
       </GoogleMap>
     </div>
   );
