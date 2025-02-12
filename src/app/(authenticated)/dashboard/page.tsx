@@ -60,14 +60,7 @@ export default function Page() {
           <StatisticCard value={totalClientsCount} type="clients" />
         </div>
         <div className={'w-full'}>
-          <Map
-            assignments={allAssignments}
-            directions={directions}
-            distance={distance}
-            duration={duration}
-            isLoaded={isLoaded}
-            loadError={loadError}
-          />
+          <Map assignments={allAssignments} isLoaded={isLoaded} loadError={loadError} />
         </div>
         <div className="flex flex-1 flex-row items-start gap-6">
           <ActionButton type="route_dashboard" />
