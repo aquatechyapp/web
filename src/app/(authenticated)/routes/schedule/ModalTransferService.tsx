@@ -10,12 +10,9 @@ import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import { useTransferPermanentlyRoute } from '@/hooks/react-query/assignments/useTransferRoute';
-import { transferAssignmentsSchema } from '@/schemas/assignments';
-import { useUserStore } from '@/store/user';
+
 import { useWeekdayStore } from '@/store/weekday';
-import { Assignment, TransferAssignment } from '@/ts/interfaces/Assignments';
-import { Weekdays, WeekdaysUppercase } from '@/ts/interfaces/Weekday';
+import { WeekdaysUppercase } from '@/ts/interfaces/Weekday';
 import { isEmpty } from '@/utils';
 
 import { useMembersStore } from '@/store/members';
@@ -153,7 +150,7 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-screen w-96 max-w-[580px] overflow-y-scroll rounded-md md:w-[580px]">
-        <DialogTitle>Transfer Route</DialogTitle>
+        <DialogTitle>Transfer Service</DialogTitle>
         {isPending ? (
           <LoadingSpinner />
         ) : (

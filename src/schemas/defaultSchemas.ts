@@ -39,7 +39,7 @@ export const defaultSchemas = {
     required_error: 'Language is required.',
     invalid_type_error: "Language must be 'English', 'Portuguese' or 'Spanish'."
   }),
-  monthlyPayment: z.number().nullable(),
+  monthlyPayment: z.number().nullable().optional(),
   clientType: z.enum(['Residential', 'Commercial'], {
     required_error: 'Client type is required.',
     invalid_type_error: "Client type must be 'Residential' or 'Company'."

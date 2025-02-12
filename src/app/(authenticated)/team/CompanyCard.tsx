@@ -17,9 +17,6 @@ type Props = {
 };
 
 export function CompanyCard({ companyId, name, email, phone, role, status }: Props) {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
   return (
     <div className="relative inline-flex w-96 flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:w-56">
       {companyId ? <DropdownMenuCompany companyId={companyId} /> : null}

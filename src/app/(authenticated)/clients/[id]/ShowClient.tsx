@@ -43,7 +43,9 @@ export default function ShowClient({ client }: Props) {
             <div className="PhotoName flex h-[206px] flex-col items-center justify-start gap-3 self-stretch">
               <Avatar className="h-[140px] w-[140px]">
                 <AvatarImage src={''} />
-                <AvatarFallback className="text-5xl">{getInitials(client.fullName)}</AvatarFallback>
+                <AvatarFallback className="text-5xl">
+                  {client && client.fullName ? getInitials(client.fullName) : ''}
+                </AvatarFallback>
               </Avatar>
               <div className="flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
                 <div className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px] text-gray-800">

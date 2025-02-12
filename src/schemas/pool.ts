@@ -11,29 +11,21 @@ export const poolSchema = z.object({
     invalid_type_error: 'Animal danger must be a boolean.'
   }),
   poolCity: city,
-  // coords: z.object({
-  //     lat: z.string({
-  //         required_error: "Latitude is required.",
-  //         invalid_type_error: "Latitude must be a string.",
-  //     }).trim().min(1, { message: "Latitude must be at least 1 character." }),
-  //     lng: z.string({
-  //         required_error: "Longitude is required.",
-  //         invalid_type_error: "Longitude must be a string.",
-  //     }).trim().min(1, { message: "Longitude must be at least 1 character." }),
-  // }),
   enterSide: z
     .string({
       required_error: 'Enter side is required.',
       invalid_type_error: 'Enter side must be a string.'
     })
     .trim()
-    .min(1, { message: 'Enter side must be at least 1 character.' }),
+    .min(1, { message: 'Enter side must be at least 1 character.' })
+    .optional(),
   lockerCode: z
     .string({
       required_error: "lockerCode field is required, even if it's null.",
       invalid_type_error: 'Locker code must be a string.'
     })
-    .nullable(),
+    .nullable()
+    .optional(),
 
   poolNotes: notes,
   poolType: z.enum(['Chlorine', 'Salt', 'Other'], {
@@ -60,7 +52,6 @@ export const editPoolSchema = z.object({
       invalid_type_error: 'enterSide must be a string.'
     })
     .trim()
-    .min(1, { message: 'enterSide must be at least 1 character.' })
     .optional(),
   lockerCode: z
     .string({
