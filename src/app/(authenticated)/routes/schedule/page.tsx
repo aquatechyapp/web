@@ -89,7 +89,7 @@ export default function Page() {
       const dateAt12PMUTC = normalizeToUTC12(addDays(today, index).toISOString());
       return {
         date: dateAt12PMUTC.toISOString(),
-        formatted: format(dateAt12PMUTC, 'EEE, do') // 'Mon, 7th'
+        formatted: format(dateAt12PMUTC, 'MM/dd') // '02/12'
       };
     });
   }
@@ -110,13 +110,18 @@ export default function Page() {
             onValueChange={handleChangeDay}
             defaultValue={selectedDay || getNext7DatesWith12PMUTC()[0].date}
             value={selectedDay}
+            className="w-full"
           >
             <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
               <Form {...form}>
                 <form className="w-full">
-                  <TabsList className="w-full">
+                  <TabsList className="grid h-12 w-full grid-cols-7">
                     {next7days.map((day, index) => (
-                      <TabsTrigger className="flex-1" key={day.formatted} value={day.date}>
+                      <TabsTrigger
+                        className="px-0 text-xs data-[state=active]:px-0"
+                        key={day.formatted}
+                        value={day.date}
+                      >
                         {day.formatted}
                       </TabsTrigger>
                     ))}
@@ -128,11 +133,6 @@ export default function Page() {
               </Form>
 
               <TabsContent value={selectedDay || getNext7DatesWith12PMUTC()[0].date} className="w-full">
-                {/* O filtro dos assignments precisa ser feito dentro de AssignmentsList, por causa
-                do componente TabsContent. Esse componente de Tabs se baseia no value para exibir
-                seus childrens (AssignmentsList). Como na aba tabs o value se baseia somente no weekday,
-                quando eu altero o Technician, ele só vai atualizar o render quando mudar de Weekday
-                A solução foi enviar todos os assignments e fazer o .filter lá dentro */}
                 <ServicesList />
               </TabsContent>
             </div>

@@ -13,12 +13,13 @@ import { useToast } from '@/components/ui/use-toast';
 type DeleteServiceDialogProps = {
   serviceId: string;
   assignmentId: string;
+  clientId: string;
 };
 
-export default function DeleteServiceDialog({ serviceId, assignmentId }: DeleteServiceDialogProps) {
+export default function DeleteServiceDialog({ serviceId, assignmentId, clientId }: DeleteServiceDialogProps) {
   const { toast } = useToast();
 
-  const cancelService = useDeleteService();
+  const cancelService = useDeleteService(clientId);
 
   async function handleConfirm() {
     await cancelService.mutateAsync({

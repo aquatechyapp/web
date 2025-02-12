@@ -117,30 +117,30 @@ export function ModalViewCompany({ children, companyId }: PropsView) {
         <DialogHeader></DialogHeader>
         <Form {...form}>
           <form>
-            <div className="inline-flex w-full flex-col items-start justify-start gap-8 bg-white">
+            <div className="inline-flex w-full flex-col items-start justify-start gap-8">
               <div className="justify-start self-stretch">
                 <div className="mb-4">
-                  <InputField name="name" label="Name" placeholder="name" />
+                  <InputField name="name" label="Name" disabled placeholder="name" />
                 </div>
 
                 <div className="mb-4">
-                  <InputField name="phone" label="Phone" placeholder="phone" />
+                  <InputField name="phone" label="Phone" disabled placeholder="phone" />
                 </div>
 
                 <div className="mb-4">
-                  <InputField name="address" label="Address" placeholder="Address" />
+                  <InputField name="address" label="Address" disabled placeholder="Address" />
                 </div>
 
                 <div className="mb-4">
-                  <InputField name="city" label="City" placeholder="City" />
+                  <InputField name="city" label="City" disabled placeholder="City" />
                 </div>
 
                 <div className="mb-4">
-                  <InputField name="state" label="State" placeholder="State" />
+                  <InputField name="state" label="State" disabled placeholder="State" />
                 </div>
 
                 <div className="mb-4">
-                  <InputField name="zip" label="Zip" placeholder="Zip" />
+                  <InputField name="zip" label="Zip" disabled placeholder="Zip" />
                 </div>
               </div>
             </div>

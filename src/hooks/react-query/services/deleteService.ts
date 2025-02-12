@@ -5,7 +5,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { clientAxios } from '@/lib/clientAxios';
 import Cookies from 'js-cookie';
 
-export const useDeleteService = () => {
+export const useDeleteService = (clientId: string) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const userId = Cookies.get('userId');
@@ -19,6 +19,7 @@ export const useDeleteService = () => {
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       queryClient.invalidateQueries({ queryKey: ['services', userId] });
+      queryClient.invalidateQueries({ queryKey: ['clients', clientId] });
       toast({
         duration: 2000,
         title: 'Deleted service successfully',

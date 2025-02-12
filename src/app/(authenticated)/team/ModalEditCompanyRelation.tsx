@@ -99,7 +99,7 @@ export function ModalEditCompanyRelation({ children, companyId }: PropsView) {
         <DialogHeader></DialogHeader>
         <Form {...form}>
           <form onSubmit={handleInvitation}>
-            <div className="inline-flex w-full flex-col items-start justify-start gap-8 bg-white">
+            <div className="inline-flex w-full flex-col items-start justify-start gap-8">
               <div className="justify-start self-stretch">
                 <div className="mb-4">
                   <InputField name="name" disabled label="Name" placeholder="name" />

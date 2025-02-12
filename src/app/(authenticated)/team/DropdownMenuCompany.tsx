@@ -76,7 +76,7 @@ export default function DropdownMenuCompany({ companyId }: Props) {
                 </ModalViewCompany>
                 <ModalEditCompanyRelation companyId={companyId}>
                   <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
-                    Edit relation
+                    Accept/Revoke
                     <DropdownMenuShortcut>
                       <MdEdit className="ml-1" />
                     </DropdownMenuShortcut>
