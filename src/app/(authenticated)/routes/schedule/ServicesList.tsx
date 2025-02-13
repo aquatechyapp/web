@@ -85,7 +85,7 @@ export function ServicesList() {
         open={openDialogDelete}
         setOpen={setOpenDialogDelete}
         service={service}
-        clientId={service!.clientOwnerId}
+        clientId={service?.clientOwnerId ?? ''}
       />
       <DialogTransferService open={openDialogTransfer} setOpen={setOpenDialogTransfer} service={service!} />
     </>
