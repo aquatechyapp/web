@@ -8,12 +8,14 @@ import { z } from 'zod';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import CompanyStateAndCitySelect from '@/components/CompanyStateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 
 import { isEmpty } from '@/utils';
 import { useCreateCompany } from '@/hooks/react-query/companies/createCompany';
+import { FieldType } from '@/ts/enums/enums';
 
 const schema = z.object({
   name: z
@@ -120,16 +122,13 @@ export function ModalAddCompany() {
               <InputField name="email" placeholder="Email" />
             </div>
             <div className="flex gap-4">
-              <InputField name="phone" placeholder="Phone" />
+              <InputField name="phone" placeholder="Phone" type={FieldType.Phone} />
             </div>
             <div className="flex gap-4">
               <InputField name="address" placeholder="Address" />
             </div>
             <div className="flex gap-4">
-              <InputField name="city" placeholder="City" />
-            </div>
-            <div className="flex gap-4">
-              <InputField name="state" placeholder="State" />
+              <CompanyStateAndCitySelect stateName="state" cityName="city" showLabels={false} />
             </div>
             <div className="flex gap-4">
               <InputField name="zip" placeholder="Zip" />

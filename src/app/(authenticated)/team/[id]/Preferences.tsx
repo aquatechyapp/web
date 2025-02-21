@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
 import { useUpdateCompanyPreferences } from '@/hooks/react-query/companies/updatePreferences';
+import { Company } from '@/ts/interfaces/Company';
 
 const schema = z.object({
   sendEmails: z.boolean(),
@@ -28,8 +29,8 @@ const schema = z.object({
   ccEmail: z.string()
 });
 
-export default function Page({ params }: { params: { companyId: string } }) {
-  const { isPending, mutate } = useUpdateCompanyPreferences(params.companyId);
+export default function Page({ company }: { company: Company }) {
+  const { isPending, mutate } = useUpdateCompanyPreferences(company.id);
   const { userPreferences, isFreePlan } = useUserStore(
     useShallow((state) => ({
       userPreferences: state.user?.userPreferences,
@@ -42,14 +43,16 @@ export default function Page({ params }: { params: { companyId: string } }) {
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      sendEmails: isFreePlan ? false : userPreferences.serviceEmailPreferences.sendEmails || false,
+      sendEmails: isFreePlan ? false : company.preferences.serviceEmailPreferences.sendEmails || false,
       attachChemicalsReadings: isFreePlan
         ? false
-        : userPreferences.serviceEmailPreferences.attachChemicalsReadings || false,
-      attachChecklist: isFreePlan ? false : userPreferences.serviceEmailPreferences.attachChecklist || false,
-      attachServiceNotes: isFreePlan ? false : userPreferences.serviceEmailPreferences.attachServiceNotes || false,
-      attachServicePhotos: isFreePlan ? false : userPreferences.serviceEmailPreferences.attachServicePhotos || false,
-      ccEmail: isFreePlan ? '' : userPreferences.serviceEmailPreferences.ccEmail || ''
+        : company.preferences.serviceEmailPreferences.attachChemicalsReadings || false,
+      attachChecklist: isFreePlan ? false : company.preferences.serviceEmailPreferences.attachChecklist || false,
+      attachServiceNotes: isFreePlan ? false : company.preferences.serviceEmailPreferences.attachServiceNotes || false,
+      attachServicePhotos: isFreePlan
+        ? false
+        : company.preferences.serviceEmailPreferences.attachServicePhotos || false,
+      ccEmail: isFreePlan ? '' : company.preferences.serviceEmailPreferences.ccEmail || ''
     }
   });
 

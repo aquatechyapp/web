@@ -26,6 +26,16 @@ export interface Company {
   createdAt: string;
   updatedAt: string;
   status: Status;
+  preferences: {
+    serviceEmailPreferences: {
+      sendEmails: boolean;
+      attachChemicalsReadings: boolean;
+      attachChecklist: boolean;
+      attachServiceNotes: boolean;
+      attachServicePhotos: boolean;
+      ccEmail: string;
+    };
+  };
 }
 
 export interface CreateCompany {

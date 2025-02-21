@@ -4,18 +4,16 @@ import { z } from 'zod';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import SelectField from '@/components/SelectField';
-import StateAndCitySelect from '@/components/StateAndCitySelect';
+
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
-import { defaultSchemas } from '@/schemas/defaultSchemas';
+
 import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
-import { Client } from '@/ts/interfaces/Client';
 import { Company } from '@/ts/interfaces/Company';
 import { useEditCompany } from '@/hooks/react-query/companies/updateCompany';
 import { updateCompanySchema } from '../ModalEditCompany';
+import CompanyStateAndCitySelect from '@/components/CompanyStateAndCitySelect';
 
 const formSchema = updateCompanySchema;
 
@@ -33,6 +31,7 @@ export default function CompanyInfo({ company }: { company: Company }) {
       name: company.name || '',
       status: company.status || 'Active',
       phone: company.phone || '',
+      email: company.email || '',
       address: company.address || ''
     }
   });
@@ -51,11 +50,11 @@ export default function CompanyInfo({ company }: { company: Company }) {
       >
         <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
           <InputField name="name" placeholder="Name" label="Name" />
-          <InputField name="status" placeholder="Status" label="Status" />
+          {/* <InputField name="status" placeholder="Status" label="Status" /> */}
         </div>
         <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
           <InputField name="address" placeholder="Address" label="Address" />
-          <StateAndCitySelect cityName="city" stateName="state" />
+          <CompanyStateAndCitySelect stateName="state" cityName="city" />
           <InputField name="zip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
         </div>
         <Typography element="h4" className="mt-2">

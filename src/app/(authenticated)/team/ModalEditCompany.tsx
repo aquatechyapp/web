@@ -77,7 +77,13 @@ export const updateCompanySchema = z.object({
       required_error: 'status is required.',
       invalid_type_error: "status must be 'Active' or 'Inactive'."
     })
-    .optional()
+    .optional(),
+  email: z
+    .string({
+      required_error: 'email is required.',
+      invalid_type_error: 'email must be a string.'
+    })
+    .trim()
 });
 
 export type FormSchema = z.infer<typeof updateCompanySchema>;
@@ -105,7 +111,8 @@ export function ModalEditCompany({ children, companyId }: PropsEdit) {
       city: selectedCompany?.city,
       state: selectedCompany?.state,
       zip: selectedCompany?.zip,
-      status: selectedCompany?.status
+      status: selectedCompany?.status,
+      email: selectedCompany?.email
     }
   });
 
@@ -118,7 +125,8 @@ export function ModalEditCompany({ children, companyId }: PropsEdit) {
       city: form.getValues('city'),
       state: form.getValues('state'),
       zip: form.getValues('zip'),
-      status: form.getValues('status')
+      status: form.getValues('status'),
+      email: form.getValues('email')
     };
 
     handleSubmit(a);
@@ -137,6 +145,10 @@ export function ModalEditCompany({ children, companyId }: PropsEdit) {
               <div className="justify-start self-stretch">
                 <div className="mb-4">
                   <InputField name="name" label="Name" placeholder="name" />
+                </div>
+
+                <div className="mb-4">
+                  <InputField name="email" label="E-mail" placeholder="E-mail" />
                 </div>
 
                 <div className="mb-4">

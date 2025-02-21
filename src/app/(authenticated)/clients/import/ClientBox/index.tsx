@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 
 import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
-import StateAndCitySelect from '@/components/StateAndCitySelect';
+import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { PoolTypes } from '@/constants';

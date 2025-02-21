@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { useForm } from 'react-hook-form';
 
-import StateAndCitySelect from '@/components/StateAndCitySelect';
+import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 
 import { FormProviderMocked } from '../providers/formProviderMocked';
 

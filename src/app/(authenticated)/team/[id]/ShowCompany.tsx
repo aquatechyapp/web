@@ -22,10 +22,6 @@ export default function ShowCompany({ company }: Props) {
   // const { mutate: mutateAddPool } = useAddPoolToClient();
   const [tab, setTab] = useState<'company_info' | 'preferences'>('company_info');
 
-  const { mutate: deactivateClient, isPending } = useDeactivateClient();
-
-  if (isPending) return <LoadingSpinner />;
-
   const selectedTabStyles = 'text-gray-800 font-semibold';
 
   return (
@@ -50,7 +46,7 @@ export default function ShowCompany({ company }: Props) {
             <div className="flex flex-row flex-wrap items-start justify-start gap-[18px] self-start lg:flex-col lg:flex-nowrap">
               <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium text-gray-500">Email</div>
+                  <div className="self-stretch text-sm font-medium text-gray-500">E-mail</div>
                   <div className="self-stretch text-sm font-medium text-gray-800">{company.email}</div>
                 </div>
               </div>
@@ -60,28 +56,7 @@ export default function ShowCompany({ company }: Props) {
                   <div className="self-stretch text-sm font-medium text-gray-800">{company.phone}</div>
                 </div>
               </div>
-              {/* <div className="inline-flex w-fit items-start justify-start gap-2">
-                <div className="Text inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium text-gray-500">Locations</div>
-                  <div className="self-stretch text-sm font-medium text-gray-800">
-                    {client.pools.length > 0
-                      ? client.pools.length === 1
-                        ? '1 Pool'
-                        : `${client.pools.length} Pools`
-                      : 'No Pools'}
-                  </div>
-                </div>
-              </div> */}
-              {/* <div className="inline-flex w-fit items-start justify-start gap-2">
-                <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
-                  <div className="self-stretch text-sm font-medium text-gray-500">Last Service</div>
-                  <div className="self-stretch text-sm font-medium text-gray-800">
-                    {client.lastServiceDate != undefined
-                      ? format(new Date(client.lastServiceDate), 'MMMM, dd, yyyy')
-                      : 'No Services'}
-                  </div>
-                </div>
-              </div> */}
+
               <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="text-sm font-medium text-gray-500">Joined</div>
@@ -96,7 +71,7 @@ export default function ShowCompany({ company }: Props) {
         <div className="flex w-full flex-col items-start">
           <div className="inline-flex h-full w-full flex-col items-start justify-start gap-6">
             <div className="inline-flex flex-wrap items-start justify-start gap-6 self-stretch text-nowrap md:flex-nowrap">
-              <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
+              {/* <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
                 <div className="inline-flex items-start justify-start gap-4 self-stretch">
                   <div className="inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
                     <div className="self-stretch text-base font-medium leading-normal text-gray-500">
@@ -108,8 +83,8 @@ export default function ShowCompany({ company }: Props) {
                     <div className="AttachMoney relative h-[18px] w-[18px]" />
                   </div>
                 </div>
-              </div>
-              <div className="RightBadgeStatisticCard inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
+              </div> */}
+              {/* <div className="RightBadgeStatisticCard inline-flex shrink grow basis-0 flex-col items-start justify-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-5">
                 <div className="TitleNumbers inline-flex items-start justify-start gap-4 self-stretch">
                   <div className="TitleNumbers inline-flex shrink grow basis-0 flex-col items-start justify-start gap-2">
                     <div className="self-stretch text-base font-medium leading-normal text-gray-500">Title</div>
@@ -119,7 +94,7 @@ export default function ShowCompany({ company }: Props) {
                     <div className="FiSrTimeAdd relative h-[18px] w-[18px]" />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="inline-flex items-start justify-start gap-4 self-stretch border-b border-gray-200">
               <div
@@ -149,7 +124,7 @@ export default function ShowCompany({ company }: Props) {
               <CompanyInfo company={company} />
             ) : (
               // <PoolHeader pools={client.pools} clientId={client.id} />
-              <Preferences params={{ companyId: company.id }} />
+              <Preferences company={company} />
             )}
           </div>
         </div>

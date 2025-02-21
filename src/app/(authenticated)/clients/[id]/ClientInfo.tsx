@@ -5,7 +5,6 @@ import { z } from 'zod';
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
-import StateAndCitySelect from '@/components/StateAndCitySelect';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -13,6 +12,7 @@ import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
+import ClientStateAndCitySelect from '@/components/ClientStateAndCitySelect';
 
 const formSchema = z.object({
   address: defaultSchemas.address,
@@ -61,7 +61,7 @@ export default function ClientInfo({ client }: { client: Client }) {
       >
         <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
           <InputField name="address" placeholder="Billing address" label="Billing address" />
-          <StateAndCitySelect cityName="city" stateName="state" />
+          <ClientStateAndCitySelect stateName="state" cityName="city" />
         </div>
         <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
           <InputField name="zip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />

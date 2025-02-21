@@ -17,6 +17,7 @@ import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { ModalViewCompany } from './ModalViewCompany';
 import { EyeOpenIcon } from '@radix-ui/react-icons';
 import { ModalEditCompanyRelation } from './ModalEditCompanyRelation';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   companyId: string;
@@ -25,6 +26,8 @@ type Props = {
 export default function DropdownMenuCompany({ companyId }: Props) {
   const { isPending, mutate } = useDeleteCompany();
   const { data: companies } = useGetCompanies();
+
+  const router = useRouter();
 
   const userRole = companies?.find((company) => company.id === companyId)?.role;
 
@@ -45,16 +48,20 @@ export default function DropdownMenuCompany({ companyId }: Props) {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent>
-            {userRole === 'Owner' ? (
+            {userRole === 'Owner' || userRole === 'Admin' ? (
               <>
-                <ModalEditCompany companyId={companyId}>
-                  <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
-                    Edit
-                    <DropdownMenuShortcut>
-                      <MdEdit className="ml-1" />
-                    </DropdownMenuShortcut>
-                  </div>
-                </ModalEditCompany>
+                <div
+                  className="flex w-full cursor-pointer items-center rounded p-1 text-gray-700 hover:bg-blue-50"
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent modal from opening
+                    router.push(`/team/${companyId}`);
+                  }}
+                >
+                  View
+                  <DropdownMenuShortcut>
+                    <MdEdit className="ml-1" />
+                  </DropdownMenuShortcut>
+                </div>
                 <DialogTrigger asChild>
                   <div className="flex w-full items-center rounded p-1 text-red-500 hover:bg-blue-50">
                     Delete

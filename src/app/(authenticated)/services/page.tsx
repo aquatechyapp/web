@@ -35,13 +35,13 @@ interface PaginatedResponse {
 }
 
 const defaultValues: UseGetServicesParams = {
-  from: new Date().toISOString(),
-  to: new Date().toISOString(),
+  from: new Date(new Date().setHours(0, 0, 0, 0)).toISOString(), // Start of current day in local time
+  to: new Date(new Date().setHours(23, 59, 59, 999)).toISOString(), // End of current day in local time
   completedByUserId: null,
   clientId: null,
   companyOwnerId: null,
   page: 1,
-  limit: 20 // Add limit to match backend pagination
+  limit: 20
 };
 
 const countAppliedFilters = (filters: UseGetServicesParams): number => {
@@ -113,7 +113,15 @@ export default function Page() {
                     className="w-full lg:w-fit"
                     placeholder="Created From"
                     value={filtersForm.watch('from') ? new Date(filtersForm.watch('from')) : undefined}
-                    onChange={(date) => filtersForm.setValue('from', date ? date.toISOString() : defaultValues.from)}
+                    onChange={(date) => {
+                      if (date) {
+                        // Set to start of day in local time
+                        const localDate = new Date(date.setHours(0, 0, 0, 0));
+                        filtersForm.setValue('from', localDate.toISOString());
+                      } else {
+                        filtersForm.setValue('from', defaultValues.from);
+                      }
+                    }}
                   />
                 </FormControl>
               </FormItem>
@@ -124,7 +132,15 @@ export default function Page() {
                     className="w-full lg:w-fit"
                     placeholder="Created To"
                     value={filtersForm.watch('to') ? new Date(filtersForm.watch('to')) : undefined}
-                    onChange={(date) => filtersForm.setValue('to', date ? date.toISOString() : defaultValues.to)} // Slice is to get only the date part in a format backend can understand
+                    onChange={(date) => {
+                      if (date) {
+                        // Set to end of day in local time
+                        const localDate = new Date(date.setHours(23, 59, 59, 999));
+                        filtersForm.setValue('to', localDate.toISOString());
+                      } else {
+                        filtersForm.setValue('to', defaultValues.to);
+                      }
+                    }}
                   />
                 </FormControl>
               </FormItem>

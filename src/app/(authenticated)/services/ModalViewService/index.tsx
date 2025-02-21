@@ -1,170 +1,211 @@
 'use client';
 
-import { CheckCircleIcon, ListChecks, XCircleIcon } from 'lucide-react';
+import {
+  CheckCircleIcon,
+  ListChecks,
+  XCircleIcon,
+  Beaker,
+  FlaskConical,
+  ImageIcon,
+  Mail,
+  Download,
+  MapPin
+} from 'lucide-react';
 import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Card, CardContent } from '@/components/ui/card';
 import { zipImages } from '@/lib/js-zip';
 import { format } from 'date-fns';
+import { Service } from '@/ts/interfaces/Service';
 
 type Props = {
-  request: any;
+  service: Service;
   open: boolean;
   setOpen: (open: boolean) => void;
 };
 
-export function ModalViewService({ request, open, setOpen }: Props) {
-  console.log('request', request);
-
-  // Map para transformar o checklist do request em um array
+export function ModalViewService({ service, open, setOpen }: Props) {
   const checklistItems = [
-    { name: 'Skimmer cleaned', completed: request?.checklistSkimmer },
-    { name: 'Tiles brushed', completed: request?.checklistTilesBrushed },
-    { name: 'Baskets cleaned', completed: request?.checklistPumpBasket },
-    { name: 'Filter washed', completed: request?.checklistFilterWashed },
-    { name: 'Water tested', completed: request?.checklistWaterTested },
-    { name: 'Pool vacuumed', completed: request?.checklistPoolVacuumed }
+    { name: 'Skimmer cleaned', completed: service?.checklist?.skimmerCleaned },
+    { name: 'Tiles brushed', completed: service?.checklist?.tilesBrushed },
+    { name: 'Baskets cleaned', completed: service?.checklist?.pumpBasketCleaned },
+    { name: 'Filter washed', completed: service?.checklist?.filterWashed },
+    { name: 'Water tested', completed: service?.checklist?.chemicalsAdjusted },
+    { name: 'Pool vacuumed', completed: service?.checklist?.poolVacuumed }
   ];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto p-6">
-        <div>
-          <div className="flex">
-            <ListChecks className="mr-2" />
-            <DialogTitle className="text-lg font-semibold">
-              {`${request?.completedAt ? format(new Date(request.completedAt), "EEEE, MMMM do 'at' h:mm a") : 'Unknown'}. (made by ${request?.completedByUser?.firstName || 'Unknown'} ${request?.completedByUser?.lastName || 'Unknown'})`}
-            </DialogTitle>
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <ListChecks className="h-6 w-6 text-blue-600" />
+            <DialogTitle className="text-xl font-semibold">Service Report</DialogTitle>
           </div>
-          <p className="text-sm text-gray-500">
-            {request.pool.address}, {request.pool.city}, {request.pool.state}, {request.pool.zip}
-          </p>
-        </div>
 
-        {/* Chemical Readings and Checklist */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <h2 className="text-center text-lg font-bold text-gray-700">Chemical readings</h2>
-            <table className="w-full text-sm">
-              <tbody>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Chlorine</td>
-                  <td className="py-2 text-right text-gray-700">{request.chlorine || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">P.H</td>
-                  <td className="py-2 text-right text-gray-700">{request.ph || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Salt</td>
-                  <td className="py-2 text-right text-gray-700">{request.salt || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Alkalinity</td>
-                  <td className="py-2 text-right text-gray-700">{request.alkalinity || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Cyan. Acid</td>
-                  <td className="py-2 text-right text-gray-700">{request.cyanAcid || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Calcium</td>
-                  <td className="py-2 text-right text-gray-700">{request.calcium || 'N/A'}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div>
-            <h2 className="text-center text-lg font-bold text-gray-700">Chemicals spent</h2>
-            <table className="w-full text-sm">
-              <tbody>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Liquid Chlorine (gallon)</td>
-                  <td className="py-2 text-right text-gray-700">{request?.chlorineSpent || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Muriatic Acid (gallon)</td>
-                  <td className="py-2 text-right text-gray-700">{request?.acidSpent || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Salt (bags)</td>
-                  <td className="py-2 text-right text-gray-700">{request?.saltSpent || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Shock</td>
-                  <td className="py-2 text-right text-gray-700">{request?.shockSpent || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Tablet</td>
-                  <td className="py-2 text-right text-gray-700">{request?.tabletSpent || 'N/A'}</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 pr-4 text-gray-700">Phosphate Remover (gallon)</td>
-                  <td className="py-2 text-right text-gray-700">{request?.phosphateSpent || 'N/A'}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Photos */}
-        {request?.photos.length > 0 && (
-          <div>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-              {request?.photos?.map((photo: string, index: number) => (
-                <div key={index} className="relative aspect-square">
-                  <Image src={photo} alt={`Photo ${index + 1}`} layout="fill" className="rounded object-cover" />
-                </div>
-              ))}
+          <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex-1">
+              {format(new Date(service?.completedAt || new Date()), "EEEE, MMMM do 'at' h:mm a")}
+              <span className="ml-1 font-medium">
+                by {service?.completedByUser?.firstName || 'Unknown'} {service?.completedByUser?.lastName || 'Unknown'}
+              </span>
             </div>
           </div>
-        )}
 
-        {/* Chemicals Spent */}
-        <div className="mx-auto w-full md:w-1/2">
-          <h2 className="text-center text-lg font-bold text-gray-700">Checklist</h2>
-          <table className="w-full text-sm">
-            <tbody>
-              {checklistItems.map((item, index) => (
-                <tr key={index} className="flex items-center justify-between border-b">
-                  <td className="py-2 pr-4 text-gray-700">{item.name}</td>
-                  {item.completed ? (
-                    <CheckCircleIcon className="border-1 h-5 w-5 rounded-full border-gray-700 text-gray-700" />
-                  ) : (
-                    <XCircleIcon className="border-1 h-5 w-5 rounded-full border-gray-700 text-gray-700" />
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          <div className="mt-1 flex items-center gap-1 text-sm text-gray-500">
+            <MapPin className="h-4 w-4" />
+            <span>
+              {service?.pool?.address}, {service?.pool?.city}, {service?.pool?.state}, {service?.pool?.zip}
+            </span>
+          </div>
+        </DialogHeader>
+
+        <Accordion type="single" collapsible defaultValue="readings" className="mt-4">
+          {/* Chemical Readings Section */}
+          <AccordionItem value="readings">
+            <AccordionTrigger className="text-lg">
+              <div className="flex items-center gap-2">
+                <Beaker className="h-5 w-5 text-blue-600" />
+                Chemical Readings
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <Card>
+                <CardContent className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3">
+                  {[
+                    { label: 'Chlorine (ppm)', value: service?.chemicalsReading?.chlorine },
+                    { label: 'P.H', value: service?.chemicalsReading?.ph },
+                    { label: 'Salt (ppm)', value: service?.chemicalsReading?.salt },
+                    { label: 'Alkalinity (ppm)', value: service?.chemicalsReading?.alkalinity },
+                    { label: 'Cyan. Acid (ppm)', value: service?.chemicalsReading?.cyanuricAcid },
+                    { label: 'Calcium (ppm)', value: service?.chemicalsReading?.hardness }
+                  ].map((item, index) => (
+                    <div key={index} className="rounded-lg bg-gray-50 p-3">
+                      <div className="text-sm text-gray-500">{item.label}</div>
+                      <div className="text-lg font-semibold">{item.value || 'N/A'}</div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Chemicals Spent Section */}
+          <AccordionItem value="spent">
+            <AccordionTrigger className="text-lg">
+              <div className="flex items-center gap-2">
+                <FlaskConical className="h-5 w-5 text-blue-600" />
+                Chemicals Spent
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <Card>
+                <CardContent className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3">
+                  {[
+                    {
+                      label: 'Liquid Chlorine (gallon)',
+                      value: service?.chemicalsSpent?.liquidChlorine,
+                      unit: 'gallon'
+                    },
+                    { label: 'Muriatic Acid (gallon)', value: service?.chemicalsSpent?.muriaticAcid, unit: 'gallon' },
+                    { label: 'Salt (lb)', value: service?.chemicalsSpent?.salt, unit: 'lb' },
+                    { label: 'Shock (oz)', value: service?.chemicalsSpent?.shock, unit: 'oz' },
+                    { label: 'Tablet (unit)', value: service?.chemicalsSpent?.tablet, unit: 'unit' },
+                    { label: 'Phosphate Remover (oz)', value: service?.chemicalsSpent?.phosphateRemover, unit: 'oz' }
+                  ].map((item, index) => (
+                    <div key={index} className="rounded-lg bg-gray-50 p-3">
+                      <div className="text-sm text-gray-500">{item.label}</div>
+                      <div className="text-lg font-semibold">{item.value ? `${item.value} ${item.unit}` : 'N/A'}</div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Checklist Section */}
+          <AccordionItem value="checklist">
+            <AccordionTrigger className="text-lg">
+              <div className="flex items-center gap-2">
+                <ListChecks className="h-5 w-5 text-blue-600" />
+                Service Checklist
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <Card>
+                <CardContent className="grid grid-cols-1 gap-2 p-4 sm:grid-cols-2">
+                  {checklistItems.map((item, index) => (
+                    <div key={index} className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
+                      <span className="text-gray-700">{item.name}</span>
+                      {item.completed ? (
+                        <CheckCircleIcon className="h-5 w-5 text-green-600" />
+                      ) : (
+                        <XCircleIcon className="h-5 w-5 text-red-600" />
+                      )}
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Photos Section */}
+          {service?.photos.length > 0 && (
+            <AccordionItem value="photos">
+              <AccordionTrigger className="text-lg">
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="h-5 w-5 text-blue-600" />
+                  Service Photos
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                  {service.photos.map((photo: string, index: number) => (
+                    <div key={index} className="relative aspect-square overflow-hidden rounded-lg">
+                      <Image
+                        src={photo}
+                        alt={`Service photo ${index + 1}`}
+                        layout="fill"
+                        className="object-cover transition-transform hover:scale-105"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+        </Accordion>
 
         {/* Actions */}
-        <div className="mt-6 flex flex-col justify-end gap-4 md:flex-row">
-          <Button variant="outline" className="w-full" type="submit">
-            Send e-mail
+        {/* <div className="mt-6 flex flex-col justify-end gap-3 sm:flex-row">
+          <Button variant="outline" className="flex-1" type="submit">
+            <Mail className="mr-2 h-4 w-4" />
+            Send Report
           </Button>
 
-          {request?.photos.length > 0 && (
+          {service?.photos.length > 0 && (
             <Button
               onClick={() => {
-                zipImages(request.photos).then((zipContent) => {
+                zipImages(service.photos).then((zipContent) => {
                   const url = URL.createObjectURL(zipContent);
                   const link = document.createElement('a');
                   link.href = url;
-                  link.download = 'images.zip';
+                  link.download = 'service-photos.zip';
                   link.click();
                   URL.revokeObjectURL(url);
                 });
               }}
               variant="outline"
-              className="w-full"
+              className="flex-1"
             >
-              Download photos
+              <Download className="mr-2 h-4 w-4" />
+              Download Photos
             </Button>
           )}
-        </div>
+        </div> */}
       </DialogContent>
     </Dialog>
   );
