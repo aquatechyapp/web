@@ -17,6 +17,7 @@ import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
+import { useUpdateCompanyPreferences } from '@/hooks/react-query/companies/updatePreferences';
 
 const schema = z.object({
   sendEmails: z.boolean(),
@@ -27,8 +28,8 @@ const schema = z.object({
   ccEmail: z.string()
 });
 
-export default function Page() {
-  const { isPending, mutate } = useChangeUserPreferences();
+export default function Page({ params }: { params: { companyId: string } }) {
+  const { isPending, mutate } = useUpdateCompanyPreferences(params.companyId);
   const { userPreferences, isFreePlan } = useUserStore(
     useShallow((state) => ({
       userPreferences: state.user?.userPreferences,
@@ -91,17 +92,15 @@ export default function Page() {
         >
           {fields.map((field) => (
             <div key={field.label} className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">
+              {/* <div className='flex gap-2'> */}
               <div className="col-span-8 row-auto flex flex-col">
-                <label htmlFor={field.label}>
-                  <Typography element="h3" className="text-gray-description">
-                    {field.label}
-                  </Typography>
+                <label htmlFor={field.label} className="flex flex-col space-y-1">
+                  <span className="text-sm font-semibold text-gray-800">{field.label}</span>
                 </label>
-                <Typography element="p" className="text-gray-description">
-                  {field.description}
-                </Typography>
+                <span className="text-muted-foreground text-sm font-normal">{field.description}</span>
               </div>
-              <div className="col-span-4 flex w-full flex-col gap-2">
+              {/* </div> */}
+              <div className="col-span-4 flex flex-col gap-2">
                 {field.itens.map((item) => {
                   const isFieldSendEmails = item.name === 'sendEmails';
 
@@ -118,11 +117,13 @@ export default function Page() {
                       </div>
                       {field.type === FieldType.Switch && (
                         <label htmlFor={item.label}>
-                          <Typography element="p">{item.label}</Typography>
+                          <div>
+                            <span className="text-sm font-semibold text-gray-800">{item.label}</span>
+                          </div>
                           {item.subLabel ? (
-                            <Typography element="p" className="text-sm text-gray-500">
-                              {item.subLabel}
-                            </Typography>
+                            <div>
+                              <span className="text-sm font-normal text-gray-800">{item.subLabel}</span>
+                            </div>
                           ) : null}
                         </label>
                       )}

@@ -220,13 +220,6 @@ export const routes: Menu[] = [
         title: 'Subscription',
         icon: CircleDollarSign,
         description: 'Manage your subscription and see our plans'
-      },
-      preferences: {
-        text: 'Preferences',
-        href: '/account/preferences',
-        title: 'Preferences',
-        description: 'Edit your preferences of e-mails and notifications',
-        icon: Settings2
       }
     },
     href: '/account',

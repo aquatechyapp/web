@@ -14,7 +14,7 @@ export const useEditCompany = () => {
   const { toast } = useToast();
   const { push } = useRouter();
 
-  const { mutate: handleSubmit } = useMutation({
+  const { mutate: handleSubmit, isPending } = useMutation({
     mutationFn: async (data: FormSchema) =>
       await clientAxios.patch(`/companies`, {
         ...data
@@ -42,5 +42,5 @@ export const useEditCompany = () => {
     }
   });
 
-  return { handleSubmit };
+  return { handleSubmit, isPending };
 };
