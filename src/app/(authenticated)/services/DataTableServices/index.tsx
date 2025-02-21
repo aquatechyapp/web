@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Request } from '@/ts/interfaces/Request';
 import { ModalViewService } from '../ModalViewService';
+import { Service } from '@/ts/interfaces/Service';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -19,7 +20,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTableServices<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   const table = useReactTable({
     data,
@@ -59,7 +60,7 @@ export function DataTableServices<TData, TValue>({ columns, data }: DataTablePro
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                onClick={() => setSelectedRequest(row.original as Request)}
+                onClick={() => setSelectedService(row.original as Service)}
                 className="cursor-pointer"
                 data-state={row.getIsSelected() && 'selected'}
               >
@@ -79,8 +80,8 @@ export function DataTableServices<TData, TValue>({ columns, data }: DataTablePro
       </Table>
 
       {/* Modal fora do loop */}
-      {selectedRequest && (
-        <ModalViewService request={selectedRequest} open={!!selectedRequest} setOpen={() => setSelectedRequest(null)} />
+      {selectedService && (
+        <ModalViewService service={selectedService} open={!!selectedService} setOpen={() => setSelectedService(null)} />
       )}
     </div>
   );
