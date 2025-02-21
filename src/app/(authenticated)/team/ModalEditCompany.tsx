@@ -16,7 +16,7 @@ import { useEditCompany } from '@/hooks/react-query/companies/updateCompany';
 import { Company } from '@/ts/interfaces/Company';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 
-const schema = z.object({
+export const updateCompanySchema = z.object({
   companyId: z
     .string({
       required_error: 'companyId is required.',
@@ -80,7 +80,7 @@ const schema = z.object({
     .optional()
 });
 
-export type FormSchema = z.infer<typeof schema>;
+export type FormSchema = z.infer<typeof updateCompanySchema>;
 
 type PropsEdit = {
   children: React.ReactNode;
@@ -97,7 +97,7 @@ export function ModalEditCompany({ children, companyId }: PropsEdit) {
   selectedCompany = companies.find((company) => company.id === companyId);
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(updateCompanySchema),
     defaultValues: {
       name: selectedCompany?.name,
       phone: selectedCompany?.phone,
