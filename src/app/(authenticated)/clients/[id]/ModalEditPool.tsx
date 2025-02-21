@@ -3,7 +3,7 @@ import { MdOutlineEdit } from 'react-icons/md';
 
 import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
-import StateAndCitySelect from '@/components/StateAndCitySelect';
+import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { PoolTypes } from '@/constants';

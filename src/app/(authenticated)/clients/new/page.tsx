@@ -12,7 +12,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import InputField from '@/components/InputField';
 import SelectField from '@/components/SelectField';
-import StateAndCitySelect from '@/components/StateAndCitySelect';
+import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form, FormDescription, FormItem } from '@/components/ui/form';

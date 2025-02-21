@@ -15,7 +15,7 @@ type Props = {
 
 const states = State.getStatesOfCountry('US');
 
-export default function StateAndCitySelect({
+export default function ClientStateAndCitySelect({
   stateName = 'clientState',
   cityName = 'clientCity',
   defaultStateValue,

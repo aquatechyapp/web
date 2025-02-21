@@ -7,7 +7,7 @@ import * as z from 'zod';
 import InputField from '@/components/InputField';
 import { InputFile } from '@/components/InputFile';
 import SelectField from '@/components/SelectField';
-import StateAndCitySelect from '@/components/StateAndCitySelect';
+import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';

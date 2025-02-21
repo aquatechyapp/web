@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import StateAndCitySelect from '@/components/StateAndCitySelect';
+import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
