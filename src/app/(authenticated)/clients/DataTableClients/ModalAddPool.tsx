@@ -12,9 +12,9 @@ import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
-import { FieldType } from '@/ts/enums/enums';
+import { FieldType, PoolType } from '@/ts/enums/enums';
 import { isEmpty } from '@/utils';
-
+import { CreatePool } from '@/ts/interfaces/Pool';
 const createPoolSchema = poolSchema
   .omit({
     poolNotes: true,
@@ -71,7 +71,7 @@ const createPoolSchema = poolSchema
 export type CreatePoolType = z.infer<typeof createPoolSchema>;
 
 type Props = {
-  handleAddPool: (data: CreatePoolType) => void;
+  handleAddPool: (data: CreatePool) => void;
   clientOwnerId: string;
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -117,7 +117,11 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
   async function handleSubmit(data: CreatePoolType) {
     const isValid = await validateForm();
     if (isValid) {
-      handleAddPool(data);
+      handleAddPool({
+        ...data,
+        monthlyPayment: data.monthlyPayment ?? undefined,
+        poolType: data.poolType as PoolType
+      });
       form.reset();
       setOpen(false);
       return;
