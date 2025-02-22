@@ -31,7 +31,7 @@ export const useCreateCompany = () => {
       queryClient.invalidateQueries({ queryKey: ['companyMembers', user.id] });
       toast({
         variant: 'success',
-        duration: 2000,
+        duration: 5000,
         title: 'Company created successfully'
       });
     }

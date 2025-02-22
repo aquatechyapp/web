@@ -162,13 +162,13 @@ const fields: Fields = [
   {
     inputClassName: 'flex justify-center items-center gap-4',
     type: FieldType.Switch,
-    description: 'Receive e-mails when a service was done.',
-    label: 'Send Emails',
+    description: 'Send e-mails when a service is done.',
+    label: 'Send e-mails',
     itens: [
       {
-        label: 'Send E-mails',
+        label: 'Send e-mails',
         subLabel: '(only on grow plan)',
-        description: 'Receive e-mails when a service was done.',
+        description: 'Send e-mails when a service is done.',
         name: 'sendEmails'
       }
     ]
@@ -176,37 +176,37 @@ const fields: Fields = [
   {
     inputClassName: 'flex justify-center items-center gap-4',
     type: FieldType.Switch,
-    description: 'Select the information you want to receive in the e-mails.',
+    description: 'Select the information you want to send in the e-mails.',
     label: 'Include in e-mails',
     itens: [
       {
         label: 'Chemicals Readings',
-        description: 'Receive e-mails when a service was done.',
+        description: 'Send e-mails with chemicals readings.',
         name: 'attachChemicalsReadings'
       },
       {
         label: 'Checklist',
-        description: 'Receive e-mails when a service was done.',
+        description: 'Send e-mails with checklist.',
         name: 'attachChecklist'
       },
       {
         label: 'Service Notes',
-        description: 'Receive e-mails when a service was done.',
+        description: 'Send e-mails with service notes.',
         name: 'attachServiceNotes'
       },
       {
         label: 'Service Photos',
-        description: 'Receive e-mails when a service was done.',
+        description: 'Send e-mails with service photos.',
         name: 'attachServicePhotos'
       }
     ]
   },
   {
-    description: 'Send a copy to another e-mail',
+    description: 'Send a copy to another e-mail.',
     itens: [
       {
         label: 'Cc E-mail',
-        description: 'Company email to include in copy.',
+        description: 'E-mail to send a copy to.',
         name: 'ccEmail'
       }
     ],
