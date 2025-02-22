@@ -23,28 +23,28 @@ function PoolCard({ pool, services, clientId }: Props) {
     setTab(tab);
   };
 
-  const selectedTabStyles = 'text-gray-800 font-semibold border-m border-gray-800';
+  const selectedTabStyles = 'text-white font-semibold border-m';
 
   return (
     <div className="Form inline-flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-gray-50">
       <div className="inline-flex w-full items-end justify-center gap-4">
-        <div className="inline-flex w-full items-start justify-start gap-4 self-stretch border-b border-gray-200">
-          <div className="border-none text-sm font-medium">{pool.name}</div>
+        <div className="inline-flex w-full items-start justify-start gap-4 self-stretch rounded-md border-b border-gray-200 bg-gradient-to-b from-sky-600 to-teal-600 px-2 pt-2">
+          <div className="border-none text-sm font-medium text-white">{pool.name}</div>
           <Separator orientation="vertical" />
           <div
             onClick={() => handleTabChange('pool_info')}
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
-            <div className={`text-sm text-gray-500 hover:cursor-pointer ${tab === 'pool_info' && selectedTabStyles}`}>
+            <div className={`text-sm text-white hover:cursor-pointer ${tab === 'pool_info' && selectedTabStyles}`}>
               Information
             </div>
-            {tab === 'pool_info' && <div className="h-0.5 self-stretch bg-gray-800" />}
+            {tab === 'pool_info' && <div className="h-0.5 self-stretch bg-gray-800 text-white" />}
           </div>
           <div
             onClick={() => handleTabChange('services')}
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
-            <div className={`text-sm text-gray-500 hover:cursor-pointer ${tab === 'services' && selectedTabStyles}`}>
+            <div className={`text-sm text-white hover:cursor-pointer ${tab === 'services' && selectedTabStyles}`}>
               Services
             </div>
             {tab === 'services' && <div className="Rectangle2 h-0.5 self-stretch bg-gray-800" />}
@@ -54,7 +54,7 @@ function PoolCard({ pool, services, clientId }: Props) {
             className="inline-flex flex-col items-start justify-start gap-2.5"
           >
             <div
-              className={`text-sm text-gray-500 hover:cursor-pointer ${tab === 'pool_assignments' && selectedTabStyles}`}
+              className={`text-sm text-white hover:cursor-pointer ${tab === 'pool_assignments' && selectedTabStyles}`}
             >
               Assignments
             </div>

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { clientAxios } from '@/lib/clientAxios';
 import { useState } from 'react';
+import { Service } from '@/ts/interfaces/Service';
 
 export interface UseGetServicesParams {
   from: string;
@@ -23,9 +24,17 @@ export default function useGetServices(initialData: UseGetServicesParams) {
         params: data
       });
 
-      console.log(response.data);
+      // Organize the services desc by completedAt
 
-      return response.data;
+      const services = response.data.services;
+      const servicesByDate = services.sort((a: Service, b: Service) => {
+        return new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime();
+      });
+
+      return {
+        ...response.data,
+        services: servicesByDate
+      };
     },
     enabled: Boolean(data.from && data.to) // Ensure the query only runs when required parameters are present
   });

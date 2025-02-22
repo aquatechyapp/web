@@ -187,6 +187,11 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
     setNext10WeekdaysEndAfter(dates);
   }
 
+  // Create a new members array don't including repeated members and removing members with firstName empty
+  const uniqueMembers = members.filter(
+    (member, index, self) => index === self.findIndex((t) => t.id === member.id) && member.firstName !== ''
+  );
+
   useEffect(() => {
     form.resetField('startOn');
     form.resetField('endAfter');
@@ -219,7 +224,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                     name="assignmentToId"
                     placeholder="Technician..."
                     label="Technician"
-                    options={members.map((m) => ({
+                    options={uniqueMembers.map((m) => ({
                       key: m.id,
                       value: m.id,
                       name: `${m.firstName} ${m.lastName}`

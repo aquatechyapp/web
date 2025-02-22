@@ -1,11 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ImageListType } from 'react-images-uploading';
 import * as z from 'zod';
 
 import InputField from '@/components/InputField';
-import { InputFile } from '@/components/InputFile';
 import SelectField from '@/components/SelectField';
 import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Button } from '@/components/ui/button';
@@ -14,9 +12,9 @@ import { Form } from '@/components/ui/form';
 import { PoolTypes } from '@/constants';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
-import { FieldType } from '@/ts/enums/enums';
+import { FieldType, PoolType } from '@/ts/enums/enums';
 import { isEmpty } from '@/utils';
-
+import { CreatePool } from '@/ts/interfaces/Pool';
 const createPoolSchema = poolSchema
   .omit({
     poolNotes: true,
@@ -45,7 +43,6 @@ const createPoolSchema = poolSchema
         .trim()
         // .min(1, { message: 'Notes must be at least 1 character.' })
         .optional(),
-      photo: defaultSchemas.imageFile,
       city: z
         .string({
           required_error: 'City is required.',
@@ -74,7 +71,7 @@ const createPoolSchema = poolSchema
 export type CreatePoolType = z.infer<typeof createPoolSchema>;
 
 type Props = {
-  handleAddPool: (data: CreatePoolType) => void;
+  handleAddPool: (data: CreatePool) => void;
   clientOwnerId: string;
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -102,10 +99,6 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
     form.reset();
   }, [open]);
 
-  function handleImagesChange(images: ImageListType) {
-    form.setValue('photo', images as File[]);
-  }
-
   const validateForm = async (): Promise<boolean> => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _ = form.formState.errors; // also works if you read form.formState.isValid
@@ -124,7 +117,11 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
   async function handleSubmit(data: CreatePoolType) {
     const isValid = await validateForm();
     if (isValid) {
-      handleAddPool(data);
+      handleAddPool({
+        ...data,
+        monthlyPayment: data.monthlyPayment ?? undefined,
+        poolType: data.poolType as PoolType
+      });
       form.reset();
       setOpen(false);
       return;
@@ -139,6 +136,8 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
           <form onSubmit={form.handleSubmit(handleSubmit)} className="grid gap-4">
             <div className="-mt-2 flex gap-4">
               <InputField name="address" label="Address" placeholder="Pool Address" />
+            </div>
+            <div className="-mt-2 flex gap-4">
               <StateAndCitySelect stateName="state" cityName="city" />
               <InputField name="zip" label="Zip" placeholder="Pool zip" type={FieldType.Zip} />
             </div>
@@ -158,8 +157,18 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
                 />
                 <SelectField name="poolType" label="Chemical type" placeholder="Chemical type" options={PoolTypes} />
               </div>
+
+              {/* Add the animal danger checkbox */}
+              <div className="grid gap-4">
+                <InputField
+                  name="animalDanger"
+                  label="Animal danger"
+                  placeholder="Is there a danger of animal attack?"
+                  type={FieldType.Checkbox}
+                />
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div>
               <InputField
                 className="h-40"
                 type={FieldType.TextArea}
@@ -167,16 +176,13 @@ export function ModalAddPool({ handleAddPool, clientOwnerId, open, setOpen }: Pr
                 label="Pool notes"
                 placeholder="Pool notes"
               />
-              <div className="mt-8 h-40">
-                <InputFile handleChange={(images) => handleImagesChange(images)} />
-              </div>
             </div>
-            <div className="m-auto flex w-[50%] justify-around">
-              <Button onClick={() => setOpen(false)} variant={'outline'}>
-                Cancel
-              </Button>
-              <Button variant={'default'} color="green" type="submit">
+            <div className="m-auto flex w-[50%] justify-around gap-4">
+              <Button className="w-full" variant={'default'} color="green" type="submit">
                 Create
+              </Button>
+              <Button className="w-full" onClick={() => setOpen(false)} variant={'outline'}>
+                Cancel
               </Button>
             </div>
           </form>

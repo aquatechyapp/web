@@ -39,6 +39,7 @@ import { getInitials } from '@/utils/others';
 
 import { DialogDeleteAssignment } from './ModalDeleteAssignment';
 import { DialogTransferRoute } from './ModalTransferRoute';
+import { AssignmentDropdownActions } from './components/AssignmentActions';
 
 type Props = {
   handleDragEnd: (event: DragEndEvent, setActive: React.Dispatch<number | null>) => void;
@@ -101,34 +102,7 @@ export function AssignmentsList({ handleDragEnd }: Props) {
               key={assignment.id}
               shouldPermitChangeOrder={shouldPermitChangeOrder}
             />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className="self-center">
-                <Button size="icon" variant="ghost">
-                  <BsThreeDotsVertical className="text-stone-500" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  onClick={() => {
-                    // setMenuOpen(false);
-                    setAssignment(assignment);
-                    setOpenDialogTransfer(true);
-                  }}
-                >
-                  Transfer Assignment
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-red-500"
-                  onClick={() => {
-                    // setMenuOpen(false);
-                    setAssignment(assignment);
-                    setOpenDialogDelete(true);
-                  }}
-                >
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <AssignmentDropdownActions assignment={assignment} />
           </div>
         ))}
         <DialogDeleteAssignment open={openDialogDelete} setOpen={setOpenDialogDelete} assignment={assignment} />

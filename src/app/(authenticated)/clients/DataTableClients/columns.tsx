@@ -4,9 +4,9 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { Client } from '@/ts/interfaces/Client';
 
-import ActionButtons from './CallActionButtons';
 import NamePhoto from './CellNamePhoto';
 import Phones from './CellPhone';
+import { ActionButtons } from './CallActionButtons';
 
 export const columns: ColumnDef<Client>[] = [
   {
@@ -50,7 +50,7 @@ export const columns: ColumnDef<Client>[] = [
   },
   {
     id: 'actions',
-    cell: (props) => <ActionButtons {...props} />
+    cell: ({ row }) => <ActionButtons client={row.original} />
   },
   {
     id: 'deactivatedAt',
