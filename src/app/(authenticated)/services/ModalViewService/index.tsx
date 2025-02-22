@@ -50,7 +50,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
             <div className="flex-1">
               {format(new Date(service?.completedAt || new Date()), "EEEE, MMMM do 'at' h:mm a")}
               <span className="ml-1 font-medium">
-                by {service?.completedByUser?.firstName || 'Unknown'} {service?.completedByUser?.lastName || 'Unknown'}
+                by {service?.completedByUser?.firstName || ''} {service?.completedByUser?.lastName || ''}
               </span>
             </div>
           </div>

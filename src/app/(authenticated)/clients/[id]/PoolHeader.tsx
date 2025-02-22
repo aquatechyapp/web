@@ -63,7 +63,7 @@ function PoolCard({ pool, services, clientId }: Props) {
         </div>
       </div>
       {tab === 'pool_info' && <BasicInformation clientId={clientId} pool={pool} />}
-      {tab === 'services' && <ServicesDatatable data={services} />}
+      {tab === 'services' && <ServicesDatatable services={services} pool={pool} />}
       {tab === 'pool_assignments' && <AssignmentsDatatable data={pool.assignments || []} />}
     </div>
   );

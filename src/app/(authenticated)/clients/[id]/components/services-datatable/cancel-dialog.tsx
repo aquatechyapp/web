@@ -14,9 +14,17 @@ type DeleteServiceDialogProps = {
   serviceId: string;
   assignmentId: string;
   clientId: string;
+  trigger: React.ReactNode;
+  onSuccess?: () => void;
 };
 
-export default function DeleteServiceDialog({ serviceId, assignmentId, clientId }: DeleteServiceDialogProps) {
+export default function DeleteServiceDialog({
+  serviceId,
+  assignmentId,
+  clientId,
+  trigger,
+  onSuccess
+}: DeleteServiceDialogProps) {
   const { toast } = useToast();
 
   const cancelService = useDeleteService(clientId);
@@ -32,16 +40,13 @@ export default function DeleteServiceDialog({ serviceId, assignmentId, clientId 
       description: 'The service has been deleted successfully',
       duration: 3000
     });
+    onSuccess?.();
   }
 
   return (
     <ConfirmActionDialog
       variant="destructive"
-      trigger={
-        <Button size="icon" variant="destructive">
-          <FaRegTrashAlt className="h-4 w-4" />
-        </Button>
-      }
+      trigger={trigger}
       onConfirm={handleConfirm}
       description="Once you delete service, you will lose all the information related"
     />
