@@ -1,23 +1,15 @@
 import { useState } from 'react';
-import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDragIndicator } from 'react-icons/md';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+
 import { useServicesContext } from '@/context/services';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { useMembersStore } from '@/store/members';
 import { useUserStore } from '@/store/user';
 import { getInitials } from '@/utils/others';
 import { Service } from '@/ts/interfaces/Service';
-import { DialogDeleteService } from './ModalDeleteService';
-import { DialogTransferService } from './ModalTransferService';
+import { ServiceActions } from './components/ServiceActions';
 
 export function ServicesList() {
   const user = useUserStore((state) => state.user);
@@ -53,41 +45,8 @@ export function ServicesList() {
             key={service.id}
             shouldPermitChangeOrder={shouldPermitChangeOrder}
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild className="self-center">
-              <Button size="icon" variant="ghost">
-                <BsThreeDotsVertical className="text-stone-500" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem
-                onClick={() => {
-                  setService(service);
-                  setOpenDialogTransfer(true);
-                }}
-              >
-                Transfer Service
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-red-500"
-                onClick={() => {
-                  setService(service);
-                  setOpenDialogDelete(true);
-                }}
-              >
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       ))}
-      <DialogDeleteService
-        open={openDialogDelete}
-        setOpen={setOpenDialogDelete}
-        service={service}
-        clientId={service?.clientOwnerId ?? ''}
-      />
-      <DialogTransferService open={openDialogTransfer} setOpen={setOpenDialogTransfer} service={service!} />
     </>
   );
 }
@@ -125,6 +84,7 @@ export function ServiceItem({ id, service, shouldPermitChangeOrder }: ServiceIte
         <div className="flex h-8 min-w-16 items-center justify-center rounded-lg border border-gray-100 px-2">
           <div className="text-center text-sm font-semibold text-gray-800">{service.status}</div>
         </div>
+        <ServiceActions service={service} />
       </div>
     </div>
   );
