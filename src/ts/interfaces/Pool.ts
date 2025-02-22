@@ -33,6 +33,22 @@ export type Pool = {
   requests?: Request[];
 };
 
+// Used only to add a pool to a client
+
+export type CreatePool = {
+  address: string;
+  animalDanger: boolean;
+  city: string;
+  clientOwnerId: string;
+  enterSide?: string | null;
+  lockerCode?: string | null;
+  monthlyPayment?: number;
+  notes?: string;
+  poolType: PoolType;
+  state: string;
+  zip: string;
+};
+
 type Coords = {
   lat: number;
   lng: number;

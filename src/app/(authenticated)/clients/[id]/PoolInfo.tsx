@@ -90,7 +90,7 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
             label="Chemical type"
           />
         </div>
-        <div className="mt-2 h-32 w-full">
+        <div className="mt-2 w-full">
           <InputField type={FieldType.TextArea} name="notes" placeholder="Location notes..." />
         </div>
         <Button disabled={isEmpty(changedFields)} className="mt-4" type="submit">
