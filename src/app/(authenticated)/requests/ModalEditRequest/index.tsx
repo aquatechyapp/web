@@ -11,7 +11,7 @@ import { InputFile } from '@/components/InputFile';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { Categories, RequestStatus } from '@/constants';
 import useGetClients from '@/hooks/react-query/clients/getClients';
@@ -23,6 +23,8 @@ import { Request } from '@/ts/interfaces/Request';
 import { formatCamelCase, isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
 
+import Image from 'next/image';
+
 import { CopyToClipboard } from './CopyToClipboard';
 import { Heading } from 'lucide-react';
 import { Typography } from '@/components/Typography';
@@ -30,6 +32,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getInitials } from '@/utils/others';
 import { format } from 'date-fns';
 import { useDeleteRequest } from '@/hooks/react-query/requests/deleteRequest';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
+import { Card, CardContent } from '@/components/ui/card';
+import { ListChecks, MapPin, User, FileText, ImageIcon, Trash2 } from 'lucide-react';
 
 const schema = z.object({
   clientId: z.string().min(1, { message: 'Client is required' }),
@@ -69,9 +74,9 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
       clientId: request.clientId || '',
       category: request.category || '',
       createdBy: {
-        id: user?.id,
-        firstName: user?.firstName,
-        lastName: user?.lastName
+        id: request.createdBy?.id,
+        firstName: request.createdBy?.firstName,
+        lastName: request.createdBy?.lastName
       },
       addressedTo: user?.id,
       poolId: request.poolId || '',
@@ -100,107 +105,123 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-full p-0 lg:max-w-sm">
-        <Form {...form}>
-          <form className="w-full lg:max-w-sm" onSubmit={form.handleSubmit((data) => handleSubmit(data))}>
-            <div className="w-full lg:max-w-sm">
-              <div className="relative flex w-full flex-col items-center justify-start gap-6 text-nowrap rounded-lg border px-6 pb-6 pt-8">
-                <div className="flex w-full flex-col flex-wrap items-start justify-start gap-[4px] self-start lg:flex-col lg:flex-nowrap">
-                  <div className="flex w-full flex-row flex-wrap items-start justify-start gap-[4px] self-start border-b border-gray-200 pb-4 lg:flex-col lg:flex-nowrap">
-                    <div className="inline-flex w-fit items-start justify-start">
-                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
-                        <div className="self-stretch text-sm font-medium text-gray-500">Client name</div>
-                        <div className="self-stretch text-sm font-medium text-gray-800">{request.client.fullName}</div>
-                      </div>
-                    </div>
-                    <div className="inline-flex w-fit items-start justify-start">
-                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
-                        <div className="self-stretch text-sm font-medium text-gray-500">Email</div>
-                        <div className="self-stretch text-sm font-medium text-gray-800">{request.client.email}</div>
-                      </div>
-                    </div>
-                    <div className="inline-flex w-fit items-start justify-start">
-                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
-                        <div className="self-stretch text-sm font-medium text-gray-500">Phone Number</div>
-                        <div className="self-stretch text-sm font-medium text-gray-800">{request.client.phone}</div>
-                      </div>
-                    </div>
-                    <div className="inline-flex w-fit items-start justify-start">
-                      <div className="Text inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
-                        <div className="self-stretch text-sm font-medium text-gray-500">Location</div>
-                        <div className="self-stretch text-sm font-medium text-gray-800">{request.pool.address}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex w-full flex-row flex-wrap items-start justify-start gap-[4px] self-start border-b border-gray-200 pb-4 lg:flex-col lg:flex-nowrap">
-                    <div className="inline-flex w-fit items-start justify-start gap-2">
-                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
-                        <div className="self-stretch text-sm font-medium text-gray-500">Opened</div>
-                        <div className="self-stretch text-sm font-medium text-gray-800">
-                          {format(new Date(request.createdAt), "MMMM, dd, yyyy 'at' h:mm a")}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="inline-flex w-fit items-start justify-start gap-2">
-                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
-                        <div className="self-stretch text-sm font-medium text-gray-500">Category</div>
-                        <div className="self-stretch text-sm font-medium text-gray-800">
-                          {formatCamelCase(request.category)}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="inline-flex w-fit items-start justify-start gap-2">
-                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
-                        <div className="self-stretch text-sm font-medium text-gray-500">Description</div>
-                        <div className="self-stretch text-sm font-medium text-gray-800">{request.description}</div>
-                      </div>
-                    </div>
-                    <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
-                      <div className="self-stretch text-sm font-medium text-gray-500">Photos</div>
-                      <div className="self-stretch text-sm font-bold text-gray-800">See photos</div>
-                      {/* <div className="self-stretch text-sm font-medium text-gray-800">
-                        <InputFile
-                          disabled={disabled}
-                          handleChange={(images) => form.setValue('photo', images)}
-                          defaultPhotos={request.photos.map((photo) => ({
-                            dataURL: photo,
-                            file: new File([], photo)
-                          }))}
-                          showBorder={false}
-                        />
-                        </div> */}
-                    </div>
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto p-6">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <ListChecks className="h-6 w-6 text-[#364D9D]" />
+            <DialogTitle className="text-xl font-semibold">Request Details</DialogTitle>
+          </div>
 
-                    <div className="inline-flex w-fit items-start justify-start gap-2">
-                      <div className="inline-flex shrink grow basis-0 flex-row items-start justify-center gap-1">
-                        <div className="self-stretch text-sm font-medium text-gray-500">Resolution</div>
-                        <div className="self-stretch text-sm font-medium text-gray-800">
-                          {request.outcome || 'No resolution yet'}
-                        </div>
+          <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex-1">
+              {format(new Date(request.createdAt), "EEEE, MMMM do 'at' h:mm a")}
+              <span className="ml-1 font-medium">
+                by {request.createdBy?.firstName} {request.createdBy?.lastName}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-1 flex items-center gap-1 text-sm text-gray-500">
+            <MapPin className="h-4 w-4" />
+            <span>{request.pool.address}</span>
+          </div>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <Accordion type="single" collapsible defaultValue="details" className="mt-4">
+              <AccordionItem value="details">
+                <AccordionTrigger className="text-lg">
+                  <div className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-[#364D9D]" />
+                    <span className="text-md">Client Information</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <Card>
+                    <CardContent className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
+                      <div className="rounded-lg bg-gray-50 p-3">
+                        <div className="text-sm text-gray-500">Client Name</div>
+                        <div className="text-lg font-semibold">{request.client.fullName}</div>
                       </div>
+                      <div className="rounded-lg bg-gray-50 p-3">
+                        <div className="text-sm text-gray-500">Email</div>
+                        <div className="text-lg font-semibold">{request.client.email}</div>
+                      </div>
+                      <div className="rounded-lg bg-gray-50 p-3">
+                        <div className="text-sm text-gray-500">Phone</div>
+                        <div className="text-lg font-semibold">{request.client.phone}</div>
+                      </div>
+                      <div className="rounded-lg bg-gray-50 p-3">
+                        <div className="text-sm text-gray-500">Category</div>
+                        <div className="text-lg font-semibold">{formatCamelCase(request.category)}</div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="request">
+                <AccordionTrigger className="text-lg">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-[#364D9D]" />
+                    <span className="text-md">Request Details</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <Card>
+                    <CardContent className="space-y-4 p-4">
+                      <div className="rounded-lg bg-gray-50 p-3">
+                        <div className="text-sm text-gray-500">Description</div>
+                        <div className="text-lg">{request.description}</div>
+                      </div>
+
+                      <InputField
+                        name="outcome"
+                        placeholder="How was the outcome?"
+                        className="w-full"
+                        type={FieldType.TextArea}
+                      />
+                      <SelectField name="status" options={RequestStatus} placeholder="Status" />
+                    </CardContent>
+                  </Card>
+                </AccordionContent>
+              </AccordionItem>
+
+              {request.photos.length > 0 && (
+                <AccordionItem value="photos">
+                  <AccordionTrigger className="text-lg">
+                    <div className="flex items-center gap-2">
+                      <ImageIcon className="h-5 w-5 text-[#364D9D]" />
+                      <span className="text-md">Photos</span>
                     </div>
-                  </div>
-                  <div className="mt-4 flex w-full flex-row flex-wrap items-start justify-start gap-[4px] self-start border-b border-gray-200 pb-4 lg:flex-col lg:flex-nowrap">
-                    <InputField
-                      name="outcome"
-                      placeholder="How was the outcome?"
-                      className="mb-2 w-full"
-                      type={FieldType.TextArea}
-                    />
-                    <SelectField name="status" options={RequestStatus} placeholder="Status" />
-                  </div>
-                </div>
-                <div className="flex w-full flex-col items-center gap-2">
-                  <div className="flex w-full justify-center gap-2">
-                    <Button className="w-full" variant={'default'} type="submit">
-                      Update
-                    </Button>
-                    <Button className="w-full" variant={'destructive'} type="button" onClick={() => handleDelete()}>
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                      {request.photos.map((photo: string, index: number) => (
+                        <div key={index} className="relative aspect-square overflow-hidden rounded-lg">
+                          <Image
+                            src={photo}
+                            alt={`Request photo ${index + 1}`}
+                            layout="fill"
+                            className="object-cover transition-transform hover:scale-105"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+            </Accordion>
+
+            <div className="mt-6 flex gap-2 border-t pt-6">
+              <Button type="submit" className="w-full">
+                Update Request
+              </Button>
+              <Button type="button" variant="destructive" className="w-full" onClick={handleDelete}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Request
+              </Button>
             </div>
           </form>
         </Form>

@@ -4,10 +4,13 @@ import { AxiosError } from 'axios';
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
 import { CreateCompany } from '@/ts/interfaces/Company';
+import { useUserStore } from '@/store/user';
 
 export const useCreateCompany = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  const user = useUserStore((state) => state.user);
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: CreateCompany) => await clientAxios.post('/companies', data),
 
@@ -25,9 +28,10 @@ export const useCreateCompany = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['companyMembers', user.id] });
       toast({
         variant: 'success',
-        duration: 2000,
+        duration: 5000,
         title: 'Company created successfully'
       });
     }

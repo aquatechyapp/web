@@ -10,18 +10,18 @@ import { clientAxios } from '../../../lib/clientAxios';
 export const useUpdateUser = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { push } = useRouter();
+  const router = useRouter();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: IUserSchema) => await clientAxios.patch('/users', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       toast({
-        duration: 2000,
+        duration: 5000,
         title: 'User updated successfully',
         variant: 'success'
       });
-      push('/dashboard');
+      router.push('/dashboard');
     },
     onError: (
       error: AxiosError<{
@@ -29,7 +29,7 @@ export const useUpdateUser = () => {
       }>
     ) => {
       toast({
-        duration: 2000,
+        duration: 5000,
         variant: 'error',
         title: 'Error updating user',
         description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
