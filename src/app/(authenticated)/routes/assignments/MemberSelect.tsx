@@ -41,18 +41,19 @@ export default function MemberSelect({ onChange }: Props) {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {members.map((member: CompanyMember) => (
-              <SelectItem key={member.id} value={member.id}>
-                {member.firstName} {member.lastName}
-              </SelectItem>
-            ))}
+            {members.map(
+              (member: CompanyMember) =>
+                member.id !== user.id &&
+                member.firstName !== '' && (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.firstName} {member.lastName}
+                  </SelectItem>
+                )
+            )}
             {
-              // If user has no company, add the user to the members array.
-              members.length === 0 && (
-                <SelectItem value={user.id}>
-                  {user.firstName} {user.lastName}
-                </SelectItem>
-              )
+              <SelectItem value={user.id}>
+                {user.firstName} {user.lastName}
+              </SelectItem>
             }
           </SelectGroup>
         </SelectContent>

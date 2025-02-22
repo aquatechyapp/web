@@ -103,8 +103,8 @@ export function ServiceItem({ id, service, shouldPermitChangeOrder }: ServiceIte
   const address = `${service?.clientOwner?.address}, ${service?.clientOwner?.city}, ${service?.clientOwner?.state}, ${service?.clientOwner?.zip}`;
 
   return (
-    <div className="inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 bg-gray-50 px-1">
-      <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 px-1 py-2">
+    <div className="inline-flex w-full items-center justify-between self-stretch border-b border-gray-100 bg-gray-50 px-1">
+      <div className="flex h-[60px] items-center justify-start gap-2 py-2">
         <div className="flex items-center justify-start gap-2">
           {!shouldPermitChangeOrder && (
             <div className="min-w-4">
@@ -121,8 +121,10 @@ export function ServiceItem({ id, service, shouldPermitChangeOrder }: ServiceIte
           </div>
         </div>
       </div>
-      <div className="flex h-8 w-8 items-center justify-center gap-1 rounded-lg border border-gray-100">
-        <div className="shrink grow basis-0 text-center text-sm font-semibold text-gray-800">{service.status}</div>
+      <div className="flex items-center gap-2">
+        <div className="flex h-8 min-w-16 items-center justify-center rounded-lg border border-gray-100 px-2">
+          <div className="text-center text-sm font-semibold text-gray-800">{service.status}</div>
+        </div>
       </div>
     </div>
   );

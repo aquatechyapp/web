@@ -37,6 +37,11 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
     }))
   );
 
+  // Create a new members array don't including repeated members and removing members with firstName empty
+  const uniqueMembers = members.filter(
+    (member, index, self) => index === self.findIndex((t) => t.id === member.id) && member.firstName !== ''
+  );
+
   const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
   const [weekday, setWeekday] = useState<WeekdaysUppercase>(selectedWeekday);
 
@@ -148,7 +153,19 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
   }, [weekday]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (!isOpen) {
+          setTimeout(() => {
+            form.reset();
+            setWeekday(selectedWeekday);
+            setNext10DatesWithChosenWeekday([]);
+          }, 0);
+        }
+      }}
+    >
       <DialogContent className="max-h-screen w-96 max-w-[580px] overflow-y-scroll rounded-md md:w-[580px]">
         <DialogTitle>Transfer Service</DialogTitle>
         {isPending ? (
@@ -162,7 +179,7 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
                     name="assignedToId"
                     placeholder="Technician..."
                     label="Technician"
-                    options={members.map((m) => ({
+                    options={uniqueMembers.map((m) => ({
                       key: m.id,
                       value: m.id,
                       name: `${m.firstName} ${m.lastName}`
@@ -192,12 +209,13 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
         )}
         <div className="flex justify-around">
           <Button onClick={transferService}>Transfer</Button>
-
           <Button
             variant="outline"
             onClick={() => {
-              setOpen(false);
               form.reset();
+              setWeekday(selectedWeekday);
+              setNext10DatesWithChosenWeekday([]);
+              setOpen(false);
             }}
           >
             Cancel
