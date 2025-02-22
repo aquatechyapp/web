@@ -41,7 +41,7 @@ export const columns: ColumnDef<PoolAssignmentsPopulated>[] = [
   },
   {
     accessorKey: 'weekday',
-    header: 'Week day',
+    header: 'Weekday',
     cell: (props) => {
       return <span className="text-nowrap">{props.row.original.weekday}</span>;
     }
