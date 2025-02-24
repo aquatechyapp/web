@@ -195,10 +195,6 @@ export default function Page() {
     }
   });
 
-  const uniqueMembers = useMemo(() => {
-    return members.filter((member, index, self) => index === self.findIndex((t) => t.id === member.id));
-  }, [members]);
-
   useEffect(() => {
     if (user.firstName === '') {
       router.push('/account');
@@ -211,9 +207,18 @@ export default function Page() {
       animalDanger: false,
       sameBillingAddress: false,
       clientState: user?.state,
-      clientType: 'Residential'
+      clientType: 'Residential',
+      companyOwnerId: ''
     }
   });
+
+  const selectedCompanyId = form.watch('companyOwnerId');
+
+  const uniqueMembers = useMemo(() => {
+    return members
+      .filter((member) => member.firstName !== '' && member.company.id === selectedCompanyId)
+      .filter((member, index, self) => index === self.findIndex((t) => t.id === member.id));
+  }, [members, selectedCompanyId]);
 
   function handleSameBillingAddress() {
     if (form.watch('sameBillingAddress')) {
@@ -545,7 +550,7 @@ export default function Page() {
                     label="Technician"
                     options={uniqueMembers.map((m) => ({
                       key: m.id,
-                      name: m.firstName,
+                      name: `${m.firstName} (${m.company.name})`,
                       value: m.id
                     }))}
                     defaultValue={members && members.length === 1 ? members[0].id : undefined}
