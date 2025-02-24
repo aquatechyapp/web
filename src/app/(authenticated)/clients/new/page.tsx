@@ -195,11 +195,9 @@ export default function Page() {
     }
   });
 
-  useEffect(() => {
-    if (user.firstName === '') {
-      router.push('/account');
-    }
-  }, [user]);
+  const uniqueMembers = useMemo(() => {
+    return members.filter((member, index, self) => index === self.findIndex((t) => t.id === member.id));
+  }, [members]);
 
   const form = useForm<PoolAndClientSchema>({
     resolver: zodResolver(poolAndClientSchema),
@@ -207,18 +205,15 @@ export default function Page() {
       animalDanger: false,
       sameBillingAddress: false,
       clientState: user?.state,
-      clientType: 'Residential',
-      companyOwnerId: ''
+      clientType: 'Residential'
     }
   });
 
-  const selectedCompanyId = form.watch('companyOwnerId');
-
-  const uniqueMembers = useMemo(() => {
-    return members
-      .filter((member) => member.firstName !== '' && member.company.id === selectedCompanyId)
-      .filter((member, index, self) => index === self.findIndex((t) => t.id === member.id));
-  }, [members, selectedCompanyId]);
+  useEffect(() => {
+    if (user.firstName === '') {
+      router.push('/account');
+    }
+  }, [user]);
 
   function handleSameBillingAddress() {
     if (form.watch('sameBillingAddress')) {
@@ -550,7 +545,7 @@ export default function Page() {
                     label="Technician"
                     options={uniqueMembers.map((m) => ({
                       key: m.id,
-                      name: `${m.firstName} (${m.company.name})`,
+                      name: m.firstName,
                       value: m.id
                     }))}
                     defaultValue={members && members.length === 1 ? members[0].id : undefined}
