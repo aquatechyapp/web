@@ -137,6 +137,7 @@ export default function Page() {
       steps.nextStep();
     }
   }
+
   async function handleValidatePoolStep() {
     const isValid = await form.trigger(
       [
@@ -193,6 +194,10 @@ export default function Page() {
       });
     }
   });
+
+  const uniqueMembers = useMemo(() => {
+    return members.filter((member, index, self) => index === self.findIndex((t) => t.id === member.id));
+  }, [members]);
 
   useEffect(() => {
     if (user.firstName === '') {
@@ -538,7 +543,7 @@ export default function Page() {
                     name="assignmentToId"
                     placeholder="Technician"
                     label="Technician"
-                    options={members.map((m) => ({
+                    options={uniqueMembers.map((m) => ({
                       key: m.id,
                       name: m.firstName,
                       value: m.id
