@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
+import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { useUserStore } from '@/store/user';
 import { DataTableClients } from './DataTableClients';
 import { columns } from './DataTableClients/columns';
@@ -12,6 +13,7 @@ import { Client } from '@/ts/interfaces/Client';
 export default function Page() {
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const { data: allClients = [], isLoading } = useGetAllClients();
+  const { data: companies = [] } = useGetCompanies();
   const user = useUserStore((state) => state.user);
   const router = useRouter();
 
@@ -33,6 +35,10 @@ export default function Page() {
     if (!allClients) return;
 
     const filtered = allClients.filter((client) => {
+      // Company filter
+      const companyMatch =
+        !filters.companyOwnerId || filters.companyOwnerId === 'all' || client.companyOwnerId === filters.companyOwnerId;
+
       // Search across all text fields
       const searchMatch =
         !filters.search ||
@@ -49,7 +55,7 @@ export default function Page() {
       // Type filter
       const typeMatch = !filters.type || filters.type === 'all' || client.type === filters.type;
 
-      return searchMatch && statusMatch && cityMatch && typeMatch;
+      return companyMatch && searchMatch && statusMatch && cityMatch && typeMatch;
     });
 
     setFilteredClients(filtered);

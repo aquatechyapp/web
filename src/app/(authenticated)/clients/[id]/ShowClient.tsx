@@ -63,6 +63,12 @@ export default function ShowClient({ client }: Props) {
               </div>
               <div className="inline-flex w-fit items-start justify-start gap-2">
                 <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
+                  <div className="self-stretch text-sm font-medium text-gray-500">Company Owner</div>
+                  <div className="self-stretch text-sm font-medium text-gray-800">{client.companyOwner.name}</div>
+                </div>
+              </div>
+              <div className="inline-flex w-fit items-start justify-start gap-2">
+                <div className="inline-flex shrink grow basis-0 flex-col items-start justify-center gap-1">
                   <div className="self-stretch text-sm font-medium text-gray-500">Phone Number</div>
                   <div className="self-stretch text-sm font-medium text-gray-800">{client.phone}</div>
                 </div>

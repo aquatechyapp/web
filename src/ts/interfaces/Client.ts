@@ -1,6 +1,7 @@
 import { ClientType, IanaTimeZones } from '@/ts/enums/enums';
 
 import { Pool } from './Pool';
+import { Company } from './Company';
 
 export interface Client {
   id: string;
@@ -21,6 +22,8 @@ export interface Client {
   state: string;
   updatedAt: string;
   userOwnerId: string;
+  companyOwnerId: string;
+  companyOwner: Company;
   zip: string;
   pools: Pool[];
   lastServiceDate: string;
