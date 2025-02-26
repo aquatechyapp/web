@@ -25,6 +25,7 @@ import { useUserStore } from '@/store/user';
 import { Client } from '@/ts/interfaces/Client';
 import { ModalAddCompany } from '../../team/ModalAddCompany';
 import { PaginationDemo } from '@/components/PaginationDemo';
+import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -91,7 +92,8 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
     defaultValues: {
       type: 'all',
       city: 'all',
-      filter: 'all'
+      filter: 'all',
+      companyOwnerId: 'all'
     }
   });
 
@@ -107,6 +109,17 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
   const typesSelectOptions = [
     { value: 'all', name: 'All types', key: 'all_types' },
     ...types.map((type) => ({ value: type, name: type, key: type }))
+  ];
+
+  const { data: companies = [] } = useGetCompanies();
+
+  const companyOptions = [
+    { key: 'all', value: 'all', name: 'All companies' },
+    ...companies.map((company) => ({
+      key: company.id,
+      value: company.id,
+      name: company.name
+    }))
   ];
 
   // console.log('sortedData', sortedData);
@@ -138,6 +151,15 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
         <div className="flex w-full">
           <Form {...form}>
             <form className="mb-2 flex w-full flex-col gap-4 md:mb-0 md:flex-row">
+              <SelectField
+                name="companyOwnerId"
+                options={companyOptions}
+                placeholder="Company"
+                onValueChange={(value) => {
+                  form.setValue('companyOwnerId', value);
+                  onFiltersChange(form.getValues());
+                }}
+              />
               <SelectField
                 name="filter"
                 options={selectOptions}

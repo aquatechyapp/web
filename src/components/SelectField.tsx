@@ -35,8 +35,8 @@ const SelectField = forwardRef<HTMLDivElement, Props & SelectFieldProps>(
 
     return (
       <Select {...props} value={form.watch(name)} onValueChange={onValueChange}>
-        <SelectTrigger className={`${!form.getValues(name) && 'text-slate-500'}`}>
-          <SelectValue placeholder={placeholder} />
+        <SelectTrigger className={`${!form.getValues(name) && 'text-slate-500'} pl-2 text-left`}>
+          <SelectValue placeholder={placeholder} className="px-3" />
         </SelectTrigger>
         <SelectContent ref={ref}>
           <SelectGroup>
