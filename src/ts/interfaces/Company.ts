@@ -36,6 +36,7 @@ export interface Company {
       ccEmail: string;
     };
   };
+  imageUrl?: string | null;
 }
 
 export interface CreateCompany {
@@ -57,6 +58,11 @@ export interface UpdateCompany {
   state: string;
   zip: string;
   status: Status;
+}
+
+export interface UpdateCompanyLogo {
+  companyId: string;
+  logo: File;
 }
 
 export interface InviteMember {
