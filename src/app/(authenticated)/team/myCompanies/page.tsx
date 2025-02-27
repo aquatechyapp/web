@@ -24,6 +24,8 @@ export default function Page() {
     `${company.name}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  console.log(filteredCompanies);
+
   useEffect(() => {
     if (user.firstName === '') {
       router.push('/account');
@@ -56,6 +58,7 @@ export default function Page() {
                   companyId={company.id}
                   role={company.role}
                   status={company.status}
+                  imageUrl={company.imageUrl}
                 />
               ))}
             </div>
