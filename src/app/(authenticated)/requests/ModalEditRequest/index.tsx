@@ -35,6 +35,7 @@ import { useDeleteRequest } from '@/hooks/react-query/requests/deleteRequest';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Card, CardContent } from '@/components/ui/card';
 import { ListChecks, MapPin, User, FileText, ImageIcon, Trash2 } from 'lucide-react';
+import { useEffect } from 'react';
 
 const schema = z.object({
   clientId: z.string().min(1, { message: 'Client is required' }),
@@ -74,9 +75,9 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
       clientId: request.clientId || '',
       category: request.category || '',
       createdBy: {
-        id: request.createdBy?.id,
-        firstName: request.createdBy?.firstName,
-        lastName: request.createdBy?.lastName
+        id: request.createdByUser?.id,
+        firstName: request.createdByUser?.firstName,
+        lastName: request.createdByUser?.lastName
       },
       addressedTo: user?.id,
       poolId: request.poolId || '',
@@ -88,9 +89,13 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
   });
 
   function handleSubmit(data: EditRequest) {
+    // console.log('data', data);
     if (isEmpty(form.formState.errors)) {
       updateRequest(data);
       setOpen(false);
+      // console.log('no errors');
+    } else {
+      console.log('errors', form.formState.errors);
     }
   }
 
@@ -116,7 +121,7 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
             <div className="flex-1">
               {format(new Date(request.createdAt), "EEEE, MMMM do 'at' h:mm a")}
               <span className="ml-1 font-medium">
-                by {request.createdBy?.firstName} {request.createdBy?.lastName}
+                by {request.createdByUser?.firstName} {request.createdByUser?.lastName}
               </span>
             </div>
           </div>

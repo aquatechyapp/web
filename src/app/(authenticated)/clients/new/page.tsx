@@ -196,7 +196,9 @@ export default function Page() {
   });
 
   const uniqueMembers = useMemo(() => {
-    return members.filter((member, index, self) => index === self.findIndex((t) => t.id === member.id));
+    return members
+      .filter((member) => member.firstName !== '')
+      .filter((member, index, self) => index === self.findIndex((t) => t.id === member.id));
   }, [members]);
 
   const form = useForm<PoolAndClientSchema>({
