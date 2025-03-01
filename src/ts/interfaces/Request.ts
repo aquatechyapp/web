@@ -2,7 +2,7 @@ import { Pool } from './Pool';
 import { Client } from './Client';
 
 export interface Request {
-  createdBy: CreatedBy;
+  createdByUser: CreatedByUser;
   id: string;
   category: string;
   clientId: string;
@@ -18,7 +18,7 @@ export interface Request {
   client: Client;
 }
 export interface Services {
-  createdBy: CreatedBy;
+  createdByUser: CreatedByUser;
   id: string;
   category: string;
   clientId: string;
@@ -78,7 +78,7 @@ export interface CreateRequest {
   clientId: string;
 }
 
-export interface CreatedBy {
+export interface CreatedByUser {
   id: string;
   firstName: string;
   lastName: string;
