@@ -30,9 +30,8 @@ const schema = z.object({
 
 export default function Page({ company }: { company: Company }) {
   const { isPending, mutate } = useUpdateCompanyPreferences(company.id);
-  const { userPreferences, isFreePlan } = useUserStore(
+  const { isFreePlan } = useUserStore(
     useShallow((state) => ({
-      userPreferences: state.user?.userPreferences,
       isFreePlan: state.isFreePlan
     }))
   );

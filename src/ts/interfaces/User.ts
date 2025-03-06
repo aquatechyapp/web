@@ -22,16 +22,6 @@ export type BasicData = {
   zip: string;
   phone: string;
   email: string;
-  userPreferences: {
-    serviceEmailPreferences: {
-      sendEmails: boolean;
-      attachChemicalsReadings: boolean;
-      attachChecklist: boolean;
-      attachServiceNotes: boolean;
-      attachServicePhotos: boolean;
-      ccEmail: string;
-    };
-  };
 };
 
 export interface User extends BasicData {
