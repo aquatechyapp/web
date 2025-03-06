@@ -171,6 +171,13 @@ export const routes: Menu[] = [
     description: 'Manage your requests and see their status'
   },
   {
+    text: 'Services',
+    href: '/services',
+    icon: ListChecks,
+    title: 'Services',
+    description: 'Look services made by your company'
+  },
+  {
     text: 'My team',
     submenu: {
       myAccount: {
@@ -198,13 +205,7 @@ export const routes: Menu[] = [
     title: 'My team',
     description: 'Manage your team and add new technicians'
   },
-  {
-    text: 'Services',
-    href: '/services',
-    icon: ListChecks,
-    title: 'Services',
-    description: 'Look services made by your company'
-  },
+
   {
     text: 'My Account',
     description: 'Edit your profile information',
