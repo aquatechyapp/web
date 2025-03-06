@@ -1,56 +1,36 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useShallow } from 'zustand/react/shallow';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { useChangeUserPreferences } from '@/hooks/react-query/user/changeUserPreferences';
 import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect';
 import { cn } from '@/lib/utils';
-import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
-import { useUpdateCompanyPreferences } from '@/hooks/react-query/companies/updatePreferences';
-import { Company } from '@/ts/interfaces/Company';
+import { Client } from '@/ts/interfaces/Client';
+import { useUpdateClientPreferences } from '@/hooks/react-query/clients/updatePreferences';
 
 const schema = z.object({
   sendEmails: z.boolean(),
   attachChemicalsReadings: z.boolean(),
   attachChecklist: z.boolean(),
-  attachServicePhotos: z.boolean(),
-  ccEmail: z.string()
+  attachServicePhotos: z.boolean()
 });
 
-export default function Page({ company }: { company: Company }) {
-  const { isPending, mutate } = useUpdateCompanyPreferences(company.id);
-  const { userPreferences, isFreePlan } = useUserStore(
-    useShallow((state) => ({
-      userPreferences: state.user?.userPreferences,
-      isFreePlan: state.isFreePlan
-    }))
-  );
-
-  const user = useUserStore((state) => state.user);
+export default function EmailPreferences({ client }: { client: Client }) {
+  const { isPending, mutate } = useUpdateClientPreferences(client.id);
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      sendEmails: isFreePlan ? false : company.preferences.serviceEmailPreferences.sendEmails || false,
-      attachChemicalsReadings: isFreePlan
-        ? false
-        : company.preferences.serviceEmailPreferences.attachChemicalsReadings || false,
-      attachChecklist: isFreePlan ? false : company.preferences.serviceEmailPreferences.attachChecklist || false,
-      attachServicePhotos: isFreePlan
-        ? false
-        : company.preferences.serviceEmailPreferences.attachServicePhotos || false,
-      ccEmail: isFreePlan ? '' : company.preferences.serviceEmailPreferences.ccEmail || ''
+      sendEmails: client.preferences?.serviceEmailPreferences?.sendEmails || false,
+      attachChemicalsReadings: client.preferences?.serviceEmailPreferences?.attachChemicalsReadings || false,
+      attachChecklist: client.preferences?.serviceEmailPreferences?.attachChecklist || false,
+      attachServicePhotos: client.preferences?.serviceEmailPreferences?.attachServicePhotos || false
     }
   });
 
@@ -69,14 +49,6 @@ export default function Page({ company }: { company: Company }) {
     }
   }
 
-  const router = useRouter();
-
-  useEffect(() => {
-    if (user.firstName === '') {
-      router.push('/account');
-    }
-  }, [user]);
-
   if (isPending) {
     return <LoadingSpinner />;
   }
@@ -84,30 +56,24 @@ export default function Page({ company }: { company: Company }) {
   return (
     <Form {...form}>
       <form className="w-full flex-col items-center" onSubmit={form.handleSubmit((data) => mutate(data))}>
-        <div
-          className={cn('flex w-full flex-col gap-2 divide-y border-gray-200 [&>:nth-child(3)]:pt-2', {
-            'opacity-50': isFreePlan
-          })}
-        >
+        <div className="flex w-full flex-col gap-2 divide-y border-gray-200 [&>:nth-child(3)]:pt-2">
           {fields.map((field) => (
             <div key={field.label} className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">
-              {/* <div className='flex gap-2'> */}
               <div className="col-span-8 row-auto flex flex-col">
                 <label htmlFor={field.label} className="flex flex-col space-y-1">
                   <span className="text-sm font-semibold text-gray-800">{field.label}</span>
                 </label>
                 <span className="text-muted-foreground text-sm font-normal">{field.description}</span>
               </div>
-              {/* </div> */}
               <div className="col-span-4 flex flex-col gap-2">
                 {field.itens.map((item) => {
                   const isFieldSendEmails = item.name === 'sendEmails';
 
                   return (
-                    <div className="flex w-full items-center gap-4">
+                    <div key={item.name} className="flex w-full items-center gap-4">
                       <div className={field.type === FieldType.Default ? 'w-full' : ''}>
                         <InputField
-                          disabled={!isFreePlan ? (isFieldSendEmails ? false : sendEmails ? false : true) : true}
+                          disabled={isFieldSendEmails ? false : sendEmails ? false : true}
                           key={item.name}
                           name={item.name}
                           type={field.type}
@@ -119,11 +85,6 @@ export default function Page({ company }: { company: Company }) {
                           <div>
                             <span className="text-sm font-semibold text-gray-800">{item.label}</span>
                           </div>
-                          {item.subLabel ? (
-                            <div>
-                              <span className="text-sm font-normal text-gray-800">{item.subLabel}</span>
-                            </div>
-                          ) : null}
                         </label>
                       )}
                     </div>
@@ -132,7 +93,7 @@ export default function Page({ company }: { company: Company }) {
               </div>
             </div>
           ))}
-          <Button disabled={!form.formState.isDirty || isFreePlan} className="mt-2">
+          <Button disabled={!form.formState.isDirty} className="mt-2">
             Save
           </Button>
         </div>
@@ -148,7 +109,6 @@ type Fields = {
   label: string;
   itens: {
     label: string;
-    subLabel?: string;
     description: string;
     name: string;
   }[];
@@ -163,7 +123,6 @@ const fields: Fields = [
     itens: [
       {
         label: 'Send e-mails',
-        subLabel: '(only on grow plan)',
         description: 'Send e-mails when a service is done.',
         name: 'sendEmails'
       }
@@ -191,17 +150,5 @@ const fields: Fields = [
         name: 'attachServicePhotos'
       }
     ]
-  },
-  {
-    description: 'Send a copy to another e-mail.',
-    itens: [
-      {
-        label: 'Cc E-mail',
-        description: 'E-mail to send a copy to.',
-        name: 'ccEmail'
-      }
-    ],
-    label: 'Cc E-mail',
-    type: FieldType.Default
   }
 ];

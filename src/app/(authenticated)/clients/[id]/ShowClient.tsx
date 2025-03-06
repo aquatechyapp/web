@@ -16,6 +16,7 @@ import { getInitials } from '@/utils/others';
 import ClientInfo from './ClientInfo';
 import PoolHeader from './PoolHeader';
 import { ModalAddPool } from '../DataTableClients/ModalAddPool';
+import EmailPreferences from './EmailPreferences';
 
 type Props = {
   client: Client;
@@ -25,7 +26,7 @@ export default function ShowClient({ client }: Props) {
   const [open, setOpen] = useState(false);
 
   const { mutate: mutateAddPool } = useAddPoolToClient();
-  const [tab, setTab] = useState<'client_info' | 'pools'>('client_info');
+  const [tab, setTab] = useState<'client_info' | 'pools' | 'email_preferences'>('client_info');
 
   const { mutate: deactivateClient, isPending } = useDeactivateClient();
 
@@ -177,11 +178,26 @@ export default function ShowClient({ client }: Props) {
                 </div>
                 {tab === 'pools' && <div className="h-0.5 self-stretch bg-gray-800" />}
               </div>
+              <div
+                onClick={() => setTab('email_preferences')}
+                className="inline-flex flex-col items-start justify-start gap-2.5"
+              >
+                <div
+                  className={`text-sm text-gray-500 hover:cursor-pointer ${
+                    tab === 'email_preferences' && selectedTabStyles
+                  }`}
+                >
+                  Preferences
+                </div>
+                {tab === 'email_preferences' && <div className="h-0.5 self-stretch bg-gray-800" />}
+              </div>
             </div>
             {tab === 'client_info' ? (
               <ClientInfo client={client} />
-            ) : (
+            ) : tab === 'pools' ? (
               <PoolHeader pools={client.pools} clientId={client.id} />
+            ) : (
+              <EmailPreferences client={client} />
             )}
           </div>
         </div>
