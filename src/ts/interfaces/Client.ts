@@ -30,4 +30,13 @@ export interface Client {
   type: ClientType;
   timezone: IanaTimeZones;
   status: string;
+  preferences?: {
+    serviceEmailPreferences: {
+      sendEmails: boolean;
+      attachChemicalsReadings: boolean;
+      attachChecklist: boolean;
+      attachServiceNotes: boolean;
+      attachServicePhotos: boolean;
+    };
+  };
 }

@@ -2,25 +2,23 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import { useToast } from '@/components/ui/use-toast';
+import { clientAxios } from '@/lib/clientAxios';
 
-import { clientAxios } from '../../../lib/clientAxios';
-
-type CompanyEmailPreferences = {
+type ClientEmailPreferences = {
   sendEmails: boolean;
   attachChemicalsReadings: boolean;
   attachChecklist: boolean;
   attachServicePhotos: boolean;
-  ccEmail: string;
 };
 
-export const useUpdateCompanyPreferences = (companyId: string) => {
+export const useUpdateClientPreferences = (clientId: string) => {
   const { toast } = useToast();
 
   const { mutate, isPending, data, isSuccess } = useMutation({
-    mutationFn: async (companyEmailPreferences: CompanyEmailPreferences) =>
-      await clientAxios.patch(`/companies/${companyId}/preferences`, {
-        companyId,
-        serviceEmailPreferences: { ...companyEmailPreferences }
+    mutationFn: async (clientEmailPreferences: ClientEmailPreferences) =>
+      await clientAxios.patch(`/clients/${clientId}/preferences`, {
+        clientId,
+        serviceEmailPreferences: { ...clientEmailPreferences }
       }),
     onSuccess: () => {
       toast({
