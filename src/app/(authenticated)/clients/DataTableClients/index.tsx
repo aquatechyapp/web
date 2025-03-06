@@ -58,6 +58,7 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
       const aValue = a[sortColumn];
       const bValue = b[sortColumn];
 
+      if (aValue === undefined || bValue === undefined) return 0;
       if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
       if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
       return 0;
