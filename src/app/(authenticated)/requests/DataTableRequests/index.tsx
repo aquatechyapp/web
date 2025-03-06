@@ -47,49 +47,6 @@ export function DataTableRequests<TData, TValue>({ columns, data }: DataTablePro
 
   return (
     <div className="flex flex-col gap-6 p-2">
-      <div className="mb-2 flex w-full flex-col flex-wrap gap-4 text-nowrap md:flex-nowrap lg:mb-0 lg:flex-row [&>*]:flex-1">
-        <ModalAddRequest />
-        <Input
-          className="min-w-50"
-          placeholder="Filter clients..."
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
-        />
-        <FilterSelect
-          data={RequestStatus}
-          value={table.getColumn('status')?.getFilterValue() as string}
-          onChange={(value) => {
-            table.getColumn('status')?.setFilterValue(value === 'All' ? '' : value);
-          }}
-          placeholder="Status"
-        />
-        <FilterSelect
-          data={Categories}
-          value={table.getColumn('category')?.getFilterValue() as string}
-          onChange={(value) => {
-            table.getColumn('category')?.setFilterValue(value === 'All' ? '' : value);
-          }}
-          placeholder="Category"
-        />
-        <DatePicker
-          placeholder="Created From"
-          onChange={(value) => {
-            table.getColumn('createdAt')?.setFilterValue((old: [d1: Date, d2: Date]) => {
-              if (!old) return [value, null];
-              return [value, old[1]];
-            });
-          }}
-        />
-        <DatePicker
-          placeholder="Created To"
-          onChange={(value) =>
-            table.getColumn('createdAt')?.setFilterValue((old: [d1: Date, d2: Date]) => {
-              if (!old) return [null, value];
-              return [old[0], value];
-            })
-          }
-        />
-      </div>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
