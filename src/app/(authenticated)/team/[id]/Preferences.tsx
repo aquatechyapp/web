@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
@@ -19,6 +19,14 @@ import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
 import { useUpdateCompanyPreferences } from '@/hooks/react-query/companies/updatePreferences';
 import { Company } from '@/ts/interfaces/Company';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
 
 const schema = z.object({
   sendEmails: z.boolean(),
@@ -76,13 +84,22 @@ export default function Page({ company }: { company: Company }) {
     }
   }, [user]);
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [formData, setFormData] = useState<any>(null);
+
   if (isPending) {
     return <LoadingSpinner />;
   }
 
   return (
     <Form {...form}>
-      <form className="w-full flex-col items-center" onSubmit={form.handleSubmit((data) => mutate(data))}>
+      <form
+        className="w-full flex-col items-center"
+        onSubmit={form.handleSubmit((data) => {
+          setFormData(data);
+          setShowConfirmModal(true);
+        })}
+      >
         <div
           className={cn('flex w-full flex-col gap-2 divide-y border-gray-200 [&>:nth-child(3)]:pt-2', {
             'opacity-50': isFreePlan
@@ -136,6 +153,33 @@ export default function Page({ company }: { company: Company }) {
           </Button>
         </div>
       </form>
+      <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+        <DialogContent>
+          <DialogHeader className="text-left">
+            <DialogTitle className="text-xl">Enable Email Notifications</DialogTitle>
+
+            <DialogDescription className="mt-4 text-left">
+              This action will change the email notifications for all clients under this company. If you want specific
+              clients not to receive or receive emails, you'll need to change it manually in their individual settings
+              on the clients page.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="mt-6">
+            <Button variant="outline" onClick={() => setShowConfirmModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                mutate(formData);
+                setShowConfirmModal(false);
+              }}
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Form>
   );
 }
