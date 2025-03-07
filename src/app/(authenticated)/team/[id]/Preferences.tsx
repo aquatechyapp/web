@@ -159,9 +159,9 @@ export default function Page({ company }: { company: Company }) {
             <DialogTitle className="text-xl">Enable Email Notifications</DialogTitle>
 
             <DialogDescription className="mt-4 text-left">
-              This action will enable email notifications for all clients under this company. If you want specific
-              clients not to receive emails, you'll need to disable it manually in their individual settings on the
-              clients page.
+              This action will change the email notifications for all clients under this company. If you want specific
+              clients not to receive or receive emails, you'll need to change it manually in their individual settings
+              on the clients page.
             </DialogDescription>
           </DialogHeader>
 
