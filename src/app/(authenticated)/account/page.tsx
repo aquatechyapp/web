@@ -19,6 +19,8 @@ import { FieldType, LanguageOptions } from '@/ts/enums/enums';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../../components/ui/dialog';
 import { ModalDeleteAccount } from './ModalDeleteAccount';
 import ChangePasswordDialog from './change-password-modal';
+import { toast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   firstName: defaultSchemas.firstName,
@@ -37,9 +39,9 @@ export type IUserSchema = z.infer<typeof formSchema>;
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
-  const { mutate, isPending } = useUpdateUser();
+  const { mutate, isPending, isSuccess } = useUpdateUser(user.id);
   const [showModal, setShowModal] = useState(false);
-
+  const router = useRouter();
   const form = useForm<IUserSchema>({
     defaultValues: {
       firstName: user?.firstName || '',
@@ -61,6 +63,20 @@ export default function Page() {
       setShowModal(true);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast({
+        title: 'Account updated successfully',
+        description: 'Your account has been updated successfully',
+        variant: 'success'
+      });
+
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
+    }
+  }, [isSuccess]);
 
   if (isPending) return <LoadingSpinner />;
 

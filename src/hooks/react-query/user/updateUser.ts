@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { dataTagSymbol, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -6,22 +6,22 @@ import { IUserSchema } from '@/app/(authenticated)/account/page';
 
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
+import { useUserStore } from '@/store/user';
 
-export const useUpdateUser = () => {
+export const useUpdateUser = (userId: string) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const setUser = useUserStore((state) => state.setUser);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: async (data: IUserSchema) => await clientAxios.patch('/users', data),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['user', userId] });
       queryClient.invalidateQueries({ queryKey: ['user'] });
-      toast({
-        duration: 5000,
-        title: 'User updated successfully',
-        variant: 'success'
-      });
-      router.push('/dashboard');
+
+      console.log(data);
+      setUser(data.data.user);
     },
     onError: (
       error: AxiosError<{
@@ -36,5 +36,5 @@ export const useUpdateUser = () => {
       });
     }
   });
-  return { mutate, isPending };
+  return { mutate, isPending, isSuccess };
 };
