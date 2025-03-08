@@ -11,6 +11,15 @@ type LoginData = {
   password: string;
 };
 
+export const useResendConfirmation = (email: string) => {
+  return useMutation({
+    mutationFn: async () => await clientAxios.post('/users/resend-account-confirmation-email', { email }),
+    onError: (error) => {
+      throw new Error(isAxiosError(error) ? error.response?.data.message : 'Error resending confirmation');
+    }
+  });
+};
+
 export const useLoginUser = () => {
   const { push } = useRouter();
 
@@ -26,29 +35,31 @@ export const useLoginUser = () => {
       // });
       if (data.user.firstName === '') {
         push('/account');
-        toast({
-          duration: 5000,
-          title: 'Login successful! Please complete your profile before starting using the platform.',
-          variant: 'success'
-        });
+
         return;
       }
       push('/dashboard');
-      toast({
-        duration: 5000,
-        title: 'Login successful!',
-        variant: 'success'
-      });
     },
     onError: (error): Error | AxiosError => {
       if (isAxiosError(error)) {
-        if (error.response?.status === 401 && error.response?.data.message === 'Invalid email or password.') {
-          toast({
-            variant: 'error',
-            duration: 5000,
-            title: 'Invalid email or password'
-          });
-          return error;
+        if (error.response?.status === 401) {
+          if (error.response?.data.message === 'Invalid email or password.') {
+            toast({
+              variant: 'error',
+              duration: 5000,
+              title: 'Invalid email or password'
+            });
+            return error;
+          } else if (error.response?.data.message === 'User not activated.') {
+            return error;
+          } else {
+            toast({
+              variant: 'error',
+              duration: 5000,
+              title: 'Internal error'
+            });
+            return error;
+          }
         }
       }
       if (error.message === 'Network Error') {

@@ -25,31 +25,39 @@ export default function Page() {
       email: ''
     }
   });
+
   return (
-    <div className="inline-flex w-[448px] flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8">
-      <div className="inline-flex h-5 items-center justify-center gap-3 self-stretch">
+    <div className="inline-flex w-96 flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8 md:w-[680px]">
+      <div className="mb-8 inline-flex h-5 items-center justify-center gap-3 self-stretch">
         <Image priority width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
       </div>
-      <div className="relative mt-4">
-        <div className="left-0 top-0 h-[30px] w-[400px] text-xl font-semibold leading-[30px] text-gray-900">
-          Recovery Password
+
+      <div className="relative h-[50px] w-full">
+        <div className="left-0 top-0 h-[30px] w-full text-xl font-semibold leading-[30px] text-gray-900">
+          Recover Password
         </div>
-        <div className="left-0 top-[30px] h-5 w-[400px]">
-          <span className="text-sm font-medium text-gray-500">Back to </span>
+        <div className="left-0 top-[30px] h-5 w-full">
+          <span className="text-sm font-medium text-gray-500">Remember your password? </span>
           <Link href="/login" className="text-sm font-semibold text-blue-500">
             Login
           </Link>
-          <span className="text-sm font-medium text-gray-500"> page</span>
         </div>
       </div>
+
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit((data) => mutate(data))}
-          className="inline-flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-gray-50"
-        >
-          <InputField name="email" label="Email" placeholder="Email" className="w-full" />
-          <Button disabled={isPending} className="w-full">
-            Send email
+        <form onSubmit={form.handleSubmit((data) => mutate(data))} className="w-full">
+          <div className="mb-8 flex w-full flex-col gap-[18px]">
+            <InputField label="E-mail" name="email" placeholder="E-mail address" />
+          </div>
+          <Button disabled={isPending} type="submit" className="flex w-full">
+            {isPending ? (
+              <div
+                className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status"
+              />
+            ) : (
+              'Send Recovery Email'
+            )}
           </Button>
         </form>
       </Form>
