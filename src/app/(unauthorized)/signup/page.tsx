@@ -27,7 +27,7 @@ const formSchema = z
   .object({
     email: defaultSchemas.email,
     password: defaultSchemas.password,
-    confirmPassword: z.string().min(8, { message: 'Password is required' })
+    confirmPassword: z.string().min(8, { message: 'Password must be at least 8 characters long.' })
   })
   .refine(
     (data) => {
