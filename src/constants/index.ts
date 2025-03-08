@@ -123,7 +123,7 @@ export const routes: Menu[] = [
         title: 'New Client',
         description: 'Create a new client, add a pool and assign a technician to it',
         icon: UserPlus
-      },
+      }
       // import: {
       //   text: 'Import Clients',
       //   href: '/clients/import',
@@ -131,13 +131,13 @@ export const routes: Menu[] = [
       //   icon: Import,
       //   description: 'Massive import and edit of clients from a CSV file'
       // },
-      broadcast: {
-        text: 'Broadcast',
-        href: '/clients/broadcast',
-        title: 'Broadcast',
-        description: 'Send a message to all clients',
-        icon: Mails
-      }
+      // broadcast: {
+      //   text: 'Broadcast',
+      //   href: '/clients/broadcast',
+      //   title: 'Broadcast',
+      //   description: 'Send a message to all clients',
+      //   icon: Mails
+      // }
     },
     icon: Users
   },
