@@ -27,6 +27,7 @@ export default function Page({ searchParams }: PropsToken) {
       toast({
         title: 'Success',
         description: 'User account confirmed successfully.',
+        duration: 8000,
         variant: 'success'
       });
     },
@@ -34,7 +35,8 @@ export default function Page({ searchParams }: PropsToken) {
       toast({
         variant: 'error',
         title: 'Internal error',
-        description: 'Please try again later.'
+        description: 'Please try again later.',
+        duration: 8000
       });
     }
   });

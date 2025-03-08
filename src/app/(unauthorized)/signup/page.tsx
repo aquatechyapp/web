@@ -1,25 +1,27 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-
+import { useToast } from '@/components/ui/use-toast';
 import imageIcon from '/public/images/logoHor.png';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { FieldType } from '@/ts/enums/enums';
-
 import InputField from '../../../components/InputField';
 import { Button } from '../../../components/ui/button';
-import { Dialog, DialogContent, DialogDescription } from '../../../components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '../../../components/ui/dialog';
 import { Form } from '../../../components/ui/form';
-import { useToast } from '../../../components/ui/use-toast';
-import { clientAxios } from '../../../lib/clientAxios';
+import { useSignup } from '@/hooks/react-query/user/createUser';
 
 const formSchema = z
   .object({
@@ -37,36 +39,19 @@ const formSchema = z
     }
   );
 
+type ModalState = {
+  isOpen: boolean;
+  type: 'success' | 'error';
+  message: string;
+};
+
 export default function Page() {
-  const { toast } = useToast();
-  const [showModal, setShowModal] = useState(false);
-  const { push } = useRouter();
-
-  const { mutate: createUser, isPending } = useMutation({
-    mutationFn: async (data: z.infer<typeof formSchema>) => await clientAxios.post('/createuser', data),
-    onSuccess: () => {
-      toast({
-        duration: 8000,
-        title: 'Success',
-        description: 'User created successfully. Please check your email to confirm your account.',
-        variant: 'success'
-      });
-      push('/login');
-    },
-    onError: (error) => {
-      let errorMessage = 'Error';
-      if (axios.isAxiosError(error)) {
-        errorMessage = error.response?.data?.message || 'Error';
-      }
-
-      toast({
-        duration: 8000,
-        title: 'Error',
-        description: errorMessage,
-        variant: 'error'
-      });
-    }
+  const [modal, setModal] = useState<ModalState>({
+    isOpen: false,
+    type: 'success',
+    message: ''
   });
+  const { signup, isPending } = useSignup();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,10 +63,20 @@ export default function Page() {
   });
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
-    const formattedData = {
-      ...data
-    };
-    createUser(formattedData);
+    try {
+      signup(data);
+      setModal({
+        isOpen: true,
+        type: 'success',
+        message: 'User created successfully. Please check your email to confirm your account.'
+      });
+    } catch (error) {
+      setModal({
+        isOpen: true,
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Error creating user'
+      });
+    }
   };
 
   return (
@@ -120,16 +115,36 @@ export default function Page() {
           Signup
         </Button>
       </form>
-      {/* Modal de confirmação de email */}
-      <Dialog open={showModal} onOpenChange={setShowModal}>
+
+      <Dialog open={modal.isOpen} onOpenChange={(open) => setModal((prev) => ({ ...prev, isOpen: open }))}>
         <DialogContent className="w-96 rounded-md md:w-[680px]">
-          {/* <DialogTitle>Email Confirmation</DialogTitle> */}
+          <DialogHeader>
+            <DialogTitle>{modal.type === 'success' ? 'Success' : 'Error'}</DialogTitle>
+          </DialogHeader>
           <DialogDescription>
-            <p>
-              Please <b>check your e-mail</b> to activate your account, if you can't find the e-mail please check your
-              spam box.
+            <p className="mt-4 text-left">
+              {modal.type === 'success' ? (
+                <span>
+                  Please <b>check your e-mail</b> to activate your account, if you can't find the e-mail please check
+                  your spam box.
+                </span>
+              ) : (
+                modal.message
+              )}
             </p>
           </DialogDescription>
+          <DialogFooter className="mt-6">
+            <Button
+              onClick={() => {
+                setModal((prev) => ({ ...prev, isOpen: false }));
+                if (modal.type === 'success') {
+                  window.location.href = '/login';
+                }
+              }}
+            >
+              {modal.type === 'success' ? 'Go to Login' : 'Close'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </Form>
