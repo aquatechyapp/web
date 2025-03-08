@@ -32,12 +32,14 @@ const formSchema = z.object({
 type ModalState = {
   isOpen: boolean;
   email: string;
+  emailSent?: boolean;
 };
 
 export default function Page() {
   const [activationModal, setActivationModal] = useState<ModalState>({
     isOpen: false,
-    email: ''
+    email: '',
+    emailSent: false
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -96,8 +98,11 @@ export default function Page() {
   const handleResendConfirmation = async () => {
     resendConfirmation(undefined, {
       onSuccess: () => {
-        // Keep modal open but update message
-        setActivationModal((prev) => ({ ...prev, isOpen: true }));
+        setActivationModal((prev) => ({
+          ...prev,
+          isOpen: true,
+          emailSent: true
+        }));
       }
     });
   };
@@ -147,25 +152,36 @@ export default function Page() {
       >
         <DialogContent className="w-96 rounded-md md:w-[680px]">
           <DialogHeader>
-            <DialogTitle>Account Not Activated</DialogTitle>
+            <DialogTitle>{activationModal.emailSent ? 'Email Sent Successfully' : 'Account Not Activated'}</DialogTitle>
           </DialogHeader>
           <DialogDescription className="mt-4 text-left">
-            <p>
-              Your account hasn't been activated yet. Please check your email for the activation link. If you haven't
-              received the email, you can click below to resend it.
-            </p>
+            {activationModal.emailSent ? (
+              <p>
+                We've sent a new activation link to your email address. Please check your inbox (and spam folder) to
+                activate your account. The link will expire in 24 hours.
+              </p>
+            ) : (
+              <p>
+                Your account hasn't been activated yet. Please check your email for the activation link. If you haven't
+                received the email, you can click below to resend it.
+              </p>
+            )}
           </DialogDescription>
           <DialogFooter className="mt-6 flex items-center justify-center">
-            <Button onClick={handleResendConfirmation} disabled={isResending}>
-              {isResending ? (
-                <div
-                  className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                  role="status"
-                />
-              ) : (
-                'Resend Activation Email'
-              )}
-            </Button>
+            {!activationModal.emailSent ? (
+              <Button onClick={handleResendConfirmation} disabled={isResending}>
+                {isResending ? (
+                  <div
+                    className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                    role="status"
+                  />
+                ) : (
+                  'Resend Activation Email'
+                )}
+              </Button>
+            ) : (
+              <Button onClick={() => setActivationModal((prev) => ({ ...prev, isOpen: false }))}>Close</Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
