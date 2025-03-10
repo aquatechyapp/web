@@ -39,7 +39,7 @@ export function VideoModal({ isOpen, onClose, videoUrl, title }: VideoModalProps
 
         <div className="aspect-video w-full">
           <iframe
-            src={`https://player.vimeo.com/video/${vimeoId}?h=ef9b326c5c`}
+            src={`https://player.vimeo.com/video/${vimeoId}?h=ef9b326c5c&title=0&byline=0&portrait=0`}
             className="h-full w-full rounded-md"
             allow="autoplay; fullscreen; picture-in-picture"
             allowFullScreen
