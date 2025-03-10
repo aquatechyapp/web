@@ -22,12 +22,16 @@ import {
 } from '../../../components/ui/dialog';
 import { Form } from '../../../components/ui/form';
 import { useSignup } from '@/hooks/react-query/user/createUser';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const formSchema = z
   .object({
     email: defaultSchemas.email,
-    password: defaultSchemas.password,
-    confirmPassword: z.string().min(8, { message: 'Password must be at least 8 characters long.' })
+    password: z.string().min(8),
+    confirmPassword: z.string().min(8),
+    acceptTerms: z.boolean().refine((val) => val === true, {
+      message: 'You must accept the terms and conditions to continue'
+    })
   })
   .refine(
     (data) => {
@@ -58,7 +62,8 @@ export default function Page() {
     defaultValues: {
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      acceptTerms: false
     }
   });
 
@@ -106,13 +111,59 @@ export default function Page() {
           <InputField
             label="Confirm Password"
             name="confirmPassword"
-            placeholder="Confirm password"
+            placeholder="Confirm Password"
             type={FieldType.Password}
           />
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="acceptTerms"
+              checked={form.watch('acceptTerms')}
+              onCheckedChange={(checked) => {
+                form.setValue('acceptTerms', checked as boolean);
+              }}
+              className="border-gray-200 data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500"
+            />
+            <div className="leading-none">
+              <label
+                htmlFor="acceptTerms"
+                className="text-sm font-medium text-gray-700 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                I agree to the{' '}
+                <Link
+                  href="https://www.aquatechyapp.com/terms"
+                  className="font-semibold text-blue-500 hover:text-blue-600"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Terms and Conditions
+                </Link>{' '}
+                and{' '}
+                <Link
+                  href="https://www.aquatechyapp.com/privacy"
+                  className="font-semibold text-blue-500 hover:text-blue-600"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Privacy Policy
+                </Link>
+              </label>
+              {form.formState.errors.acceptTerms && (
+                <p className="mt-1 text-sm text-red-500">{form.formState.errors.acceptTerms.message}</p>
+              )}
+            </div>
+          </div>
         </div>
 
         <Button disabled={isPending} type="submit" className="w-full">
-          Signup
+          {isPending ? (
+            <div
+              className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+              role="status"
+            />
+          ) : (
+            'Sign Up'
+          )}
         </Button>
       </form>
 
