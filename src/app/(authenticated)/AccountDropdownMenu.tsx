@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { PlayCircle } from 'lucide-react';
 
 import { useUserStore } from '@/store/user';
 import { getInitials } from '@/utils/others';
@@ -20,6 +22,7 @@ type Props = {
 export function AccountDropdownMenu({ handleLogout }: Props) {
   const { user } = useUserStore();
   const [isLoaded, setIsLoaded] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (user.firstName && user.lastName) {
@@ -40,8 +43,10 @@ export function AccountDropdownMenu({ handleLogout }: Props) {
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        {/* <DropdownMenuLabel>Menu</DropdownMenuLabel> */}
-        {/* <Separator /> */}
+        <DropdownMenuItem onClick={() => router.push('/quickstart')}>
+          <PlayCircle className="mr-2 h-4 w-4" />
+          Quick Start Guide
+        </DropdownMenuItem>
         <DropdownMenuItem>
           <Link href="/account">My Account</Link>
         </DropdownMenuItem>
