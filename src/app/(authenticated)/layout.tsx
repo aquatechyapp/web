@@ -45,7 +45,8 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
         <VideoModal
           isOpen={showWelcomeVideo}
           onClose={handleCloseWelcomeVideo}
-          videoUrl="https://vimeo.com/1062213838"
+          // hide title, channel and avatar photo from video player
+          videoUrl="https://vimeo.com/1062213838?title=0&byline=0&portrait=0"
           title="Welcome to Aquatechy!"
         />
       )}

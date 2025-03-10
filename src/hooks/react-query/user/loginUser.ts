@@ -28,17 +28,18 @@ export const useLoginUser = () => {
     onSuccess: async ({ data }) => {
       Cookies.set('accessToken', data.accessToken);
       Cookies.set('userId', data.user.id);
-      // setUser({
-      //   ...data.user,
-      //   incomeAsACompany: data.incomeAsACompany,
-      //   incomeAsASubcontractor: data.incomeAsASubcontractor
-      // });
-      if (data.user.firstName === '') {
-        push('/account');
 
-        return;
+      // Check if it's the first visit
+      const hasVisitedBefore = localStorage.getItem(`first-visit-${data.user.id}`);
+
+      if (!hasVisitedBefore) {
+        // First time user
+        localStorage.setItem(`first-visit-${data.user.id}`, 'true');
+        push('/quickstart');
+      } else {
+        // Returning user
+        push('/dashboard');
       }
-      push('/dashboard');
     },
     onError: (error): Error | AxiosError => {
       if (isAxiosError(error)) {
