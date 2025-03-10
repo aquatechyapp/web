@@ -9,7 +9,8 @@ import {
   Mails,
   Settings2,
   UserPlus,
-  Users
+  Users,
+  PlayCircle
 } from 'lucide-react';
 
 import RouteIcon from '@/components/ui/route-icon';
@@ -99,6 +100,13 @@ export const PoolTypes = [
 ];
 
 export const routes: Menu[] = [
+  {
+    text: 'Quick Start',
+    href: '/quickstart',
+    icon: PlayCircle,
+    title: 'Quick Start Guide',
+    description: 'Get started with Aquatechy in a few simple steps'
+  },
   {
     text: 'Dashboard',
     href: '/dashboard',

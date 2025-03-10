@@ -23,6 +23,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   email: defaultSchemas.email,
@@ -36,6 +37,7 @@ type ModalState = {
 };
 
 export default function Page() {
+  const router = useRouter();
   const [activationModal, setActivationModal] = useState<ModalState>({
     isOpen: false,
     email: '',
@@ -54,6 +56,17 @@ export default function Page() {
 
   const handleLogin = (data: z.infer<typeof formSchema>) => {
     handleSubmit(data, {
+      onSuccess: (response) => {
+        const userId = response.data.user.id;
+        const hasVisitedBefore = localStorage.getItem(`first-visit-${userId}`);
+
+        if (!hasVisitedBefore) {
+          localStorage.setItem(`first-visit-${userId}`, 'true');
+          router.push('/quickstart');
+        } else {
+          router.push('/dashboard');
+        }
+      },
       onError: (error) => {
         if (
           isAxiosError(error) &&

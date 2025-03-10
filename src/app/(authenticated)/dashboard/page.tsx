@@ -1,22 +1,19 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useAssignmentsContext } from '@/context/assignments';
-import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useMapAssignmentsUtils } from '@/hooks/useMapAssignmentsUtils';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { useUserStore } from '@/store/user';
-import { Assignment } from '@/ts/interfaces/Assignments';
-import { Client } from '@/ts/interfaces/Client';
 
 import ActionButton from './_components/ActionButton';
 import StatisticCard from './_components/StatisticCard';
 import Map from './Map';
 import { useServicesContext } from '@/context/services';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
+import { useEffect } from 'react';
 
 export default function Page() {
   const router = useRouter();
@@ -29,12 +26,6 @@ export default function Page() {
 
   const { data: allClients, isLoading: isLoadingAllClients } = useGetAllClients();
   const { width = 0 } = useWindowDimensions();
-
-  useEffect(() => {
-    if (user.firstName === '') {
-      router.push('/account');
-    }
-  }, [user, router]);
 
   const totalClientsCount = allClients?.length;
 
