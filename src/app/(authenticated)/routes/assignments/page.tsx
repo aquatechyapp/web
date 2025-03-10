@@ -171,10 +171,15 @@ export default function Page() {
                     />
                   </div>
 
+                  {assignmentToId !== user?.id && (
+                    <div className="mt-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-600">
+                      Note: Only the assigned technician can reorganize their routes when logged into their account.
+                    </div>
+                  )}
+
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                     {assignments.current.length > 0 && assignmentToId === user?.id && (
                       <Button
-                        disabled={isFreePlan}
                         type="button"
                         className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
                         onClick={() => getDirectionsFromGoogleMaps(true)}
@@ -205,11 +210,6 @@ export default function Page() {
               </Form>
 
               <TabsContent value={selectedWeekday} className="w-full">
-                {/* O filtro dos assignments precisa ser feito dentro de AssignmentsList, por causa
-                do componente TabsContent. Esse componente de Tabs se baseia no value para exibir
-                seus childrens (AssignmentsList). Como na aba tabs o value se baseia somente no weekday,
-                quando eu altero o Technician, ele só vai atualizar o render quando mudar de Weekday
-                A solução foi enviar todos os assignments e fazer o .filter lá dentro */}
                 <AssignmentsList handleDragEnd={handleDragEnd} />
               </TabsContent>
             </div>
