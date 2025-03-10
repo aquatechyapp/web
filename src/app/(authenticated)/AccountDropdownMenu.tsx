@@ -43,10 +43,7 @@ export function AccountDropdownMenu({ handleLogout }: Props) {
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuItem onClick={() => router.push('/quickstart')}>
-          <PlayCircle className="mr-2 h-4 w-4" />
-          Quick Start Guide
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push('/quickstart')}>Quick Start</DropdownMenuItem>
         <DropdownMenuItem>
           <Link href="/account">My Account</Link>
         </DropdownMenuItem>
