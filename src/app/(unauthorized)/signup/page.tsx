@@ -68,20 +68,22 @@ export default function Page() {
   });
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
-    try {
-      signup(data);
-      setModal({
-        isOpen: true,
-        type: 'success',
-        message: 'User created successfully. Please check your email to confirm your account.'
-      });
-    } catch (error) {
-      setModal({
-        isOpen: true,
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Error creating user'
-      });
-    }
+    signup(data, {
+      onSuccess: () => {
+        setModal({
+          isOpen: true,
+          type: 'success',
+          message: 'User created successfully. Please check your email to confirm your account.'
+        });
+      },
+      onError: (error) => {
+        setModal({
+          isOpen: true,
+          type: 'error',
+          message: error instanceof Error ? error.message : 'Error creating user'
+        });
+      }
+    });
   };
 
   return (
