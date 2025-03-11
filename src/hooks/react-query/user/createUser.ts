@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { z } from 'zod';
 import { clientAxios } from '@/lib/clientAxios';
 import { useRouter } from 'next/navigation';
@@ -26,12 +26,16 @@ export const useSignup = () => {
   const router = useRouter();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: SignupData) => await clientAxios.post('/createuser', data),
-    onError: (error) => {
-      if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || 'Error creating user');
+    mutationFn: async (data: SignupData) => {
+      try {
+        const response = await clientAxios.post('/createuser', data);
+        return response.data;
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 409) {
+          throw new Error('User with this e-mail already exists.');
+        }
+        throw new Error('Error creating user');
       }
-      throw new Error('Error creating user');
     }
   });
 
