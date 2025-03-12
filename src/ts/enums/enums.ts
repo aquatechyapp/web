@@ -35,7 +35,8 @@ export enum FieldType {
   Zip = 'zip',
   PercentValue = 'percentValue',
   CurrencyValue = 'currencyValue',
-  Switch = 'switch'
+  Switch = 'switch',
+  Number = 'number'
 }
 
 export enum ClientType {

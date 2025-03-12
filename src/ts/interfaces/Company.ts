@@ -34,6 +34,9 @@ export interface Company {
       attachServicePhotos: boolean;
       ccEmail: string;
     };
+    equipmentMaintenancePreferences: {
+      filterCleaningIntervalDays: number;
+    };
   };
   imageUrl?: string | null;
 }
