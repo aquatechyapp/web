@@ -27,17 +27,19 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
+import { useUpdateEquipmentMaintenancePreferences } from '@/hooks/react-query/companies/updateEquipmentMaintenancePreferences';
 
 const schema = z.object({
   sendEmails: z.boolean(),
   attachChemicalsReadings: z.boolean(),
   attachChecklist: z.boolean(),
   attachServicePhotos: z.boolean(),
-  ccEmail: z.string()
+  ccEmail: z.string(),
+  filterCleaningIntervalDays: z.coerce.number().min(1)
 });
 
 export default function Page({ company }: { company: Company }) {
-  const { isPending, mutate } = useUpdateCompanyPreferences(company.id);
+  const { isPending: isEmailPending, mutate: updateEmailPrefs } = useUpdateCompanyPreferences(company.id);
   const { isFreePlan } = useUserStore(
     useShallow((state) => ({
       isFreePlan: state.isFreePlan
@@ -48,16 +50,18 @@ export default function Page({ company }: { company: Company }) {
 
   const form = useForm({
     resolver: zodResolver(schema),
+    mode: 'onChange',
     defaultValues: {
-      sendEmails: isFreePlan ? false : company.preferences.serviceEmailPreferences.sendEmails || false,
+      sendEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendEmails || false,
       attachChemicalsReadings: isFreePlan
         ? false
-        : company.preferences.serviceEmailPreferences.attachChemicalsReadings || false,
-      attachChecklist: isFreePlan ? false : company.preferences.serviceEmailPreferences.attachChecklist || false,
+        : company.preferences?.serviceEmailPreferences?.attachChemicalsReadings || false,
+      attachChecklist: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachChecklist || false,
       attachServicePhotos: isFreePlan
         ? false
-        : company.preferences.serviceEmailPreferences.attachServicePhotos || false,
-      ccEmail: isFreePlan ? '' : company.preferences.serviceEmailPreferences.ccEmail || ''
+        : company.preferences?.serviceEmailPreferences?.attachServicePhotos || false,
+      ccEmail: isFreePlan ? '' : company.preferences?.serviceEmailPreferences?.ccEmail || '',
+      filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28
     }
   });
 
@@ -87,19 +91,39 @@ export default function Page({ company }: { company: Company }) {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [formData, setFormData] = useState<any>(null);
 
-  if (isPending) {
+  useEffect(() => {
+    const subscription = form.watch(() => form.trigger());
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  const filterDays = form.watch('filterCleaningIntervalDays');
+  const [initialFilterDays] = useState(filterDays);
+
+  const handleSubmit = (data: z.infer<typeof schema>) => {
+    const { filterCleaningIntervalDays, ...emailPrefs } = data;
+
+    // Combine all preferences into a single request
+    const updateData = {
+      serviceEmailPreferences: {
+        ...emailPrefs
+      },
+      equipmentMaintenancePreferences: {
+        filterCleaningIntervalDays
+      },
+      companyId: company.id
+    };
+
+    // Use only updateEmailPrefs since it points to the correct endpoint
+    updateEmailPrefs(updateData);
+  };
+
+  if (isEmailPending) {
     return <LoadingSpinner />;
   }
 
   return (
     <Form {...form}>
-      <form
-        className="w-full flex-col items-center"
-        onSubmit={form.handleSubmit((data) => {
-          setFormData(data);
-          setShowConfirmModal(true);
-        })}
-      >
+      <form className="w-full flex-col items-center" onSubmit={form.handleSubmit(handleSubmit)}>
         <div
           className={cn('flex w-full flex-col gap-2 divide-y border-gray-200 [&>:nth-child(3)]:pt-2', {
             'opacity-50': isFreePlan
@@ -126,7 +150,7 @@ export default function Page({ company }: { company: Company }) {
                           disabled={!isFreePlan ? (isFieldSendEmails ? false : sendEmails ? false : true) : true}
                           key={item.name}
                           name={item.name}
-                          type={field.type}
+                          type={item.type || field.type}
                           placeholder={field.type === FieldType.Default ? item.label : ''}
                         />
                       </div>
@@ -148,8 +172,12 @@ export default function Page({ company }: { company: Company }) {
               </div>
             </div>
           ))}
-          <Button disabled={!form.formState.isDirty || isFreePlan} className="mt-2">
-            Save
+          <Button disabled={!form.formState.isDirty || isFreePlan || isEmailPending} className="mt-2">
+            {isEmailPending ? (
+              <div className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em]" />
+            ) : (
+              'Save'
+            )}
           </Button>
         </div>
       </form>
@@ -171,7 +199,7 @@ export default function Page({ company }: { company: Company }) {
             </Button>
             <Button
               onClick={() => {
-                mutate(formData);
+                updateEmailPrefs(formData);
                 setShowConfirmModal(false);
               }}
             >
@@ -194,6 +222,7 @@ type Fields = {
     subLabel?: string;
     description: string;
     name: string;
+    type?: FieldType;
   }[];
 }[];
 
@@ -245,6 +274,19 @@ const fields: Fields = [
       }
     ],
     label: 'Cc E-mail',
+    type: FieldType.Default
+  },
+  {
+    description: 'Set the interval in days for filter cleaning maintenance.',
+    itens: [
+      {
+        label: 'days',
+        description: 'Number of days between filter cleanings',
+        name: 'filterCleaningIntervalDays',
+        type: FieldType.Number
+      }
+    ],
+    label: 'Filter Cleaning Interval',
     type: FieldType.Default
   }
 ];

@@ -1,34 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-
+import { clientAxios } from '@/lib/clientAxios';
 import { toast } from '@/components/ui/use-toast';
-
-import { clientAxios } from '../../../lib/clientAxios';
-
-type PreferencesData = {
-  serviceEmailPreferences?: {
-    sendEmails?: boolean;
-    attachChemicalsReadings?: boolean;
-    attachChecklist?: boolean;
-    attachServicePhotos?: boolean;
-    ccEmail?: string;
-  };
-  equipmentMaintenancePreferences?: {
-    filterCleaningIntervalDays?: number;
-  };
-  companyId: string;
-};
 
 type ErrorResponse = {
   message: string;
 };
 
-export const useUpdateCompanyPreferences = (companyId: string) => {
+export const useUpdateEquipmentMaintenancePreferences = (companyId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: PreferencesData) => {
-      return await clientAxios.patch(`/companies/${companyId}/preferences`, data);
+    mutationFn: async (data: { filterCleaningIntervalDays: number }) => {
+      return await clientAxios.patch(`/companies/${companyId}/preferences/equipment-maintenance`, {
+        equipmentMaintenancePreferences: data,
+        companyId
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });

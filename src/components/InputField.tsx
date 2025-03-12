@@ -122,6 +122,9 @@ export default function InputField({ name, placeholder, type = FieldType.Default
       component: (field: ControllerRenderProps) => (
         <Switch {...props} checked={field.value} onCheckedChange={field.onChange} />
       )
+    },
+    number: {
+      component: (field: any) => <Input type="number" {...field} className="h-9" />
     }
   };
 
