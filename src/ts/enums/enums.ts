@@ -66,3 +66,27 @@ export enum Frequency {
   E4WEEKS = 'E4WEEKS',
   ONCE = 'ONCE'
 }
+
+export enum FilterType {
+  Sand = 'Sand',
+  Cartridge = 'Cartridge',
+  DE = 'DE',
+  Other = 'Other'
+}
+
+export enum EquipmentCondition {
+  Excellent = 'Excellent',
+  Good = 'Good',
+  Fair = 'Fair',
+  Poor = 'Poor',
+  NeedsReplacement = 'NeedsReplacement'
+}
+
+export enum MaintenanceType {
+  Cleaning = 'Cleaning',
+  Inspection = 'Inspection',
+  Installation = 'Installation',
+  Replacement = 'Replacement',
+  Adjustment = 'Adjustment',
+  Other = 'Other'
+}
