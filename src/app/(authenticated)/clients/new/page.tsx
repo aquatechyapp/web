@@ -121,6 +121,8 @@ export default function Page() {
         'clientCompany',
         'customerCode',
         'clientAddress',
+        'clientCity',
+        'clientState',
         'clientZip',
         'clientType',
         'timezone',
@@ -164,12 +166,14 @@ export default function Page() {
   }
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: async (data: PoolAndClientSchema) =>
-      await clientAxios.post('/client-pool-assignment', createFormData(data), {
+    mutationFn: async (data: PoolAndClientSchema) => {
+      console.log(data);
+      return await clientAxios.post('/client-pool-assignment', createFormData(data), {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
-      }),
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
@@ -207,7 +211,8 @@ export default function Page() {
       animalDanger: false,
       sameBillingAddress: false,
       clientState: user?.state,
-      clientType: 'Residential'
+      clientType: 'Residential',
+      monthlyPayment: 0
     }
   });
 

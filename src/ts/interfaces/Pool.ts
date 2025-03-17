@@ -1,4 +1,4 @@
-import { PoolType } from '@/ts/enums/enums';
+import { EquipmentCondition, FilterType, MaintenanceType, PoolType } from '@/ts/enums/enums';
 
 import { Service } from './Service';
 import { Client } from './Client';
@@ -31,6 +31,7 @@ export type Pool = {
   services?: Service[];
   assignments?: Assignment[];
   requests?: Request[];
+  equipment?: Equipment | null;
 };
 
 // Used only to add a pool to a client
@@ -53,3 +54,29 @@ type Coords = {
   lat: number;
   lng: number;
 };
+
+export interface MaintenanceHistory {
+  date: Date;
+  type?: MaintenanceType;
+  userId: string;
+  notes?: string;
+  photos?: string[];
+}
+
+export interface Filter {
+  model?: string;
+  photos?: string[];
+  serialNumber?: string;
+  type?: FilterType;
+  lastCleaningDate?: Date;
+  replacementDate?: Date;
+  lastCleaningUserId?: string;
+  condition?: EquipmentCondition;
+  maintenanceHistory?: MaintenanceHistory[];
+  recommendedCleaningIntervalDays?: number;
+  warrantyExpirationDate?: Date;
+}
+
+export interface Equipment {
+  filter?: Filter | null;
+}
