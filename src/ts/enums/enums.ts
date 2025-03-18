@@ -33,6 +33,7 @@ export enum FieldType {
   TextArea = 'textArea',
   File = 'file',
   Zip = 'zip',
+  Date = 'date',
   PercentValue = 'percentValue',
   CurrencyValue = 'currencyValue',
   Switch = 'switch',
