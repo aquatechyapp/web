@@ -4,13 +4,14 @@ import { FieldType } from '@/ts/enums/enums';
 
 import { InputMasked } from './InputMasked';
 import { Checkbox } from './ui/checkbox';
-import { FormControl, FormField, FormItem, FormMessage } from './ui/form';
+import { FormControl, FormField, FormItem, FormMessage, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Switch } from './ui/switch';
 import { Textarea } from './ui/textarea';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { format } from 'date-fns';
 
 type MaskTypes = 'currencyValue' | 'percentValue' | 'phone';
 
@@ -22,6 +23,7 @@ type Props = {
   type?: FieldType;
   props?: React.HTMLProps<HTMLInputElement>;
   label?: string;
+  value?: string;
 };
 
 export default function InputField({ name, placeholder, type = FieldType.Default, label, ...props }: Props) {
@@ -125,8 +127,47 @@ export default function InputField({ name, placeholder, type = FieldType.Default
     },
     number: {
       component: (field: any) => <Input type="number" {...field} className="h-9" />
+    },
+    date: {
+      component: (field: ControllerRenderProps) => (
+        <Input
+          type="date"
+          placeholder={placeholder}
+          {...field}
+          value={field.value || ''}
+          onChange={(e) => {
+            field.onChange(e.target.value);
+          }}
+        />
+      )
     }
   };
+
+  if (type === FieldType.Date) {
+    return (
+      <FormField
+        control={form.control}
+        name={name}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>{label}</FormLabel>
+            <FormControl>
+              <Input
+                type="date"
+                placeholder={placeholder}
+                {...field}
+                value={field.value || ''}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
 
   return (
     <FormField
