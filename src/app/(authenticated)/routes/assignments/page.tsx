@@ -37,10 +37,12 @@ import { newAssignmentSchema } from '@/schemas/assignments';
 import { DialogTransferRoute } from './ModalTransferRoute';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { OptimizeRouteModal } from './OptimizeRouteModal';
 
 export default function Page() {
   const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapAssignmentsUtils();
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
+  const [isOptimizeModalOpen, setIsOptimizeModalOpen] = useState(false);
 
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayStore((state) => state);
@@ -106,7 +108,7 @@ export default function Page() {
         ...assignments,
         current: changedOrderProperty
       });
-      getDirectionsFromGoogleMaps();
+      getDirectionsFromGoogleMaps(false, 'first', 'last', user.addressCoords!);
     }
   }
 
@@ -119,6 +121,20 @@ export default function Page() {
     setAssignmentToId(memberId);
     form.setValue('assignmentToId', memberId);
   }
+
+  const handleOptimize = (origin: 'home' | 'first', destination: 'home' | 'last') => {
+    if (assignments.current.length > 0) {
+      console.log('User address coords:', user.addressCoords);
+      console.log('Origin type:', origin);
+      console.log('Destination type:', destination);
+      getDirectionsFromGoogleMaps(true, origin, destination, user.addressCoords!);
+      // Add this to ensure the UI updates
+      setAssignments({
+        ...assignments,
+        initial: assignments.current
+      });
+    }
+  };
 
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
@@ -182,7 +198,7 @@ export default function Page() {
                       <Button
                         type="button"
                         className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
-                        onClick={() => getDirectionsFromGoogleMaps(true)}
+                        onClick={() => setIsOptimizeModalOpen(true)}
                       >
                         Optimize Route
                       </Button>
@@ -226,6 +242,15 @@ export default function Page() {
           />
         </div>
       </div>
+      {assignments.current.length > 0 && (
+        <OptimizeRouteModal
+          open={isOptimizeModalOpen}
+          onOpenChange={setIsOptimizeModalOpen}
+          onOptimize={handleOptimize}
+          assignments={assignments.current}
+          userAddress={user.address}
+        />
+      )}
     </FormProvider>
   );
 }

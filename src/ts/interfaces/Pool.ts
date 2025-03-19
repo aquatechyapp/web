@@ -50,7 +50,7 @@ export type CreatePool = {
   zip: string;
 };
 
-type Coords = {
+export type Coords = {
   lat: number;
   lng: number;
 };

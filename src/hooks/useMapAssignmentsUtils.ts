@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { libraries } from '@/constants';
 import { useAssignmentsContext } from '@/context/assignments';
+import { Coords } from '@/ts/interfaces/Pool';
 
 type DirectionsResult = google.maps.DirectionsResult | null;
 
@@ -26,24 +27,35 @@ export function useMapAssignmentsUtils() {
   const [duration, setDuration] = useState('');
 
   const getDirectionsFromGoogleMaps = useCallback(
-    (optimizeWaypoints: boolean = false) => {
+    (
+      optimizeWaypoints: boolean = false,
+      originType: 'home' | 'first' = 'first',
+      destinationType: 'home' | 'last' = 'last',
+      userHomeCoords: Coords
+    ) => {
+      console.log('Received user home coords:', userHomeCoords);
+
       if (current.length <= 0 || !isLoaded) {
         setDirections(null);
         setDistance('');
         setDuration('');
         return;
       }
-      const origin = current[0].pool.coords;
-      const destination = current[current.length - 1].pool.coords;
+
+      const origin = originType === 'home' ? userHomeCoords : current[0].pool.coords;
+      const destination = destinationType === 'home' ? userHomeCoords : current[current.length - 1].pool.coords;
       const service = new google.maps.DirectionsService();
-      // create a waypoints constant that not contain the origin and destination and get only assignments.pool.coords
+
+      console.log('Final origin coords:', origin);
+      console.log('Final destination coords:', destination);
+
+      // Adjust waypoints based on origin and destination
       const waypoints = current
-        .filter((assignment, index) => index !== 0 && index !== current.length - 1)
-        .map((assignment) => {
-          return {
-            location: assignment.pool.coords
-          };
-        });
+        .slice(originType === 'home' ? 0 : 1, destinationType === 'home' ? undefined : -1)
+        .map((assignment) => ({
+          location: assignment.pool.coords
+        }));
+
       service.route(
         {
           origin,
@@ -59,7 +71,7 @@ export function useMapAssignmentsUtils() {
 
             setDirections(result);
             setDuration(
-              (totalDuration / 60).toLocaleString('pt-br', {
+              (totalDuration / 60).toLocaleString('en-US', {
                 style: 'decimal',
                 maximumSignificantDigits: 2
               }) + ' min'
@@ -67,15 +79,22 @@ export function useMapAssignmentsUtils() {
             setDistance((totalDistance * 0.000621371).toFixed(1) + ' mi');
 
             if (optimizeWaypoints) {
-              const optimizedWaypoints = [
-                current[0],
-                ...result.routes[0].waypoint_order.map((index) => current[index + 1]),
-                current[current.length - 1]
-              ];
-              // I need to change the order property of each assignment based on the optimizedWaypoints
-              const changedOrderProperty = optimizedWaypoints.map((assignment, index) => {
-                return { ...assignment, order: index + 1 };
-              });
+              let optimizedAssignments = [...current];
+              if (originType === 'home') {
+                optimizedAssignments = [...result.routes[0].waypoint_order.map((index) => current[index])];
+              } else {
+                optimizedAssignments = [
+                  current[0],
+                  ...result.routes[0].waypoint_order.map((index) => current[index + 1]),
+                  ...(destinationType === 'last' ? [current[current.length - 1]] : [])
+                ];
+              }
+
+              const changedOrderProperty = optimizedAssignments.map((assignment, index) => ({
+                ...assignment,
+                order: index + 1
+              }));
+
               setAssignments({
                 ...assignments,
                 current: changedOrderProperty
@@ -89,8 +108,15 @@ export function useMapAssignmentsUtils() {
   );
 
   useEffect(() => {
-    getDirectionsFromGoogleMaps();
-  }, [getDirectionsFromGoogleMaps]);
+    if (current.length > 0) {
+      // Only run on initial load, not on every change
+      const initialRun = sessionStorage.getItem('initialRouteLoad');
+      if (!initialRun) {
+        getDirectionsFromGoogleMaps(false, 'first', 'last', current[0].pool.coords);
+        sessionStorage.setItem('initialRouteLoad', 'true');
+      }
+    }
+  }, [current.length]); // Only depend on current.length
 
   return {
     directions,
