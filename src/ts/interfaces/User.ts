@@ -1,5 +1,6 @@
 import { LanguageOptions, UserSubscription } from '@/ts/enums/enums';
 import { Company } from './Company';
+import { Coords } from './Pool';
 
 export type UserCompany = {
   companyId: string;
@@ -22,6 +23,7 @@ export type BasicData = {
   zip: string;
   phone: string;
   email: string;
+  addressCoords?: Coords;
 };
 
 export interface User extends BasicData {
