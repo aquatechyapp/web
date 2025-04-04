@@ -107,12 +107,11 @@ export default function ShowClient({ client }: Props) {
             </div>
             <div className="flex w-full flex-col items-center gap-2">
               <div className="flex w-full justify-center gap-2">
-                <Button className="w-full" variant={'outline'}>
-                  E-mail
-                </Button>
-                <Button className="w-full" variant={'outline'}>
-                  Message
-                </Button>
+                <a href={`mailto:${client.email}`} className="w-full">
+                  <Button className="w-full" variant={'outline'}>
+                    E-mail
+                  </Button>
+                </a>
               </div>
               <div className="flex w-full justify-center gap-2">
                 <Button className="w-full" onClick={() => deactivateClient(client.id)} variant={'destructive'}>
