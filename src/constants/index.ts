@@ -131,14 +131,21 @@ export const routes: Menu[] = [
         title: 'New Client',
         description: 'Create a new client, add a pool and assign a technician to it',
         icon: UserPlus
+      },
+      importQuickbooks: {
+        text: 'QuickBooks Import',
+        href: '/clients/import-quickbooks',
+        title: 'Import Clients from QuickBooks',
+        icon: Import,
+        description: 'Import clients from a QuickBooks file'
+      },
+      importCSV: {
+        text: 'CSV Import',
+        href: '/clients/import-csv',
+        title: 'Import Clients from CSV',
+        icon: Import,
+        description: 'Import clients using our CSV template'
       }
-      // import: {
-      //   text: 'Import Clients',
-      //   href: '/clients/import',
-      //   title: 'Import Clients',
-      //   icon: Import,
-      //   description: 'Massive import and edit of clients from a CSV file'
-      // },
       // broadcast: {
       //   text: 'Broadcast',
       //   href: '/clients/broadcast',

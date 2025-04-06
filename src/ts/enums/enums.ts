@@ -37,7 +37,8 @@ export enum FieldType {
   PercentValue = 'percentValue',
   CurrencyValue = 'currencyValue',
   Switch = 'switch',
-  Number = 'number'
+  Number = 'number',
+  Address = 'address'
 }
 
 export enum ClientType {
@@ -91,3 +92,64 @@ export enum MaintenanceType {
   Adjustment = 'Adjustment',
   Other = 'Other'
 }
+
+export const STATE_TIMEZONE_MAP: { [key: string]: IanaTimeZones } = {
+  // Eastern Time Zone
+  CT: IanaTimeZones.NY,
+  DE: IanaTimeZones.NY,
+  FL: IanaTimeZones.NY,
+  GA: IanaTimeZones.NY,
+  MA: IanaTimeZones.NY,
+  MD: IanaTimeZones.NY,
+  ME: IanaTimeZones.NY,
+  NC: IanaTimeZones.NY,
+  NH: IanaTimeZones.NY,
+  NJ: IanaTimeZones.NY,
+  NY: IanaTimeZones.NY,
+  PA: IanaTimeZones.NY,
+  RI: IanaTimeZones.NY,
+  SC: IanaTimeZones.NY,
+  VA: IanaTimeZones.NY,
+  VT: IanaTimeZones.NY,
+  WV: IanaTimeZones.NY,
+
+  // Central Time Zone
+  AL: IanaTimeZones.CHICAGO,
+  AR: IanaTimeZones.CHICAGO,
+  IA: IanaTimeZones.CHICAGO,
+  IL: IanaTimeZones.CHICAGO,
+  KS: IanaTimeZones.CHICAGO,
+  KY: IanaTimeZones.CHICAGO,
+  LA: IanaTimeZones.CHICAGO,
+  MN: IanaTimeZones.CHICAGO,
+  MO: IanaTimeZones.CHICAGO,
+  MS: IanaTimeZones.CHICAGO,
+  ND: IanaTimeZones.CHICAGO,
+  NE: IanaTimeZones.CHICAGO,
+  OK: IanaTimeZones.CHICAGO,
+  SD: IanaTimeZones.CHICAGO,
+  TN: IanaTimeZones.CHICAGO,
+  TX: IanaTimeZones.CHICAGO,
+  WI: IanaTimeZones.CHICAGO,
+
+  // Mountain Time Zone
+  AZ: IanaTimeZones.DENVER,
+  CO: IanaTimeZones.DENVER,
+  ID: IanaTimeZones.DENVER,
+  MT: IanaTimeZones.DENVER,
+  NM: IanaTimeZones.DENVER,
+  UT: IanaTimeZones.DENVER,
+  WY: IanaTimeZones.DENVER,
+
+  // Pacific Time Zone
+  CA: IanaTimeZones.LA,
+  NV: IanaTimeZones.LA,
+  OR: IanaTimeZones.LA,
+  WA: IanaTimeZones.LA,
+
+  // Alaska Time Zone
+  AK: IanaTimeZones.ANCHORAGE,
+
+  // Hawaii Time Zone
+  HI: IanaTimeZones.HONOLULU
+};

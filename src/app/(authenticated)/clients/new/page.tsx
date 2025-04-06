@@ -33,6 +33,7 @@ import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { Stepper, useSteps } from '@/components/stepper';
 import { ArrowLeftIcon, Loader2Icon } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { AddressInput } from '@/components/AddressInput';
 
 type PoolAndClientSchema = z.infer<typeof poolAndClientSchema>;
 
@@ -54,6 +55,10 @@ export default function Page() {
   const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
   const { data: companies, isLoading: isCompaniesLoading, isSuccess: isCompaniesSuccess } = useGetCompanies();
   const [showNoCompaniesDialog, setShowNoCompaniesDialog] = useState(false);
+
+  const ownerAdminOfficeCompanies = companies.filter(
+    (c) => c.role === 'Owner' || c.role === 'Admin' || c.role === 'Office'
+  );
 
   useEffect(() => {
     if (user && user.id && user.id !== undefined && isCompaniesSuccess) {
@@ -176,6 +181,7 @@ export default function Page() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ['allClients'] });
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       queryClient.invalidateQueries({ queryKey: ['schedule'] });
       router.push('/clients');
@@ -210,9 +216,10 @@ export default function Page() {
     defaultValues: {
       animalDanger: false,
       sameBillingAddress: false,
-      clientState: user?.state,
+      // clientState: user?.state,
       clientType: 'Residential',
-      monthlyPayment: 0
+      monthlyPayment: 0,
+      companyOwnerId: ownerAdminOfficeCompanies.length === 1 ? ownerAdminOfficeCompanies[0].id : undefined
     }
   });
 
@@ -355,8 +362,24 @@ export default function Page() {
   }, [form.watch('weekday')]);
 
   useEffect(() => {
-    getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn'));
+    const startOnValue = form.watch('startOn');
+    if (startOnValue) {
+      getNext10DatesForEndAfterBasedOnWeekday(new Date(startOnValue));
+      form.setValue('endAfter', 'No end'); // Set default value to "No end"
+    }
   }, [form.watch('startOn')]);
+
+  useEffect(() => {
+    if (isCompaniesSuccess && companies) {
+      const ownerAdminOfficeCompanies = companies.filter(
+        (c) => c.role === 'Owner' || c.role === 'Admin' || c.role === 'Office'
+      );
+
+      if (ownerAdminOfficeCompanies.length === 1) {
+        form.setValue('companyOwnerId', ownerAdminOfficeCompanies[0].id, { shouldValidate: true });
+      }
+    }
+  }, [companies, isCompaniesSuccess, form.setValue, isCompaniesLoading]);
 
   return (
     <Form {...form}>
@@ -397,7 +420,23 @@ export default function Page() {
                 <InputField name="customerCode" placeholder="Customer code" label="Customer code" />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                <InputField name="clientAddress" placeholder="Billing address" label="Billing address" />
+                {/* <InputField name="clientAddress" placeholder="Billing address" label="Billing address" /> */}
+                <AddressInput
+                  name="clientAddress"
+                  label="Billing address"
+                  placeholder="Enter address"
+                  onAddressSelect={({ state, city, zipCode, timezone }) => {
+                    // First set the state
+                    form.setValue('clientState', state, { shouldValidate: true });
+
+                    // Wait for cities to load
+                    setTimeout(() => {
+                      form.setValue('clientCity', city, { shouldValidate: true });
+                      form.setValue('clientZip', zipCode, { shouldValidate: true });
+                      form.setValue('timezone', timezone, { shouldValidate: true });
+                    }, 500);
+                  }}
+                />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                 <StateAndCitySelect />
@@ -589,6 +628,7 @@ export default function Page() {
                       name: date.name,
                       value: date.value
                     }))}
+                    defaultValue="No end"
                   />
                 </div>
               )}

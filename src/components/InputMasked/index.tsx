@@ -29,7 +29,7 @@ export const InputMasked = forwardRef<HTMLInputElement, Props>(({ field, placeho
   const form = useFormContext();
   const inputRef = useMaskito({ options: masks[mask] });
 
-  let value = field.value;
+  let value = field.value || '';
 
   if (mask === 'currencyValue' && value) {
     value = maskitoTransform(insertDot(onlyNumbers(value.toString())).toFixed(2), masks[mask]);
@@ -44,7 +44,7 @@ export const InputMasked = forwardRef<HTMLInputElement, Props>(({ field, placeho
     if (mask === 'currencyValue' || mask === 'percentValue') {
       newValue = onlyNumbers(newValue);
     }
-    form.setValue(name, newValue);
+    field.onChange(newValue);
   }
 
   return (
@@ -66,3 +66,5 @@ export const InputMasked = forwardRef<HTMLInputElement, Props>(({ field, placeho
     />
   );
 });
+
+InputMasked.displayName = 'InputMasked';

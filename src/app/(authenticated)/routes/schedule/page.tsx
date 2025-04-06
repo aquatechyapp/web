@@ -82,14 +82,16 @@ export default function Page() {
     form.setValue('assignedToId', memberId);
   }
 
-  function getNext7DatesWith12PMUTC(): { date: string; formatted: string }[] {
+  function getDateRange(): { date: string; formatted: string }[] {
     const today = new Date();
 
+    // Create array from -3 to +3 (7 days total)
     return Array.from({ length: 7 }, (_, index) => {
-      const dateAt12PMUTC = normalizeToUTC12(addDays(today, index).toISOString());
+      // Subtract 3 from index to start 3 days ago
+      const dateAt12PMUTC = normalizeToUTC12(addDays(today, index - 3).toISOString());
       return {
         date: dateAt12PMUTC.toISOString(),
-        formatted: format(dateAt12PMUTC, 'MM/dd') // '02/12'
+        formatted: format(dateAt12PMUTC, 'MM/dd')
       };
     });
   }
@@ -98,7 +100,7 @@ export default function Page() {
     setSelectedDay(day);
   }
 
-  const next7days = getNext7DatesWith12PMUTC();
+  const dateRange = getDateRange();
 
   return (
     <FormProvider {...form}>
@@ -108,7 +110,7 @@ export default function Page() {
         <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
           <Tabs
             onValueChange={handleChangeDay}
-            defaultValue={selectedDay || getNext7DatesWith12PMUTC()[0].date}
+            defaultValue={selectedDay || getDateRange()[3].date}
             value={selectedDay}
             className="w-full"
           >
@@ -116,7 +118,7 @@ export default function Page() {
               <Form {...form}>
                 <form className="w-full">
                   <TabsList className="grid h-12 w-full grid-cols-7">
-                    {next7days.map((day, index) => (
+                    {dateRange.map((day, index) => (
                       <TabsTrigger
                         className="px-0 text-xs data-[state=active]:px-0"
                         key={day.formatted}
@@ -132,7 +134,7 @@ export default function Page() {
                 </form>
               </Form>
 
-              <TabsContent value={selectedDay || getNext7DatesWith12PMUTC()[0].date} className="w-full">
+              <TabsContent value={selectedDay || getDateRange()[3].date} className="w-full">
                 <ServicesList />
               </TabsContent>
             </div>
