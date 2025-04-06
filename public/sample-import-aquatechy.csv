@@ -1,3 +1,0 @@
-clientAddress,clientCity,email,firstName,lastName,clientNotes,phone,clientState,clientZip,poolAddress,animalDanger,poolCity,enterSide,lockerCode,poolNotes,poolType,poolState,poolZip,customerCode,clientCompany,clientType,monthlyPayment,timezone
-Endereço 2,Arab,asd@asd.com,Segybdi,Smith,Notas,1 232 323-2323,AL,123123,Endereço piscina,FALSE,Arab,north,123,notes,Chlorine,AL,123123,123,Companhia CLiente,Residential,"$123,00",America/New_York
-Endereço 1,Arab,asd@asd.com,John,Doe,Notas,1 232 323-2323,AL,123123,Endereço piscina,TRUE,Arab,north,123,notes,Salt,AL,123123,123,Companhia CLiente,Commercial,"$123,00",America/Chicago
