@@ -361,7 +361,11 @@ export default function Page() {
   }, [form.watch('weekday')]);
 
   useEffect(() => {
-    getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn'));
+    const startOnValue = form.watch('startOn');
+    if (startOnValue) {
+      getNext10DatesForEndAfterBasedOnWeekday(new Date(startOnValue));
+      form.setValue('endAfter', 'No end'); // Set default value to "No end"
+    }
   }, [form.watch('startOn')]);
 
   useEffect(() => {
