@@ -627,6 +627,7 @@ export default function Page() {
                       name: date.name,
                       value: date.value
                     }))}
+                    defaultValue="No end"
                   />
                 </div>
               )}
