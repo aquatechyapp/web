@@ -7,8 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest --run",
-    "test:watch": "vitest",
     "prepare": "husky install",
     "prettier": "prettier --write ."
   },
