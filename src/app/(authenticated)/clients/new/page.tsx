@@ -33,6 +33,7 @@ import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { Stepper, useSteps } from '@/components/stepper';
 import { ArrowLeftIcon, Loader2Icon } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { AddressInput } from '@/components/AddressInput';
 
 type PoolAndClientSchema = z.infer<typeof poolAndClientSchema>;
 
@@ -210,7 +211,7 @@ export default function Page() {
     defaultValues: {
       animalDanger: false,
       sameBillingAddress: false,
-      clientState: user?.state,
+      // clientState: user?.state,
       clientType: 'Residential',
       monthlyPayment: 0
     }
@@ -397,7 +398,22 @@ export default function Page() {
                 <InputField name="customerCode" placeholder="Customer code" label="Customer code" />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                <InputField name="clientAddress" placeholder="Billing address" label="Billing address" />
+                {/* <InputField name="clientAddress" placeholder="Billing address" label="Billing address" /> */}
+                <AddressInput
+                  name="clientAddress"
+                  label="Billing address"
+                  placeholder="Enter address"
+                  onAddressSelect={({ state, city, zipCode }) => {
+                    // First set the state
+                    form.setValue('clientState', state, { shouldValidate: true });
+
+                    // Wait for cities to load
+                    setTimeout(() => {
+                      form.setValue('clientCity', city, { shouldValidate: true });
+                      form.setValue('clientZip', zipCode, { shouldValidate: true });
+                    }, 500);
+                  }}
+                />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                 <StateAndCitySelect />

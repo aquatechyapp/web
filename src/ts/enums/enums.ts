@@ -37,7 +37,8 @@ export enum FieldType {
   PercentValue = 'percentValue',
   CurrencyValue = 'currencyValue',
   Switch = 'switch',
-  Number = 'number'
+  Number = 'number',
+  Address = 'address'
 }
 
 export enum ClientType {
