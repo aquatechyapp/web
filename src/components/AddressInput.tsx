@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Input } from './ui/input';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
+import { IanaTimeZones, STATE_TIMEZONE_MAP } from '@/ts/enums/enums';
 
 type AddressInputProps = {
   name: string;
@@ -11,7 +12,13 @@ type AddressInputProps = {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
-  onAddressSelect?: (address: { fullAddress: string; state: string; city: string; zipCode: string }) => void;
+  onAddressSelect?: (address: {
+    fullAddress: string;
+    state: string;
+    city: string;
+    zipCode: string;
+    timezone: IanaTimeZones;
+  }) => void;
 };
 
 const GOOGLE_MAPS_LIBRARIES: Array<'places'> = ['places'];
@@ -87,7 +94,8 @@ export function AddressInput({ name, label, placeholder, className, disabled, on
           fullAddress,
           state,
           city,
-          zipCode
+          zipCode,
+          timezone: STATE_TIMEZONE_MAP[state] || IanaTimeZones.NY // Default to NY timezone if state not found
         });
       }
     };

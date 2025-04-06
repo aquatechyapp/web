@@ -403,7 +403,7 @@ export default function Page() {
                   name="clientAddress"
                   label="Billing address"
                   placeholder="Enter address"
-                  onAddressSelect={({ state, city, zipCode }) => {
+                  onAddressSelect={({ state, city, zipCode, timezone }) => {
                     // First set the state
                     form.setValue('clientState', state, { shouldValidate: true });
 
@@ -411,6 +411,7 @@ export default function Page() {
                     setTimeout(() => {
                       form.setValue('clientCity', city, { shouldValidate: true });
                       form.setValue('clientZip', zipCode, { shouldValidate: true });
+                      form.setValue('timezone', timezone, { shouldValidate: true });
                     }, 500);
                   }}
                 />
