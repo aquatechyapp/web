@@ -56,6 +56,10 @@ export default function Page() {
   const { data: companies, isLoading: isCompaniesLoading, isSuccess: isCompaniesSuccess } = useGetCompanies();
   const [showNoCompaniesDialog, setShowNoCompaniesDialog] = useState(false);
 
+  const ownerAdminOfficeCompanies = companies.filter(
+    (c) => c.role === 'Owner' || c.role === 'Admin' || c.role === 'Office'
+  );
+
   useEffect(() => {
     if (user && user.id && user.id !== undefined && isCompaniesSuccess) {
       setShowNoCompaniesDialog(companies.length === 0);
@@ -213,7 +217,8 @@ export default function Page() {
       sameBillingAddress: false,
       // clientState: user?.state,
       clientType: 'Residential',
-      monthlyPayment: 0
+      monthlyPayment: 0,
+      companyOwnerId: ownerAdminOfficeCompanies.length === 1 ? ownerAdminOfficeCompanies[0].id : undefined
     }
   });
 
@@ -358,6 +363,18 @@ export default function Page() {
   useEffect(() => {
     getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn'));
   }, [form.watch('startOn')]);
+
+  useEffect(() => {
+    if (isCompaniesSuccess && companies) {
+      const ownerAdminOfficeCompanies = companies.filter(
+        (c) => c.role === 'Owner' || c.role === 'Admin' || c.role === 'Office'
+      );
+
+      if (ownerAdminOfficeCompanies.length === 1) {
+        form.setValue('companyOwnerId', ownerAdminOfficeCompanies[0].id, { shouldValidate: true });
+      }
+    }
+  }, [companies, isCompaniesSuccess, form.setValue, isCompaniesLoading]);
 
   return (
     <Form {...form}>
