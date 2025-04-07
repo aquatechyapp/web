@@ -41,6 +41,7 @@ import { OptimizeRouteModal } from './OptimizeRouteModal';
 
 export default function Page() {
   const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapAssignmentsUtils();
+
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
   const [isOptimizeModalOpen, setIsOptimizeModalOpen] = useState(false);
 

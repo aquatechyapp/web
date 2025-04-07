@@ -14,6 +14,7 @@ if (!googleMapsApiKey) {
 }
 
 export function useMapAssignmentsUtils() {
+
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey,
     libraries
@@ -21,6 +22,7 @@ export function useMapAssignmentsUtils() {
 
   const { assignments, setAssignments } = useAssignmentsContext();
   const { current } = assignments;
+
 
   const [directions, setDirections] = useState<DirectionsResult | undefined>();
   const [distance, setDistance] = useState('');
@@ -34,6 +36,8 @@ export function useMapAssignmentsUtils() {
       userHomeCoords: Coords
     ) => {
       console.log('Received user home coords:', userHomeCoords);
+      console.log('current', current);
+      console.log('isLoaded', isLoaded);
 
       if (current.length <= 0 || !isLoaded) {
         setDirections(null);
@@ -45,9 +49,6 @@ export function useMapAssignmentsUtils() {
       const origin = originType === 'home' ? userHomeCoords : current[0].pool.coords;
       const destination = destinationType === 'home' ? userHomeCoords : current[current.length - 1].pool.coords;
       const service = new google.maps.DirectionsService();
-
-      console.log('Final origin coords:', origin);
-      console.log('Final destination coords:', destination);
 
       // Adjust waypoints based on origin and destination
       const waypoints = current
@@ -66,6 +67,7 @@ export function useMapAssignmentsUtils() {
         },
         (result, status) => {
           if (status === 'OK' && result) {
+
             const totalDuration = result.routes[0].legs.reduce((acc, leg) => acc + (leg.duration?.value ?? 0), 0);
             const totalDistance = result.routes[0].legs.reduce((acc, leg) => acc + (leg.distance?.value ?? 0), 0);
 
@@ -110,13 +112,13 @@ export function useMapAssignmentsUtils() {
   useEffect(() => {
     if (current.length > 0) {
       // Only run on initial load, not on every change
-      const initialRun = sessionStorage.getItem('initialRouteLoad');
-      if (!initialRun) {
+      // const initialRun = sessionStorage.getItem('initialRouteLoad');
+      // if (!initialRun) {
         getDirectionsFromGoogleMaps(false, 'first', 'last', current[0].pool.coords);
-        sessionStorage.setItem('initialRouteLoad', 'true');
-      }
+        // sessionStorage.setItem('initialRouteLoad', 'true');
+      // }
     }
-  }, [current.length]); // Only depend on current.length
+  }, [current]); // Only depend on current.length
 
   return {
     directions,
