@@ -31,6 +31,7 @@ export function useMapServicesUtils() {
         setDuration('');
         return;
       }
+      
       const origin = services[0].pool!.coords;
       const destination = services[services.length - 1].pool!.coords;
       const service = new google.maps.DirectionsService();
@@ -52,8 +53,13 @@ export function useMapServicesUtils() {
         },
         (result, status) => {
           if (status === 'OK' && result) {
+            console.log('result', result);
+
             const totalDuration = result.routes[0].legs.reduce((acc, leg) => acc + (leg.duration?.value ?? 0), 0);
             const totalDistance = result.routes[0].legs.reduce((acc, leg) => acc + (leg.distance?.value ?? 0), 0);
+
+            console.log('totalDuration', totalDuration);
+            console.log('totalDistance', totalDistance);
 
             setDirections(result);
             setDuration(

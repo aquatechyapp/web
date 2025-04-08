@@ -80,6 +80,7 @@ export function AddressInput({ name, label, placeholder, className, disabled, on
           case 'postal_code':
             zipCode = component.long_name;
             break;
+          
         }
       }
 

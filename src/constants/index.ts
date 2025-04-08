@@ -171,6 +171,13 @@ export const routes: Menu[] = [
         title: 'Schedule',
         description: 'See your schedule and the pools you have to service',
         icon: UserPlus
+      },
+      routeFinder: {
+        text: 'Route Finder',
+        href: '/routes/route-finder',
+        title: 'Route Finder',
+        description: 'Find the best route for a new pool location',
+        icon: RouteIcon
       }
     },
     href: '/routes/assignments',
