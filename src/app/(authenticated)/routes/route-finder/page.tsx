@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Cookies from 'js-cookie';
+import { MapPin, Calendar, Palette, CheckSquare, MousePointer } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -168,6 +169,53 @@ export default function RouteFinder() {
     <div className="flex h-full flex-col gap-4 p-4">
       <div className="flex flex-col gap-4 lg:flex-row">
         <div className="w-full lg:w-1/3">
+          <div className="mb-4 space-y-4">
+
+            <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+              <div className="space-y-4">
+                
+                
+                <div className="grid gap-3">
+                  <div className="flex gap-3 items-start">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50">
+                      <Calendar className="h-3.5 w-3.5 text-blue-500" />
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      View your technician's weekly assignments with color-coded markers
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3 items-start">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50">
+                      <CheckSquare className="h-3.5 w-3.5 text-blue-500" />
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Toggle visibility of specific days for each technician
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3 items-start">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50">
+                      <Palette className="h-3.5 w-3.5 text-blue-500" />
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Customize route colors to match your preferences
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3 items-start">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50">
+                      <MousePointer className="h-3.5 w-3.5 text-blue-500" />
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Click markers to view detailed assignment information
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mb-4">
               <AddressInput
