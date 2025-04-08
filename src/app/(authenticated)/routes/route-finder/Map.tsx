@@ -11,7 +11,9 @@ import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { Coords } from '@/ts/interfaces/Pool';
 
-type DirectionsResult = google.maps.DirectionsResult | null;
+interface AssignmentWithColor extends Assignment {
+  color?: string;
+}
 
 const mapContainerStyle = {
   width: '100%',
@@ -38,25 +40,15 @@ const calculateMapCenter = (assignments: Assignment[], newLocation: Coords | nul
   return { lat: avgLat, lng: avgLng };
 };
 
-type Props = {
-  assignments: Assignment[];
+interface MapProps {
+  assignments: AssignmentWithColor[];
   newLocation: Coords | null;
   isLoaded: boolean;
   loadError: Error | undefined;
-};
+}
 
-const weekdayOptions: { [key: string]: { iconColor: string; textColor: string; label: string } } = {
-  MONDAY: { iconColor: '#FF0000', textColor: '#FFFFFF', label: 'Monday' },
-  TUESDAY: { iconColor: '#FFA500', textColor: '#FFFFFF', label: 'Tuesday' },
-  WEDNESDAY: { iconColor: '#FFE201', textColor: '#000000', label: 'Wednesday' },
-  THURSDAY: { iconColor: '#008000', textColor: '#FFFFFF', label: 'Thursday' },
-  FRIDAY: { iconColor: '#0000FF', textColor: '#FFFFFF', label: 'Friday' },
-  SATURDAY: { iconColor: '#4B0082', textColor: '#FFFFFF', label: 'Saturday' },
-  SUNDAY: { iconColor: '#EE82EE', textColor: '#000000', label: 'Sunday' }
-};
-
-const Map = ({ assignments, newLocation, isLoaded, loadError }: Props) => {
-  const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+const Map = ({ assignments, newLocation, isLoaded, loadError }: MapProps) => {
+  const [selectedAssignment, setSelectedAssignment] = useState<AssignmentWithColor | null>(null);
 
   if (loadError) {
     return <div>Error loading maps</div>;
@@ -93,12 +85,8 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: Props) => {
       >
         {/* Existing assignments */}
         <div>
-          {assignments.map((assignment) => {
-            const weekdayColor = weekdayOptions[assignment.weekday] || {
-              iconColor: '#808080',
-              textColor: '#000000'
-            };
-
+          {assignments.map((assignment: AssignmentWithColor) => {
+            
             return (
               <Marker
                 onClick={() => setSelectedAssignment(assignment)}
@@ -109,7 +97,7 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: Props) => {
                 }}
                 icon={{
                   path: google.maps.SymbolPath.CIRCLE,
-                  fillColor: weekdayColor.iconColor,
+                  fillColor: assignment.color,
                   fillOpacity: 1,
                   scale: 10,
                   strokeColor: 'white',
@@ -125,12 +113,11 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: Props) => {
           <Marker
             position={newLocation}
             icon={{
-              path: google.maps.SymbolPath.CIRCLE,
-              fillColor: Colors.blue[500],
-              fillOpacity: 1,
-              scale: 12,
-              strokeColor: 'white',
-              strokeWeight: 2
+              path: 'M -2,-2 2,2 M 2,-2 -2,2', // X shape
+              strokeColor: '#FF0000', // Bright red
+              strokeWeight: 6, // Thicker lines
+              scale: 6, // Bigger size
+              strokeOpacity: 1
             }}
           />
         )}
@@ -152,11 +139,10 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: Props) => {
                 <div className="flex flex-1 items-center justify-start gap-2">
                   <span
                     className="h-2 w-6 rounded-md"
-                    style={{ backgroundColor: weekdayOptions[selectedAssignment.weekday].iconColor }}
+                    style={{ 
+                      backgroundColor: selectedAssignment.color
+                    }}
                   />
-                  <Typography element="h3" className="font-semibold">
-                    {weekdayOptions[selectedAssignment.weekday].label}
-                  </Typography>
                 </div>
                 <Button
                   variant="ghost"
