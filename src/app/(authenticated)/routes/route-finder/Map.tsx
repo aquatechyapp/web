@@ -10,6 +10,8 @@ import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { Coords } from '@/ts/interfaces/Pool';
+import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
+import { useUserStore } from '@/store/user';
 
 interface AssignmentWithColor extends Assignment {
   color?: string;
@@ -49,6 +51,9 @@ interface MapProps {
 
 const Map = ({ assignments, newLocation, isLoaded, loadError }: MapProps) => {
   const [selectedAssignment, setSelectedAssignment] = useState<AssignmentWithColor | null>(null);
+  
+  const user = useUserStore((state) => state.user);
+  const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
 
   if (loadError) {
     return <div>Error loading maps</div>;
@@ -85,27 +90,28 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: MapProps) => {
       >
         {/* Existing assignments */}
         <div>
-          {assignments.map((assignment: AssignmentWithColor) => {
-            
-            return (
-              <Marker
-                onClick={() => setSelectedAssignment(assignment)}
-                key={assignment.id}
-                position={{
-                  lat: assignment.pool.coords.lat,
-                  lng: assignment.pool.coords.lng
-                }}
-                icon={{
-                  path: google.maps.SymbolPath.CIRCLE,
-                  fillColor: assignment.color,
-                  fillOpacity: 1,
-                  scale: 10,
-                  strokeColor: 'white',
-                  strokeWeight: 1.5
-                }}
-              />
-            );
-          })}
+          {assignments
+            .filter(assignment => assignment.color !== 'transparent')
+            .map((assignment: AssignmentWithColor) => {
+              return (
+                <Marker
+                  onClick={() => setSelectedAssignment(assignment)}
+                  key={assignment.id}
+                  position={{
+                    lat: assignment.pool.coords.lat,
+                    lng: assignment.pool.coords.lng
+                  }}
+                  icon={{
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: assignment.color,
+                    fillOpacity: 1,
+                    scale: 10,
+                    strokeColor: 'white',
+                    strokeWeight: 1.5
+                  }}
+                />
+              );
+            })}
         </div>
 
         {/* New location marker */}
@@ -154,25 +160,24 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: MapProps) => {
               </div>
               <div className="space-y-1">
                 <Typography element="p" className="text-sm">
-                  <span className="font-semibold">Owner </span>
-                  {selectedAssignment.pool.name.trim().split('-')[0]}
+                  <span className="font-semibold">Technician </span>
+                  {members?.find(m => m.id === selectedAssignment.assignmentToId)
+                    ? `${members.find(m => m.id === selectedAssignment.assignmentToId)?.firstName} ${members.find(m => m.id === selectedAssignment.assignmentToId)?.lastName}`
+                    : 'Unknown'
+                  }
+                </Typography>
+                <Typography element="p" className="text-sm">
+                  <span className="font-semibold">Client </span>
+                  {selectedAssignment.pool.name.trim()}
                 </Typography>
                 <Typography element="p" className="text-sm">
                   <span className="font-semibold">Address </span>
                   {`${selectedAssignment.pool.address}, ${selectedAssignment.pool.city}, ${selectedAssignment.pool.zip}`}
                 </Typography>
-                <div>
-                  <Typography element="p" className="text-sm font-semibold">
-                    Hour
-                  </Typography>
-                  <Typography element="p" className="text-sm">
-                    <span>Start </span>
-                    {format(selectedAssignment.startOn, 'hh:mm a')}
-                  </Typography>
-                  <Typography element="p" className="text-sm">
-                    <span>End </span> {format(selectedAssignment.endAfter, 'hh:mm a')}
-                  </Typography>
-                </div>
+                <Typography element="p" className="text-sm">
+                  <span className="font-semibold">Day </span>
+                  {format(selectedAssignment.startOn, 'EEEE')}
+                </Typography>
               </div>
             </div>
           </InfoBox>

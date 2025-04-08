@@ -7,6 +7,12 @@ import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/g
 import { useUserStore } from '@/store/user';
 import Cookies from 'js-cookie';
 import { Input } from '@/components/ui/input';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
 const COOKIE_NAME = 'technician-weekday-colors';
@@ -88,22 +94,22 @@ export function TechnicianSummary({
     };
     setTechFilters(newFilters);
 
-    // Filter assignments but preserve their colors
-    const filtered = assignments.map(assignment => {
+    // Filter assignments - only include assignments where the day is checked
+    const filtered = assignments.filter(assignment => {
       const techFilter = newFilters[assignment.assignmentToId];
       const weekday = new Date(assignment.startOn)
         .toLocaleDateString('en-US', { weekday: 'long' })
         .toLowerCase() as typeof weekdays[number];
       
-      // If the assignment should be visible, use its color, otherwise make it transparent
-      const visible = techFilter && techFilter[assignment.weekday.toLowerCase()];
-      const color = visible 
-        ? colorScheme[assignment.assignmentToId]?.[weekday] || '#808080'
-        : 'transparent';
-
+      return techFilter && techFilter[weekday];
+    }).map(assignment => {
+      const weekday = new Date(assignment.startOn)
+        .toLocaleDateString('en-US', { weekday: 'long' })
+        .toLowerCase() as typeof weekdays[number];
+      
       return {
         ...assignment,
-        color
+        color: colorScheme[assignment.assignmentToId]?.[weekday] || '#808080'
       };
     });
 
@@ -128,113 +134,120 @@ export function TechnicianSummary({
   };
 
   return (
-    <div className="space-y-8">
-      {Object.entries(technicianAssignments).map(([techId, tech]) => (
-        <div key={techId} className="bg-white rounded-xl shadow-sm">
-          {/* Technician Header */}
-          <div className="p-4 border-b">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <span className="text-blue-600 font-semibold">
-                  {tech.name.charAt(0)}
-                </span>
+    <div className="space-y-4">
+      <Accordion type="multiple" defaultValue={Object.keys(technicianAssignments)} className="space-y-4">
+        {Object.entries(technicianAssignments).map(([techId, tech]) => (
+          <AccordionItem
+            key={techId}
+            value={techId}
+            className="bg-white rounded-xl shadow-sm border-none"
+          >
+            <AccordionTrigger className="hover:no-underline px-4 py-3">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-blue-600 font-semibold">
+                    {tech.name.charAt(0)}
+                  </span>
+                </div>
+                <div>
+                  <Typography element="h4" className="text-left font-semibold text-gray-900">
+                    {tech.name}
+                  </Typography>
+                  <Typography element="span" className="text-sm text-gray-500">
+                    {tech.assignments.length} total assignments
+                  </Typography>
+                </div>
               </div>
-              <div>
-                <Typography element="h4" className="font-semibold text-gray-900">
-                  {tech.name}
-                </Typography>
-                <Typography element="span" className="text-sm text-gray-500">
-                  {tech.assignments.length} total assignments
-                </Typography>
-              </div>
-            </div>
-          </div>
+            </AccordionTrigger>
 
-          {/* Weekdays Table */}
-          <div className="p-3">
-            <div className="divide-y divide-gray-100">
-              {weekdays.map((day) => {
-                const assignmentsForDay = tech.assignments.filter(
-                  a => a.weekday.toLowerCase() === day
-                ).length;
-                const isActive = techFilters[techId]?.[day] ?? true;
-                const currentColor = colorScheme[techId]?.[day] || '#808080';
-                
-                return (
-                  <div
-                    key={`${techId}-${day}`}
-                    className={`
-                      flex items-center justify-between py-2 px-3
-                      ${isActive ? '' : 'opacity-60'}
-                      hover:bg-gray-50 rounded-lg transition-all
-                    `}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <Input
-                          type="color"
-                          value={currentColor}
-                          onChange={(e) => handleColorChange(techId, day, e.target.value)}
-                          className="w-6 h-6 p-0 rounded-full cursor-pointer border-0
-                            opacity-0 absolute inset-0"
-                        />
-                        <div 
-                          className="w-6 h-6 rounded-full ring-2 ring-offset-2 ring-gray-200"
-                          style={{ backgroundColor: currentColor }}
-                        />
-                      </div>
-                      <button
-                        onClick={() => handleDayToggle(techId, day, !isActive)}
-                        className="flex items-center gap-3"
+            <AccordionContent>
+              {/* Weekdays Table */}
+              <div className="p-3">
+                <div className="divide-y divide-gray-100">
+                  {weekdays.map((day) => {
+                    const assignmentsForDay = tech.assignments.filter(
+                      a => a.weekday.toLowerCase() === day
+                    ).length;
+                    const isActive = techFilters[techId]?.[day] ?? true;
+                    const currentColor = colorScheme[techId]?.[day] || '#808080';
+                    
+                    return (
+                      <div
+                        key={`${techId}-${day}`}
+                        className={`
+                          flex items-center justify-between py-2 px-3
+                          ${isActive ? '' : 'opacity-60'}
+                          hover:bg-gray-50 rounded-lg transition-all
+                        `}
                       >
-                        <span className="font-medium capitalize text-left text-gray-700 min-w-[100px]">
-                          {day}
-                        </span>
-                        {assignmentsForDay > 0 && (
-                          <div className="flex items-center gap-1.5">
-                            <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                            <span className="text-sm text-gray-500">
-                              {assignmentsForDay} assignments
-                            </span>
+                        <div className="flex items-center gap-4">
+                          <div className="relative">
+                            <Input
+                              type="color"
+                              value={currentColor}
+                              onChange={(e) => handleColorChange(techId, day, e.target.value)}
+                              className="w-6 h-6 p-0 rounded-full cursor-pointer border-0
+                                opacity-0 absolute inset-0"
+                            />
+                            <div 
+                              className="w-6 h-6 rounded-full ring-2 ring-offset-2 ring-gray-200"
+                              style={{ backgroundColor: currentColor }}
+                            />
                           </div>
-                        )}
-                      </button>
-                    </div>
+                          <button
+                            onClick={() => handleDayToggle(techId, day, !isActive)}
+                            className="flex items-center gap-3"
+                          >
+                            <span className="font-medium capitalize text-left text-gray-700 min-w-[100px]">
+                              {day}
+                            </span>
+                            {assignmentsForDay > 0 && (
+                              <div className="flex items-center gap-1.5">
+                                <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                                <span className="text-sm text-gray-500">
+                                  {assignmentsForDay} assignments
+                                </span>
+                              </div>
+                            )}
+                          </button>
+                        </div>
 
-                    <button
-                      onClick={() => handleDayToggle(techId, day, !isActive)}
-                      className={`
-                        p-1 rounded-md transition-colors
-                        ${isActive 
-                          ? 'text-green-600 bg-green-50 hover:bg-green-100' 
-                          : 'text-gray-400 bg-gray-50 hover:bg-gray-100'
-                        }
-                      `}
-                    >
-                      <svg 
-                        className="w-5 h-5"
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor"
-                      >
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d={isActive 
-                            ? "M5 13l4 4L19 7" 
-                            : "M6 18L18 6M6 6l12 12"
-                          } 
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      ))}
+                        <button
+                          onClick={() => handleDayToggle(techId, day, !isActive)}
+                          className={`
+                            p-1 rounded-md transition-colors
+                            ${isActive 
+                              ? 'text-green-600 bg-green-50 hover:bg-green-100' 
+                              : 'text-gray-400 bg-gray-50 hover:bg-gray-100'
+                            }
+                          `}
+                        >
+                          <svg 
+                            className="w-5 h-5"
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={2} 
+                              d={isActive 
+                                ? "M5 13l4 4L19 7" 
+                                : "M6 18L18 6M6 6l12 12"
+                              } 
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 } 

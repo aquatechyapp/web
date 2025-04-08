@@ -176,32 +176,6 @@ export default function RouteFinder() {
                 placeholder="Enter pool address"
                 onAddressSelect={handleAddressSelect}
               />
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Preferred Day</label>
-                <Select
-                  value={form.watch('preferredDay')}
-                  onValueChange={(value) => form.setValue('preferredDay', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select preferred day" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any day</SelectItem>
-                    <SelectItem value="monday">Monday</SelectItem>
-                    <SelectItem value="tuesday">Tuesday</SelectItem>
-                    <SelectItem value="wednesday">Wednesday</SelectItem>
-                    <SelectItem value="thursday">Thursday</SelectItem>
-                    <SelectItem value="friday">Friday</SelectItem>
-                    <SelectItem value="saturday">Saturday</SelectItem>
-                    <SelectItem value="sunday">Sunday</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <Button type="submit" className="w-full">
-                Find Best Route
-              </Button>
             </form>
 
             <TechnicianSummary 
