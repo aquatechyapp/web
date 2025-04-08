@@ -31,7 +31,10 @@ export function CompanyCard({ companyId, name, email, phone, role, status, image
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { handleSubmit, isPending } = useEditCompanyLogo();
 
+  const canEditLogo = role === 'Owner' || role === 'Admin' || role === 'Office';
+
   const handleImageSelect = () => {
+    if (!canEditLogo) return;
     fileInputRef.current?.click();
   };
 
@@ -39,7 +42,7 @@ export function CompanyCard({ companyId, name, email, phone, role, status, image
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
+    if (file && canEditLogo) {
       setSelectedImage(file);
       setIsOpen(true);
     }
@@ -66,58 +69,64 @@ export function CompanyCard({ companyId, name, email, phone, role, status, image
     <div className="relative inline-flex w-96 flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:w-56">
       {companyId ? <DropdownMenuCompany companyId={companyId} /> : null}
       <div className="flex h-[138px] flex-col items-center justify-start gap-4 self-stretch">
-        <div className="group relative cursor-pointer" onClick={handleImageSelect}>
+        <div className={`relative ${canEditLogo ? 'group cursor-pointer' : ''}`} onClick={handleImageSelect}>
           <Avatar className="size-24">
             <AvatarImage src={imageUrl || ''} alt={`${name} logo`} />
             <AvatarFallback className="text-2xl">{getInitials(name)}</AvatarFallback>
           </Avatar>
-          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-            <Camera className="size-8 text-white" />
-          </div>
-          <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
+          {canEditLogo && (
+            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+              <Camera className="size-8 text-white" />
+            </div>
+          )}
+          {canEditLogo && (
+            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
+          )}
         </div>
         <div className="flex h-[42px] flex-col items-center justify-center gap-1 self-stretch">
           <div className="self-stretch text-center text-sm font-semibold text-gray-800">{name}</div>
         </div>
       </div>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Update Company Logo</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col items-center gap-4">
-            {selectedImage && (
-              <>
-                <div className="rounded-lg border p-2">
-                  <AvatarEditor
-                    ref={editorRef}
-                    image={selectedImage}
-                    width={250}
-                    height={250}
-                    border={0}
-                    borderRadius={125}
-                    color={[0, 0, 0, 0.6]}
-                    scale={zoom}
-                  />
-                </div>
-                <div className="w-full px-4">
-                  <p className="mb-2 text-sm text-gray-500">Zoom</p>
-                  <Slider value={[zoom]} onValueChange={(value) => setZoom(value[0])} min={1} max={3} step={0.1} />
-                </div>
-              </>
-            )}
-            <div className="flex w-full justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave} disabled={isPending}>
-                {isPending ? 'Updating...' : 'Update Logo'}
-              </Button>
+      {canEditLogo && (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Update Company Logo</DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-col items-center gap-4">
+              {selectedImage && (
+                <>
+                  <div className="rounded-lg border p-2">
+                    <AvatarEditor
+                      ref={editorRef}
+                      image={selectedImage}
+                      width={250}
+                      height={250}
+                      border={0}
+                      borderRadius={125}
+                      color={[0, 0, 0, 0.6]}
+                      scale={zoom}
+                    />
+                  </div>
+                  <div className="w-full px-4">
+                    <p className="mb-2 text-sm text-gray-500">Zoom</p>
+                    <Slider value={[zoom]} onValueChange={(value) => setZoom(value[0])} min={1} max={3} step={0.1} />
+                  </div>
+                </>
+              )}
+              <div className="flex w-full justify-end gap-2">
+                <Button variant="outline" onClick={() => setIsOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSave} disabled={isPending}>
+                  {isPending ? 'Updating...' : 'Update Logo'}
+                </Button>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
 
       <Separator />
       <div className="flex h-[52px] flex-col items-center justify-center gap-2.5 self-stretch">

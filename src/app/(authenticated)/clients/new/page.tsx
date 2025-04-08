@@ -591,7 +591,7 @@ export default function Page() {
                     label="Technician"
                     options={uniqueMembers.map((m) => ({
                       key: m.id,
-                      name: m.firstName,
+                      name: `${m.firstName} ${m.lastName}`,
                       value: m.id
                     }))}
                     defaultValue={members && members.length === 1 ? members[0].id : undefined}
