@@ -24,17 +24,15 @@ import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/g
 import MemberSelect from './MemberSelect';
 import { ServicesList } from './ServicesList';
 import { useServicesContext } from '@/context/services';
-import { Service } from '@/ts/interfaces/Service';
 import { newServiceSchema } from '@/schemas/service';
 import { useMapServicesUtils } from '@/hooks/useMapServicesUtils';
 import { DialogNewService } from './ModalNewService';
-import { normalize } from 'quill/modules/keyboard';
-
+import { useAssignmentsContext } from '@/context/assignments';
 export default function Page() {
   const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapServicesUtils();
-  const [openTransferDialog, setOpenTransferDialog] = useState(false);
 
   const { services, setServices } = useServicesContext();
+
   const { selectedDay, setSelectedDay } = useWeekdayStore((state) => state);
   const { width = 0 } = useWindowDimensions();
 
@@ -72,10 +70,6 @@ export default function Page() {
       scheduledTo: ''
     }
   });
-
-  function getDifference(array1: Service[], array2: Service[]): boolean {
-    return JSON.stringify(array1) !== JSON.stringify(array2);
-  }
 
   function handleChangeMember(memberId: string) {
     setAssignedToid(memberId);

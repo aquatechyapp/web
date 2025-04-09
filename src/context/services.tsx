@@ -11,6 +11,7 @@ import { Frequency } from '@/ts/enums/enums';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { clientAxios } from '../lib/clientAxios';
 import { Service } from '@/ts/interfaces/Service';
+import { useAssignmentsContext } from './assignments';
 
 function filterServicesByDay(services: Service[], selectedDay: string): Service[] {
   return services.filter((service) => {
@@ -35,6 +36,7 @@ export const ServicesProvider = ({ children }: { children: React.ReactNode }) =>
 
   const assignedToId = useMembersStore((state) => state.assignedToId);
   const selectedDay = useWeekdayStore((state) => state.selectedDay);
+  const { allAssignments } = useAssignmentsContext();
 
   const userId = Cookies.get('userId');
 
@@ -60,8 +62,14 @@ export const ServicesProvider = ({ children }: { children: React.ReactNode }) =>
     const filteredServices = data.services?.filter((service: Service) => service.assignedTo.id === assignedToId);
 
     const filteredServicesByDay = filterServicesByDay(filteredServices, selectedDay);
+    // Order services by assignment order
+    const orderedServices = filteredServicesByDay.sort((a, b) => {
+      const aAssignment = allAssignments.find((assignment) => assignment.id === a.assignmentId);
+      const bAssignment = allAssignments.find((assignment) => assignment.id === b.assignmentId);
+      return (aAssignment?.order ?? 0) - (bAssignment?.order ?? 0);
+    });
 
-    setServices(filteredServicesByDay);
+    setServices(orderedServices);
   }, [data, isError, isLoading, assignedToId, userId, selectedDay]);
 
   if (isLoading) return <LoadingSpinner />;
