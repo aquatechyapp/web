@@ -1,6 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { useState } from 'react';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -13,6 +15,7 @@ import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 import ClientStateAndCitySelect from '@/components/ClientStateAndCitySelect';
+import { AddressInput } from '@/components/AddressInput';
 
 const formSchema = z.object({
   address: defaultSchemas.address,
@@ -27,10 +30,15 @@ const formSchema = z.object({
   timezone: defaultSchemas.timezone
 });
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<typeof formSchema> & {
+  updatePoolAddress?: boolean;
+};
 
 export default function ClientInfo({ client }: { client: Client }) {
   const { mutate, isPending } = useUpdateClient<FormData>();
+  const [showAddressChangeDialog, setShowAddressChangeDialog] = useState(false);
+  const initialAddress = client.address || '';
+  
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,7 +48,7 @@ export default function ClientInfo({ client }: { client: Client }) {
       email: client.email || '',
       phone: client.phone || '',
       notes: client.notes || undefined,
-      address: client.address || '',
+      address: initialAddress,
       clientCompany: client.company || '',
       type: client.type || 'Residential',
       timezone: client.timezone
@@ -50,70 +58,127 @@ export default function ClientInfo({ client }: { client: Client }) {
   if (isPending) return <LoadingSpinner />;
 
   const handleSubmit = async () => {
-    mutate(form.getValues());
+    const formValues = form.getValues();
+    
+    // Check if address was changed
+    if (formValues.address !== initialAddress) {
+      setShowAddressChangeDialog(true);
+      return;
+    }
+
+    // If address wasn't changed, proceed with normal update
+    submitForm(formValues);
+  };
+
+  const submitForm = (values: FormData) => {
+    mutate({
+      ...values,
+      updatePoolAddress: showAddressChangeDialog // Add flag to indicate pool address should be updated
+    });
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50"
-      >
-        <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          <InputField name="address" placeholder="Billing address" label="Billing address" />
-          <ClientStateAndCitySelect stateName="state" cityName="city" />
-        </div>
-        <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
-          <InputField name="zip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
-          <InputField name="clientCompany" label="Company" placeholder="Company" />
-          <SelectField
-            placeholder="Client Type"
-            name="type"
-            label="Type"
-            options={[
-              {
-                key: 'Residential',
-                name: 'Residential',
-                value: 'Residential'
-              },
-              {
-                key: 'Commercial',
-                name: 'Commercial',
-                value: 'Commercial'
-              }
-            ]}
-          />
-          <SelectField
-            placeholder="Select Time Zone"
-            name="timezone"
-            label="Client Time zone"
-            options={Object.values(IanaTimeZones).map((tz) => ({
-              key: tz,
-              name: tz,
-              value: tz
-            }))}
-          />
-        </div>
-        <Typography element="h4" className="mt-2">
-          Contact information
-        </Typography>
-        <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-          <InputField type={FieldType.Phone} name="phone" placeholder="Phone" label="Phone" />
-          <InputField name="email" placeholder="E-mail" label="E-mail" />
-        </div>
-        <div className="mt-2 w-full">
-          <InputField
-            placeholder="Type client notes here..."
-            label="Client Notes"
-            name="notes"
-            type={FieldType.TextArea}
-          />
-        </div>
+    <>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50"
+        >
+          <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
+            <AddressInput
+              name="address"
+              label="Billing address"
+              placeholder="Enter address"
+              onAddressSelect={({ state, city, zipCode, timezone }) => {
+                form.setValue('state', state, { shouldValidate: true });
+                form.setValue('city', city, { shouldValidate: true });
+                form.setValue('zip', zipCode, { shouldValidate: true });
+                form.setValue('timezone', timezone, { shouldValidate: true });
+              }}
+            />
+          </div>
+          <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
+            <InputField name="zip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
+            <InputField name="clientCompany" label="Company" placeholder="Company" />
+            <SelectField
+              placeholder="Client Type"
+              name="type"
+              label="Type"
+              options={[
+                {
+                  key: 'Residential',
+                  name: 'Residential',
+                  value: 'Residential'
+                },
+                {
+                  key: 'Commercial',
+                  name: 'Commercial',
+                  value: 'Commercial'
+                }
+              ]}
+            />
+            <SelectField
+              placeholder="Select Time Zone"
+              name="timezone"
+              label="Client Time zone"
+              options={Object.values(IanaTimeZones).map((tz) => ({
+                key: tz,
+                name: tz,
+                value: tz
+              }))}
+            />
+          </div>
+          <Typography element="h4" className="mt-2">
+            Contact information
+          </Typography>
+          <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
+            <InputField type={FieldType.Phone} name="phone" placeholder="Phone" label="Phone" />
+            <InputField name="email" placeholder="E-mail" label="E-mail" />
+          </div>
+          <div className="mt-2 w-full">
+            <InputField
+              placeholder="Type client notes here..."
+              label="Client Notes"
+              name="notes"
+              type={FieldType.TextArea}
+            />
+          </div>
 
-        <Button type="submit" className="w-full">
-          Save
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit" className="w-full">
+            Save
+          </Button>
+        </form>
+      </Form>
+
+      <Dialog open={showAddressChangeDialog} onOpenChange={setShowAddressChangeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Update Address</DialogTitle>
+            <DialogDescription className="pt-3">
+              You are about to change the client&apos;s address. You will also need to update the pool service address separately.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowAddressChangeDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                const values = form.getValues();
+                submitForm(values);
+                setShowAddressChangeDialog(false);
+              }}
+            >
+              Update only client
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

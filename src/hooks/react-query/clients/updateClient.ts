@@ -14,7 +14,7 @@ export const useUpdateClient = <T>() => {
     mutationFn: async (data: T) => await clientAxios.patch('/clients', { ...data, clientId }),
     onSuccess: () => {
       toast({
-        duration: 2000,
+        duration: 5000,
         title: 'Client updated successfully',
         variant: 'success'
       });
