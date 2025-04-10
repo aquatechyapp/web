@@ -114,10 +114,10 @@ export default function ShowClient({ client }: Props) {
                 </a>
               </div>
               <div className="flex w-full justify-center gap-2">
-                <Button className="w-full" onClick={() => deactivateClient(client.id)} variant={'destructive'}>
+                {/* <Button className="w-full" onClick={() => deactivateClient(client.id)} variant={'destructive'}>
                   Deactivate Client
-                </Button>
-                <Button onClick={() => setOpen(true)} className="w-full" variant={'outline'}>
+                </Button> */}
+                <Button onClick={() => setOpen(true)} className="w-full" variant={'default'}>
                   Add pool
                 </Button>
                 <Dialog open={open} onOpenChange={setOpen}>
