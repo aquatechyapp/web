@@ -18,6 +18,9 @@ import { buttonVariants } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import SelectField from '@/components/SelectField';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
+import { useUserStore } from '@/store/user';
+import { useShallow } from 'zustand/react/shallow';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 // Add this type to match your CSV structure
 type CSVRow = {
@@ -160,7 +163,7 @@ const convertStateToAbbreviation = (state: string): string => {
 };
 
 export default function ImportFromCSV() {
-  const { data: companies = [] } = useGetCompanies();
+  const { data: companies = [], isLoading: isCompaniesLoading, isSuccess: isCompaniesSuccess } = useGetCompanies();
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string>('');
   const [parsedData, setParsedData] = useState<CreateManyClientsInput>([]);
@@ -168,7 +171,7 @@ export default function ImportFromCSV() {
   const { mutateAsync: createManyClients, isPending } = useCreateManyClients();
   const router = useRouter();
   const form = useForm();
-
+  const [showNoCompaniesDialog, setShowNoCompaniesDialog] = useState(false);
   const formatPhoneNumber = (phone: string) => {
     const phoneRegex = /^\+1 \(\d{3}\) \d{3}-\d{4}$/;
 
@@ -308,6 +311,19 @@ export default function ImportFromCSV() {
     const phoneRegex = /^\+1 \(\d{3}\) \d{3}-\d{4}$/;
     return data.every((client) => phoneRegex.test(client.phone));
   };
+
+  const { user } = useUserStore(
+    useShallow((state) => ({
+      user: state.user
+    }))
+  );
+
+
+  useEffect(() => {
+    if (user && user.id && user.id !== undefined && isCompaniesSuccess) {
+      setShowNoCompaniesDialog(companies.length === 0);
+    }
+  }, [companies, user, isCompaniesSuccess]);
 
   return (
     <div className="p-6">
@@ -454,6 +470,21 @@ export default function ImportFromCSV() {
           </div>
         </>
       )}
+
+      <Dialog
+        open={!isCompaniesLoading && isCompaniesSuccess && showNoCompaniesDialog}
+        onOpenChange={setShowNoCompaniesDialog}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-center">No Companies Available</DialogTitle>
+            <DialogDescription>Please create a company before importing clients.</DialogDescription>
+          </DialogHeader>
+          <Button type="button" onClick={() => router.push('/team/myCompanies')}>
+            Create Company
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

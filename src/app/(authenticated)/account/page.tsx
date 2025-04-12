@@ -7,7 +7,6 @@ import { z } from 'zod';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -15,12 +14,14 @@ import { useUpdateUser } from '@/hooks/react-query/user/updateUser';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
 import { FieldType, LanguageOptions } from '@/ts/enums/enums';
+import { AddressInput } from '@/components/AddressInput';
 
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../../components/ui/dialog';
 import { ModalDeleteAccount } from './ModalDeleteAccount';
 import ChangePasswordDialog from './change-password-modal';
 import { toast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
+import { IanaTimeZones } from '@/ts/enums/enums';
 
 const formSchema = z.object({
   firstName: defaultSchemas.firstName,
@@ -84,6 +85,19 @@ export default function Page() {
     mutate(data);
   }
 
+  const handleAddressSelect = (address: {
+    fullAddress: string;
+    state: string;
+    city: string;
+    zipCode: string;
+    timezone: IanaTimeZones;
+  }) => {
+    form.setValue('address', address.fullAddress);
+    form.setValue('state', address.state);
+    form.setValue('city', address.city);
+    form.setValue('zip', address.zipCode);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -95,21 +109,20 @@ export default function Page() {
             <InputField name="company" label="Company" placeholder="Company" />
           </div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-            <InputField name={'address'} label="Address" placeholder="Address" />
-            <StateAndCitySelect cityName="city" stateName="state" />
-            <InputField name={'zip'} placeholder="Zip code" label="Zip code" />
+            <AddressInput 
+              name="address" 
+              label="Address" 
+              placeholder="Enter your address"
+              onAddressSelect={handleAddressSelect}
+            />
+            <InputField name="state" label="State" placeholder="State" disabled />
+            <InputField name="city" label="City" placeholder="City" disabled />
+            <InputField name="zip" label="Zip Code" placeholder="Zip Code" disabled />
           </div>
           <Typography element="h3">Contact Information</Typography>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
             <InputField name="phone" placeholder="Phone" label="Phone" type={FieldType.Phone} />
             <InputField disabled name="email" placeholder="E-mail" label="E-mail" />
-            {/* <SelectField
-              data={languageSelectOptions}
-
-              label="Language"
-              name="language"
-              placeholder="Language"
-            /> */}
           </div>
           <Button type="submit" className="h-10 w-full">
             Update account
