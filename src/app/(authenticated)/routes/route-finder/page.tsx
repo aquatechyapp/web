@@ -22,9 +22,10 @@ import { libraries } from '@/constants';
 import { AddressInput } from '@/components/AddressInput';
 import { IanaTimeZones } from '@/ts/enums/enums';
 import Map from './Map';
-import { useAssignmentsContext } from '@/context/assignments';
+import { AssignmentsProvider, useAssignmentsContext } from '@/context/assignments';
 import { TechnicianSummary } from './TechnicianSummary';
 import { Assignment } from '@/ts/interfaces/Assignments';
+import { ServicesProvider } from '@/context/services';
 
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY || '';
 
@@ -66,7 +67,8 @@ function generateTechnicianWeekdayColors(technicianIds: string[]): TechnicianWee
   return colors;
 }
 
-export default function RouteFinder() {
+function RouteFinderContent() {
+  const { allAssignments } = useAssignmentsContext();
   const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [loadError, setLoadError] = useState<Error | undefined>();
   const [filteredAssignments, setFilteredAssignments] = useState<Assignment[]>([]);
@@ -121,10 +123,6 @@ export default function RouteFinder() {
     }
   };
 
-  console.log('currentColorScheme ', currentColorScheme);
-
-  const { allAssignments } = useAssignmentsContext();
-  
   useEffect(() => {
     if (Object.keys(currentColorScheme).length > 0) return; // Skip if we already have colors
 
@@ -245,5 +243,13 @@ export default function RouteFinder() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <AssignmentsProvider>
+      <RouteFinderContent />
+    </AssignmentsProvider>
   );
 } 

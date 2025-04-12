@@ -13,7 +13,8 @@ type Props = {
 
 export default function useGetUser({ userId }: Props) {
   const setUser = useUserStore((state) => state.setUser);
-  const { setMembers, setAssignmentToId, setAssignedToId } = useMembersStore(
+  const setDashboard = useUserStore((state) => state.setDashboard);
+  const { setAssignmentToId, setAssignedToId } = useMembersStore(
     useShallow((state) => ({
       setMembers: state.setMembers,
       setAssignmentToId: state.setAssignmentToId,
@@ -24,15 +25,14 @@ export default function useGetUser({ userId }: Props) {
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: ['user', userId],
     queryFn: async () => {
-      const response = (await clientAxios.get(`/users/${userId}`)).data;
+      const response = (await clientAxios.get(`/users/${userId}/v2`)).data;
       const user = response.data.user as User;
       delete response.data.user;
-      const userData: User = {
-        ...user,
-        ...response.data
-      };
+      
+      const dashboard = response.data.dashboard;
 
-      setUser(userData);
+      setUser(user);
+      setDashboard(dashboard);
       setAssignmentToId(user.id);
       setAssignedToId(user.id);
 

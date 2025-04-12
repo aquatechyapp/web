@@ -20,6 +20,7 @@ import { isEmpty } from '@/utils';
 import { findDifferenceBetweenTwoObjects } from '@/utils/others';
 
 import { ModalDeletePool } from './ModalDeletePool';
+import { AddressInput } from '@/components/AddressInput';
 
 export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: string }) {
   const { mutate, isPending: isPendingUpdatePool } = useUpdatePool();
@@ -37,7 +38,8 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
       lockerCode: pool.lockerCode || '',
       enterSide: pool.enterSide || '',
       poolType: pool.poolType,
-      notes: pool.notes || ''
+      notes: pool.notes || '',
+      zip: pool.zip || ''
     }
   });
 
@@ -67,11 +69,21 @@ export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: str
             <ModalDeletePool deletePool={() => deletePool()} />
           </div>
         </div>
-        <InputField name="address" label="Address" placeholder="Address" />
+        
+        <AddressInput
+          name="address"
+          label="Address"
+          placeholder="Enter address"
+          onAddressSelect={({ state, city, zipCode, timezone }) => {
+            form.setValue('state', state, { shouldValidate: true });
+            form.setValue('city', city, { shouldValidate: true });
+            form.setValue('zip', zipCode, { shouldValidate: true });
+          }}
+        />
 
-        <div className="Form inline-flex flex-wrap items-start justify-start self-stretch md:flex-nowrap">
-          {/* <InputField disabled  name="address" placeholder="Address" /> */}
+        <div className="Form inline-flex flex-wrap items-start justify-start self-stretch md:flex-nowrap gap-4">
           <StateAndCitySelect cityName="city" stateName="state" />
+          <InputField name="zip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
         </div>
         <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
           <InputField

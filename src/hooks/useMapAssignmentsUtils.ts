@@ -35,9 +35,7 @@ export function useMapAssignmentsUtils() {
       destinationType: 'home' | 'last' = 'last',
       userHomeCoords: Coords
     ) => {
-      console.log('Received user home coords:', userHomeCoords);
-      console.log('current', current);
-      console.log('isLoaded', isLoaded);
+
 
       if (current.length <= 0 || !isLoaded) {
         setDirections(null);

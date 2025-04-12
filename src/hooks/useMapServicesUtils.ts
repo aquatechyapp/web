@@ -53,13 +53,10 @@ export function useMapServicesUtils() {
         },
         (result, status) => {
           if (status === 'OK' && result) {
-            console.log('result', result);
 
             const totalDuration = result.routes[0].legs.reduce((acc, leg) => acc + (leg.duration?.value ?? 0), 0);
             const totalDistance = result.routes[0].legs.reduce((acc, leg) => acc + (leg.distance?.value ?? 0), 0);
 
-            console.log('totalDuration', totalDuration);
-            console.log('totalDistance', totalDistance);
 
             setDirections(result);
             setDuration(

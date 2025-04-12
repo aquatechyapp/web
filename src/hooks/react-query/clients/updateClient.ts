@@ -1,20 +1,24 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { usePathname } from 'next/navigation';
 
 import { useToast } from '@/components/ui/use-toast';
 import { clientAxios } from '@/lib/clientAxios';
-
+import Cookies from 'js-cookie';
 export const useUpdateClient = <T>() => {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const pathname = usePathname();
   const clientId = pathname.split('/')[2];
-
+  const userId = Cookies.get('userId');
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: T) => await clientAxios.patch('/clients', { ...data, clientId }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clients', clientId] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       toast({
-        duration: 2000,
+        duration: 5000,
         title: 'Client updated successfully',
         variant: 'success'
       });

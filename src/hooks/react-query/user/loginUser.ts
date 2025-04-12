@@ -24,7 +24,7 @@ export const useLoginUser = () => {
   const { push } = useRouter();
 
   const { mutate, isPending, error } = useMutation({
-    mutationFn: async (data: LoginData) => await clientAxios.post('/sessions', data),
+    mutationFn: async (data: LoginData) => await clientAxios.post('/sessions/v2', data),
     onSuccess: async ({ data }) => {
       Cookies.set('accessToken', data.accessToken);
       Cookies.set('userId', data.user.id);

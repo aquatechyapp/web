@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { useAssignmentsContext } from '@/context/assignments';
+import { AssignmentsProvider, useAssignmentsContext } from '@/context/assignments';
 
 import { useUpdateAssignments } from '@/hooks/react-query/assignments/updateAssignments';
 import { useMapAssignmentsUtils } from '@/hooks/useMapAssignmentsUtils';
@@ -140,119 +140,121 @@ export default function Page() {
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
   return (
-    <FormProvider {...form}>
-      <div
-        className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 p-2 ${mdScreen ? 'flex-col' : ''}`}
-      >
-        <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
-          <Tabs
-            onValueChange={(weekday) => handleChangeWeekday(weekday as WeekdaysUppercase)}
-            defaultValue={format(new Date(), 'EEEE').toUpperCase()}
-            value={selectedWeekday}
-          >
-            <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
-              <Form {...form}>
-                <form className="w-full">
-                  <TabsList className="w-full">
-                    {weekdays.map((weekday, index) => (
-                      <TabsTrigger className="flex-1" key={weekday} value={weekday.toUpperCase()}>
-                        {width
-                          ? width < 1440
-                            ? width < 768
-                              ? weekdaysLetter[index]
-                              : weekdaysShort[index]
-                            : weekday
-                          : weekday}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
+    <AssignmentsProvider>
+      <FormProvider {...form}>
+        <div
+          className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 p-2 ${mdScreen ? 'flex-col' : ''}`}
+        >
+          <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
+            <Tabs
+              onValueChange={(weekday) => handleChangeWeekday(weekday as WeekdaysUppercase)}
+              defaultValue={format(new Date(), 'EEEE').toUpperCase()}
+              value={selectedWeekday}
+            >
+              <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
+                <Form {...form}>
+                  <form className="w-full">
+                    <TabsList className="w-full">
+                      {weekdays.map((weekday, index) => (
+                        <TabsTrigger className="flex-1" key={weekday} value={weekday.toUpperCase()}>
+                          {width
+                            ? width < 1440
+                              ? width < 768
+                                ? weekdaysLetter[index]
+                                : weekdaysShort[index]
+                              : weekday
+                            : weekday}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
 
-                  <MemberSelect onChange={handleChangeMember} />
+                    <MemberSelect onChange={handleChangeMember} />
 
-                  <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-                    <DialogNewAssignment />
-                    {assignments.current.length > 0 && (
-                      <Button
-                        type="button"
-                        className="w-full"
-                        variant="secondary"
-                        onClick={() => setOpenTransferDialog(true)}
-                      >
-                        Transfer Route
-                      </Button>
-                    )}
-                    <DialogTransferRoute
-                      open={openTransferDialog}
-                      setOpen={setOpenTransferDialog}
-                      isEntireRoute={true}
-                    />
-                  </div>
-
-                  {assignmentToId !== user?.id && (
-                    <div className="mt-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-600">
-                      Note: Only the assigned technician can reorganize their routes when logged into their account.
+                    <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                      <DialogNewAssignment />
+                      {assignments.current.length > 0 && (
+                        <Button
+                          type="button"
+                          className="w-full"
+                          variant="secondary"
+                          onClick={() => setOpenTransferDialog(true)}
+                        >
+                          Transfer Route
+                        </Button>
+                      )}
+                      <DialogTransferRoute
+                        open={openTransferDialog}
+                        setOpen={setOpenTransferDialog}
+                        isEntireRoute={true}
+                      />
                     </div>
-                  )}
 
-                  <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-                    {assignments.current.length > 0 && assignmentToId === user?.id && (
-                      <Button
-                        type="button"
-                        className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
-                        onClick={() => setIsOptimizeModalOpen(true)}
-                      >
-                        Optimize Route
-                      </Button>
+                    {assignmentToId !== user?.id && (
+                      <div className="mt-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-600">
+                        Note: Only the assigned technician can reorganize their routes when logged into their account.
+                      </div>
                     )}
-                    {getDifference(assignments.initial, assignments.current) && (
-                      <Button
-                        type="button"
-                        onClick={() =>
-                          updateAssignments(
-                            assignments.current.map((assignment) => {
-                              return {
-                                assignmentId: assignment.id,
-                                ...assignment
-                              };
-                            })
-                          )
-                        }
-                        className="mt-2 w-full bg-green-500 hover:bg-green-700"
-                      >
-                        Save
-                      </Button>
-                    )}
-                  </div>
-                </form>
-              </Form>
 
-              <TabsContent value={selectedWeekday} className="w-full">
-                <AssignmentsList handleDragEnd={handleDragEnd} />
-              </TabsContent>
-            </div>
-          </Tabs>
+                    <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                      {assignments.current.length > 0 && assignmentToId === user?.id && (
+                        <Button
+                          type="button"
+                          className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
+                          onClick={() => setIsOptimizeModalOpen(true)}
+                        >
+                          Optimize Route
+                        </Button>
+                      )}
+                      {getDifference(assignments.initial, assignments.current) && (
+                        <Button
+                          type="button"
+                          onClick={() =>
+                            updateAssignments(
+                              assignments.current.map((assignment) => {
+                                return {
+                                  assignmentId: assignment.id,
+                                  ...assignment
+                                };
+                              })
+                            )
+                          }
+                          className="mt-2 w-full bg-green-500 hover:bg-green-700"
+                        >
+                          Save
+                        </Button>
+                      )}
+                    </div>
+                  </form>
+                </Form>
+
+                <TabsContent value={selectedWeekday} className="w-full">
+                  <AssignmentsList handleDragEnd={handleDragEnd} />
+                </TabsContent>
+              </div>
+            </Tabs>
+          </div>
+          <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
+            <Map
+              assignments={assignments.current}
+              directions={directions}
+              distance={distance}
+              duration={duration}
+              isLoaded={isLoaded}
+              loadError={loadError}
+            />
+          </div>
         </div>
-        <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
-          <Map
+        {assignments.current.length > 0 && (
+          <OptimizeRouteModal
+            open={isOptimizeModalOpen}
+            onOpenChange={setIsOptimizeModalOpen}
+            onOptimize={handleOptimize}
             assignments={assignments.current}
-            directions={directions}
-            distance={distance}
-            duration={duration}
-            isLoaded={isLoaded}
-            loadError={loadError}
+            userAddress={user.address}
           />
-        </div>
-      </div>
-      {assignments.current.length > 0 && (
-        <OptimizeRouteModal
-          open={isOptimizeModalOpen}
-          onOpenChange={setIsOptimizeModalOpen}
-          onOptimize={handleOptimize}
-          assignments={assignments.current}
-          userAddress={user.address}
-        />
-      )}
-    </FormProvider>
+        )}
+      </FormProvider>
+    </AssignmentsProvider>
   );
 }
 
