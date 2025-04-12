@@ -23,7 +23,7 @@ import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/g
 
 import MemberSelect from './MemberSelect';
 import { ServicesList } from './ServicesList';
-import { useServicesContext } from '@/context/services';
+import { ServicesProvider, useServicesContext } from '@/context/services';
 import { newServiceSchema } from '@/schemas/service';
 import { useMapServicesUtils } from '@/hooks/useMapServicesUtils';
 import { DialogNewService } from './ModalNewService';
@@ -97,55 +97,57 @@ export default function Page() {
   const dateRange = getDateRange();
 
   return (
-    <FormProvider {...form}>
-      <div
-        className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 p-2 ${mdScreen ? 'flex-col' : ''}`}
-      >
-        <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
-          <Tabs
-            onValueChange={handleChangeDay}
-            defaultValue={selectedDay || getDateRange()[3].date}
-            value={selectedDay}
-            className="w-full"
-          >
-            <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
-              <Form {...form}>
-                <form className="w-full">
-                  <TabsList className="grid h-12 w-full grid-cols-7">
-                    {dateRange.map((day, index) => (
-                      <TabsTrigger
-                        className="px-0 text-xs data-[state=active]:px-0"
-                        key={day.formatted}
-                        value={day.date}
-                      >
-                        {day.formatted}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
+    <ServicesProvider>
+      <FormProvider {...form}>
+        <div
+          className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 p-2 ${mdScreen ? 'flex-col' : ''}`}
+        >
+          <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
+            <Tabs
+              onValueChange={handleChangeDay}
+              defaultValue={selectedDay || getDateRange()[3].date}
+              value={selectedDay}
+              className="w-full"
+            >
+              <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
+                <Form {...form}>
+                  <form className="w-full">
+                    <TabsList className="grid h-12 w-full grid-cols-7">
+                      {dateRange.map((day, index) => (
+                        <TabsTrigger
+                          className="px-0 text-xs data-[state=active]:px-0"
+                          key={day.formatted}
+                          value={day.date}
+                        >
+                          {day.formatted}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
 
-                  <MemberSelect onChange={handleChangeMember} />
-                  <DialogNewService />
-                </form>
-              </Form>
+                    <MemberSelect onChange={handleChangeMember} />
+                    <DialogNewService />
+                  </form>
+                </Form>
 
-              <TabsContent value={selectedDay || getDateRange()[3].date} className="w-full">
-                <ServicesList />
-              </TabsContent>
-            </div>
-          </Tabs>
+                <TabsContent value={selectedDay || getDateRange()[3].date} className="w-full">
+                  <ServicesList />
+                </TabsContent>
+              </div>
+            </Tabs>
+          </div>
+          <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
+            <Map
+              services={services}
+              directions={directions}
+              distance={distance}
+              duration={duration}
+              isLoaded={isLoaded}
+              loadError={loadError}
+            />
+          </div>
         </div>
-        <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
-          <Map
-            services={services}
-            directions={directions}
-            distance={distance}
-            duration={duration}
-            isLoaded={isLoaded}
-            loadError={loadError}
-          />
-        </div>
-      </div>
-    </FormProvider>
+      </FormProvider>
+    </ServicesProvider>
   );
 }
 

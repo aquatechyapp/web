@@ -59,9 +59,11 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
           <main>
             <Suspense fallback={<LoadingSpinner />}>
               <div className="mx-2 mt-2 rounded-md border border-gray-200 p-2 shadow-inner lg:mt-0">
-                <AssignmentsProvider>
+                {/* <AssignmentsProvider>
                   <ServicesProvider>{isLoading ? <LoadingSpinner /> : children}</ServicesProvider>
-                </AssignmentsProvider>
+                </AssignmentsProvider> */}
+                
+                {isLoading ? <LoadingSpinner /> : children}
               </div>
             </Suspense>
             <ProgressBar height="6px" color={Colors.blue[500]} options={{ showSpinner: false }} shallowRouting />
