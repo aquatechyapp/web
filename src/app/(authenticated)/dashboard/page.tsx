@@ -8,6 +8,7 @@ import { MetricCard } from './_components/MetricCard';
 import { TableCard } from './_components/TableCard';
 import ActionButton from './_components/ActionButton';
 import StatisticCard from './_components/StatisticCard';
+import { useUserStore } from '@/store/user';
 
 // Temporary mock data - replace with API calls later
 const mockData = {
@@ -47,23 +48,78 @@ const formatMonthlyPayment = (payment: string | number | undefined) => {
 
 export default function Page() {
   const [ showConfidential, setShowConfidential ] = useState(false);
-  const { data: allClients, isLoading: isLoadingAllClients } = useGetAllClients();
+  const { dashboard } = useUserStore((state) => state);
   const { width = 0 } = useWindowDimensions();
 
-  if (isLoadingAllClients) return <LoadingSpinner />;
-
-  const totalClientsCount = allClients?.length || 0;
+  const { churnRate, clients, companyValue, revenue, lateFilters, recentIssues, topCities } = dashboard;
 
   const toggleConfidential = () => setShowConfidential(!showConfidential);
 
   if (width < 1024) {
     return (
-      <div className="p-2">
-        <div className="flex w-full flex-col gap-6 text-nowrap">
-          <ActionButton type="add_client" />
-          <ActionButton type="route_dashboard" />
-          <ActionButton type="my_team" />
-          <StatisticCard value={totalClientsCount} type="clients" />
+      <div className="p-4">
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4">
+            <MetricCard
+              title="Total Clients"
+              value={dashboard.clients.total.toString()}
+              icon="clients"
+            />
+            <MetricCard
+              title="Total Monthly Revenue"
+              value={formatMonthlyPayment(dashboard.revenue.monthly)}
+              showEyeIcon={true}
+              isBlurred={!showConfidential}
+              onToggleBlur={toggleConfidential}
+              icon="revenue"
+            />
+            <MetricCard
+              title="Average Revenue per Pool"
+              value={formatMonthlyPayment(dashboard.revenue.averagePerPool)}
+              subValue="Monthly average"
+              showEyeIcon={true}
+              isBlurred={!showConfidential}
+              onToggleBlur={toggleConfidential}
+              icon="revenue"
+            />
+            <MetricCard
+              title="Company Value"
+              value={`${formatMonthlyPayment(dashboard.companyValue.min)} - ${formatMonthlyPayment(dashboard.companyValue.max)}`}
+              showEyeIcon={true}
+              isBlurred={!showConfidential}
+              onToggleBlur={toggleConfidential}
+              icon="company"
+            />
+            
+            
+            <MetricCard
+              title="Churn Rate"
+              value={`${dashboard.churnRate.value}%`}
+            />
+          </div>
+          <div className="flex flex-col gap-4">
+            <TableCard
+              title="Late Filters"
+              items={dashboard.lateFilters.map(filter => ({
+                name: filter.name,
+                value: `${filter.daysOverdue} days`
+              }))}
+            />
+            <TableCard
+              title="Recent Issues"
+              items={dashboard.recentIssues.map(issue => ({
+                name: issue.clientName,
+                value: issue.issue
+              }))}
+            />
+            <TableCard
+              title="Top Cities"
+              items={dashboard.topCities.map(city => ({
+                name: city.city,
+                value: `${city.poolCount} pools`
+              }))}
+            />
+          </div>
         </div>
       </div>
     );
@@ -72,38 +128,25 @@ export default function Page() {
   return (
     <div className="p-6">
       {/* First Row - Financial Metrics */}
-      <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-        <MetricCard
-          title="Monthly Revenue & Average per Pool"
-          value={formatMonthlyPayment(mockData.monthlyRevenue)}
-          subValue={`${formatMonthlyPayment(mockData.averageRevenuePerPool)} per pool`}
-          isBlurred={!showConfidential}
-          showEyeIcon
-          onToggleBlur={toggleConfidential}
-          trend={{ value: 8.2, isPositive: true }}
-        />
-        <MetricCard
-          title="Estimated Company Value"
-          value={`${formatMonthlyPayment(mockData.companyValueMin)} - ${formatMonthlyPayment(mockData.companyValueMax)}`}
-          isBlurred={!showConfidential}
-          showEyeIcon
-          onToggleBlur={toggleConfidential}
-          trend={{ value: 12.5, isPositive: true }}
-        />
-      </div>
-
-      {/* Second Row - Operational Metrics */}
       <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
         <MetricCard
           title="Total Clients"
-          value={totalClientsCount}
-          trend={{ value: 5.3, isPositive: true }}
+          value={clients.total}
         />
-       
         <MetricCard
-          title="Churn Rate"
-          value={`${mockData.churnRate}%`}
-          trend={{ value: 0.5, isPositive: false }}
+          title="Monthly Revenue & Average per Pool"
+          value={formatMonthlyPayment(revenue.monthly)}
+          subValue={`${formatMonthlyPayment(revenue.averagePerPool)} per pool`}
+          isBlurred={!showConfidential}
+          showEyeIcon
+          onToggleBlur={toggleConfidential}
+        />
+        <MetricCard
+          title="Estimated Company Value"
+          value={`${formatMonthlyPayment(companyValue.min)} - ${formatMonthlyPayment(companyValue.max)}`}
+          isBlurred={!showConfidential}
+          showEyeIcon
+          onToggleBlur={toggleConfidential}
         />
       </div>
 
@@ -114,15 +157,15 @@ export default function Page() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <TableCard
           title="Top 5 late filters"
-          items={mockData.lateFilters}
+          items={lateFilters.map((filter) => ({ name: filter.name, value: `${filter.daysOverdue} days overdue` }))}
         />
         <TableCard
           title="Recent issues"
-          items={mockData.recentReports}
+          items={recentIssues.map((issue) => ({ name: issue.clientName, value: issue.issue }))}
         />
         <TableCard
           title="Top cities by pool count"
-          items={mockData.topCities}
+          items={topCities.map((city) => ({ name: city.city, value: city.poolCount }))}
         />
       </div>
     </div>

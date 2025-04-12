@@ -4,9 +4,11 @@ import { devtools } from 'zustand/middleware';
 import { UserSubscription } from '@/ts/enums/enums';
 
 import { User } from '../ts/interfaces/User';
+import { Dashboard } from '../ts/interfaces/Dashboard';
 
 type Store = {
   user: User;
+  dashboard: Dashboard;
   isFreePlan: boolean;
   reachedPoolLimit: boolean;
   shouldDisableNewPools: boolean;
@@ -14,6 +16,7 @@ type Store = {
 
 type Actions = {
   setUser: (user: User) => void;
+  setDashboard: (dashboard: Dashboard) => void;
 };
 
 const poolsLimitBySubscription = {
@@ -31,6 +34,10 @@ export const useUserStore = create<Store & Actions>()(
         reachedPoolLimit: user.poolsCount >= poolsLimitBySubscription[user.subscription],
         shouldDisableNewPools: user.poolsCount >= poolsLimitBySubscription[user.subscription]
       });
+    },
+    dashboard: {} as Dashboard,
+    setDashboard: (dashboard: Dashboard) => {
+      set({ dashboard });
     },
     isFreePlan: false,
     reachedPoolLimit: false,
