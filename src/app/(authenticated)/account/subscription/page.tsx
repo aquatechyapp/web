@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertCircle, Check, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -13,13 +13,6 @@ import { useUserStore } from '@/store/user';
 import { UserSubscription } from '@/ts/enums/enums';
 
 import { SubscriptionCard } from './SubscriptionCard';
-
-interface Props {
-  searchParams: {
-    status: string;
-    session_id: string;
-  };
-}
 
 type AlertKey = 'success' | 'cancelled' | 'pending';
 
@@ -61,8 +54,10 @@ const alertType: Record<
   }
 };
 
-export default function Page({ searchParams }: Props) {
-  const { status, session_id } = searchParams;
+export default function Page() {
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
+  const session_id = searchParams.get('session_id');
   const { push } = useRouter();
   const { setUser, user } = useUserStore(
     useShallow((state) => ({
@@ -77,56 +72,61 @@ export default function Page({ searchParams }: Props) {
     alertData = alertType[status as AlertKey];
   }
 
+  // Payment status check effect
   useEffect(() => {
-    if (status === 'pending') {
-      const checkPaymentStatus = async () => await clientAxios.get(`/subscriptions/checkpayment/${session_id}`);
-      setTimeout(() => {
-        checkPaymentStatus()
-          .then((res) => {
-            if (res.data.paymentStatus === 'unpaid') {
-              push('/account/subscription?status=cancelled');
-              toast({
-                title: 'Failed to process payment',
-                variant: 'error'
-              });
-              return res;
-            }
-            if (res.data.paymentStatus === 'paid') {
-              setUser({ ...user, subscription: res.data.subscription });
-              push('/account/subscription');
-              toast({
-                title: 'Payment processed successfully',
-                description: 'You can now enjoy your new subscription',
-                variant: 'success'
-              });
-              return res;
-            }
-          })
-          .catch((err) => {
+    if (status === 'pending' && session_id) {
+      const checkPaymentStatus = async () => {
+        try {
+          const response = await clientAxios.get(`/subscriptions/checkpayment/${session_id}`);
+          
+          if (response.data.paymentStatus === 'unpaid') {
             push('/account/subscription?status=cancelled');
-            return err;
-          });
-      }, 5000);
+            toast({
+              title: 'Failed to process payment',
+              variant: 'error'
+            });
+            return;
+          }
+          
+          if (response.data.paymentStatus === 'paid') {
+            setUser({ ...user, subscription: response.data.subscription });
+            push('/account/subscription?status=success');
+            toast({
+              title: 'Payment processed successfully',
+              description: 'You can now enjoy your new subscription',
+              variant: 'success'
+            });
+          }
+        } catch (err) {
+          push('/account/subscription?status=cancelled');
+        }
+      };
+
+      // Execute immediately and then set interval
+      checkPaymentStatus();
+      const interval = setInterval(checkPaymentStatus, 5000);
+
+      // Cleanup interval
+      return () => clearInterval(interval);
     }
-  }, []);
+  }, [status, session_id, setUser, user]);
 
-  const router = useRouter();
-
+  // Separate profile check effect
   useEffect(() => {
     if (user.firstName === '') {
-      router.push('/account');
+      push('/account');
     }
-  }, [user]);
+  }, [user, push]);
 
   return (
     <div className="flex w-full flex-col items-center p-2">
-      {alertData && (
+      {/* {alertData && (
         <Alert className={`${alertData.customClassName} w-fit min-w-72`} variant={alertData.variant}>
           <alertData.CustomAlertIcon className={alertData.iconClassName} color={alertData.iconColor} />
           <AlertTitle>{alertData.title}</AlertTitle>
           <AlertDescription>{alertData.description}</AlertDescription>
         </Alert>
-      )}
+      )} */}
       <div className="grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2">
         {Plans.map((p) => (
           <SubscriptionCard key={p.title} plan={p} currentUserPlan={user.subscription} />
@@ -149,7 +149,6 @@ const Plans = [
       { text: 'Create up to 30 pools', include: true },
       { text: 'Optimize routes', include: true },
       { text: 'Email clients after service', include: false },
-      { text: 'SMS clients after service', include: false },
       { text: 'Broadcast e-mails', include: false }
     ]
   },
@@ -165,7 +164,6 @@ const Plans = [
       { text: 'Create up to 100 pools', include: true },
       { text: 'Optimize routes', include: true },
       { text: 'Email clients after service', include: true },
-      { text: 'SMS clients after service', include: true },
       { text: 'Broadcast e-mails', include: true }
     ],
     extra: '* Extra pools costs $0.19 each'
