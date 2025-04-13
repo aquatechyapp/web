@@ -16,7 +16,7 @@ import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/g
 export default function Page() {
   const user = useUserStore((state) => state.user);
 
-  const { data: members, isLoading } = useGetMembersOfAllCompaniesByUserId(user.id);
+  const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
 
   const [searchTerm, setSearchTerm] = useState('');
 

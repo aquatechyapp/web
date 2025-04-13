@@ -97,7 +97,6 @@ export default function Page() {
   const dateRange = getDateRange();
 
   return (
-    <ServicesProvider>
       <FormProvider {...form}>
         <div
           className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 p-2 ${mdScreen ? 'flex-col' : ''}`}
@@ -147,7 +146,6 @@ export default function Page() {
           </div>
         </div>
       </FormProvider>
-    </ServicesProvider>
   );
 }
 
