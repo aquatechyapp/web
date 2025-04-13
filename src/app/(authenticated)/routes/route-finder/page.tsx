@@ -248,8 +248,6 @@ function RouteFinderContent() {
 
 export default function Page() {
   return (
-    <AssignmentsProvider>
       <RouteFinderContent />
-    </AssignmentsProvider>
   );
 } 
