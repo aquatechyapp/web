@@ -231,13 +231,16 @@ export default function Page() {
                               {...field}
                               options={
                                 members.length > 0
-                                  ? members.map((member) => {
-                                      return {
+                                  ? members
+                                      .filter((member, index, self) => 
+                                        // Keep only the first occurrence of each member ID
+                                        index === self.findIndex(m => m.id === member.id)
+                                      )
+                                      .map((member) => ({
                                         key: member.id,
                                         value: member.id,
                                         name: member.firstName + ' ' + member.lastName
-                                      };
-                                    })
+                                      }))
                                   : []
                               }
                             />
