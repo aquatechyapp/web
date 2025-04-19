@@ -41,8 +41,12 @@ export default function MemberSelect({ onChange }: Props) {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {members.map(
-              (member: CompanyMember) =>
+            {members
+              .filter((member, index, self) => 
+                // Keep only the first occurrence of each member ID
+                index === self.findIndex(m => m.id === member.id)
+              )
+              .map((member) =>
                 member.id !== user.id &&
                 member.firstName !== '' && (
                   <SelectItem key={member.id} value={member.id}>

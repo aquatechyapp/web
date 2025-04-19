@@ -91,11 +91,6 @@ export default function Page() {
               icon="company"
             />
             
-            
-            <MetricCard
-              title="Churn Rate"
-              value={`${dashboard.churnRate.value}%`}
-            />
           </div>
           <div className="flex flex-col gap-4">
             <TableCard
