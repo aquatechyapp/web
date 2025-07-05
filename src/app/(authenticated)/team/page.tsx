@@ -47,7 +47,7 @@ export default function Page() {
       <div className="mt-3">
         <div className="flex flex-wrap justify-center gap-2 self-stretch md:justify-normal">
           {filteredMembers && (
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap justify-start gap-2">
               {filteredMembers.map((member: CompanyMember) => (
                 <CompanyMemberCard
                   status={member.status}

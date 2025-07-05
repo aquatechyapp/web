@@ -4,14 +4,18 @@ import { DirectionsRenderer, GoogleMap, InfoBox, Marker } from '@react-google-ma
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Colors } from '@/constants/colors';
 import { Assignment } from '@/ts/interfaces/Assignments';
+import { Pool } from '@/ts/interfaces/Pool';
 import { useState } from 'react';
 import { Typography } from '@/components/Typography';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X, ArrowLeftRight, Trash2 } from 'lucide-react';
 import { Coords } from '@/ts/interfaces/Pool';
 import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 import { useUserStore } from '@/store/user';
+import { DialogAssignPool } from './ModalAssignPool';
+import { DialogTransferRoute } from '../assignments/ModalTransferRoute';
+import { DialogDeleteAssignment } from '../assignments/ModalDeleteAssignment';
 
 interface AssignmentWithColor extends Assignment {
   color?: string;
@@ -23,34 +27,46 @@ const mapContainerStyle = {
   borderRadius: '8px'
 };
 
-const calculateMapCenter = (assignments: Assignment[], newLocation: Coords | null) => {
+const calculateMapCenter = (assignments: Assignment[], poolsWithoutAssignments: Pool[], newLocation: Coords | null) => {
   if (newLocation) {
     return newLocation;
   }
 
-  const coords = assignments.map((assignment) => assignment.pool.coords);
-  const avgLat = coords.reduce((sum, coord) => sum + coord.lat, 0) / coords.length;
-  const avgLng = coords.reduce((sum, coord) => sum + coord.lng, 0) / coords.length;
+  const allCoords = [
+    ...assignments.map((assignment) => assignment.pool.coords),
+    ...poolsWithoutAssignments.map((pool) => pool.coords)
+  ];
 
-  if (assignments.length === 0) {
+  if (allCoords.length === 0) {
     return {
       lat: 40.039444085342595,
       lng: -97.07113126266353
     };
   }
 
+  const avgLat = allCoords.reduce((sum, coord) => sum + coord.lat, 0) / allCoords.length;
+  const avgLng = allCoords.reduce((sum, coord) => sum + coord.lng, 0) / allCoords.length;
+
   return { lat: avgLat, lng: avgLng };
 };
 
 interface MapProps {
   assignments: AssignmentWithColor[];
+  poolsWithoutAssignments: Pool[];
   newLocation: Coords | null;
   isLoaded: boolean;
   loadError: Error | undefined;
 }
 
-const Map = ({ assignments, newLocation, isLoaded, loadError }: MapProps) => {
+const Map = ({ assignments, poolsWithoutAssignments, newLocation, isLoaded, loadError }: MapProps) => {
   const [selectedAssignment, setSelectedAssignment] = useState<AssignmentWithColor | null>(null);
+  const [selectedPool, setSelectedPool] = useState<Pool | null>(null);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [poolToAssign, setPoolToAssign] = useState<Pool | null>(null);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
+  const [assignmentToTransfer, setAssignmentToTransfer] = useState<Assignment | null>(null); // Add this state
   
   const user = useUserStore((state) => state.user);
   const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
@@ -63,16 +79,19 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: MapProps) => {
     return <LoadingSpinner />;
   }
 
-  const mapCenter = calculateMapCenter(assignments, newLocation);
+  const mapCenter = calculateMapCenter(assignments, poolsWithoutAssignments, newLocation);
 
   return (
     <div className="relative h-full">
 
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        zoom={assignments.length === 0 ? 4 : 10}
+        zoom={assignments.length === 0 && poolsWithoutAssignments.length === 0 ? 4 : 10}
         center={mapCenter}
-        onClick={() => setSelectedAssignment(null)}
+        onClick={() => {
+          setSelectedAssignment(null);
+          setSelectedPool(null);
+        }}
         options={{
           styles: [
             {
@@ -95,7 +114,10 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: MapProps) => {
             .map((assignment: AssignmentWithColor) => {
               return (
                 <Marker
-                  onClick={() => setSelectedAssignment(assignment)}
+                  onClick={() => {
+                    setSelectedAssignment(assignment);
+                    setSelectedPool(null);
+                  }}
                   key={assignment.id}
                   position={{
                     lat: assignment.pool.coords.lat,
@@ -114,15 +136,42 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: MapProps) => {
             })}
         </div>
 
+        {/* Pools without assignments */}
+        <div>
+          {poolsWithoutAssignments.map((pool: Pool) => {
+            return (
+              <Marker
+                onClick={() => {
+                  setSelectedPool(pool);
+                  setSelectedAssignment(null);
+                }}
+                key={pool.id}
+                position={{
+                  lat: pool.coords.lat,
+                  lng: pool.coords.lng
+                }}
+                icon={{
+                  path: google.maps.SymbolPath.CIRCLE,
+                  fillColor: '#FF0000',
+                  fillOpacity: 0.7,
+                  scale: 8,
+                  strokeColor: 'white',
+                  strokeWeight: 2
+                }}
+              />
+            );
+          })}
+        </div>
+
         {/* New location marker */}
         {newLocation && (
           <Marker
             position={newLocation}
             icon={{
-              path: 'M -2,-2 2,2 M 2,-2 -2,2', // X shape
-              strokeColor: '#FF0000', // Bright red
-              strokeWeight: 6, // Thicker lines
-              scale: 6, // Bigger size
+              path: 'M -2,-2 2,2 M 2,-2 -2,2',
+              strokeColor: '#FF0000',
+              strokeWeight: 6,
+              scale: 6,
               strokeOpacity: 1
             }}
           />
@@ -178,11 +227,144 @@ const Map = ({ assignments, newLocation, isLoaded, loadError }: MapProps) => {
                   <span className="font-semibold">Day </span>
                   {format(selectedAssignment.startOn, 'EEEE')}
                 </Typography>
+                
+                {/* Action buttons */}
+                <div className="mt-4 w-full flex items-center gap-2">
+                  <Button
+                    size="default"
+                    style={{ width: '100%' }}
+                    variant="outline"
+                    onClick={() => {
+                      setTimeout(() => {
+                        setAssignmentToTransfer(selectedAssignment);
+                        setIsTransferModalOpen(true);
+                      }, 0);
+                    }}
+                    className="flex items-center gap-1"
+                  >
+                    <ArrowLeftRight className="h-3 w-3" />
+                    Transfer
+                  </Button>
+                  <Button
+                    size="default"
+                    style={{ width: '100%' }}
+                    variant="destructive"
+                    onClick={() => {
+                      setTimeout(() => {
+                        setAssignmentToDelete(selectedAssignment);
+                        setIsDeleteModalOpen(true);
+                      }, 0);
+                    }}
+                    className="flex items-center gap-1"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </InfoBox>
+        )}
+
+        {/* Info window for selected pool without assignment */}
+        {selectedPool && (
+          <InfoBox
+            position={
+              new google.maps.LatLng(selectedPool.coords.lat ?? 0, selectedPool.coords.lng ?? 0)
+            }
+            options={{
+              closeBoxURL: '',
+              enableEventPropagation: true,
+              maxWidth: 500
+            }}
+          >
+            <div className="min-w-32 animate-in fade-in-0 rounded-md bg-white p-2 px-3 shadow-md">
+              <div className="mb-1 flex items-center justify-between">
+                <div className="flex flex-1 items-center justify-start gap-2">
+                  <span
+                    className="h-2 w-6 rounded-md"
+                    style={{ 
+                      backgroundColor: '#FF0000'
+                    }}
+                  />
+                </div>
+                <Button
+                  variant="ghost"
+                  className="h-auto w-auto rounded-full p-1"
+                  onClick={() => setSelectedPool(null)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="space-y-1">
+                <Typography element="p" className="text-sm">
+                  <span className="font-semibold">Pool </span>
+                  {selectedPool.name.trim()}
+                </Typography>
+                <Typography element="p" className="text-sm">
+                  <span className="font-semibold">Address </span>
+                  {`${selectedPool.address}, ${selectedPool.city}, ${selectedPool.zip}`}
+                </Typography>
+                <Typography element="p" className="text-sm text-red-600 font-semibold">
+                  No assignment scheduled
+                </Typography>
+                <div className="mt-2">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setPoolToAssign(selectedPool);
+                      setIsAssignModalOpen(true);
+                    }}
+                    className="w-full"
+                  >
+                    Assign
+                  </Button>
+                </div>
               </div>
             </div>
           </InfoBox>
         )}
       </GoogleMap>
+
+      {/* Assign Pool Modal */}
+      <DialogAssignPool
+        open={isAssignModalOpen}
+        setOpen={(open) => {
+          setIsAssignModalOpen(open);
+          if (!open) {
+            setPoolToAssign(null);
+          }
+        }}
+        pool={poolToAssign}
+      />
+
+      {/* Transfer Assignment Modal */}
+      {assignmentToTransfer && (
+        <DialogTransferRoute
+          open={isTransferModalOpen}
+          setOpen={(open) => {
+            setIsTransferModalOpen(open);
+            if (!open) {
+              setAssignmentToTransfer(null);
+            }
+          }}
+          assignment={assignmentToTransfer}
+        />
+      )}
+
+      {/* Delete Assignment Modal */}
+      {assignmentToDelete && (
+        <DialogDeleteAssignment
+          open={isDeleteModalOpen}
+          setOpen={(open) => {
+            setIsDeleteModalOpen(open);
+            if (!open) {
+              setAssignmentToDelete(null);
+            }
+          }}
+          assignment={assignmentToDelete}
+        />
+      )}
     </div>
   );
 };

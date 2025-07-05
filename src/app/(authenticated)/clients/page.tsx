@@ -17,12 +17,14 @@ export default function Page() {
   const user = useUserStore((state) => state.user);
   const router = useRouter();
 
-  // Set initial filtered clients
+  // Set initial filtered clients - FIXED: Only set once when allClients changes from undefined to actual data
   useEffect(() => {
-    if (allClients) {
+    console.log('🔄 useEffect triggered:', { allClientsLength: allClients?.length, filteredClientsLength: filteredClients.length });
+    if (allClients && allClients.length > 0 && filteredClients.length === 0) {
+      console.log('✅ Setting initial filtered clients');
       setFilteredClients(allClients);
     }
-  }, [allClients]);
+  }, [allClients, filteredClients.length]);
 
   // Auth check
   useEffect(() => {

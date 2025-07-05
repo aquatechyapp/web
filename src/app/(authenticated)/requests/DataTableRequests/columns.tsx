@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { Categories } from '@/constants';
 import { Request } from '@/ts/interfaces/Request';
+import { format } from 'date-fns';
 
 const statusOptions = {
   Pending: {
@@ -37,10 +38,17 @@ export const columns: ColumnDef<Request>[] = [
     }
   },
   {
-    accessorKey: 'category',
-    header: 'Category',
+    accessorKey: 'createdAt',
+    header: 'Date',
+    cell: ({ row: { original } }) => <div>{format(new Date(original.createdAt!), "EEEE, MMMM do 'at' h:mm a")}</div>
+  },
+  {
+    accessorKey: 'description',
+    header: 'Description',
     cell: ({ row: { original } }) => (
-      <div>{Object.values(Categories).find((category) => category.value === original.category)?.name}</div>
+      <div className="truncate max-w-[200px]" title={original.description}>
+        {original.description}
+      </div>
     )
   },
   {

@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 
-import { Services } from '@/ts/interfaces/Request';
+import { Service } from '@/ts/interfaces/Service';
 import { ServiceStatus } from '@/ts/interfaces/Service';
 import { format } from 'date-fns';
 
@@ -25,17 +25,17 @@ const statusOptions: Record<ServiceStatus, { label: string; className: string }>
   }
 };
 
-export const columns: ColumnDef<Services>[] = [
+export const columns: ColumnDef<Service>[] = [
   {
     accessorKey: 'client',
     header: 'Client',
     cell: ({ row: { original } }) => (
       <>
         <div>
-          {original.pool.clientOwner!.firstName} {original.pool.clientOwner!.lastName}
+          {original.pool!.clientOwner!.firstName} {original.pool!.clientOwner!.lastName}
         </div>
         <div>
-          {original.pool.address}, {original.pool.city}, {original.pool.state}, {original.pool.zip}
+          {original.pool!.address}, {original.pool!.city}, {original.pool!.state}, {original.pool!.zip}
         </div>
       </>
     )
@@ -48,7 +48,13 @@ export const columns: ColumnDef<Services>[] = [
   {
     accessorKey: 'notes',
     header: 'Notes',
-    cell: ({ row: { original } }) => <div>{'N/A'}</div>
+    cell: ({ row: { original } }) => (
+      original.notes && original.notes !== 'N/A' ? (
+        <div className="truncate max-w-[200px]" title={original.notes}>
+          {original.notes}
+        </div>
+      ) : null
+    )
   },
   {
     accessorKey: 'completedByUserId',

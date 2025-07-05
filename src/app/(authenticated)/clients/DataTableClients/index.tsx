@@ -37,6 +37,7 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
   const shouldDisableNewPools = useUserStore((state) => state.shouldDisableNewPools);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
   const [sortColumn, setSortColumn] = useState<keyof Client | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
@@ -72,9 +73,31 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     state: {
-      columnFilters
+      columnFilters,
+      globalFilter
     },
-
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, columnId, filterValue) => {
+      if (!filterValue || filterValue === '') return true;
+      
+      const searchTerm = filterValue.toLowerCase();
+      const client = row.original;
+      
+      // Create a combined search string from all relevant fields
+      const combinedSearchString = [
+        client.firstName || '',
+        client.lastName || '',
+        client.email || '',
+        client.phone || '',
+        client.address || '',
+        client.city || '',
+        client.state || '',
+        client.zip || '',
+        client.customerCode || ''
+      ].join(' ').toLowerCase();
+      
+      return combinedSearchString.includes(searchTerm);
+    },
     initialState: {
       columnVisibility: {
         deactivatedAt: false
@@ -144,8 +167,8 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
           </HoverCard>
           <Input
             placeholder="Filter clients..."
-            value={table.getState().globalFilter ?? ''}
-            onChange={(event) => table.setGlobalFilter(event.target.value)}
+            value={globalFilter ?? ''}
+            onChange={(event) => setGlobalFilter(event.target.value)}
             className="mb-2 mr-2 md:mb-0 md:max-w-xs"
           />
         </div>

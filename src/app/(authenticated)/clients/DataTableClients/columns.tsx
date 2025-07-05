@@ -13,23 +13,31 @@ export const columns: ColumnDef<Client>[] = [
     accessorKey: 'firstName',
     header: 'Name',
     cell: (props) => <NamePhoto {...props} />,
-    filterFn: 'includesString'
+    enableGlobalFilter: true
+  },
+  {
+    accessorKey: 'lastName',
+    header: '',
+    cell: '',
+    enableGlobalFilter: true
   },
   {
     accessorKey: 'type',
     header: '',
     cell: '',
+    enableGlobalFilter: true,
     filterFn: (row, _, filter) => {
-      if (filter === 'all') {
+      if (filter === 'all' || filter === '' || !filter) {
         return true;
       }
-      return row.original.type.toLowerCase().includes(filter.toLowerCase());
+      return row.original.type === filter;
     }
   },
   {
     accessorKey: 'phone',
     header: 'Phone',
-    cell: (props) => <Phones {...props} />
+    cell: (props) => <Phones {...props} />,
+    enableGlobalFilter: true
   },
   {
     accessorKey: 'city',
@@ -41,12 +49,31 @@ export const columns: ColumnDef<Client>[] = [
         </div>
       );
     },
+    enableGlobalFilter: true,
     filterFn: (row, _, filter) => {
-      if (filter === 'all') {
+      if (filter === 'all' || filter === '' || !filter) {
         return true;
       }
-      return row.original.city.toLowerCase().includes(filter.toLowerCase());
+      return row.original.city === filter;
     }
+  },
+  {
+    accessorKey: 'address',
+    header: '',
+    cell: '',
+    enableGlobalFilter: true
+  },
+  {
+    accessorKey: 'state',
+    header: '',
+    cell: '',
+    enableGlobalFilter: true
+  },
+  {
+    accessorKey: 'zip',
+    header: '',
+    cell: '',
+    enableGlobalFilter: true
   },
   {
     id: 'actions',
