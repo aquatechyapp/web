@@ -52,8 +52,6 @@ export default function Page() {
   const { mutate: handleSubmit, isPending, error } = useLoginUser();
   const { mutate: resendConfirmation, isPending: isResending } = useResendConfirmation(activationModal.email);
 
-  const errorMessage = 'Internal server error';
-
   const handleLogin = (data: z.infer<typeof formSchema>) => {
     handleSubmit(data, {
       onSuccess: (response) => {
@@ -143,7 +141,6 @@ export default function Page() {
               <Link href="/recover" className="text-sm font-semibold text-blue-500">
                 Forgot Password?
               </Link>
-              {error && <p className="text-[0.8rem] font-medium text-red-500 dark:text-red-900">{errorMessage}</p>}
             </div>
             <Button disabled={isPending} type="submit" className="flex w-full">
               {isPending ? (
