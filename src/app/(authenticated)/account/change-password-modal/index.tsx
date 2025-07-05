@@ -25,8 +25,18 @@ import { X } from 'lucide-react';
 import InputField from '@/components/InputField';
 import { FieldType } from '@/ts/enums/enums';
 
-type ChangePasswordInput = typeof ChangePasswordSchema._input;
-type ChangePasswordOutput = typeof ChangePasswordSchema._output;
+type ChangePasswordInput = {
+  currentPassword: string;
+  newPassword: string;
+  newPasswordConfirmation: string;
+  id?: string;
+};
+
+type ChangePasswordOutput = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 const ChangePasswordSchema = z
   .object({
     id: z.string().optional(),
@@ -88,7 +98,7 @@ export default function ChangePasswordDialog() {
   const [open, setOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const changePasswordForm = useForm<ChangePasswordInput, any, ChangePasswordOutput>({
+  const changePasswordForm = useForm<ChangePasswordInput>({
     defaultValues,
     resolver: zodResolver(ChangePasswordSchema)
   });
@@ -105,10 +115,11 @@ export default function ChangePasswordDialog() {
 
   const handleConfirmAction = async () => {
     try {
+      const formValues = changePasswordForm.getValues();
       const res = await changePasswordService.mutateAsync({
-        ...changePasswordForm.getValues(),
-        id: user.id
-      } as any);
+        currentPassword: formValues.currentPassword,
+        newPassword: formValues.newPassword
+      });
 
       if (res.status === 200) {
         handleOpenChange(false);
