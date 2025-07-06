@@ -11,9 +11,10 @@ export function ModalDeleteClient({ open, setOpen, handleSubmit }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
-        <DialogTitle>Are you sure?</DialogTitle>
-        <DialogHeader>This action cannot be undone.</DialogHeader>
-        <DialogDescription>Once you delete the client, you will lose all the information related</DialogDescription>
+        <DialogHeader>
+          <DialogTitle>Are you sure?</DialogTitle>
+          <DialogDescription>This action cannot be undone. Once you delete the client, you will lose all the information related.</DialogDescription>
+        </DialogHeader>
         <div className="flex justify-around">
           <Button
             onClick={() => {
