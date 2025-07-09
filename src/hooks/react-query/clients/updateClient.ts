@@ -11,17 +11,21 @@ export const useUpdateClient = <T>() => {
   const pathname = usePathname();
   const clientId = pathname.split('/')[2];
   const userId = Cookies.get('userId');
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: async (data: T) => await clientAxios.patch('/clients', { ...data, clientId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients', clientId] });
+      queryClient.invalidateQueries({ queryKey: ['clients', 1] });
+      queryClient.invalidateQueries({ queryKey: ['allClients'] });
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
+
       toast({
         duration: 5000,
         title: 'Client updated successfully',
         variant: 'success'
       });
+      
     },
     onError: (
       error: AxiosError<{
@@ -36,5 +40,5 @@ export const useUpdateClient = <T>() => {
       });
     }
   });
-  return { mutate, isPending };
+  return { mutate, isPending, isSuccess };
 };

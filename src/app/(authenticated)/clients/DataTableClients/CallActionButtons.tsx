@@ -48,11 +48,19 @@ export function ActionButtons({ client }: ActionButtonsProps) {
     }, 0);
   };
 
+  const handleDropdownClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleDropdownOpenChange = (open: boolean) => {
+    setIsDropdownOpen(open);
+  };
+
   return (
-    <>
-      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+    <div onClick={handleDropdownClick}>
+      <DropdownMenu open={isDropdownOpen} onOpenChange={handleDropdownOpenChange}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={handleDropdownClick}>
             <BsThreeDotsVertical className="text-stone-500" />
           </Button>
         </DropdownMenuTrigger>
@@ -86,6 +94,6 @@ export function ActionButtons({ client }: ActionButtonsProps) {
           clientOwnerId={client.id}
         />
       </Dialog>
-    </>
+    </div>
   );
 }

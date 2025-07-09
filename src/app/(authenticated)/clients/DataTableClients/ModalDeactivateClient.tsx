@@ -5,15 +5,16 @@ type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
   handleSubmit: () => void;
+  isActive: boolean;
 };
 
-export function ModalDeleteClient({ open, setOpen, handleSubmit }: Props) {
+export function ModalDeactivateClient({ open, setOpen, handleSubmit, isActive }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you sure?</DialogTitle>
-          <DialogDescription>This action cannot be undone. Once you delete the client, you will lose all the information related.</DialogDescription>
+          <DialogTitle className="mb-2">Are you sure?</DialogTitle>
+          <DialogDescription className="text-start">This action will {isActive ? 'deactivate' : 'activate'} the client. {isActive ? 'The client will no longer be active but their data will be preserved.' : 'The client will be active again.'}</DialogDescription>
         </DialogHeader>
         <div className="flex justify-around">
           <Button
@@ -21,13 +22,13 @@ export function ModalDeleteClient({ open, setOpen, handleSubmit }: Props) {
               handleSubmit();
               setOpen(false);
             }}
-            className="rounded-md bg-red-500 px-4 py-2 font-bold text-gray-50 hover:bg-red-700"
+            variant={isActive ? 'destructive' : 'default'}
           >
-            Delete
+            {isActive ? 'Deactivate' : 'Activate'}
           </Button>
           <Button
             onClick={() => setOpen(false)}
-            className="rounded-md bg-gray-500 px-4 py-2 font-bold text-gray-50 hover:bg-gray-700"
+            variant={'outline'}
           >
             Cancel
           </Button>
@@ -35,4 +36,4 @@ export function ModalDeleteClient({ open, setOpen, handleSubmit }: Props) {
       </DialogContent>
     </Dialog>
   );
-}
+} 
