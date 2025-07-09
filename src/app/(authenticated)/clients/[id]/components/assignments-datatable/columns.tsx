@@ -20,7 +20,7 @@ export const columns: ColumnDef<PoolAssignmentsPopulated>[] = [
     accessorKey: 'startOn',
     header: 'Start on',
     cell: (props) => {
-      const formattedDate = format(new Date(props.row.original.createdAt), 'MM/dd/yyyy');
+      const formattedDate = format(new Date(props.row.original.startOn), 'MM/dd/yyyy');
       return <span className="text-nowrap">{formattedDate}</span>;
     }
   },

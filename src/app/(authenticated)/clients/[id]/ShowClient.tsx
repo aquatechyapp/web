@@ -1,14 +1,14 @@
 'use client';
 
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
-import { useDeactivateClient } from '@/hooks/react-query/clients/deactivateClient';
+import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
 import { Client } from '@/ts/interfaces/Client';
 import { calculateTotalAssignmentsOfAllPools, calculateTotalMonthlyOfAllPools } from '@/utils';
 import { getInitials } from '@/utils/others';
@@ -16,7 +16,12 @@ import { getInitials } from '@/utils/others';
 import ClientInfo from './ClientInfo';
 import PoolHeader from './PoolHeader';
 import { ModalAddPool } from '../DataTableClients/ModalAddPool';
+import { ModalDeactivateClient } from '../DataTableClients/ModalDeactivateClient';
 import EmailPreferences from './EmailPreferences';
+import { Separator } from '@/components/ui/separator';
+import { ModalDeleteClient } from '../DataTableClients/ModalDeleteClient';
+import { useDeleteClient } from '@/hooks/react-query/clients/deleteClient';
+import { notFound } from 'next/navigation';
 
 type Props = {
   client: Client;
@@ -24,15 +29,31 @@ type Props = {
 
 export default function ShowClient({ client }: Props) {
   const [open, setOpen] = useState(false);
-
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const { mutate: mutateAddPool } = useAddPoolToClient();
+  const { mutate: updateClient, isPending } = useUpdateClient<{ isActive: boolean }>();
+  const { mutate: deleteClient, isPending: isDeleting } = useDeleteClient();
+
   const [tab, setTab] = useState<'client_info' | 'pools' | 'email_preferences'>('client_info');
 
-  const { mutate: deactivateClient, isPending } = useDeactivateClient();
-
-  if (isPending) return <LoadingSpinner />;
+  if (isPending || isDeleting) return <LoadingSpinner />;
 
   const selectedTabStyles = 'text-gray-800 font-semibold';
+
+ 
+
+  const handleDeactivateClient = () => {
+    updateClient({ isActive: false });
+  };
+
+  const handleActivateClient = () => {
+    updateClient({ isActive: true });
+  };
+
+  const handleDeleteClient = () => {
+    deleteClient(client.id);
+  };
 
   return (
     <div>
@@ -49,9 +70,9 @@ export default function ShowClient({ client }: Props) {
                 </AvatarFallback>
               </Avatar>
               <div className="flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
-                <div className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px] text-gray-800">
-                  {client.fullName}
-                </div>
+                <span className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px] text-gray-800">
+                  {client.fullName} {!client.isActive ? <span className="text-red-500 text-sm">Inactive</span> : null}
+                </span>
                 <div className="text-sm font-medium text-gray-500">{client.address}</div>
               </div>
             </div>
@@ -106,23 +127,26 @@ export default function ShowClient({ client }: Props) {
               </div>
             </div>
             <div className="flex w-full flex-col items-center gap-2">
-              <div className="flex w-full justify-center gap-2">
-                <a href={`mailto:${client.email}`} className="w-full">
-                  <Button className="w-full" variant={'outline'}>
+                <a href={`mailto:${client.email}`} className='w-full'>
+                  <Button variant={'outline'} className='w-full'>
                     E-mail
                   </Button>
                 </a>
-              </div>
-              <div className="flex w-full justify-center gap-2">
-                {/* <Button className="w-full" onClick={() => deactivateClient(client.id)} variant={'destructive'}>
-                  Deactivate Client
-                </Button> */}
                 <Button onClick={() => setOpen(true)} className="w-full" variant={'default'}>
                   Add pool
                 </Button>
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <ModalAddPool handleAddPool={mutateAddPool} clientOwnerId={client.id} open={open} setOpen={setOpen} />
-                </Dialog>
+              <Separator className="w-full bg-gray-200 opacity-50" />
+              <div className="flex w-full justify-center gap-2">
+                  <Button 
+                    onClick={() => setDeactivateModalOpen(true)} 
+                    className="w-full" 
+                    variant={client.isActive ? 'destructive' : 'default'}
+                  >
+                    {client.isActive ? 'Deactivate' : 'Activate'}
+                  </Button>
+                  <Button onClick={() => setDeleteModalOpen(true)} variant={'destructive'} className='w-full'>
+                    Delete
+                  </Button>
               </div>
             </div>
           </div>
@@ -201,6 +225,31 @@ export default function ShowClient({ client }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Add Pool Modal */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <ModalAddPool handleAddPool={mutateAddPool} clientOwnerId={client.id} open={open} setOpen={setOpen} />
+      </Dialog>
+
+      {/* Deactivate Client Modal */}
+      <Dialog open={deactivateModalOpen} onOpenChange={setDeactivateModalOpen}>
+        <ModalDeactivateClient
+          open={deactivateModalOpen}
+          setOpen={setDeactivateModalOpen}
+          handleSubmit={client.isActive ? handleDeactivateClient : handleActivateClient}
+          isActive={client.isActive}
+        />
+      </Dialog>
+
+      {/* Delete Client Modal */}
+      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <ModalDeleteClient
+          open={deleteModalOpen}
+          setOpen={setDeleteModalOpen}
+          handleSubmit={handleDeleteClient}
+        />
+      </Dialog>
     </div>
   );
 }
+

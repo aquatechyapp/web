@@ -26,16 +26,21 @@ export default function Page({ params: { id } }: Props) {
     notFound();
   }
 
-  const { data, isLoading } = useGetClient(id);
+  const { data, isLoading, isError } = useGetClient(id);
+
   const user = useUserStore((state) => state.user);
 
-  const router = useRouter();
+  const router = useRouter(); 
 
   useEffect(() => {
     if (user.firstName === '') {
       router.push('/account');
     }
   }, [user]);
+
+  if (isError) {
+    notFound();
+  }
 
   if (isLoading) return <LoadingSpinner />;
 

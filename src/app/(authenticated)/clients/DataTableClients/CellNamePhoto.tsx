@@ -14,7 +14,7 @@ export default function NamePhoto(cell: CellContext<Client, unknown>) {
         <AvatarFallback>{getInitials(fullName)}</AvatarFallback>
       </Avatar>
       <div className="ml-4 flex flex-col">
-        <span>{fullName}</span>
+        <span>{fullName} {!cell.row.original.isActive ? <span className="text-red-500">Inactive</span> : ''}</span>
         <span>{email}</span>
       </div>
     </div>
