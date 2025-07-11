@@ -16,6 +16,7 @@ export const useUpdateClient = <T>() => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients', clientId] });
       queryClient.invalidateQueries({ queryKey: ['clients', 1] });
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
       queryClient.invalidateQueries({ queryKey: ['allClients'] });
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
