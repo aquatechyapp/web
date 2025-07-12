@@ -2,6 +2,7 @@
 
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,7 +16,6 @@ import { getInitials } from '@/utils/others';
 
 import ClientInfo from './ClientInfo';
 import PoolHeader from './PoolHeader';
-import { ModalAddPool } from '../DataTableClients/ModalAddPool';
 import { ModalDeactivateClient } from '../DataTableClients/ModalDeactivateClient';
 import EmailPreferences from './EmailPreferences';
 import { Separator } from '@/components/ui/separator';
@@ -28,12 +28,11 @@ type Props = {
 };
 
 export default function ShowClient({ client }: Props) {
-  const [open, setOpen] = useState(false);
   const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const { mutate: mutateAddPool } = useAddPoolToClient();
   const { mutate: updateClient, isPending } = useUpdateClient<{ isActive: boolean }>();
   const { mutate: deleteClient, isPending: isDeleting } = useDeleteClient();
+  const router = useRouter();
 
   const [tab, setTab] = useState<'client_info' | 'pools' | 'email_preferences'>('client_info');
 
@@ -53,6 +52,10 @@ export default function ShowClient({ client }: Props) {
 
   const handleDeleteClient = () => {
     deleteClient(client.id);
+  };
+
+  const handleAddPool = () => {
+    router.push(`/clients/add-pool?clientId=${client.id}`);
   };
 
   return (
@@ -132,7 +135,7 @@ export default function ShowClient({ client }: Props) {
                     E-mail
                   </Button>
                 </a>
-                <Button onClick={() => setOpen(true)} className="w-full" variant={'default'}>
+                <Button onClick={handleAddPool} className="w-full" variant={'default'}>
                   Add pool
                 </Button>
               <Separator className="w-full bg-gray-200 opacity-50" />
@@ -225,11 +228,6 @@ export default function ShowClient({ client }: Props) {
           </div>
         </div>
       </div>
-
-      {/* Add Pool Modal */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <ModalAddPool handleAddPool={mutateAddPool} clientOwnerId={client.id} open={open} setOpen={setOpen} />
-      </Dialog>
 
       {/* Deactivate Client Modal */}
       <Dialog open={deactivateModalOpen} onOpenChange={setDeactivateModalOpen}>

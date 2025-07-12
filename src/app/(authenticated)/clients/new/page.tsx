@@ -1,8 +1,6 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { format, getDay } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -16,34 +14,54 @@ import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form, FormDescription, FormItem } from '@/components/ui/form';
-import { useToast } from '@/components/ui/use-toast';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { clientAxios } from '@/lib/clientAxios';
 import { clientSchema } from '@/schemas/client';
 import { dateSchema } from '@/schemas/date';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { poolSchema } from '@/schemas/pool';
 import { useUserStore } from '@/store/user';
 import { FieldType, Frequency, IanaTimeZones } from '@/ts/enums/enums';
-import { createFormData } from '@/utils/formUtils';
 import { isEmpty } from '@/utils';
 import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { Stepper, useSteps } from '@/components/stepper';
-import { ArrowLeftIcon, Loader2Icon } from 'lucide-react';
+import { ArrowLeftIcon, Loader2Icon, PlusIcon, Trash2Icon } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AddressInput } from '@/components/AddressInput';
+import { useCreateClientWithMultipleAssignments, Assignment, CreateClientWithAssignmentsData } from '@/hooks/react-query/clients/createClientWithMultipleAssignments';
+import { useToast } from '@/components/ui/use-toast';
+// Update the schema to remove the old assignment fields
+const assignmentSchema = z.object({
+  assignmentToId: z.string().min(1),
+  weekday: defaultSchemas.weekday,
+  frequency: defaultSchemas.frequency,
+  startOn: z.string().min(1),
+  endAfter: z.string().min(1)
+});
+
+const additionalSchemas = z.object({
+  sameBillingAddress: z.boolean(),
+  customerCode: z.string().nullable().optional(),
+  monthlyPayment: defaultSchemas.monthlyPayment,
+  clientCompany: z.string().nullable().optional(),
+  clientType: z.enum(['Commercial', 'Residential']),
+  timezone: defaultSchemas.timezone,
+  companyOwnerId: z.string().min(1, {
+    message: 'Company owner is required.'
+  })
+  // Remove assignments from here since we handle them separately
+});
+
+// Remove dateSchema from the combined schema
+const poolAndClientSchema = clientSchema.and(poolSchema).and(additionalSchemas);
 
 type PoolAndClientSchema = z.infer<typeof poolAndClientSchema>;
 
 export default function Page() {
-  const queryClient = useQueryClient();
   const router = useRouter();
-
   const { toast } = useToast();
   const { width } = useWindowDimensions();
-
   const isMobile = width ? width < 640 : false;
 
   const { user } = useUserStore(
@@ -60,31 +78,36 @@ export default function Page() {
     (c) => c.role === 'Owner' || c.role === 'Admin' || c.role === 'Office'
   );
 
+  // Use the new hook
+  const { mutateAsync, isPending } = useCreateClientWithMultipleAssignments();
+
+  // State for managing multiple assignments
+  const [assignments, setAssignments] = useState<Assignment[]>([
+    {
+      assignmentToId: '',
+      weekday: 'SUNDAY' as const, // or any default weekday
+      frequency: Frequency.WEEKLY,
+      startOn: '',
+      endAfter: ''
+    }
+  ]);
+
+  // State for managing assignment-specific date options
+  const [assignmentDateOptions, setAssignmentDateOptions] = useState<{
+    [key: number]: {
+      startOn: { name: string; key: string; value: string }[];
+      endAfter: { name: string; key: string; value: string }[];
+    };
+  }>({});
+
   useEffect(() => {
     if (user && user.id && user.id !== undefined && isCompaniesSuccess) {
       setShowNoCompaniesDialog(companies.length === 0);
     }
   }, [companies, user, isCompaniesSuccess]);
 
-  const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
-    {
-      name: string;
-      key: string;
-      value: string;
-    }[]
-  >([]);
-
-  const [next10WeekdaysEndAfter, setNext10WeekdaysEndAfter] = useState<
-    {
-      name: string;
-      key: string;
-      value: string;
-    }[]
-  >([]);
-
   const validateForm = async (): Promise<boolean> => {
     const isValid = await form.trigger();
-
     if (isValid) {
       return true;
     }
@@ -113,7 +136,7 @@ export default function Page() {
       index: 2,
       active: false,
       complete: false,
-      title: 'Assignment'
+      title: 'Assignments'
     }
   ]);
 
@@ -170,41 +193,6 @@ export default function Page() {
     }
   }
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: async (data: PoolAndClientSchema) => {
-      console.log(data);
-      return await clientAxios.post('/client-pool-assignment', createFormData(data), {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
-      queryClient.invalidateQueries({ queryKey: ['allClients'] });
-      queryClient.invalidateQueries({ queryKey: ['assignments'] });
-      queryClient.invalidateQueries({ queryKey: ['schedule'] });
-      router.push('/clients');
-      toast({
-        duration: 5000,
-        title: 'Client added successfully',
-        variant: 'success'
-      });
-    },
-    onError: (
-      error: AxiosError<{
-        message: string;
-      }>
-    ) => {
-      toast({
-        duration: 5000,
-        title: 'Error adding client',
-        variant: 'error',
-        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
-      });
-    }
-  });
-
   const uniqueMembers = useMemo(() => {
     return members
       .filter((member) => member.firstName !== '')
@@ -216,10 +204,10 @@ export default function Page() {
     defaultValues: {
       animalDanger: false,
       sameBillingAddress: false,
-      // clientState: user?.state,
       clientType: 'Residential',
       monthlyPayment: 0,
-      companyOwnerId: ownerAdminOfficeCompanies.length === 1 ? ownerAdminOfficeCompanies[0].id : undefined
+      companyOwnerId: ownerAdminOfficeCompanies.length === 1 ? ownerAdminOfficeCompanies[0].id : undefined,
+      
     }
   });
 
@@ -239,8 +227,6 @@ export default function Page() {
   }
 
   function getNext10DatesForStartOnBasedOnWeekday(weekday: string) {
-    // Convert weekday string to a number (0=Sunday, 1=Monday, ..., 6=Saturday)
-
     if (!weekday) return;
     const weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     const targetWeekday = weekdays.indexOf(weekday.toLowerCase());
@@ -250,24 +236,23 @@ export default function Page() {
     }
 
     const today = new Date();
-    const todayWeekday = getDay(today); // Get current weekday
-    let daysToNext = (targetWeekday - todayWeekday + 7) % 7; // Calculate days to the next occurrence
+    const todayWeekday = getDay(today);
+    let daysToNext = (targetWeekday - todayWeekday + 7) % 7;
 
-    // If today is the target weekday, include today
     if (daysToNext === 0) {
-      daysToNext = 0; // Set to 0 to include today
+      daysToNext = 0;
     } else {
-      daysToNext = daysToNext || 7; // Otherwise, find the next week's same weekday
+      daysToNext = daysToNext || 7;
     }
     const dates: { name: string; key: string; value: string }[] = [];
 
     for (let i = 0; i < 10; i++) {
       const nextDate = new Date(today);
-      nextDate.setDate(today.getDate() + daysToNext + i * 7); // Add weeks
+      nextDate.setDate(today.getDate() + daysToNext + i * 7);
 
       const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
       const weekdayName = format(nextDate, 'yyyy-MM-dd');
-      const isoDate = String(nextDate); // Get the ISO string for the date
+      const isoDate = String(nextDate);
 
       dates.push({
         name: formattedDate,
@@ -276,16 +261,13 @@ export default function Page() {
       });
     }
 
-    setNext10WeekdaysStartOn(dates);
+    return dates;
   }
 
-  function getNext10DatesForEndAfterBasedOnWeekday(startOn: Date) {
-    // Convert weekday string to a number (0=Sunday, 1=Monday, ..., 6=Saturday)
+  function getNext10DatesForEndAfterBasedOnWeekday(startOn: Date, frequency: string) {
+    if (!startOn) return [];
 
-    if (!startOn) return;
-
-    const startDate = new Date(startOn); // UTC time
-
+    const startDate = new Date(startOn);
     const dates: { name: string; key: string; value: string }[] = [];
 
     dates.push({
@@ -294,15 +276,38 @@ export default function Page() {
       value: 'No end'
     });
 
+    let daysToAdd: number;
+    switch (frequency) {
+      case 'WEEKLY':
+        daysToAdd = 7;
+        break;
+      case 'E2WEEKS':
+        daysToAdd = 14;
+        break;
+      case 'E3WEEKS':
+        daysToAdd = 21;
+        break;
+      case 'E4WEEKS':
+        daysToAdd = 28;
+        break;
+      case 'ONCE':
+        daysToAdd = 0;
+        break;
+      default:
+        daysToAdd = 7;
+    }
+
+    if (frequency === 'ONCE') {
+      return dates;
+    }
+
     for (let i = 1; i <= 10; i++) {
       const nextDate = new Date(startDate);
-      nextDate.setDate(startDate.getDate() + i * 7); // Add weeks to match the same weekday
+      nextDate.setDate(startDate.getDate() + i * daysToAdd);
 
       const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
       const weekdayName = format(nextDate, 'yyyy-MM-dd');
-      // create a key with date ex: 2022-12-31
-
-      const isoDate = String(nextDate); // Get the ISO string for the date
+      const isoDate = String(nextDate);
 
       dates.push({
         name: formattedDate,
@@ -311,33 +316,167 @@ export default function Page() {
       });
     }
 
-    setNext10WeekdaysEndAfter(dates);
+    return dates;
   }
 
-  async function handleCreateClientPoolAndAssignment(data: PoolAndClientSchema) {
-    const isValid = await validateForm();
+  // Function to add a new assignment
+  const addAssignment = () => {
+    const newAssignment: Assignment = {
+      assignmentToId: '',
+      weekday: 'SUNDAY' as const, // or any default weekday
+      frequency: Frequency.WEEKLY,
+      startOn: '',
+      endAfter: ''
+    };
+    setAssignments([...assignments, newAssignment]);
+  };
 
-    if (!isValid) {
+  // Function to remove an assignment
+  const removeAssignment = (index: number) => {
+    if (assignments.length > 1) {
+      const newAssignments = assignments.filter((_, i) => i !== index);
+      setAssignments(newAssignments);
+      
+      // Update assignment date options
+      const newOptions = { ...assignmentDateOptions };
+      delete newOptions[index];
+      setAssignmentDateOptions(newOptions);
+    }
+  };
+
+  // Function to update assignment
+  const updateAssignment = (index: number, field: keyof Assignment, value: string) => {
+    const newAssignments = [...assignments];
+    newAssignments[index] = { ...newAssignments[index], [field]: value };
+    setAssignments(newAssignments);
+
+    // Update date options when weekday or frequency changes
+    if (field === 'weekday' || field === 'frequency') {
+      const assignment = newAssignments[index];
+      if (assignment.weekday) {
+        const startOnDates = getNext10DatesForStartOnBasedOnWeekday(assignment.weekday);
+        setAssignmentDateOptions(prev => ({
+          ...prev,
+          [index]: {
+            ...prev[index],
+            startOn: startOnDates || []
+          }
+        }));
+      }
+    }
+
+    // Update end after options when start on changes
+    if (field === 'startOn') {
+      const assignment = newAssignments[index];
+      if (assignment.startOn && assignment.frequency && assignment.startOn !== '') {
+        try {
+          const endAfterDates = getNext10DatesForEndAfterBasedOnWeekday(new Date(assignment.startOn), assignment.frequency);
+          setAssignmentDateOptions(prev => ({
+            ...prev,
+            [index]: {
+              ...prev[index],
+              endAfter: endAfterDates || []
+            }
+          }));
+        } catch (error) {
+          console.error('Invalid date:', assignment.startOn);
+        }
+      }
+    }
+  };
+
+  async function handleCreateClientPoolAndAssignments(data: PoolAndClientSchema) {
+    console.log(data);
+    // Skip form validation since we're handling assignments separately
+    // const isValid = await validateForm();
+    // if (!isValid) {
+    //   return;
+    // }
+
+    // Validate assignments
+    if (assignments.length === 0) {
+      toast({
+        duration: 5000,
+        title: 'Error',
+        variant: 'error',
+        description: 'At least one assignment is required'
+      });
       return;
     }
+
+    // Check if all assignments have required fields
+    const invalidAssignments = assignments.filter(
+      assignment => !assignment.assignmentToId || !assignment.weekday || !assignment.frequency || !assignment.startOn || !assignment.endAfter
+    );
+
+    if (invalidAssignments.length > 0) {
+      toast({
+        duration: 5000,
+        title: 'Error',
+        variant: 'error',
+        description: 'Please fill in all required fields for all assignments'
+      });
+      return;
+    }
+
     try {
-      await mutateAsync(data);
+      const submissionData: CreateClientWithAssignmentsData = {
+        // Client data
+        companyOwnerId: data.companyOwnerId,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        clientCompany: data.clientCompany || undefined,
+        customerCode: data.customerCode || undefined,
+        clientAddress: data.clientAddress,
+        clientCity: data.clientCity,
+        clientState: data.clientState,
+        clientZip: data.clientZip,
+        clientType: data.clientType,
+        timezone: data.timezone,
+        phone: data.phone,
+        email: data.email,
+        clientNotes: data.clientNotes,
+        
+        // Pool data
+        sameBillingAddress: data.sameBillingAddress,
+        animalDanger: data.animalDanger,
+        poolAddress: data.poolAddress,
+        poolState: data.poolState,
+        poolCity: data.poolCity,
+        poolZip: data.poolZip,
+        monthlyPayment: data.monthlyPayment || 0,
+        lockerCode: data.lockerCode || undefined,
+        enterSide: data.enterSide,
+        poolType: data.poolType,
+        poolNotes: data.poolNotes,
+        
+        // Assignments
+        assignments: assignments
+      };
+      
+      await mutateAsync(submissionData);
       steps.goToStep(0);
       form.reset();
+      setAssignments([{
+        assignmentToId: '',
+        weekday: 'SUNDAY' as const, // or any default weekday
+        frequency: Frequency.WEEKLY,
+        startOn: '',
+        endAfter: ''
+      }]);
+      setAssignmentDateOptions({});
       return;
     } catch (error) {
       return;
     }
   }
 
-  const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip, startOn, weekday] = form.watch([
+  const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip] = form.watch([
     'sameBillingAddress',
     'clientAddress',
     'clientCity',
     'clientState',
-    'clientZip',
-    'startOn',
-    'weekday'
+    'clientZip'
   ]);
 
   const handleCheckboxSameBillingAddress = useMemo(() => {
@@ -353,21 +492,6 @@ export default function Page() {
   useEffect(() => {
     handleSameBillingAddress();
   }, [handleCheckboxSameBillingAddress]);
-
-  useEffect(() => {
-    form.resetField('startOn');
-    form.resetField('endAfter');
-    getNext10DatesForEndAfterBasedOnWeekday(startOn);
-    getNext10DatesForStartOnBasedOnWeekday(weekday);
-  }, [form.watch('weekday')]);
-
-  useEffect(() => {
-    const startOnValue = form.watch('startOn');
-    if (startOnValue) {
-      getNext10DatesForEndAfterBasedOnWeekday(new Date(startOnValue));
-      form.setValue('endAfter', 'No end'); // Set default value to "No end"
-    }
-  }, [form.watch('startOn')]);
 
   useEffect(() => {
     if (isCompaniesSuccess && companies) {
@@ -387,8 +511,12 @@ export default function Page() {
         <Stepper steps={steps.stepsData} goToStep={steps.goToStep} />
       </div>
 
-      <form onSubmit={form.handleSubmit((data) => handleCreateClientPoolAndAssignment(data))}>
+      <form onSubmit={(e) => {
+        console.log('Form submitted!');
+        form.handleSubmit((data) => handleCreateClientPoolAndAssignments(data))(e);
+      }}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 p-2 lg:px-8">
+          {/* Steps 0 and 1 remain the same */}
           {steps.currentStepIndex === 0 && (
             <>
               <Typography element="h2" className="pb-0 text-base">
@@ -399,9 +527,6 @@ export default function Page() {
                   placeholder="Company owner"
                   name="companyOwnerId"
                   label="Company owner"
-                  // defaultValue={
-                  //   user.userCompanies && user.userCompanies.length === 1 ? user.userCompanies[0].companyId : ''
-                  // }
                   options={
                     companies
                       .filter((c) => c.role === 'Owner' || c.role === 'Admin' || c.role === 'Office')
@@ -420,16 +545,12 @@ export default function Page() {
                 <InputField name="customerCode" placeholder="Customer code" label="Customer code" />
               </div>
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                {/* <InputField name="clientAddress" placeholder="Billing address" label="Billing address" /> */}
                 <AddressInput
                   name="clientAddress"
                   label="Billing address"
                   placeholder="Enter address"
                   onAddressSelect={({ state, city, zipCode, timezone }) => {
-                    // First set the state
                     form.setValue('clientState', state, { shouldValidate: true });
-
-                    // Wait for cities to load
                     setTimeout(() => {
                       form.setValue('clientCity', city, { shouldValidate: true });
                       form.setValue('clientZip', zipCode, { shouldValidate: true });
@@ -582,63 +703,105 @@ export default function Page() {
                 Assignment Information
               </Typography>
 
-              <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                <FormItem className="w-full">
-                  <SelectField
-                    disabled={members.length === 0}
-                    name="assignmentToId"
-                    placeholder="Technician"
-                    label="Technician"
-                    options={uniqueMembers.map((m) => ({
-                      key: m.id,
-                      name: `${m.firstName} ${m.lastName}`,
-                      value: m.id
-                    }))}
-                    defaultValue={members && members.length === 1 ? members[0].id : undefined}
-                  />
-                  {members.length === 0 && <FormDescription>No technicians available</FormDescription>}
-                </FormItem>
-                <SelectField label="Weekday" name="weekday" placeholder="Weekday" options={Weekdays} />
-                <SelectField
-                  label="Frequency"
-                  name="frequency"
-                  placeholder="Frequency"
-                  defaultValue={Frequency.WEEKLY}
-                  options={Frequencies}
-                />
-              </div>
-              {form.watch('weekday') && form.watch('frequency') && (
-                <div className="inline-flex w-full items-start justify-start gap-4">
-                  <SelectField
-                    label="Start on"
-                    name="startOn"
-                    placeholder="Start on"
-                    options={next10WeekdaysStartOn.map((date) => ({
-                      key: date.key,
-                      name: date.name,
-                      value: date.value
-                    }))}
-                  />
-                  <SelectField
-                    label="End after"
-                    name="endAfter"
-                    placeholder="End after"
-                    options={next10WeekdaysEndAfter.map((date) => ({
-                      key: date.key,
-                      name: date.name,
-                      value: date.value
-                    }))}
-                    defaultValue="No end"
-                  />
+              {assignments.map((assignment, index) => (
+                <div key={index} className="w-full space-y-4 rounded-lg border p-4">
+                  <div className="flex items-center justify-between">
+                    <Typography element="h3" className="text-sm font-medium">
+                      Assignment {index + 1}
+                    </Typography>
+                    {assignments.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeAssignment(index)}
+                        className="h-8 w-8 text-red-500 hover:text-red-700"
+                      >
+                        <Trash2Icon className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
+                    <FormItem className="w-full">
+                      <SelectField
+                        name={`assignmentToId-${index}`} // Make name unique
+                        disabled={members.length === 0}
+                        placeholder="Technician"
+                        label="Technician"
+                        options={uniqueMembers.map((m) => ({
+                          key: m.id,
+                          name: `${m.firstName} ${m.lastName}`,
+                          value: m.id
+                        }))}
+                        value={assignment.assignmentToId}
+                        onValueChange={(value) => updateAssignment(index, 'assignmentToId', value)}
+                      />
+                      {members.length === 0 && <FormDescription>No technicians available</FormDescription>}
+                    </FormItem>
+                    <SelectField 
+                      name={`weekday-${index}`} // Make name unique
+                      label="Weekday" 
+                      placeholder="Weekday" 
+                      options={Weekdays}
+                      value={assignment.weekday}
+                      onValueChange={(value) => updateAssignment(index, 'weekday', value)}
+                    />
+                    <SelectField
+                      name={`frequency-${index}`} // Make name unique
+                      label="Frequency"
+                      placeholder="Frequency"
+                      options={Frequencies}
+                      value={assignment.frequency}
+                      onValueChange={(value) => updateAssignment(index, 'frequency', value)}
+                    />
+                  </div>
+
+                  {assignment.weekday && assignment.frequency && (
+                    <div className="inline-flex w-full items-start justify-start gap-4">
+                      <SelectField
+                        name={`startOn-${index}`} // Make name unique
+                        label="Start on"
+                        placeholder="Start on"
+                        options={assignmentDateOptions[index]?.startOn || getNext10DatesForStartOnBasedOnWeekday(assignment.weekday) || []}
+                        value={assignment.startOn}
+                        onValueChange={(value) => updateAssignment(index, 'startOn', value)}
+                      />
+                      <SelectField
+                        name={`endAfter-${index}`} // Make name unique
+                        label="End after"
+                        placeholder="End after"
+                        options={assignmentDateOptions[index]?.endAfter || (assignment.startOn && assignment.startOn !== '' ? getNext10DatesForEndAfterBasedOnWeekday(new Date(assignment.startOn), assignment.frequency) : []) || []}
+                        value={assignment.endAfter}
+                        onValueChange={(value) => updateAssignment(index, 'endAfter', value)}
+                      />
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addAssignment}
+                className="w-full"
+              >
+                <PlusIcon className="mr-2 h-4 w-4" />
+                Add Another Assignment
+              </Button>
 
               <div className="flex w-full flex-1 flex-row items-center justify-between">
                 <Button type="button" className="" onClick={steps.prevStep}>
                   <ArrowLeftIcon className="mr-2 h-4 w-4" />
                   Previous
                 </Button>
-                <Button disabled={isPending} type="submit">
+                <Button 
+                  disabled={isPending} 
+                  type="submit"
+                  onClick={() => {
+                    console.log('Button clicked!');
+                  }}
+                >
                   {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
                   Add client
                 </Button>
@@ -662,18 +825,3 @@ export default function Page() {
     </Form>
   );
 }
-
-const additionalSchemas = z.object({
-  weekday: defaultSchemas.weekday,
-  frequency: defaultSchemas.frequency,
-  sameBillingAddress: z.boolean(),
-  assignmentToId: z.string().min(1),
-  customerCode: z.string().nullable().optional(),
-  monthlyPayment: defaultSchemas.monthlyPayment,
-  clientCompany: z.string().nullable().optional(),
-  clientType: z.enum(['Commercial', 'Residential']),
-  timezone: defaultSchemas.timezone,
-  companyOwnerId: z.string().min(1)
-});
-
-const poolAndClientSchema = clientSchema.and(poolSchema).and(additionalSchemas).and(dateSchema);

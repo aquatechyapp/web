@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
@@ -13,7 +13,6 @@ import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useChangeUserPreferences } from '@/hooks/react-query/user/changeUserPreferences';
-import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
@@ -47,6 +46,8 @@ export default function Page({ company }: { company: Company }) {
   );
 
   const user = useUserStore((state) => state.user);
+  const previousSendEmails = useRef<boolean | null>(null);
+  const isInitialRender = useRef(true);
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -65,20 +66,36 @@ export default function Page({ company }: { company: Company }) {
     }
   });
 
-  const { sendEmails } = form.getValues();
-  useDidUpdateEffect(handleEmailsChange, [sendEmails]);
+  const sendEmails = form.watch('sendEmails');
 
-  function handleEmailsChange() {
-    if (sendEmails) {
-      form.setValue('attachChemicalsReadings', true);
-      form.setValue('attachChecklist', true);
-      form.setValue('attachServicePhotos', true);
+  // Use useCallback to prevent infinite re-renders
+  const handleEmailsChange = useCallback((newSendEmails: boolean) => {
+    if (newSendEmails) {
+      form.setValue('attachChemicalsReadings', true, { shouldDirty: true });
+      form.setValue('attachChecklist', true, { shouldDirty: true });
+      form.setValue('attachServicePhotos', true, { shouldDirty: true });
     } else {
-      form.setValue('attachChemicalsReadings', false);
-      form.setValue('attachChecklist', false);
-      form.setValue('attachServicePhotos', false);
+      form.setValue('attachChemicalsReadings', false, { shouldDirty: true });
+      form.setValue('attachChecklist', false, { shouldDirty: true });
+      form.setValue('attachServicePhotos', false, { shouldDirty: true });
     }
-  }
+  }, [form]);
+
+  // Only trigger handleEmailsChange when sendEmails actually changes (not on initial render)
+  useEffect(() => {
+    if (isInitialRender.current) {
+      // On initial render, just store the current value
+      previousSendEmails.current = sendEmails;
+      isInitialRender.current = false;
+      return;
+    }
+
+    // Only trigger if the value actually changed and it's not the initial render
+    if (previousSendEmails.current !== null && previousSendEmails.current !== sendEmails) {
+      handleEmailsChange(sendEmails);
+      previousSendEmails.current = sendEmails;
+    }
+  }, [sendEmails, handleEmailsChange]);
 
   const router = useRouter();
 
@@ -86,15 +103,10 @@ export default function Page({ company }: { company: Company }) {
     if (user.firstName === '') {
       router.push('/account');
     }
-  }, [user]);
+  }, [user, router]);
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [formData, setFormData] = useState<any>(null);
-
-  useEffect(() => {
-    const subscription = form.watch(() => form.trigger());
-    return () => subscription.unsubscribe();
-  }, [form]);
 
   const filterDays = form.watch('filterCleaningIntervalDays');
   const [initialFilterDays] = useState(filterDays);
@@ -131,24 +143,21 @@ export default function Page({ company }: { company: Company }) {
         >
           {fields.map((field) => (
             <div key={field.label} className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">
-              {/* <div className='flex gap-2'> */}
               <div className="col-span-8 row-auto flex flex-col">
                 <label htmlFor={field.label} className="flex flex-col space-y-1">
                   <span className="text-sm font-semibold text-gray-800">{field.label}</span>
                 </label>
                 <span className="text-muted-foreground text-sm font-normal">{field.description}</span>
               </div>
-              {/* </div> */}
               <div className="col-span-4 flex flex-col gap-2">
                 {field.itens.map((item) => {
                   const isFieldSendEmails = item.name === 'sendEmails';
 
                   return (
-                    <div className="flex w-full items-center gap-4">
+                    <div key={item.name} className="flex w-full items-center gap-4">
                       <div className={field.type === FieldType.Default ? 'w-full' : ''}>
                         <InputField
                           disabled={!isFreePlan ? (isFieldSendEmails ? false : sendEmails ? false : true) : true}
-                          key={item.name}
                           name={item.name}
                           type={item.type || field.type}
                           placeholder={field.type === FieldType.Default ? item.label : ''}

@@ -4,16 +4,15 @@ import { z } from 'zod';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { AddressInput } from '@/components/AddressInput';
 
 import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
 import { Company } from '@/ts/interfaces/Company';
 import { useEditCompany } from '@/hooks/react-query/companies/updateCompany';
 import { updateCompanySchema } from '../ModalEditCompany';
-import CompanyStateAndCitySelect from '@/components/CompanyStateAndCitySelect';
 
 const formSchema = updateCompanySchema;
 
@@ -42,6 +41,19 @@ export default function CompanyInfo({ company }: { company: Company }) {
     handleSubmitCompany(form.getValues());
   };
 
+  const handleAddressSelect = (address: {
+    fullAddress: string;
+    state: string;
+    city: string;
+    zipCode: string;
+    timezone: IanaTimeZones;
+  }) => {
+    form.setValue('address', address.fullAddress);
+    form.setValue('state', address.state);
+    form.setValue('city', address.city);
+    form.setValue('zip', address.zipCode);
+  };
+
   return (
     <Form {...form}>
       <form
@@ -53,9 +65,15 @@ export default function CompanyInfo({ company }: { company: Company }) {
           {/* <InputField name="status" placeholder="Status" label="Status" /> */}
         </div>
         <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
-          <InputField name="address" placeholder="Address" label="Address" />
-          <CompanyStateAndCitySelect stateName="state" cityName="city" />
-          <InputField name="zip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
+          <AddressInput 
+            name="address" 
+            label="Address" 
+            placeholder="Enter company address"
+            onAddressSelect={handleAddressSelect}
+          />
+          <InputField name="state" label="State" placeholder="State" disabled />
+          <InputField name="city" label="City" placeholder="City" disabled />
+          <InputField name="zip" label="Zip code" placeholder="Zip code" disabled />
         </div>
         <Typography element="h4" className="mt-2">
           Contact information

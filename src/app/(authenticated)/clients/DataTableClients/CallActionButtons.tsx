@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDeleteOutline } from 'react-icons/md';
+import { Loader2Icon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,9 +15,7 @@ import {
 import { Dialog } from '@/components/ui/dialog';
 import { Client } from '@/ts/interfaces/Client';
 import { ModalDeleteClient } from './ModalDeleteClient';
-import { ModalAddPool } from './ModalAddPool';
 import { useDeleteClient } from '@/hooks/react-query/clients/deleteClient';
-import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
 
 interface ActionButtonsProps {
   client: Client;
@@ -26,20 +25,20 @@ export function ActionButtons({ client }: ActionButtonsProps) {
   const { push } = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isAddPoolModalOpen, setIsAddPoolModalOpen] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const { mutate: mutateDeleteClient } = useDeleteClient();
-  const { mutate: mutateAddPool } = useAddPoolToClient();
 
   const handleActionSelect = (action: 'view' | 'addPool' | 'delete') => {
     setIsDropdownOpen(false);
     setTimeout(() => {
       switch (action) {
         case 'view':
+          setIsNavigating(true);
           push(`/clients/${client.id}`);
           break;
         case 'addPool':
-          setIsAddPoolModalOpen(true);
+          push(`/clients/add-pool?clientId=${client.id}`);
           break;
         case 'delete':
           setIsDeleteModalOpen(true);
@@ -61,13 +60,38 @@ export function ActionButtons({ client }: ActionButtonsProps) {
       <DropdownMenu open={isDropdownOpen} onOpenChange={handleDropdownOpenChange}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" onClick={handleDropdownClick}>
-            <BsThreeDotsVertical className="text-stone-500" />
+            {isNavigating ? (
+              <Loader2Icon className="h-4 w-4 animate-spin" />
+            ) : (
+              <BsThreeDotsVertical className="text-stone-500" />
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onSelect={() => handleActionSelect('view')}>View</DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => handleActionSelect('addPool')}>Add Pool</DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => handleActionSelect('delete')} className="text-red-500">
+          <DropdownMenuItem 
+            onSelect={() => handleActionSelect('view')}
+            disabled={isNavigating}
+          >
+            {isNavigating ? (
+              <div className="flex items-center gap-2">
+                <Loader2Icon className="h-4 w-4 animate-spin" />
+                Loading...
+              </div>
+            ) : (
+              'View'
+            )}
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            onSelect={() => handleActionSelect('addPool')}
+            disabled={isNavigating}
+          >
+            Add Pool
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            onSelect={() => handleActionSelect('delete')} 
+            className="text-red-500"
+            disabled={isNavigating}
+          >
             <div className="flex w-full items-center">
               Delete
               <DropdownMenuShortcut>
@@ -83,15 +107,6 @@ export function ActionButtons({ client }: ActionButtonsProps) {
           open={isDeleteModalOpen}
           setOpen={setIsDeleteModalOpen}
           handleSubmit={() => mutateDeleteClient(client.id)}
-        />
-      </Dialog>
-
-      <Dialog open={isAddPoolModalOpen} onOpenChange={setIsAddPoolModalOpen}>
-        <ModalAddPool
-          open={isAddPoolModalOpen}
-          setOpen={setIsAddPoolModalOpen}
-          handleAddPool={mutateAddPool}
-          clientOwnerId={client.id}
         />
       </Dialog>
     </div>

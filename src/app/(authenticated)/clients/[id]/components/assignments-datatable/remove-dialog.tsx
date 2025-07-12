@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { MdOutlineFreeCancellation } from 'react-icons/md';
+import { MdDeleteOutline } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -30,8 +31,12 @@ export default function RemoveAssignmentDialog({ assignmentId }: RemoveAssignmen
   return (
     <ConfirmActionDialog
       trigger={
-        <Button size="icon" variant="danger" className="h-8 w-8">
-          <MdOutlineFreeCancellation className="h-4 w-4" />
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8 bg-red-500 text-white"
+        >
+          <MdDeleteOutline className="h-4 w-4 text-white" />
         </Button>
       }
       onConfirm={handleConfirm}

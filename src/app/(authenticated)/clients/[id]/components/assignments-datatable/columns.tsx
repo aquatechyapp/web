@@ -50,7 +50,15 @@ export const columns: ColumnDef<PoolAssignmentsPopulated>[] = [
     accessorKey: 'frequency',
     header: 'Frequency',
     cell: (props) => {
-      return <span className="text-nowrap">{props.row.original.frequency}</span>;
+      const frequency = props.row.original.frequency;
+      const frequencyMap = {
+        WEEKLY: 'Weekly',
+        E2WEEKS: 'Each 2 weeks',
+        E3WEEKS: 'Each 3 weeks',
+        E4WEEKS: 'Each 4 weeks',
+        ONCE: 'Once'
+      };
+      return <span className="text-nowrap">{frequencyMap[frequency as keyof typeof frequencyMap]}</span>;
     }
   },
   {

@@ -143,6 +143,14 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
 
   const isOnlyAt = startsOn === endsAfter;
 
+  const frequencyMap = {
+    WEEKLY: 'Weekly',
+    E2WEEKS: 'Each 2 weeks',
+    E3WEEKS: 'Each 3 weeks',
+    E4WEEKS: 'Each 4 weeks',
+    ONCE: 'Once'
+  };
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition
@@ -172,7 +180,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
               <div className="text-xs text-red-500">{startsOn}</div>
             ) : (
               <div className="text-xs text-gray-500">
-                {startsOn} - {endsAfter} - {assignment.frequency}
+                {startsOn} - {endsAfter} - {frequencyMap[assignment.frequency as keyof typeof frequencyMap]}
               </div>
             )}
           </div>
