@@ -365,25 +365,9 @@ export default function Page() {
     const startOnValue = form.watch('startOn');
     if (startOnValue) {
       getNext10DatesForEndAfterBasedOnWeekday(new Date(startOnValue));
-      // Only set default value if endAfter is not already set or if it's the first time
-      const currentEndAfter = form.getValues('endAfter');
-      if (!currentEndAfter || currentEndAfter === 'No end') {
-        form.setValue('endAfter', 'No end', { shouldValidate: true });
-      }
+      // Don't automatically set endAfter - let user choose
     }
   }, [form.watch('startOn')]);
-
-  // Add a separate useEffect to handle the initial setup
-  useEffect(() => {
-    if (form.watch('weekday') && form.watch('frequency')) {
-      const startOnValue = form.watch('startOn');
-      if (startOnValue) {
-        getNext10DatesForEndAfterBasedOnWeekday(new Date(startOnValue));
-        // Set initial default value
-        form.setValue('endAfter', 'No end', { shouldValidate: true });
-      }
-    }
-  }, [form.watch('weekday'), form.watch('frequency')]);
 
   useEffect(() => {
     if (isCompaniesSuccess && companies) {
@@ -644,8 +628,6 @@ export default function Page() {
                       name: date.name,
                       value: date.value
                     }))}
-                    defaultValue="No end"
-                    key={`endAfter-${next10WeekdaysEndAfter.length}`} // Add key to force re-render when options change
                   />
                 </div>
               )}
