@@ -279,9 +279,7 @@ export default function Page() {
     setNext10WeekdaysStartOn(dates);
   }
 
-  function getNext10DatesForEndAfterBasedOnWeekday(startOn: Date) {
-    // Convert weekday string to a number (0=Sunday, 1=Monday, ..., 6=Saturday)
-
+  function getNext10DatesForEndAfterBasedOnWeekday(startOn: Date, frequency: string) {
     if (!startOn) return;
 
     const startDate = new Date(startOn); // UTC time
@@ -294,13 +292,40 @@ export default function Page() {
       value: 'No end'
     });
 
+    // Calculate the number of days to add based on frequency
+    let daysToAdd: number;
+    switch (frequency) {
+      case 'WEEKLY':
+        daysToAdd = 7;
+        break;
+      case 'E2WEEKS':
+        daysToAdd = 14;
+        break;
+      case 'E3WEEKS':
+        daysToAdd = 21;
+        break;
+      case 'E4WEEKS':
+        daysToAdd = 28;
+        break;
+      case 'ONCE':
+        daysToAdd = 0; // For one-time assignments, no recurring dates
+        break;
+      default:
+        daysToAdd = 7; // Default to weekly
+    }
+
+    // If it's a one-time assignment, don't add recurring dates
+    if (frequency === 'ONCE') {
+      setNext10WeekdaysEndAfter(dates);
+      return;
+    }
+
     for (let i = 1; i <= 10; i++) {
       const nextDate = new Date(startDate);
-      nextDate.setDate(startDate.getDate() + i * 7); // Add weeks to match the same weekday
+      nextDate.setDate(startDate.getDate() + i * daysToAdd); // Add days based on frequency
 
       const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
       const weekdayName = format(nextDate, 'yyyy-MM-dd');
-      // create a key with date ex: 2022-12-31
 
       const isoDate = String(nextDate); // Get the ISO string for the date
 
@@ -357,17 +382,18 @@ export default function Page() {
   useEffect(() => {
     form.resetField('startOn');
     form.resetField('endAfter');
-    getNext10DatesForEndAfterBasedOnWeekday(startOn);
+    const currentFrequency = form.watch('frequency');
+    getNext10DatesForEndAfterBasedOnWeekday(startOn, currentFrequency);
     getNext10DatesForStartOnBasedOnWeekday(weekday);
   }, [form.watch('weekday')]);
 
   useEffect(() => {
     const startOnValue = form.watch('startOn');
-    if (startOnValue) {
-      getNext10DatesForEndAfterBasedOnWeekday(new Date(startOnValue));
-      // Don't automatically set endAfter - let user choose
+    const frequencyValue = form.watch('frequency');
+    if (startOnValue && frequencyValue) {
+      getNext10DatesForEndAfterBasedOnWeekday(new Date(startOnValue), frequencyValue);
     }
-  }, [form.watch('startOn')]);
+  }, [form.watch('startOn'), form.watch('frequency')]);
 
   useEffect(() => {
     if (isCompaniesSuccess && companies) {
@@ -603,7 +629,6 @@ export default function Page() {
                   label="Frequency"
                   name="frequency"
                   placeholder="Frequency"
-                  defaultValue={Frequency.WEEKLY}
                   options={Frequencies}
                 />
               </div>

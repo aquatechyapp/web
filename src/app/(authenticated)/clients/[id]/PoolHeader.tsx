@@ -393,7 +393,7 @@ function PoolCard({ pool, services, clientId }: Props) {
       <div className="w-full">
         <div className={headerStyles}>
           <div className="flex items-center gap-4 px-6 py-4">
-            <h3 className="text-md text-gray-900">{pool.name}</h3>
+            <h3 className="text-sm text-gray-900">{pool.name}</h3>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto border-t border-gray-100 px-6 md:gap-6">
             <div
