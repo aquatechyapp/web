@@ -47,7 +47,9 @@ const additionalSchemas = z.object({
   clientCompany: z.string().nullable().optional(),
   clientType: z.enum(['Commercial', 'Residential']),
   timezone: defaultSchemas.timezone,
-  companyOwnerId: z.string().min(1)
+  companyOwnerId: z.string().min(1, {
+    message: 'Company owner is required.'
+  })
   // Remove assignments from here since we handle them separately
 });
 
@@ -205,25 +207,7 @@ export default function Page() {
       clientType: 'Residential',
       monthlyPayment: 0,
       companyOwnerId: ownerAdminOfficeCompanies.length === 1 ? ownerAdminOfficeCompanies[0].id : undefined,
-      // Remove assignments from here
-      firstName: 'Kawan',
-      lastName: 'Kawan',
-      clientAddress: '4375 SW 10TH PL',
-      clientCity: 'Deerfield Beach',
-      clientState: 'FL',
-      clientZip: '33442',
-      timezone: 'America/New_York' as IanaTimeZones,
-      phone: '9542010000',
-      email: 'kawan@kawan.com',
-      clientNotes: 'Test notes',
-      poolAddress: '4375 SW 10TH PL',
-      poolState: 'FL',
-      poolCity: 'Deerfield Beach',
-      poolZip: '33442',
-      lockerCode: '12345',
-      enterSide: 'Front',
-      poolType: 'Chlorine',
-      poolNotes: 'Test notes'
+      
     }
   });
 
@@ -520,10 +504,6 @@ export default function Page() {
       }
     }
   }, [companies, isCompaniesSuccess, form.setValue, isCompaniesLoading]);
-
-  // Add this near the top of the component to see form errors
-  console.log('Form errors:', form.formState.errors);
-  console.log('Form is valid:', form.formState.isValid);
 
   return (
     <Form {...form}>
