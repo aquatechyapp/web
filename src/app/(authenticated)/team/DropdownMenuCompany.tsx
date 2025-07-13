@@ -74,16 +74,16 @@ export default function DropdownMenuCompany({ companyId }: Props) {
             ) : (
               <>
                 <ModalViewCompany companyId={companyId}>
-                  <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
-                    View
+                  <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50 cursor-pointer">
+                    <span className="text-sm">View</span>
                     <DropdownMenuShortcut>
                       <EyeOpenIcon className="ml-1" />
                     </DropdownMenuShortcut>
                   </div>
                 </ModalViewCompany>
                 <ModalEditCompanyRelation companyId={companyId}>
-                  <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50">
-                    Accept/Revoke
+                  <div className="flex w-full items-center rounded p-1 text-gray-700 hover:bg-blue-50 cursor-pointer">
+                    <span className="text-sm">Accept/Revoke</span>
                     <DropdownMenuShortcut>
                       <MdEdit className="ml-1" />
                     </DropdownMenuShortcut>
