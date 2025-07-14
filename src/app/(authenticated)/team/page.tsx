@@ -3,24 +3,24 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { PlusIcon } from '@radix-ui/react-icons';
 
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store/user';
 
 import { CompanyMember } from '@/ts/interfaces/Company';
 
 import { CompanyMemberCard } from './CompanyMemberCard';
-import { ModalAddMember } from './ModalAddMember';
 import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
+  const router = useRouter();
 
   const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
 
   const [searchTerm, setSearchTerm] = useState('');
-
-  const router = useRouter();
 
   const filteredMembers = members?.filter((member: CompanyMember) =>
     `${member.firstName + member.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
@@ -35,7 +35,10 @@ export default function Page() {
   return (
     <div className="p-2">
       <div className="flex flex-col items-start justify-start gap-4 md:flex-row">
-        <ModalAddMember />
+        <Button onClick={() => router.push('/team/add-member')}>
+          <PlusIcon className="mr-2" />
+          Add member
+        </Button>
         <Input
           placeholder="Filter by name"
           value={searchTerm}
