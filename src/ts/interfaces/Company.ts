@@ -71,6 +71,15 @@ export interface InviteMember {
   userInvitedEmail: string;
   companyId: string;
   role: 'Owner' | 'Admin' | 'Office' | 'Technician' | 'Cleaner';
+  firstName?: string | null;
+  lastName?: string | null;
+  company?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip?: string | null;
+  userAlreadyExists: boolean;
 }
 
 export interface AcceptInvitation {
