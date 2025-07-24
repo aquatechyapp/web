@@ -21,6 +21,8 @@ export interface Dashboard {
   recentIssues: Array<{
     clientName: string;
     issue: string;
+    createdAt: Date;
+    id: string;
   }>;
   topCities: Array<{
     city: string;

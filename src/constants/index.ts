@@ -146,13 +146,6 @@ export const routes: Menu[] = [
         icon: Import,
         description: 'Import clients using our CSV template'
       }
-      // broadcast: {
-      //   text: 'Broadcast',
-      //   href: '/clients/broadcast',
-      //   title: 'Broadcast',
-      //   description: 'Send a message to all clients',
-      //   icon: Mails
-      // }
     },
     icon: Users
   },
@@ -198,6 +191,36 @@ export const routes: Menu[] = [
     icon: ListChecks,
     title: 'Services',
     description: 'Look services made by your company'
+  },
+  {
+    text: 'Reports',
+    href: '/reports',
+    icon: FileBarChartIcon,
+    title: 'Reports',
+    description: 'Generate comprehensive reports and analytics',
+    submenu: {
+      clientReports: {
+        text: 'Client Reports',
+        href: '/reports/clients',
+        title: 'Client Reports',
+        description: 'Client activity and pool maintenance reports',
+        icon: Users
+      },
+      serviceReports: {
+        text: 'Service Reports',
+        href: '/reports/services',
+        title: 'Service Reports',
+        description: 'Service completion and technician reports',
+        icon: ListChecks
+      },
+      teamReports: {
+        text: 'Team Reports',
+        href: '/reports/team',
+        title: 'Team Reports',
+        description: 'Team performance and productivity reports',
+        icon: UserPlus
+      }
+    }
   },
   {
     text: 'My team',
