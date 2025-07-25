@@ -123,9 +123,7 @@ export default function Page() {
 
   const handleOptimize = (origin: 'home' | 'first', destination: 'home' | 'last') => {
     if (assignments.current.length > 0) {
-      console.log('User address coords:', user.addressCoords);
-      console.log('Origin type:', origin);
-      console.log('Destination type:', destination);
+
       getDirectionsFromGoogleMaps(true, origin, destination, user.addressCoords!);
       // Add this to ensure the UI updates
       setAssignments({

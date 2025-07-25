@@ -9,36 +9,9 @@ import { TableCard } from './_components/TableCard';
 import ActionButton from './_components/ActionButton';
 import StatisticCard from './_components/StatisticCard';
 import { useUserStore } from '@/store/user';
+import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
-// Temporary mock data - replace with API calls later
-const mockData = {
-  monthlyRevenue: 45000,
-  averageRevenuePerPool: 250,
-  companyValueMin: 800000,
-  companyValueMax: 1200000,
-  churnRate: 2.5,
-  lateFilters: [
-    { name: 'Smith Family Pool', value: '2 days overdue' },
-    { name: 'Johnson Residence', value: '1 day overdue' },
-    { name: 'Williams Estate', value: '3 days overdue' },
-    { name: 'Brown Family Pool', value: '1 day overdue' },
-    { name: 'Davis Residence', value: '2 days overdue' },
-  ],
-  recentReports: [
-    { name: 'Smith Family', value: 'High chlorine levels detected' },
-    { name: 'Johnson Residence', value: 'Pump maintenance required' },
-    { name: 'Williams Estate', value: 'Filter cleaning overdue' },
-    { name: 'Brown Family', value: 'Water balance needed' },
-    { name: 'Davis Residence', value: 'Equipment inspection due' },
-  ],
-  topCities: [
-    { name: 'Miami', value: '45 pools' },
-    { name: 'Fort Lauderdale', value: '32 pools' },
-    { name: 'Boca Raton', value: '28 pools' },
-    { name: 'West Palm Beach', value: '25 pools' },
-    { name: 'Pompano Beach', value: '20 pools' },
-  ],
-};
 
 const formatMonthlyPayment = (payment: string | number | undefined) => {
   if (payment === undefined) return 'US$ 0.00';
@@ -50,7 +23,7 @@ export default function Page() {
   const [ showConfidential, setShowConfidential ] = useState(false);
   const { dashboard } = useUserStore((state) => state);
   const { width = 0 } = useWindowDimensions();
-
+  const router = useRouter();
   const { churnRate, clients, companyValue, revenue, lateFilters, recentIssues, topCities } = dashboard;
 
   const toggleConfidential = () => setShowConfidential(!showConfidential);
@@ -152,11 +125,21 @@ export default function Page() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <TableCard
           title="Top 5 late filters"
-          items={lateFilters.map((filter) => ({ name: filter.name, value: `${filter.daysOverdue} days overdue` }))}
+          items={lateFilters.map((filter) => ({ name: filter.name, value: `${filter.daysOverdue} days overdue`,}))}
         />
         <TableCard
-          title="Recent issues"
-          items={recentIssues.map((issue) => ({ name: issue.clientName, value: issue.issue }))}
+          title="Recent reports"
+          items={recentIssues.map((issue) => ({ 
+            name: issue.clientName, 
+            value: issue.issue, 
+            thirdColumn: format(new Date(issue.createdAt), 'MMMM do') // This will show "July 21st"
+          }))}
+          columns={3}
+          columnLabels={{
+            first: 'Client',
+            second: 'Description',
+            third: 'Date'
+          }}
         />
         <TableCard
           title="Top cities by pool count"

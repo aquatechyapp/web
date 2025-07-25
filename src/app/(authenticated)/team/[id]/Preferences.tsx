@@ -6,12 +6,15 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
+import { Mail, Filter, Settings } from 'lucide-react';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { useChangeUserPreferences } from '@/hooks/react-query/user/changeUserPreferences';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store/user';
@@ -26,15 +29,17 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { useUpdateEquipmentMaintenancePreferences } from '@/hooks/react-query/companies/updateEquipmentMaintenancePreferences';
 
+// Update the schema to include the new fields
 const schema = z.object({
   sendEmails: z.boolean(),
   attachChemicalsReadings: z.boolean(),
   attachChecklist: z.boolean(),
   attachServicePhotos: z.boolean(),
   ccEmail: z.string(),
-  filterCleaningIntervalDays: z.coerce.number().min(1)
+  filterCleaningIntervalDays: z.coerce.number().min(1),
+  filterReplacementIntervalDays: z.coerce.number().min(1),
+  filterCleaningMustHavePhotos: z.boolean()
 });
 
 export default function Page({ company }: { company: Company }) {
@@ -49,6 +54,7 @@ export default function Page({ company }: { company: Company }) {
   const previousSendEmails = useRef<boolean | null>(null);
   const isInitialRender = useRef(true);
 
+  // Update the form default values
   const form = useForm({
     resolver: zodResolver(schema),
     mode: 'onChange',
@@ -62,7 +68,9 @@ export default function Page({ company }: { company: Company }) {
         ? false
         : company.preferences?.serviceEmailPreferences?.attachServicePhotos || false,
       ccEmail: isFreePlan ? '' : company.preferences?.serviceEmailPreferences?.ccEmail || '',
-      filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28
+      filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28,
+      filterReplacementIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterReplacementIntervalDays || 365,
+      filterCleaningMustHavePhotos: company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false
     }
   });
 
@@ -111,8 +119,14 @@ export default function Page({ company }: { company: Company }) {
   const filterDays = form.watch('filterCleaningIntervalDays');
   const [initialFilterDays] = useState(filterDays);
 
+  // Update the handleSubmit function
   const handleSubmit = (data: z.infer<typeof schema>) => {
-    const { filterCleaningIntervalDays, ...emailPrefs } = data;
+    const { 
+      filterCleaningIntervalDays, 
+      filterReplacementIntervalDays, 
+      filterCleaningMustHavePhotos,
+      ...emailPrefs 
+    } = data;
 
     // Combine all preferences into a single request
     const updateData = {
@@ -120,7 +134,9 @@ export default function Page({ company }: { company: Company }) {
         ...emailPrefs
       },
       equipmentMaintenancePreferences: {
-        filterCleaningIntervalDays
+        filterCleaningIntervalDays,
+        filterReplacementIntervalDays,
+        filterCleaningMustHavePhotos
       },
       companyId: company.id
     };
@@ -129,67 +145,178 @@ export default function Page({ company }: { company: Company }) {
     updateEmailPrefs(updateData);
   };
 
+  const ccEmail = form.watch('ccEmail');
+
+  useEffect(() => {
+    const originalCcEmail = company.preferences?.serviceEmailPreferences?.ccEmail || '';
+    if (ccEmail !== originalCcEmail) {
+      // Force the form to recognize the change
+      form.setValue('ccEmail', ccEmail, { shouldDirty: true, shouldTouch: true });
+    }
+  }, [ccEmail, company.preferences?.serviceEmailPreferences?.ccEmail, form]);
+
+  useEffect(() => {
+    console.log('Form dirty state:', form.formState.isDirty);
+    console.log('Form values:', form.getValues());
+    console.log('CC Email value:', form.watch('ccEmail'));
+  }, [form.formState.isDirty, form.watch('ccEmail')]);
+
+  
+
   if (isEmailPending) {
     return <LoadingSpinner />;
   }
 
+ 
   return (
-    <Form {...form}>
-      <form className="w-full flex-col items-center" onSubmit={form.handleSubmit(handleSubmit)}>
-        <div
-          className={cn('flex w-full flex-col gap-2 divide-y border-gray-200 [&>:nth-child(3)]:pt-2', {
-            'opacity-50': isFreePlan
-          })}
-        >
-          {fields.map((field) => (
-            <div key={field.label} className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">
-              <div className="col-span-8 row-auto flex flex-col">
-                <label htmlFor={field.label} className="flex flex-col space-y-1">
-                  <span className="text-sm font-semibold text-gray-800">{field.label}</span>
-                </label>
-                <span className="text-muted-foreground text-sm font-normal">{field.description}</span>
-              </div>
-              <div className="col-span-4 flex flex-col gap-2">
-                {field.itens.map((item) => {
-                  const isFieldSendEmails = item.name === 'sendEmails';
+    <div className="w-full space-y-8">
+      
 
-                  return (
-                    <div key={item.name} className="flex w-full items-center gap-4">
-                      <div className={field.type === FieldType.Default ? 'w-full' : ''}>
-                        <InputField
-                          disabled={!isFreePlan ? (isFieldSendEmails ? false : sendEmails ? false : true) : true}
-                          name={item.name}
-                          type={item.type || field.type}
-                          placeholder={field.type === FieldType.Default ? item.label : ''}
-                        />
-                      </div>
-                      {field.type === FieldType.Switch && (
-                        <label htmlFor={item.label}>
-                          <div>
-                            <span className="text-sm font-semibold text-gray-800">{item.label}</span>
-                          </div>
-                          {item.subLabel ? (
-                            <div>
-                              <span className="text-sm font-normal text-gray-800">{item.subLabel}</span>
-                            </div>
-                          ) : null}
-                        </label>
-                      )}
-                    </div>
-                  );
-                })}
+      <Form {...form}>
+        <form className="w-full space-y-8" onSubmit={form.handleSubmit(handleSubmit)}>
+          
+          {/* Email Preferences Card */}
+          <Card className={cn('w-full border-2', {
+            'opacity-50': isFreePlan
+          })}>
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Mail className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-blue-900">Email Notifications</CardTitle>
+                  <CardDescription className="text-blue-700">
+                    Configure how and when to send service completion emails
+                  </CardDescription>
+                </div>
               </div>
-            </div>
-          ))}
-          <Button disabled={!form.formState.isDirty || isFreePlan || isEmailPending} className="mt-2">
-            {isEmailPending ? (
-              <div className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em]" />
-            ) : (
-              'Save'
-            )}
-          </Button>
-        </div>
-      </form>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              {emailFields.map((field) => (
+                <div key={field.label} className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">
+                  <div className="col-span-8 row-auto flex flex-col">
+                    <label htmlFor={field.label} className="flex flex-col space-y-1">
+                      <span className="text-sm font-semibold text-gray-800">{field.label}</span>
+                    </label>
+                    <span className="text-muted-foreground text-sm font-normal">{field.description}</span>
+                  </div>
+                  <div className="col-span-4 flex flex-col gap-2">
+                    {field.itens.map((item) => {
+                      const isFieldSendEmails = item.name === 'sendEmails';
+
+                      return (
+                        <div key={item.name} className="flex w-full items-center gap-4">
+                          <div className={field.type === FieldType.Default ? 'w-full' : ''}>
+                            {item.name === 'ccEmail' ? (
+                              // Use regular input for ccEmail
+                              <input
+                                {...form.register('ccEmail')}
+                                type="email"
+                                placeholder="Enter CC email"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              />
+                            ) : (
+                              // Use InputField for other fields
+                              <InputField
+                                disabled={!isFreePlan ? (isFieldSendEmails ? false : sendEmails ? false : true) : true}
+                                name={item.name}
+                                type={item.type || field.type}
+                                placeholder={field.type === FieldType.Default ? item.label : ''}
+                              />
+                            )}
+                          </div>
+                          {field.type === FieldType.Switch && (
+                            <label htmlFor={item.label}>
+                              <div>
+                                <span className="text-sm font-semibold text-gray-800">{item.label}</span>
+                              </div>
+                              {item.subLabel ? (
+                                <div>
+                                  <span className="text-sm font-normal text-gray-800">{item.subLabel}</span>
+                                </div>
+                              ) : null}
+                            </label>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Filter Maintenance Card */}
+          <Card className="w-full border-2 border-green-200">
+            <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-200">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Filter className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-green-900">Filter Maintenance</CardTitle>
+                  <CardDescription className="text-green-700">
+                    Set up automatic filter cleaning schedules and reminders
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              {filterFields.map((field) => (
+                <div key={field.label} className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">
+                  <div className="col-span-8 row-auto flex flex-col">
+                    <label htmlFor={field.label} className="flex flex-col space-y-1">
+                      <span className="text-sm font-semibold text-gray-800">{field.label}</span>
+                    </label>
+                    <span className="text-muted-foreground text-sm font-normal">{field.description}</span>
+                  </div>
+                  <div className="col-span-4 flex flex-col gap-2">
+                    {field.itens.map((item) => (
+                      <div key={item.name} className="flex w-full items-center gap-4">
+                        <div className={field.type === FieldType.Default ? 'w-full' : ''}>
+                          <InputField
+                            name={item.name}
+                            type={item.type || field.type}
+                            placeholder={field.type === FieldType.Default ? item.label : ''}
+                          />
+                        </div>
+                        {field.type === FieldType.Switch && (
+                          <label htmlFor={item.label}>
+                            <div>
+                              <span className="text-sm font-semibold text-gray-800">{item.label}</span>
+                            </div>
+                            {item.subLabel ? (
+                              <div>
+                                <span className="text-sm font-normal text-gray-800">{item.subLabel}</span>
+                              </div>
+                            ) : null}
+                          </label>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Save Button */}
+          <div className="flex justify-center">
+            <Button 
+              disabled={!form.formState.isDirty || isFreePlan || isEmailPending} 
+              className="mt-2 w-full"
+            >
+              {isEmailPending ? (
+                <div className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em]" />
+              ) : (
+                'Save all preferences'
+              )}
+            </Button>
+          </div>
+        </form>
+      </Form>
+
       <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
         <DialogContent>
           <DialogHeader className="text-left">
@@ -217,7 +344,7 @@ export default function Page({ company }: { company: Company }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Form>
+    </div>
   );
 }
 
@@ -235,7 +362,8 @@ type Fields = {
   }[];
 }[];
 
-const fields: Fields = [
+// Separate email fields
+const emailFields: Fields = [
   {
     inputClassName: 'flex justify-center items-center gap-4',
     type: FieldType.Switch,
@@ -279,12 +407,17 @@ const fields: Fields = [
       {
         label: 'Cc E-mail',
         description: 'E-mail to send a copy to.',
-        name: 'ccEmail'
+        name: 'ccEmail',
+        type: FieldType.Default
       }
     ],
     label: 'Cc E-mail',
     type: FieldType.Default
-  },
+  }
+];
+
+// Update the filter fields array
+const filterFields: Fields = [
   {
     description: 'Set the interval in days for filter cleaning maintenance.',
     itens: [
@@ -297,5 +430,31 @@ const fields: Fields = [
     ],
     label: 'Filter Cleaning Interval',
     type: FieldType.Default
+  },
+  {
+    description: 'Set the interval in days for filter replacement.',
+    itens: [
+      {
+        label: 'days',
+        description: 'Number of days between filter replacements',
+        name: 'filterReplacementIntervalDays',
+        type: FieldType.Number
+      }
+    ],
+    label: 'Filter Replacement Interval',
+    type: FieldType.Default
+  },
+  {
+    inputClassName: 'flex justify-center items-center gap-4',
+    type: FieldType.Switch,
+    description: 'Require technicians to take photos when cleaning filters.',
+    label: 'Filter Cleaning Photos',
+    itens: [
+      {
+        label: 'Require photo to every filter cleaned',
+        description: 'Technicians must take photos when cleaning filters',
+        name: 'filterCleaningMustHavePhotos'
+      }
+    ]
   }
 ];

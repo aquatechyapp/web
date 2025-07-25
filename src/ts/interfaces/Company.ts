@@ -36,6 +36,8 @@ export interface Company {
     };
     equipmentMaintenancePreferences: {
       filterCleaningIntervalDays: number;
+      filterReplacementIntervalDays: number;
+      filterCleaningMustHavePhotos: boolean;
     };
   };
   imageUrl?: string | null;
