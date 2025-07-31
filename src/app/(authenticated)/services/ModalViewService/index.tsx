@@ -9,7 +9,8 @@ import {
   ImageIcon,
   Mail,
   Download,
-  MapPin
+  MapPin,
+  FileText
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -20,6 +21,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { zipImages } from '@/lib/js-zip';
 import { format } from 'date-fns';
 import { Service } from '@/ts/interfaces/Service';
+import { generateServicePDF } from '@/utils/generateServicePDF';
 
 type Props = {
   service: Service;
@@ -29,12 +31,12 @@ type Props = {
 
 export function ModalViewService({ service, open, setOpen }: Props) {
   const checklistItems = [
-    { name: 'Skimmer cleaned', completed: service?.checklist?.skimmerCleaned },
-    { name: 'Tiles brushed', completed: service?.checklist?.tilesBrushed },
-    { name: 'Baskets cleaned', completed: service?.checklist?.pumpBasketCleaned },
-    { name: 'Filter washed', completed: service?.checklist?.filterWashed },
-    { name: 'Water tested', completed: service?.checklist?.chemicalsAdjusted },
-    { name: 'Pool vacuumed', completed: service?.checklist?.poolVacuumed }
+    { id: 'skimmer', name: 'Skimmer cleaned', completed: service?.checklist?.skimmerCleaned },
+    { id: 'tiles', name: 'Tiles brushed', completed: service?.checklist?.tilesBrushed },
+    { id: 'baskets', name: 'Baskets cleaned', completed: service?.checklist?.pumpBasketCleaned },
+    { id: 'filter', name: 'Filter washed', completed: service?.checklist?.filterWashed },
+    { id: 'water', name: 'Water tested', completed: service?.checklist?.chemicalsAdjusted },
+    { id: 'vacuum', name: 'Pool vacuumed', completed: service?.checklist?.poolVacuumed }
   ];
 
   return (
@@ -76,14 +78,14 @@ export function ModalViewService({ service, open, setOpen }: Props) {
               <Card>
                 <CardContent className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3">
                   {[
-                    { label: 'Chlorine (ppm)', value: service?.chemicalsReading?.chlorine },
-                    { label: 'P.H', value: service?.chemicalsReading?.ph },
-                    { label: 'Salt (ppm)', value: service?.chemicalsReading?.salt },
-                    { label: 'Alkalinity (ppm)', value: service?.chemicalsReading?.alkalinity },
-                    { label: 'Cyan. Acid (ppm)', value: service?.chemicalsReading?.cyanuricAcid },
-                    { label: 'Calcium (ppm)', value: service?.chemicalsReading?.hardness }
-                  ].map((item, index) => (
-                    <div key={index} className="rounded-lg bg-gray-50 p-3">
+                    { id: 'chlorine', label: 'Chlorine (ppm)', value: service?.chemicalsReading?.chlorine },
+                    { id: 'ph', label: 'P.H', value: service?.chemicalsReading?.ph },
+                    { id: 'salt', label: 'Salt (ppm)', value: service?.chemicalsReading?.salt },
+                    { id: 'alkalinity', label: 'Alkalinity (ppm)', value: service?.chemicalsReading?.alkalinity },
+                    { id: 'cyanuric', label: 'Cyan. Acid (ppm)', value: service?.chemicalsReading?.cyanuricAcid },
+                    { id: 'calcium', label: 'Calcium (ppm)', value: service?.chemicalsReading?.hardness }
+                  ].map((item) => (
+                    <div key={item.id} className="rounded-lg bg-gray-50 p-3">
                       <div className="text-sm text-gray-500">{item.label}</div>
                       <div className="text-lg font-semibold">{item.value || 'N/A'}</div>
                     </div>
@@ -106,17 +108,18 @@ export function ModalViewService({ service, open, setOpen }: Props) {
                 <CardContent className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3">
                   {[
                     {
+                      id: 'liquidChlorine',
                       label: 'Liquid Chlorine (gallon)',
                       value: service?.chemicalsSpent?.liquidChlorine,
                       unit: 'gallon'
                     },
-                    { label: 'Muriatic Acid (gallon)', value: service?.chemicalsSpent?.muriaticAcid, unit: 'gallon' },
-                    { label: 'Salt (lb)', value: service?.chemicalsSpent?.salt, unit: 'lb' },
-                    { label: 'Shock (oz)', value: service?.chemicalsSpent?.shock, unit: 'oz' },
-                    { label: 'Tablet (unit)', value: service?.chemicalsSpent?.tablet, unit: 'unit' },
-                    { label: 'Phosphate Remover (oz)', value: service?.chemicalsSpent?.phosphateRemover, unit: 'oz' }
-                  ].map((item, index) => (
-                    <div key={index} className="rounded-lg bg-gray-50 p-3">
+                    { id: 'muriaticAcid', label: 'Muriatic Acid (gallon)', value: service?.chemicalsSpent?.muriaticAcid, unit: 'gallon' },
+                    { id: 'salt', label: 'Salt (lb)', value: service?.chemicalsSpent?.salt, unit: 'lb' },
+                    { id: 'shock', label: 'Shock (oz)', value: service?.chemicalsSpent?.shock, unit: 'oz' },
+                    { id: 'tablet', label: 'Tablet (unit)', value: service?.chemicalsSpent?.tablet, unit: 'unit' },
+                    { id: 'phosphateRemover', label: 'Phosphate Remover (oz)', value: service?.chemicalsSpent?.phosphateRemover, unit: 'oz' }
+                  ].map((item) => (
+                    <div key={item.id} className="rounded-lg bg-gray-50 p-3">
                       <div className="text-sm text-gray-500">{item.label}</div>
                       <div className="text-lg font-semibold">{item.value ? `${item.value} ${item.unit}` : 'N/A'}</div>
                     </div>
@@ -137,8 +140,8 @@ export function ModalViewService({ service, open, setOpen }: Props) {
             <AccordionContent>
               <Card>
                 <CardContent className="grid grid-cols-1 gap-2 p-4 sm:grid-cols-2">
-                  {checklistItems.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
+                  {checklistItems.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
                       <span className="text-gray-700">{item.name}</span>
                       {item.completed ? (
                         <CheckCircleIcon className="h-5 w-5 text-green-600" />
@@ -164,13 +167,37 @@ export function ModalViewService({ service, open, setOpen }: Props) {
               <AccordionContent>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                   {service.photos.map((photo: string, index: number) => (
-                    <div key={index} className="relative aspect-square overflow-hidden rounded-lg">
+                    <div key={`photo-${index}-${photo}`} className="relative aspect-square overflow-hidden rounded-lg group">
                       <Image
                         src={photo}
                         alt={`Service photo ${index + 1}`}
                         layout="fill"
                         className="object-cover transition-transform hover:scale-105"
                       />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
+                        <Button
+                          onClick={async () => {
+                            try {
+                              const response = await fetch(photo);
+                              const blob = await response.blob();
+                              const url = URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = `service-photo-${index + 1}.jpg`;
+                              link.click();
+                              URL.revokeObjectURL(url);
+                            } catch (error) {
+                              console.error('Error downloading photo:', error);
+                              alert('Failed to download photo. Please try again.');
+                            }
+                          }}
+                          size="sm"
+                          variant="secondary"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/90 hover:bg-white text-gray-800 hover:text-gray-900"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -180,32 +207,47 @@ export function ModalViewService({ service, open, setOpen }: Props) {
         </Accordion>
 
         {/* Actions */}
-        {/* <div className="mt-6 flex flex-col justify-end gap-3 sm:flex-row">
-          <Button variant="outline" className="flex-1" type="submit">
-            <Mail className="mr-2 h-4 w-4" />
-            Send Report
+        <div className="mt-6 flex justify-center gap-3">
+          <Button
+            onClick={async () => {
+              try {
+                await generateServicePDF(service);
+              } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Failed to generate PDF. Please try again.');
+              }
+            }}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            Download PDF Report
           </Button>
 
           {service?.photos.length > 0 && (
             <Button
-              onClick={() => {
-                zipImages(service.photos).then((zipContent) => {
+              onClick={async () => {
+                try {
+                  const zipContent = await zipImages(service.photos);
                   const url = URL.createObjectURL(zipContent);
                   const link = document.createElement('a');
                   link.href = url;
                   link.download = 'service-photos.zip';
                   link.click();
                   URL.revokeObjectURL(url);
-                });
+                } catch (error) {
+                  console.error('Error downloading photos:', error);
+                  alert('Failed to download photos. Please try again.');
+                }
               }}
               variant="outline"
-              className="flex-1"
+              className="flex items-center gap-2"
             >
-              <Download className="mr-2 h-4 w-4" />
+              <Download className="h-4 w-4" />
               Download Photos
             </Button>
           )}
-        </div> */}
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -447,12 +447,12 @@ const filterFields: Fields = [
   {
     inputClassName: 'flex justify-center items-center gap-4',
     type: FieldType.Switch,
-    description: 'Require technicians to take photos when cleaning filters.',
-    label: 'Filter Cleaning Photos',
+    description: 'Require technicians to take photos when cleaning or replacing filters.',
+    label: 'Filter Maintenance Photos',
     itens: [
       {
-        label: 'Require photo to every filter cleaned',
-        description: 'Technicians must take photos when cleaning filters',
+        label: 'Require photo to every filter cleaned or replaced',
+        description: 'Technicians must take photos when cleaning or replacing filters',
         name: 'filterCleaningMustHavePhotos'
       }
     ]

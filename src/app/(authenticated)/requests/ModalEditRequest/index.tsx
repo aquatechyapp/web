@@ -34,7 +34,7 @@ import { format } from 'date-fns';
 import { useDeleteRequest } from '@/hooks/react-query/requests/deleteRequest';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Card, CardContent } from '@/components/ui/card';
-import { ListChecks, MapPin, User, FileText, ImageIcon, Trash2 } from 'lucide-react';
+import { ListChecks, MapPin, User, FileText, ImageIcon, Trash2, Download } from 'lucide-react';
 import { useEffect } from 'react';
 
 const schema = z.object({
@@ -204,13 +204,37 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
                   <AccordionContent>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                       {request.photos.map((photo: string, index: number) => (
-                        <div key={index} className="relative aspect-square overflow-hidden rounded-lg">
+                        <div key={`photo-${index}-${photo}`} className="relative aspect-square overflow-hidden rounded-lg group">
                           <Image
                             src={photo}
                             alt={`Request photo ${index + 1}`}
                             layout="fill"
                             className="object-cover transition-transform hover:scale-105"
                           />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
+                            <Button
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(photo);
+                                  const blob = await response.blob();
+                                  const url = URL.createObjectURL(blob);
+                                  const link = document.createElement('a');
+                                  link.href = url;
+                                  link.download = `request-photo-${index + 1}.jpg`;
+                                  link.click();
+                                  URL.revokeObjectURL(url);
+                                } catch (error) {
+                                  console.error('Error downloading photo:', error);
+                                  alert('Failed to download photo. Please try again.');
+                                }
+                              }}
+                              size="sm"
+                              variant="secondary"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/90 hover:bg-white text-gray-800 hover:text-gray-900"
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>

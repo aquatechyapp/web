@@ -1,25 +1,26 @@
 import JSZip from 'jszip';
 
-export function zipImages(imageUrls: string[]): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    const zip = new JSZip();
-    const promises = [] as Promise<void>[];
-
-    imageUrls.forEach((url, index) => {
-      const filename = `image_${index}.jpg`;
-      promises.push(
-        fetch(url)
-          .then((response) => response.blob())
-          .then((blob) => {
-            zip.file(filename, blob);
-          })
-      );
-    });
-
-    Promise.all(promises)
-      .then(() => {
-        zip.generateAsync({ type: 'blob' }).then((content) => resolve(content));
-      })
-      .catch((error) => reject(error));
-  });
+export async function zipImages(imageUrls: string[]): Promise<Blob> {
+  const zip = new JSZip();
+  
+  for (let i = 0; i < imageUrls.length; i++) {
+    try {
+      // Use the proxy API route instead of direct S3 URLs
+      const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(imageUrls[i])}`;
+      const response = await fetch(proxyUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image ${i + 1}`);
+      }
+      
+      const blob = await response.blob();
+      const fileName = `photo_${i + 1}.jpg`;
+      zip.file(fileName, blob);
+    } catch (error) {
+      console.error(`Error processing image ${i + 1}:`, error);
+      // Continue with other images even if one fails
+    }
+  }
+  
+  return await zip.generateAsync({ type: 'blob' });
 }
