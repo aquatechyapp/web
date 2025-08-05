@@ -1,13 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 import { MetricCard } from './_components/MetricCard';
 import { TableCard } from './_components/TableCard';
-import ActionButton from './_components/ActionButton';
-import StatisticCard from './_components/StatisticCard';
+
 import { useUserStore } from '@/store/user';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
