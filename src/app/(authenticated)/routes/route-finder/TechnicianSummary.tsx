@@ -7,6 +7,7 @@ import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/g
 import { useUserStore } from '@/store/user';
 import Cookies from 'js-cookie';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Accordion,
   AccordionContent,
@@ -133,6 +134,51 @@ export function TechnicianSummary({
     onColorChange(newColorScheme);
   };
 
+  const handleTechnicianToggle = (techId: string, checked: boolean) => {
+    const newFilters = {
+      ...techFilters,
+      [techId]: weekdays.reduce<{ [key: string]: boolean }>((days, day) => ({
+        ...days,
+        [day]: checked
+      }), {})
+    };
+    setTechFilters(newFilters);
+
+    // Filter assignments - only include assignments where the day is checked
+    const filtered = assignments.filter(assignment => {
+      const techFilter = newFilters[assignment.assignmentToId];
+      const weekday = new Date(assignment.startOn)
+        .toLocaleDateString('en-US', { weekday: 'long' })
+        .toLowerCase() as typeof weekdays[number];
+      
+      return techFilter && techFilter[weekday];
+    }).map(assignment => {
+      const weekday = new Date(assignment.startOn)
+        .toLocaleDateString('en-US', { weekday: 'long' })
+        .toLowerCase() as typeof weekdays[number];
+      
+      return {
+        ...assignment,
+        color: colorScheme[assignment.assignmentToId]?.[weekday] || '#808080'
+      };
+    });
+
+    onFilterChange(filtered);
+  };
+
+  const isTechnicianAllChecked = (techId: string) => {
+    const techFilter = techFilters[techId];
+    if (!techFilter) return false;
+    return weekdays.every(day => techFilter[day]);
+  };
+
+  const isTechnicianIndeterminate = (techId: string) => {
+    const techFilter = techFilters[techId];
+    if (!techFilter) return false;
+    const checkedDays = weekdays.filter(day => techFilter[day]).length;
+    return checkedDays > 0 && checkedDays < weekdays.length;
+  };
+
   return (
     <div className="space-y-4">
       <Accordion type="multiple" defaultValue={Object.keys(technicianAssignments)} className="space-y-4">
@@ -143,17 +189,48 @@ export function TechnicianSummary({
             className="bg-white rounded-xl shadow-sm border-none"
           >
             <AccordionTrigger className="hover:no-underline px-4 py-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 w-full">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const isAllChecked = isTechnicianAllChecked(techId);
+                    handleTechnicianToggle(techId, !isAllChecked);
+                  }}
+                  className={`
+                    p-1 rounded-md transition-colors shrink-0
+                    ${isTechnicianAllChecked(techId) 
+                      ? 'text-green-600 bg-green-50 hover:bg-green-100' 
+                      : 'text-gray-400 bg-gray-50 hover:bg-gray-100'
+                    }
+                  `}
+                >
+                  <svg 
+                    className="w-5 h-5"
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d={isTechnicianAllChecked(techId) 
+                        ? "M5 13l4 4L19 7" 
+                        : "M6 18L18 6M6 6l12 12"
+                      } 
+                    />
+                  </svg>
+                </button>
                 <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                   <span className="text-blue-600 font-semibold">
                     {tech.name.charAt(0)}
                   </span>
                 </div>
-                <div>
+                <div className="flex-1 text-left">
                   <Typography element="h4" className="text-left font-semibold text-gray-900">
                     {tech.name}
                   </Typography>
-                  <Typography element="span" className="text-sm text-gray-500">
+                  <Typography element="span" className="text-left text-sm text-gray-500">
                     {tech.assignments.length} total assignments
                   </Typography>
                 </div>
