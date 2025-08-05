@@ -307,80 +307,11 @@ export const RequestStatus = [
 ];
 
 export const Categories = [
+  
   {
-    value: 'equipmentMalfunctions',
-    name: 'Equipment Malfunctions',
-    key: 'EquipmentMalfunctions'
-  },
-  {
-    value: 'waterChemistryImbalance',
-    name: 'Water Chemistry Imbalance',
-    key: 'WaterChemistryImbalance'
-  },
-  {
-    value: 'algaeGrowth',
-    name: 'Algae Growth',
-    key: 'AlgaeGrowth'
-  },
-  {
-    value: 'debrisAccumulation',
-    name: 'Debris Accumulation',
-    key: 'DebrisAccumulation'
-  },
-  {
-    value: 'cloggedDrainsandSkimmers',
-    name: 'Clogged Drains and Skimmers',
-    key: 'CloggedDrainsandSkimmers'
-  },
-  {
-    value: 'leaks',
-    name: 'Leaks',
-    key: 'Leaks'
-  },
-  {
-    value: 'equipmentMaintenance',
-    name: 'Equipment Maintenance',
-    key: 'EquipmentMaintenance'
-  },
-  {
-    value: 'waterClarityIssues',
-    name: 'Water Clarity Issues',
-    key: 'WaterClarityIssues'
-  },
-  {
-    value: 'surfaceStains',
-    name: 'Surface Stains',
-    key: 'SurfaceStains'
-  },
-  {
-    value: 'crackedorDamagedTiles',
-    name: 'Cracked or Damaged Tiles',
-    key: 'CrackedorDamagedTiles'
-  },
-  {
-    value: 'pumpPrimingProblems',
-    name: 'Pump Priming Problems',
-    key: 'PumpPrimingProblems'
-  },
-  {
-    value: 'equipmentCompatibility',
-    name: 'Equipment Compatibility',
-    key: 'EquipmentCompatibility'
-  },
-  {
-    value: 'safetyConcerns',
-    name: 'Safety Concerns',
-    key: 'SafetyConcerns'
-  },
-  {
-    value: 'waterLoss',
-    name: 'Water Loss',
-    key: 'WaterLoss'
-  },
-  {
-    value: 'customerCommunication',
-    name: 'Customer Communication',
-    key: 'CustomerCommunication'
+    value: 'other',
+    name: 'Other',
+    key: 'other'
   }
 ];
 
