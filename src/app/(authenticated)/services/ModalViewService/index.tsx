@@ -208,7 +208,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
 
         {/* Actions */}
         <div className="mt-6 flex justify-center gap-3">
-          <Button
+          {/* <Button
             onClick={async () => {
               try {
                 await generateServicePDF(service);
@@ -222,7 +222,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
           >
             <FileText className="h-4 w-4" />
             Download PDF Report
-          </Button>
+          </Button> */}
 
           {service?.photos.length > 0 && (
             <Button

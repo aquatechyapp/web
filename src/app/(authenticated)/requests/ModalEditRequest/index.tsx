@@ -213,7 +213,9 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
                           />
                           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
                             <Button
-                              onClick={async () => {
+                              onClick={async (e) => {
+                                e.preventDefault(); // Prevent form submission
+                                e.stopPropagation(); // Stop event bubbling
                                 try {
                                   const response = await fetch(photo);
                                   const blob = await response.blob();
