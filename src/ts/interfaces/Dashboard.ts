@@ -1,31 +1,22 @@
 export interface Dashboard {
-  revenue: {
-    monthly: number;
-    averagePerPool: number;
-  };
-  companyValue: {
-    min: number;
-    max: number;
-  };
-  clients: {
-    total: number;
-  };
-  churnRate: {
-    value: number;
-    change: number;
-  };
-  lateFilters: Array<{
-    name: string;
-    daysOverdue: number;
-  }>;
   recentIssues: Array<{
-    clientName: string;
-    issue: string;
-    createdAt: Date;
     id: string;
+    client: string; 
+    date: Date; 
+    technician: string;
+    description: string;
   }>;
-  topCities: Array<{
-    city: string;
-    poolCount: number;
+  filterCleaningPunctuality: Array<{
+    id: string;
+    technician: string;
+    onTimePercentage: number;
+    overdueCount: number;
+    assignedPools: number;
+  }>;
+  poolsWithoutAssignment: Array<{
+    id: string;
+    clientName: string;
+    poolName: string;
+    address: string;
   }>;
 }
