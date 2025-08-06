@@ -1,7 +1,7 @@
 import JSZip from 'jszip';
 
 export async function zipImages(imageUrls: string[]): Promise<Blob> {
-  const zip = new JSZip();
+    const zip = new JSZip();
   
   for (let i = 0; i < imageUrls.length; i++) {
     try {
