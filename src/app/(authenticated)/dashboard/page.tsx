@@ -27,10 +27,105 @@ export default function Page() {
 
   if (width < 1024) {
     return (
-      <div className="p-4">
+      <div className="p-4 pb-20">
         <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 gap-4">
-            
+          {/* Recent Issues */}
+          <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-md font-semibold text-gray-900">Recent Issues</h2>
+              <Button 
+                onClick={() => router.push('/requests')}
+                size="sm"
+                className="flex items-center gap-1 whitespace-nowrap"
+              >
+                View All Requests
+                <ArrowRight className="h-3 w-3" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {dashboard.recentIssues?.slice(0, 3).map((issue) => (
+                <div key={issue.id} className="bg-gray-50 rounded-lg p-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900 mb-1">{issue.client}</div>
+                      <div className="text-sm text-gray-600 line-clamp-2">{issue.description}</div>
+                    </div>
+                    <div className="ml-3 text-right">
+                      <div className="text-xs text-gray-500">{format(new Date(issue.date), 'MMM dd')}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Filter Cleaning Punctuality */}
+          <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-md font-semibold text-gray-900">Filter Cleaning Punctuality</h2>
+              <Button 
+                onClick={() => router.push('/reports')}
+                size="sm"
+                className="flex items-center gap-1 whitespace-nowrap"
+              >
+                View Reports
+                <ArrowRight className="h-3 w-3" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {dashboard.filterCleaningPunctuality?.slice(0, 3).map((tech: any) => (
+                <div key={tech.id} className="bg-gray-50 rounded-lg p-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900 mb-1">{tech.technician}</div>
+                      <div className="text-sm text-gray-600">{tech.assignedPools} pools assigned</div>
+                    </div>
+                    <div className="ml-3 text-right">
+                      <div className={`text-sm font-semibold ${
+                        tech.onTimePercentage >= 90 ? 'text-green-600' : 
+                        tech.onTimePercentage >= 80 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {tech.onTimePercentage}% on time
+                      </div>
+                      <div className={`text-xs mt-1 px-2 py-1 rounded-full font-medium ${
+                        tech.overdueCount === 0 ? 'bg-green-100 text-green-800' :
+                        tech.overdueCount <= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {tech.overdueCount} overdue
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Pools Without Assignment */}
+          <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-md font-semibold text-gray-900">Pools Without Assignment</h2>
+              <Button 
+                onClick={() => router.push('/clients')}
+                size="sm"
+                className="flex items-center gap-1 whitespace-nowrap"
+              >
+                View All Clients
+                <ArrowRight className="h-3 w-3" />
+              </Button>
+            </div>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {dashboard.poolsWithoutAssignment?.map((pool) => (
+                <div key={pool.id} className="bg-gray-50 rounded-lg p-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900 mb-1">{pool.clientName}</div>
+                      <div className="text-sm text-gray-600 mb-1">{pool.poolName}</div>
+                      <div className="text-xs text-gray-500 line-clamp-1">{pool.address}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
