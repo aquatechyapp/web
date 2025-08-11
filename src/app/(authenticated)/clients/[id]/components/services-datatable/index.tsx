@@ -15,11 +15,18 @@ export default function ServicesDatatable({ services, pool }: ServicesDatatableP
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [open, setOpen] = useState(false);
 
+  // Sort services by scheduledTo date (most recent first)
+  const sortedServices = [...services].sort((a, b) => {
+    const dateA = new Date(a.scheduledTo);
+    const dateB = new Date(b.scheduledTo);
+    return dateB.getTime() - dateA.getTime();
+  });
+
   return (
     <>
       <BasicServicesDataTable
         columns={columns}
-        data={services}
+        data={sortedServices}
         onRowClick={(row) => {
           setSelectedService(row.original);
           setOpen(true);
