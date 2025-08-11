@@ -1,7 +1,5 @@
 'use client';
 
-import { PlusIcon } from '@radix-ui/react-icons';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -9,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { useUserStore } from '@/store/user';
 
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
-import { Company, CompanyWithMyRole } from '@/ts/interfaces/Company';
+import { CompanyWithMyRole } from '@/ts/interfaces/Company';
 import { CompanyCard } from '../CompanyCard';
 import { ModalAddCompany } from '../ModalAddCompany';
 
@@ -23,8 +21,6 @@ export default function Page() {
   const filteredCompanies = companies?.filter((company: CompanyWithMyRole) =>
     `${company.name}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  console.log(filteredCompanies);
 
   useEffect(() => {
     if (user.firstName === '') {

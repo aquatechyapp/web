@@ -10,12 +10,10 @@ import { Mail, Filter, Settings } from 'lucide-react';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { useChangeUserPreferences } from '@/hooks/react-query/user/changeUserPreferences';
+
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
@@ -39,7 +37,8 @@ const schema = z.object({
   ccEmail: z.string(),
   filterCleaningIntervalDays: z.coerce.number().min(1),
   filterReplacementIntervalDays: z.coerce.number().min(1),
-  filterCleaningMustHavePhotos: z.boolean()
+  filterCleaningMustHavePhotos: z.boolean(),
+  sendFilterCleaningEmails: z.boolean()
 });
 
 export default function Page({ company }: { company: Company }) {
@@ -70,7 +69,8 @@ export default function Page({ company }: { company: Company }) {
       ccEmail: isFreePlan ? '' : company.preferences?.serviceEmailPreferences?.ccEmail || '',
       filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28,
       filterReplacementIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterReplacementIntervalDays || 365,
-      filterCleaningMustHavePhotos: company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false
+      filterCleaningMustHavePhotos: company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false,
+      sendFilterCleaningEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false
     }
   });
 
@@ -134,8 +134,8 @@ export default function Page({ company }: { company: Company }) {
         ...emailPrefs
       },
       equipmentMaintenancePreferences: {
-        filterCleaningIntervalDays,
-        filterReplacementIntervalDays,
+        filterCleaningIntervalDays: Number(filterCleaningIntervalDays),
+        filterReplacementIntervalDays: Number(filterReplacementIntervalDays),
         filterCleaningMustHavePhotos
       },
       companyId: company.id
@@ -304,8 +304,14 @@ export default function Page({ company }: { company: Company }) {
           {/* Save Button */}
           <div className="flex justify-center">
             <Button 
+              type="button"
               disabled={!form.formState.isDirty || isFreePlan || isEmailPending} 
               className="mt-2 w-full"
+              onClick={() => {
+                const formData = form.getValues();
+                setFormData(formData);
+                setShowConfirmModal(true);
+              }}
             >
               {isEmailPending ? (
                 <div className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em]" />
@@ -323,9 +329,9 @@ export default function Page({ company }: { company: Company }) {
             <DialogTitle className="text-xl">Enable Email Notifications</DialogTitle>
 
             <DialogDescription className="mt-4 text-left">
-              This action will change the email notifications for all clients under this company. If you want specific
+              This action will change the email notifications and filter maintenance for all clients under this company. If you want specific
               clients not to receive or receive emails, you'll need to change it manually in their individual settings
-              on the clients page.
+              on the clients page after this action.
             </DialogDescription>
           </DialogHeader>
 
@@ -335,7 +341,9 @@ export default function Page({ company }: { company: Company }) {
             </Button>
             <Button
               onClick={() => {
-                updateEmailPrefs(formData);
+                if (formData) {
+                  handleSubmit(formData);
+                }
                 setShowConfirmModal(false);
               }}
             >
@@ -429,7 +437,7 @@ const filterFields: Fields = [
       }
     ],
     label: 'Filter Cleaning Interval',
-    type: FieldType.Default
+    type: FieldType.Number
   },
   {
     description: 'Set the interval in days for filter replacement.',
@@ -442,7 +450,7 @@ const filterFields: Fields = [
       }
     ],
     label: 'Filter Replacement Interval',
-    type: FieldType.Default
+    type: FieldType.Number
   },
   {
     inputClassName: 'flex justify-center items-center gap-4',
@@ -454,6 +462,20 @@ const filterFields: Fields = [
         label: 'Require photo to every filter cleaned or replaced',
         description: 'Technicians must take photos when cleaning or replacing filters',
         name: 'filterCleaningMustHavePhotos'
+      }
+    ]
+  },
+  {
+    inputClassName: 'flex justify-center items-center gap-4',
+    type: FieldType.Switch,
+    description: 'Send e-mails when filter cleaning is completed.',
+    label: 'Filter cleaning notifications',
+    itens: [
+      {
+        label: 'Send filter cleaning e-mails',
+        subLabel: '(only on grow plan)',
+        description: 'Send e-mails when filter cleaning is completed.',
+        name: 'sendFilterCleaningEmails'
       }
     ]
   }

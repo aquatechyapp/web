@@ -33,6 +33,7 @@ export interface Company {
       attachChecklist: boolean;
       attachServicePhotos: boolean;
       ccEmail: string;
+      sendFilterCleaningEmails: boolean;
     };
     equipmentMaintenancePreferences: {
       filterCleaningIntervalDays: number;
