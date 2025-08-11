@@ -36,6 +36,7 @@ export interface Client {
       attachChemicalsReadings: boolean;
       attachChecklist: boolean;
       attachServicePhotos: boolean;
+      sendFilterCleaningEmails: boolean;
     };
   };
 }

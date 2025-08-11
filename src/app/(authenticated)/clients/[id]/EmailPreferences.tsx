@@ -9,7 +9,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect';
-import { cn } from '@/lib/utils';
 import { FieldType } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 import { useUpdateClientPreferences } from '@/hooks/react-query/clients/updatePreferences';
@@ -18,7 +17,8 @@ const schema = z.object({
   sendEmails: z.boolean(),
   attachChemicalsReadings: z.boolean(),
   attachChecklist: z.boolean(),
-  attachServicePhotos: z.boolean()
+  attachServicePhotos: z.boolean(),
+  sendFilterCleaningEmails: z.boolean()
 });
 
 export default function EmailPreferences({ client }: { client: Client }) {
@@ -30,7 +30,8 @@ export default function EmailPreferences({ client }: { client: Client }) {
       sendEmails: client.preferences?.serviceEmailPreferences?.sendEmails || false,
       attachChemicalsReadings: client.preferences?.serviceEmailPreferences?.attachChemicalsReadings || false,
       attachChecklist: client.preferences?.serviceEmailPreferences?.attachChecklist || false,
-      attachServicePhotos: client.preferences?.serviceEmailPreferences?.attachServicePhotos || false
+      attachServicePhotos: client.preferences?.serviceEmailPreferences?.attachServicePhotos || false,
+      sendFilterCleaningEmails: client.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false
     }
   });
 
@@ -73,7 +74,7 @@ export default function EmailPreferences({ client }: { client: Client }) {
                     <div key={item.name} className="flex w-full items-center gap-4">
                       <div className={field.type === FieldType.Default ? 'w-full' : ''}>
                         <InputField
-                          disabled={isFieldSendEmails ? false : sendEmails ? false : true}
+                          disabled={isFieldSendEmails ? false : item.name === 'sendFilterCleaningEmails' ? false : sendEmails ? false : true}
                           key={item.name}
                           name={item.name}
                           type={field.type}
@@ -119,10 +120,10 @@ const fields: Fields = [
     inputClassName: 'flex justify-center items-center gap-4',
     type: FieldType.Switch,
     description: 'Send e-mails when a service is done.',
-    label: 'Send e-mails',
+    label: 'Send service e-mails',
     itens: [
       {
-        label: 'Send e-mails',
+        label: 'Send service e-mails',
         description: 'Send e-mails when a service is done.',
         name: 'sendEmails'
       }
@@ -131,23 +132,36 @@ const fields: Fields = [
   {
     inputClassName: 'flex justify-center items-center gap-4',
     type: FieldType.Switch,
-    description: 'Select the information you want to send in the e-mails.',
-    label: 'Include in e-mails',
+    description: 'Select the information you want to send in the service e-mails.',
+    label: 'Include in service e-mails',
     itens: [
       {
         label: 'Chemicals Readings',
-        description: 'Send e-mails with chemicals readings.',
+        description: 'Send service e-mails with chemicals readings.',
         name: 'attachChemicalsReadings'
       },
       {
         label: 'Checklist',
-        description: 'Send e-mails with checklist.',
+        description: 'Send service e-mails with checklist.',
         name: 'attachChecklist'
       },
       {
         label: 'Service Photos',
-        description: 'Send e-mails with service photos.',
+        description: 'Send service e-mails with service photos.',
         name: 'attachServicePhotos'
+      }
+    ]
+  },
+  {
+    inputClassName: 'flex justify-center items-center gap-4',
+    type: FieldType.Switch,
+    description: 'Send e-mails when filter cleaning is completed.',
+    label: 'Filter cleaning notifications',
+    itens: [
+      {
+        label: 'Send filter cleaning e-mails',
+        description: 'Send e-mails when filter cleaning is completed.',
+        name: 'sendFilterCleaningEmails'
       }
     ]
   }

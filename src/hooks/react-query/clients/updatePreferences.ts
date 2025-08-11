@@ -9,6 +9,7 @@ type ClientEmailPreferences = {
   attachChemicalsReadings: boolean;
   attachChecklist: boolean;
   attachServicePhotos: boolean;
+  sendFilterCleaningEmails: boolean;
 };
 
 export const useUpdateClientPreferences = (clientId: string) => {
