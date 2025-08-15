@@ -46,14 +46,6 @@ export function ModalViewService({ service, open, setOpen }: Props) {
     if (service?.id) {
       resendEmailMutation.mutate(
         { serviceId: service.id },
-        {
-          onSuccess: () => {
-            alert('Email resent successfully!');
-          },
-          onError: () => {
-            alert('Failed to resend email. Please try again.');
-          }
-        }
       );
     }
   };
