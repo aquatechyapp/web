@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import { Service } from '@/ts/interfaces/Service';
 import { Pool } from '@/ts/interfaces/Pool';
 import DeleteServiceDialog from '../services-datatable/cancel-dialog';
+import { useResendServiceEmail } from '@/hooks/react-query/services/useResendServiceEmail';
 
 type Props = {
   service: Service;
@@ -33,6 +34,8 @@ type Props = {
 };
 
 export function ModalViewService({ service, pool, open, setOpen }: Props) {
+  const resendEmailMutation = useResendServiceEmail();
+
   const getStatusMessage = (status: string) => {
     switch (status) {
       case 'InProgress':
@@ -43,6 +46,22 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
         return 'Service was skipped.';
       default:
         return '';
+    }
+  };
+
+  const handleResendEmail = () => {
+    if (service?.id) {
+      resendEmailMutation.mutate(
+        { serviceId: service.id },
+        {
+          onSuccess: () => {
+            alert('Email resent successfully!');
+          },
+          onError: () => {
+            alert('Failed to resend email. Please try again.');
+          }
+        }
+      );
     }
   };
 
@@ -209,15 +228,50 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
               )}
             </Accordion>
 
-            <div className="mt-6 border-t pt-6">
+            {/* Actions */}
+            <div className="mt-6 flex justify-center gap-3">
+              <Button
+                onClick={handleResendEmail}
+                variant="outline"
+                className="flex items-center gap-2"
+                disabled={resendEmailMutation.isPending}
+              >
+                <Mail className="h-4 w-4" />
+                {resendEmailMutation.isPending ? 'Sending...' : 'Resend Email'}
+              </Button>
+
+              {service?.photos.length > 0 && (
+                <Button
+                  onClick={async () => {
+                    try {
+                      const zipContent = await zipImages(service.photos);
+                      const url = URL.createObjectURL(zipContent);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = 'service-photos.zip';
+                      link.click();
+                      URL.revokeObjectURL(url);
+                    } catch (error) {
+                      console.error('Error downloading photos:', error);
+                      alert('Failed to download photos. Please try again.');
+                    }
+                  }}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Download Photos
+                </Button>
+              )}
+
               <DeleteServiceDialog
                 serviceId={service.id}
                 assignmentId={service.assignmentId}
                 clientId={pool.clientOwnerId}
                 onSuccess={() => setOpen(false)}
                 trigger={
-                  <Button variant="destructive" className="w-full">
-                    <Trash2 className="mr-2 h-4 w-4" />
+                  <Button variant="destructive" className="flex items-center gap-2">
+                    <Trash2 className="h-4 w-4" />
                     Delete Service
                   </Button>
                 }

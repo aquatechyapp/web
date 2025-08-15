@@ -22,6 +22,7 @@ import { zipImages } from '@/lib/js-zip';
 import { format } from 'date-fns';
 import { Service } from '@/ts/interfaces/Service';
 import { generateServicePDF } from '@/utils/generateServicePDF';
+import { useResendServiceEmail } from '@/hooks/react-query/services/useResendServiceEmail';
 
 type Props = {
   service: Service;
@@ -30,6 +31,8 @@ type Props = {
 };
 
 export function ModalViewService({ service, open, setOpen }: Props) {
+  const resendEmailMutation = useResendServiceEmail();
+
   const checklistItems = [
     { id: 'skimmer', name: 'Skimmer cleaned', completed: service?.checklist?.skimmerCleaned },
     { id: 'tiles', name: 'Tiles brushed', completed: service?.checklist?.tilesBrushed },
@@ -38,6 +41,22 @@ export function ModalViewService({ service, open, setOpen }: Props) {
     { id: 'water', name: 'Water tested', completed: service?.checklist?.chemicalsAdjusted },
     { id: 'vacuum', name: 'Pool vacuumed', completed: service?.checklist?.poolVacuumed }
   ];
+
+  const handleResendEmail = () => {
+    if (service?.id) {
+      resendEmailMutation.mutate(
+        { serviceId: service.id },
+        {
+          onSuccess: () => {
+            alert('Email resent successfully!');
+          },
+          onError: () => {
+            alert('Failed to resend email. Please try again.');
+          }
+        }
+      );
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -223,6 +242,16 @@ export function ModalViewService({ service, open, setOpen }: Props) {
             <FileText className="h-4 w-4" />
             Download PDF Report
           </Button> */}
+
+          <Button
+            onClick={handleResendEmail}
+            variant="outline"
+            className="flex items-center gap-2"
+            disabled={resendEmailMutation.isPending}
+          >
+            <Mail className="h-4 w-4" />
+            {resendEmailMutation.isPending ? 'Sending...' : 'Resend Email'}
+          </Button>
 
           {service?.photos.length > 0 && (
             <Button
