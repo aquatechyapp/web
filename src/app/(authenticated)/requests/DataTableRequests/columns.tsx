@@ -40,7 +40,23 @@ export const columns: ColumnDef<Request>[] = [
   {
     accessorKey: 'createdAt',
     header: 'Date',
-    cell: ({ row: { original } }) => <div>{format(new Date(original.createdAt!), "EEEE, MMMM do 'at' h:mm a")}</div>
+    cell: ({ row: { original } }) => <div>{format(new Date(original.createdAt!), "EEEE, MMMM do 'at' h:mm a")}</div>,
+    filterFn: (row, columnId, value) => {
+      let date: string | Date = row.original.createdAt;
+
+      const [start, end] = value; // value => two date input values
+      //If one filter defined and date is null filter it
+      if ((start || end) && !date) return false;
+      // vem do back como string
+      if (typeof date === 'string') date = new Date(date);
+      if (start && !end) {
+        return date.getTime() >= start.getTime();
+      } else if (!start && end) {
+        return date.getTime() <= end.getTime();
+      } else if (start && end) {
+        return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
+      } else return true;
+    }
   },
   {
     accessorKey: 'description',
@@ -63,7 +79,7 @@ export const columns: ColumnDef<Request>[] = [
         </div>
       );
     }
-  },
+  }
   // Implementar Delete
   // {
   //   id: 'actions',
@@ -71,23 +87,4 @@ export const columns: ColumnDef<Request>[] = [
   //     return ;
   //   }
   // },
-  {
-    id: 'createdAt',
-    filterFn: (row, columnId, value) => {
-      let date: string | Date = row.original.createdAt;
-
-      const [start, end] = value; // value => two date input values
-      //If one filter defined and date is null filter it
-      if ((start || end) && !date) return false;
-      // vem do back como string
-      if (typeof date === 'string') date = new Date(date);
-      if (start && !end) {
-        return date.getTime() >= start.getTime();
-      } else if (!start && end) {
-        return date.getTime() <= end.getTime();
-      } else if (start && end) {
-        return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
-      } else return true;
-    }
-  }
 ];

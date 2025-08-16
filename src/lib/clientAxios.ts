@@ -7,12 +7,13 @@ export const clientAxios = axios.create({
   baseURL: baseUrl + '/api/v1',
   headers: {
     'Content-Type': ['application/json']
-  }
+  },
+  withCredentials: true
 });
 
 clientAxios.interceptors.request.use(
   async (config) => {
-    if (config.url === '/login' || config.url === '/signup') {
+    if (config.url === '/login' || config.url === '/signup' || config.url === '/server-offline') {
       return config;
     }
 
@@ -35,17 +36,20 @@ clientAxios.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    // Detectando erro de rede (servidor offline ou erro de conexão)
-    // if (error.code === 'ECONNABORTED' || error.message.includes('Network Error')) {
-    //   window.location.href = window.location.protocol + '//' + window.location.host + '/server-offline';
-    // }
+    if (error.code === 'ECONNABORTED' || error.message.includes('Network Error')) {
+      console.log('Network Error');
+      // window.location.href = window.location.protocol + '//' + window.location.host + '/server-offline';
+    }
 
-    // if (error.response?.status === 401) {
-    //   window.location.href = window.location.protocol + '//' + window.location.host + '/login';
-    // }
-    // if (error && error.response && error.response.status >= 500) {
-    //   window.location.href = window.location.protocol + '//' + window.location.host + '/server-error';
-    // }
+    if (error.response?.status === 401) {
+      Cookies.remove('accessToken');
+      Cookies.remove('userId');
+      window.location.href = window.location.protocol + '//' + window.location.host + '/login';
+    }
+    if (error && error.response && error.response.status >= 500) {
+      console.log('Server Error');
+      // window.location.href = window.location.protocol + '//' + window.location.host + '/server-error';
+    }
     return Promise.reject(error);
   }
 );

@@ -63,13 +63,7 @@ export const useLoginUser = () => {
           }
         }
       }
-      if (error.message === 'Network Error') {
-        toast({
-          duration: 5000,
-          title: 'Internal error',
-          variant: 'error'
-        });
-      }
+      
       return error;
     }
   });
