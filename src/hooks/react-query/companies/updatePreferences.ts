@@ -12,9 +12,12 @@ type PreferencesData = {
     attachChecklist?: boolean;
     attachServicePhotos?: boolean;
     ccEmail?: string;
+    sendFilterCleaningEmails?: boolean;
   };
   equipmentMaintenancePreferences?: {
     filterCleaningIntervalDays?: number;
+    filterReplacementIntervalDays?: number;
+    filterCleaningMustHavePhotos?: boolean;
   };
   companyId: string;
 };

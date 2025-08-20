@@ -43,19 +43,28 @@ export default function Page() {
               </Button>
             </div>
             <div className="space-y-4">
-              {dashboard.recentIssues?.slice(0, 3).map((issue) => (
-                <div key={issue.id} className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900 mb-1">{issue.client}</div>
-                      <div className="text-sm text-gray-600 line-clamp-2">{issue.description}</div>
-                    </div>
-                    <div className="ml-3 text-right">
-                      <div className="text-xs text-gray-500">{format(new Date(issue.date), 'MMM dd')}</div>
+              {dashboard.recentIssues?.length > 0 ? (
+                dashboard.recentIssues.slice(0, 3).map((issue) => (
+                  <div key={issue.id} className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900 mb-1">{issue.client}</div>
+                        <div className="text-sm text-gray-600 line-clamp-2">{issue.description}</div>
+                      </div>
+                      <div className="ml-3 text-right">
+                        <div className="text-xs text-gray-500">{format(new Date(issue.date), 'MMM dd')}</div>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-500 text-sm">
+                    <p className="font-medium mb-1">No pending issues yet</p>
+                    <p>Issues will appear here as your team reports them during service visits.</p>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
@@ -73,30 +82,39 @@ export default function Page() {
               </Button>
             </div>
             <div className="space-y-4">
-              {dashboard.filterCleaningPunctuality?.slice(0, 3).map((tech: any) => (
-                <div key={tech.id} className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900 mb-1">{tech.technician}</div>
-                      <div className="text-sm text-gray-600">{tech.assignedPools} pools assigned</div>
-                    </div>
-                    <div className="ml-3 text-right">
-                      <div className={`text-sm font-semibold ${
-                        tech.onTimePercentage >= 90 ? 'text-green-600' : 
-                        tech.onTimePercentage >= 80 ? 'text-yellow-600' : 'text-red-600'
-                      }`}>
-                        {tech.onTimePercentage}% on time
+              {dashboard.filterCleaningPunctuality?.length > 0 ? (
+                dashboard.filterCleaningPunctuality.slice(0, 3).map((tech: any) => (
+                  <div key={tech.id} className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900 mb-1">{tech.technician}</div>
+                        <div className="text-sm text-gray-600">{tech.assignedPools} pools assigned</div>
                       </div>
-                      <div className={`text-xs mt-1 px-2 py-1 rounded-full font-medium ${
-                        tech.overdueCount === 0 ? 'bg-green-100 text-green-800' :
-                        tech.overdueCount <= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {tech.overdueCount} overdue
+                      <div className="ml-3 text-right">
+                        <div className={`text-sm font-semibold ${
+                          tech.onTimePercentage >= 90 ? 'text-green-600' : 
+                          tech.onTimePercentage >= 80 ? 'text-yellow-600' : 'text-red-600'
+                        }`}>
+                          {tech.onTimePercentage}% on time
+                        </div>
+                        <div className={`text-xs mt-1 px-2 py-1 rounded-full font-medium ${
+                          tech.overdueCount === 0 ? 'bg-green-100 text-green-800' :
+                          tech.overdueCount <= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {tech.overdueCount} overdue
+                        </div>
                       </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-500 text-sm">
+                    <p className="font-medium mb-1">No filter cleaning data yet</p>
+                    <p>Performance metrics will appear here once your technicians start completing filter cleanings.</p>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
@@ -114,17 +132,26 @@ export default function Page() {
               </Button>
             </div>
             <div className="space-y-4 max-h-96 overflow-y-auto">
-              {dashboard.poolsWithoutAssignment?.map((pool) => (
-                <div key={pool.id} className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900 mb-1">{pool.clientName}</div>
-                      <div className="text-sm text-gray-600 mb-1">{pool.poolName}</div>
-                      <div className="text-xs text-gray-500 line-clamp-1">{pool.address}</div>
+              {dashboard.poolsWithoutAssignment?.length > 0 ? (
+                dashboard.poolsWithoutAssignment.map((pool) => (
+                  <div key={pool.id} className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900 mb-1">{pool.clientName}</div>
+                        <div className="text-sm text-gray-600 mb-1">{pool.poolName}</div>
+                        <div className="text-xs text-gray-500 line-clamp-1">{pool.address}</div>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-500 text-sm">
+                    <p className="font-medium mb-1">All pools have assignments</p>
+                    <p>Great! All your pools are currently assigned to technicians.</p>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>
@@ -162,14 +189,24 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {recentIssues?.map((issue) => (
-                  <tr key={issue.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4 text-gray-900 font-medium">{issue.client}</td>
-                    <td className="py-3 px-4 text-gray-600 flex">{format(new Date(issue.date), 'MMM dd, yyyy hh:mma')}</td>
-                    <td className="py-3 px-4 text-gray-600">{issue.technician}</td>
-                    <td className="py-3 px-4 text-gray-600">{issue.description}</td>
+                {recentIssues?.length > 0 ? (
+                  recentIssues.map((issue) => (
+                    <tr key={issue.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="py-3 px-4 text-gray-900 font-medium">{issue.client}</td>
+                      <td className="py-3 px-4 text-gray-600 flex">{format(new Date(issue.date), 'MMM dd, yyyy hh:mma')}</td>
+                      <td className="py-3 px-4 text-gray-600">{issue.technician}</td>
+                      <td className="py-3 px-4 text-gray-600">{issue.description}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="py-12 text-center">
+                      <div className="text-gray-500">
+                        <p className="text-sm">Issues will appear here as your team reports them during service visits.</p>
+                      </div>
+                    </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -201,39 +238,49 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {filterCleaningPunctuality?.map((tech) => (
-                  <tr key={tech.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4 text-gray-900 font-medium">{tech.technician}</td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className={`font-semibold ${
-                          tech.onTimePercentage >= 90 ? 'text-green-600' : 
-                          tech.onTimePercentage >= 80 ? 'text-yellow-600' : 'text-red-600'
-                        }`}>
-                          {tech.onTimePercentage}%
-                        </span>
-                        <div className="w-16 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className={`h-2 rounded-full ${
-                              tech.onTimePercentage >= 90 ? 'bg-green-500' : 
-                              tech.onTimePercentage >= 80 ? 'bg-yellow-500' : 'bg-red-500'
-                            }`}
-                            style={{ width: `${tech.onTimePercentage}%` }}
-                          />
+                {filterCleaningPunctuality?.length > 0 ? (
+                  filterCleaningPunctuality.map((tech) => (
+                    <tr key={tech.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="py-3 px-4 text-gray-900 font-medium">{tech.technician}</td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className={`font-semibold ${
+                            tech.onTimePercentage >= 90 ? 'text-green-600' : 
+                            tech.onTimePercentage >= 80 ? 'text-yellow-600' : 'text-red-600'
+                          }`}>
+                            {tech.onTimePercentage}%
+                          </span>
+                          <div className="w-16 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full ${
+                                tech.onTimePercentage >= 90 ? 'bg-green-500' : 
+                                tech.onTimePercentage >= 80 ? 'bg-yellow-500' : 'bg-red-500'
+                              }`}
+                              style={{ width: `${tech.onTimePercentage}%` }}
+                            />
+                          </div>
                         </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          tech.overdueCount === 0 ? 'bg-green-100 text-green-800' :
+                          tech.overdueCount <= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {tech.overdueCount} overdue
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-gray-600">{tech.assignedPools} pools</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="py-12 text-center">
+                      <div className="text-gray-500">
+                        <p className="text-sm">Performance metrics will appear here once your technicians start completing filter cleanings.</p>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        tech.overdueCount === 0 ? 'bg-green-100 text-green-800' :
-                        tech.overdueCount <= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {tech.overdueCount} overdue
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-gray-600">{tech.assignedPools} pools</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -264,13 +311,23 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {poolsWithoutAssignment?.map((pool) => (
-                  <tr key={pool.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4 text-gray-900 font-medium">{pool.clientName}</td>
-                    <td className="py-3 px-4 text-gray-600">{pool.poolName}</td>
-                    <td className="py-3 px-4 text-gray-600">{pool.address}</td>
+                {poolsWithoutAssignment?.length > 0 ? (
+                  poolsWithoutAssignment.map((pool) => (
+                    <tr key={pool.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="py-3 px-4 text-gray-900 font-medium">{pool.clientName}</td>
+                      <td className="py-3 px-4 text-gray-600">{pool.poolName}</td>
+                      <td className="py-3 px-4 text-gray-600">{pool.address}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="py-12 text-center">
+                      <div className="text-gray-500">
+                        <p className="text-sm">Great! All your pools are currently assigned to technicians.</p>
+                      </div>
+                    </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
