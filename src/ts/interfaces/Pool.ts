@@ -3,7 +3,7 @@ import { EquipmentCondition, FilterType, MaintenanceType, PoolType } from '@/ts/
 import { Service } from './Service';
 import { Client } from './Client';
 import { Assignment } from './Assignments';
-import { Company } from './Company';
+import { ChecklistTemplate, Company } from './Company';
 
 export type Pool = {
   id: string;
@@ -32,6 +32,7 @@ export type Pool = {
   assignments?: Assignment[];
   requests?: Request[];
   equipment?: Equipment | null;
+  checklistTemplates?: ChecklistTemplate[];
 };
 
 // Used only to add a pool to a client

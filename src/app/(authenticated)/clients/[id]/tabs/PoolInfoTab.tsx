@@ -9,20 +9,23 @@ import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { AddressInput } from '@/components/AddressInput';
 import { PoolTypes } from '@/constants';
 import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 import { editPoolSchema } from '@/schemas/pool';
 import { FieldType } from '@/ts/enums/enums';
 import { Pool } from '@/ts/interfaces/Pool';
-
 import { isEmpty } from '@/utils';
 import { findDifferenceBetweenTwoObjects } from '@/utils/others';
+import { ModalDeletePool } from '../ModalDeletePool';
 
-import { ModalDeletePool } from './ModalDeletePool';
-import { AddressInput } from '@/components/AddressInput';
+interface PoolInfoTabProps {
+  pool: Pool;
+  clientId: string;
+}
 
-export default function PoolInfo({ pool, clientId }: { pool: Pool; clientId: string }) {
+export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
   const { mutate, isPending: isPendingUpdatePool } = useUpdatePool();
   const { mutate: deletePool, isPending: isPendingDeletePool } = useDeletePool(['clients', clientId], pool.id);
   const isPending = isPendingUpdatePool || isPendingDeletePool;

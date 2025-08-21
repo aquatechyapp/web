@@ -41,7 +41,7 @@ clientAxios.interceptors.response.use(
       // window.location.href = window.location.protocol + '//' + window.location.host + '/server-offline';
     }
 
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !error.message.includes('Invalid credentials.')) {
       Cookies.remove('accessToken');
       Cookies.remove('userId');
       window.location.href = window.location.protocol + '//' + window.location.host + '/login';

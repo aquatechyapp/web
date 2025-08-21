@@ -119,13 +119,13 @@ export default function ShowCompany({ company }: Props) {
                 </div>
                 {tab === 'preferences' && <div className="h-0.5 self-stretch bg-gray-800" />}
               </div>
+                
             </div>
             {tab === 'company_info' ? (
               <CompanyInfo company={company} />
-            ) : (
-              // <PoolHeader pools={client.pools} clientId={client.id} />
+            ) : tab === 'preferences' ? (
               <Preferences company={company} />
-            )}
+            ) : null}
           </div>
         </div>
       </div>

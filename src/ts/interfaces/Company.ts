@@ -42,7 +42,27 @@ export interface Company {
     };
   };
   imageUrl?: string | null;
+  checklistTemplates: ChecklistTemplate[];
 }
+
+export type ChecklistTemplate = {
+  id: string;
+  name: string;
+  description?: string | null;
+  companyId: string;
+  isActive: boolean;
+  isDefault: boolean;
+  createdAt: string;
+  items: ChecklistTemplateItem[];
+}
+
+export type ChecklistTemplateItem = {
+  id: string;
+  templateId: string;
+  label: string;
+  order: number;
+  createdAt: Date;
+};
 
 export interface CreateCompany {
   name: string;
