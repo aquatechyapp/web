@@ -27,9 +27,9 @@ import DataTableRequestsSkeleton from './DataTableRequests/skeleton';
 import { PaginationDemo } from '@/components/PaginationDemo';
 
 const defaultValues: UseGetRequestsParams = {
-  from: new Date(new Date().setHours(0, 0, 0, 0)).toISOString(),
+  from: new Date(new Date().setDate(new Date().getDate() - 14)).toISOString(),
   to: new Date(new Date().setHours(23, 59, 59, 999)).toISOString(),
-  status: null,
+  status: 'Pending',
   category: null,
   clientId: null,
   companyId: null,
