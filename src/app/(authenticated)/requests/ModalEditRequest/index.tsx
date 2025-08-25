@@ -75,27 +75,23 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
       clientId: request.clientId || '',
       category: request.category || '',
       createdBy: {
-        id: request.createdByUser?.id,
-        firstName: request.createdByUser?.firstName,
-        lastName: request.createdByUser?.lastName
+        id: request.createdByUser?.id || '',
+        firstName: request.createdByUser?.firstName || '',
+        lastName: request.createdByUser?.lastName || ''
       },
-      addressedTo: user?.id,
+      addressedTo: user?.id || '',
       poolId: request.poolId || '',
       description: request.description || '',
       photo: request.photos || [],
       status: request.status || 'Pending',
-      outcome: request.outcome || undefined
+      outcome: request.outcome || ''
     }
   });
 
   function handleSubmit(data: EditRequest) {
-    // console.log('data', data);
-    if (isEmpty(form.formState.errors)) {
+    if (Object.keys(form.formState.errors).length === 0) {
       updateRequest(data);
       setOpen(false);
-      // console.log('no errors');
-    } else {
-      console.log('errors', form.formState.errors);
     }
   }
 
@@ -133,7 +129,24 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = form.getValues();
+              handleSubmit(formData);
+            }}
+          >
+            {/* Hidden fields for required values */}
+            <input type="hidden" {...form.register('clientId')} />
+            <input type="hidden" {...form.register('poolId')} />
+            <input type="hidden" {...form.register('category')} />
+            <input type="hidden" {...form.register('description')} />
+            <input type="hidden" {...form.register('addressedTo')} />
+            <input type="hidden" {...form.register('createdBy.id')} />
+            <input type="hidden" {...form.register('createdBy.firstName')} />
+            <input type="hidden" {...form.register('createdBy.lastName')} />
+            <input type="hidden" {...form.register('photo')} />
+            
             <Accordion type="single" collapsible defaultValue="details" className="mt-4">
               <AccordionItem value="details">
                 <AccordionTrigger className="text-lg">
@@ -213,9 +226,8 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
                           />
                           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
                             <Button
-                              onClick={async (e) => {
-                                e.preventDefault(); // Prevent form submission
-                                e.stopPropagation(); // Stop event bubbling
+                              type="button"
+                              onClick={async () => {
                                 try {
                                   const response = await fetch(photo);
                                   const blob = await response.blob();
@@ -246,10 +258,20 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
             </Accordion>
 
             <div className="mt-6 flex gap-2 border-t pt-6">
-              <Button type="submit" className="w-full">
+              <Button 
+                type="submit" 
+                className="w-full"
+              >
                 Update Request
               </Button>
-              <Button type="button" variant="destructive" className="w-full" onClick={handleDelete}>
+              <Button 
+                type="button" 
+                variant="destructive" 
+                className="w-full" 
+                onClick={() => {
+                  handleDelete();
+                }}
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete Request
               </Button>
