@@ -43,7 +43,23 @@ export const columns: ColumnDef<Service>[] = [
   {
     accessorKey: 'completedAt',
     header: 'Date',
-    cell: ({ row: { original } }) => <div>{format(new Date(original.completedAt!), "EEEE, MMMM do 'at' h:mm a")}</div>
+    cell: ({ row: { original } }) => <div>{format(new Date(original.completedAt!), "EEEE, MMMM do 'at' h:mm a")}</div>,
+    filterFn: (row, columnId, value) => {
+      let date: string | Date = row.original.completedAt!;
+
+      const [start, end] = value; // value => two date input values
+      //If one filter defined and date is null filter it
+      if ((start || end) && !date) return false;
+      // vem do back como string
+      if (typeof date === 'string') date = new Date(date);
+      if (start && !end) {
+        return date.getTime() >= start.getTime();
+      } else if (!start && end) {
+        return date.getTime() <= end.getTime();
+      } else if (start && end) {
+        return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
+      } else return true;
+    }
   },
   {
     accessorKey: 'notes',
@@ -78,30 +94,4 @@ export const columns: ColumnDef<Service>[] = [
       );
     }
   },
-  // Implementar Delete
-  // {
-  //   id: 'actions',
-  //   cell: ({ row: { original } }) => {
-  //     return ;
-  //   }
-  // },
-  {
-    id: 'completedAt',
-    filterFn: (row, columnId, value) => {
-      let date: string | Date = row.original.completedAt!;
-
-      const [start, end] = value; // value => two date input values
-      //If one filter defined and date is null filter it
-      if ((start || end) && !date) return false;
-      // vem do back como string
-      if (typeof date === 'string') date = new Date(date);
-      if (start && !end) {
-        return date.getTime() >= start.getTime();
-      } else if (!start && end) {
-        return date.getTime() <= end.getTime();
-      } else if (start && end) {
-        return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
-      } else return true;
-    }
-  }
 ];
