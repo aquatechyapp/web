@@ -23,7 +23,10 @@ export function PaginationDemo({ currentPage, totalItems, itemsPerPage, onPageCh
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        onClick={() => {
+          const newPage = Math.max(1, Number(currentPage) - 1);
+          onPageChange(newPage);
+        }}
         disabled={currentPage <= 1}
       >
         Previous
@@ -34,7 +37,10 @@ export function PaginationDemo({ currentPage, totalItems, itemsPerPage, onPageCh
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        onClick={() => {
+          const newPage = Math.min(totalPages, Number(currentPage) + 1);
+          onPageChange(newPage);
+        }}
         disabled={currentPage >= totalPages}
       >
         Next

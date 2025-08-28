@@ -35,7 +35,8 @@ export function DataTableServices<TData, TValue>({ columns, data }: DataTablePro
     },
     initialState: {
       columnVisibility: {
-        deactivatedAt: false
+        deactivatedAt: false,
+        // completedAt: false
       }
     }
   });
