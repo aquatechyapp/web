@@ -32,6 +32,7 @@ export interface CreateClientWithAssignmentsData {
   timezone: string;
   phone: string;
   email: string;
+  secondaryEmail?: string;
   invoiceEmail?: string;
   clientNotes?: string;
   

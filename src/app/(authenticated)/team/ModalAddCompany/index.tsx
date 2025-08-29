@@ -12,6 +12,7 @@ import CompanyStateAndCitySelect from '@/components/CompanyStateAndCitySelect';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
+import { AddressInput } from '@/components/AddressInput';
 
 import { isEmpty } from '@/utils';
 import { useCreateCompany } from '@/hooks/react-query/companies/createCompany';
@@ -125,7 +126,15 @@ export function ModalAddCompany() {
               <InputField name="phone" placeholder="Phone" type={FieldType.Phone} />
             </div>
             <div className="flex gap-4">
-              <InputField name="address" placeholder="Address" />
+              <AddressInput
+                name="address"
+                placeholder="Enter address"
+                onAddressSelect={({ state, city, zipCode }) => {
+                  form.setValue('state', state, { shouldValidate: true });
+                  form.setValue('city', city, { shouldValidate: true });
+                  form.setValue('zip', zipCode, { shouldValidate: true });
+                }}
+              />
             </div>
             <div className="flex gap-4">
               <CompanyStateAndCitySelect stateName="state" cityName="city" showLabels={false} />

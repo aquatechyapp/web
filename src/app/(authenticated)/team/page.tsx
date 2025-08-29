@@ -39,6 +39,10 @@ export default function Page() {
           <PlusIcon className="mr-2" />
           Add member
         </Button>
+        <Button onClick={() => router.push('/team/add-company')}>
+          <PlusIcon className="mr-2" />
+          Add company
+        </Button>
         <Input
           placeholder="Filter by name"
           value={searchTerm}

@@ -12,6 +12,7 @@ export interface Client {
   createdAt: string;
   deactivatedAt: string;
   email: string;
+  secondaryEmail?: string;
   invoiceEmail: string;
   isActive: boolean;
   firstName: string;
