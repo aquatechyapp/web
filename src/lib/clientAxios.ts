@@ -35,16 +35,20 @@ clientAxios.interceptors.response.use(
   (response) => {
     return response;
   },
-  async (error: AxiosError) => {
+  async (error: AxiosError<{ message: string }>) => {
     if (error.code === 'ECONNABORTED' || error.message.includes('Network Error')) {
       console.log('Network Error');
       // window.location.href = window.location.protocol + '//' + window.location.host + '/server-offline';
     }
 
-    if (error.response?.status === 401 && !error.message.includes('Invalid credentials.')) {
-      Cookies.remove('accessToken');
-      Cookies.remove('userId');
-      window.location.href = window.location.protocol + '//' + window.location.host + '/login';
+    if (error.response?.status === 401) {
+      if (error.response?.data?.message?.includes('Invalid credentials.')) {
+        return Promise.reject(error);
+      } else {
+        Cookies.remove('accessToken');
+        Cookies.remove('userId');
+        window.location.href = window.location.protocol + '//' + window.location.host + '/login';
+      }
     }
     if (error && error.response && error.response.status >= 500) {
       console.log('Server Error');
