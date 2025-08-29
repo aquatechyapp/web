@@ -165,6 +165,9 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
               </HoverCardContent>
             )}
           </HoverCard>
+          <Button variant="outline">
+            <Link href={'/clients/bulk-actions'}>Bulk Actions</Link>
+          </Button>
           <Input
             placeholder="Filter clients..."
             value={globalFilter ?? ''}
