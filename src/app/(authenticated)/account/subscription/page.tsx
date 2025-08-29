@@ -166,7 +166,7 @@ export default function Page() {
                 <tr className="border-b">
                   <td className="py-4 text-gray-900">Pools Limit</td>
                   <td className="text-center text-gray-700">30 pools</td>
-                  <td className="text-center text-gray-700">100 pools (extra pools cost $0.19 each)</td>
+                  <td className="text-center text-gray-700">300 pools (extra pools cost $0.23 each)</td>
                 </tr>
                 <tr className="border-b">
                   <td className="py-4 text-gray-900">Support Level</td>
@@ -199,7 +199,7 @@ export default function Page() {
           <div className="grid gap-6 md:grid-cols-2">
             <div className="rounded-lg bg-white p-6 shadow-lg">
               <h3 className="mb-3 font-semibold text-gray-900">What happens if I exceed my pool limit?</h3>
-              <p className="text-gray-600">With the Grow plan, additional pools cost just $0.19 each. You can add pools as your business grows.</p>
+              <p className="text-gray-600">With the Grow plan, additional pools cost just $0.23 each. You can add pools as your business grows.</p>
             </div>
             <div className="rounded-lg bg-white p-6 shadow-lg">
               <h3 className="mb-3 font-semibold text-gray-900">Can I change plans later?</h3>
@@ -231,17 +231,17 @@ const Plans = [
   {
     title: 'Grow',
     name: UserSubscription.GROW,
-    price: 19,
+    price: 69,
     features: [
       { text: 'Unlimited clients', include: true },
       { text: 'Full access to mobile app', include: true },
       { text: 'Basic reports', include: true },
       { text: 'Specialized support', include: true },
-      { text: 'Create up to 100 pools', include: true },
+      { text: 'Create up to 300 pools', include: true },
       { text: 'Optimize routes', include: true },
       { text: 'Email clients after service', include: true },
       { text: 'Broadcast e-mails', include: true }
     ],
-    extra: '* Extra pools costs $0.19 each'
+    extra: '* Extra pools costs $0.23 each'
   }
 ];
