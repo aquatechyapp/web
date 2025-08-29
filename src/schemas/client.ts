@@ -8,6 +8,7 @@ export const clientSchema = z.object({
   clientAddress: address,
   clientCity: city,
   email: email,
+  secondaryEmail: email.optional(),
   firstName: name,
   lastName: name,
   clientNotes: notes,

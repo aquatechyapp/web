@@ -435,6 +435,7 @@ export default function Page() {
         timezone: data.timezone,
         phone: data.phone,
         email: data.email,
+        secondaryEmail: data.secondaryEmail || undefined,
         clientNotes: data.clientNotes,
         
         // Pool data

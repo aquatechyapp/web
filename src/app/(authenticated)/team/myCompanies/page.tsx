@@ -10,6 +10,8 @@ import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { CompanyWithMyRole } from '@/ts/interfaces/Company';
 import { CompanyCard } from '../CompanyCard';
 import { ModalAddCompany } from '../ModalAddCompany';
+import { PlusIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
@@ -31,7 +33,10 @@ export default function Page() {
   return (
     <div className="p-2">
       <div className="flex flex-col items-start justify-start gap-4 md:flex-row">
-        <ModalAddCompany />
+        <Button onClick={() => router.push('/team/add-company')}>
+          <PlusIcon className="mr-2" />
+          Add company
+        </Button>
 
         <Input
           placeholder="Filter by name..."

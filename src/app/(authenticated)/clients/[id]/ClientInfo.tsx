@@ -14,15 +14,17 @@ import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
-import ClientStateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { AddressInput } from '@/components/AddressInput';
 
 const formSchema = z.object({
+  firstName: defaultSchemas.firstName,
+  lastName: defaultSchemas.lastName,
   address: defaultSchemas.address,
   city: defaultSchemas.city,
   state: defaultSchemas.state,
   zip: defaultSchemas.zipCode,
   email: defaultSchemas.email,
+  secondaryEmail: defaultSchemas.email.optional(),
   phone: defaultSchemas.phone,
   notes: defaultSchemas.stringOptional,
   clientCompany: defaultSchemas.stringOptional,
@@ -42,10 +44,13 @@ export default function ClientInfo({ client }: { client: Client }) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      firstName: client.firstName || '',
+      lastName: client.lastName || '',
       city: client.city || '',
       state: client.state || '',
       zip: client.zip || '',
       email: client.email || '',
+      secondaryEmail: client.secondaryEmail || '',
       phone: client.phone || '',
       notes: client.notes || undefined,
       address: initialAddress,
@@ -84,6 +89,11 @@ export default function ClientInfo({ client }: { client: Client }) {
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col items-start justify-start gap-2 self-stretch bg-gray-50"
         >
+          <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
+            <InputField name="firstName" label="First Name" placeholder="First Name" />
+            <InputField name="lastName" label="Last Name" placeholder="Last Name" />
+          </div>
+          
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
             <AddressInput
               name="address"
@@ -134,6 +144,7 @@ export default function ClientInfo({ client }: { client: Client }) {
           <div className="Form inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
             <InputField type={FieldType.Phone} name="phone" placeholder="Phone" label="Phone" />
             <InputField name="email" placeholder="E-mail" label="E-mail" />
+            <InputField name="secondaryEmail" placeholder="Secondary E-mail" label="Secondary E-mail" />
           </div>
           <div className="mt-2 w-full">
             <InputField
