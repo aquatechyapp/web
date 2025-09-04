@@ -23,6 +23,7 @@ import {
 import { Form } from '../../../components/ui/form';
 import { useSignup } from '@/hooks/react-query/user/createUser';
 import { Checkbox } from '@/components/ui/checkbox';
+import Script from 'next/script';
 
 const formSchema = z
   .object({
@@ -92,6 +93,15 @@ export default function Page() {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="inline-flex w-96 flex-col items-start justify-start gap-[18px] rounded-lg bg-gray-50 px-6 py-8 md:w-[680px]"
       >
+        <Script id="signup-goal" strategy="afterInteractive">
+          {`
+            if (window.location.pathname === '/signup') {
+              window.gtag('event', 'sign_up_page_view', {
+                page_path: window.location.pathname,
+              });
+            }
+          `}
+        </Script>
         <div className="mb-8 inline-flex h-5 items-center justify-center gap-3 self-stretch">
           <Image priority width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
         </div>

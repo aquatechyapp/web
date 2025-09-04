@@ -677,7 +677,7 @@ export default function Page({ company }: { company: Company }) {
       <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
         <DialogContent>
           <DialogHeader className="text-left">
-            <DialogTitle className="text-xl">
+            <DialogTitle className="text-xl mb-4">
               {modalType === 'email' 
                 ? 'Update Email Preferences' 
                 : modalType === 'filter' 
@@ -688,9 +688,25 @@ export default function Page({ company }: { company: Company }) {
 
             <DialogDescription className="mt-4 text-left">
               {modalType === 'email' 
-                ? 'This action will change the email notification preferences for all clients under this company. If you want specific clients not to receive or receive emails, you\'ll need to change it manually in their individual settings on the clients page after this action.'
+                ? (
+                  <>
+                    This action will set the email notification preferences for all NEW CLIENTS created from now on under this company.
+                    <br /><br />
+                    Clients created before this change will need to be updated manually in their individual settings on the clients page or using the bulk actions page.
+                    <br /><br />
+                    <strong>Note:</strong> In order to send service emails, both the client preferences AND company preferences must be enabled.
+                  </>
+                )
                 : modalType === 'filter'
-                  ? 'This action will change the filter maintenance preferences for all clients under this company. This includes cleaning intervals, replacement schedules, and photo requirements.'
+                  ? (
+                    <>
+                      This action will change the filter maintenance preferences for all NEW CLIENTS created from now on under this company. This includes cleaning intervals, replacement schedules, and photo requirements.
+                      <br /><br />
+                      Clients created before this change will need to be updated manually in their individual settings on the clients page or using the bulk actions page. The photo requirement to filter cleaning is the only preference that will be updated for all clients including the previous ones.
+                      <br /><br />
+                      <strong>Note:</strong> In order to send filter cleaning emails, both the client preferences AND company preferences must be enabled.
+                    </>
+                  )
                   : 'This action will update the custom checklist template for all new service reports. Existing service reports will not be affected.'
               }
             </DialogDescription>
