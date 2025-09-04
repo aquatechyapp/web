@@ -8,6 +8,7 @@ import localFont from 'next/font/local';
 import { ReactQueryProviderComponent } from '@/providers/ReactQueryProviderComponent';
 
 import { Toaster } from '../components/ui/toaster';
+import Script from 'next/script';
 
 const poppins = localFont({
   src: [
@@ -53,7 +54,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <GoogleTagManager gtmId="GTM-KPJ5P65V" />
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="gtag-init" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+            page_path: window.location.pathname,
+          });
+        `}
+      </Script>
       <body className={poppins.className}>
         <Analytics />
         <ReactQueryProviderComponent>{children}</ReactQueryProviderComponent>
