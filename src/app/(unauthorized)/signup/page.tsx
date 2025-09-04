@@ -102,6 +102,28 @@ export default function Page() {
             }
           `}
         </Script>
+        <Script id="signup-goal" strategy="afterInteractive">
+          {`
+          <!-- Google tag (gtag.js) event -->
+            <script>
+              gtag('event', 'ads_conversion_Sign_up_Page_load_https_1', {
+                // <event_parameters>
+              });
+            </script>
+          `}
+        </Script>
+        <Script id="signup-goal" strategy="afterInteractive">
+          {`
+            <!-- Google tag (gtag.js) event -->
+            <script>
+              gtag('event', 'Subscribed', {
+                // <event_parameters>
+              });
+            </script>
+          `}
+        </Script>
+
+
         <div className="mb-8 inline-flex h-5 items-center justify-center gap-3 self-stretch">
           <Image priority width="0" height="0" sizes="100vw" className="h-auto w-80" src={imageIcon} alt="Logo" />
         </div>
