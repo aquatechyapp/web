@@ -24,7 +24,7 @@ const formSchema = z.object({
   state: defaultSchemas.state,
   zip: defaultSchemas.zipCode,
   email: defaultSchemas.email,
-  secondaryEmail: defaultSchemas.email.optional(),
+  secondaryEmail: z.string().email().optional().or(z.literal('')),
   phone: defaultSchemas.phone,
   notes: defaultSchemas.stringOptional,
   clientCompany: defaultSchemas.stringOptional,
@@ -50,7 +50,7 @@ export default function ClientInfo({ client }: { client: Client }) {
       state: client.state || '',
       zip: client.zip || '',
       email: client.email || '',
-      secondaryEmail: client.secondaryEmail || '',
+      secondaryEmail: client.secondaryEmail || undefined,
       phone: client.phone || '',
       notes: client.notes || undefined,
       address: initialAddress,
@@ -78,6 +78,7 @@ export default function ClientInfo({ client }: { client: Client }) {
   const submitForm = (values: FormData) => {
     mutate({
       ...values,
+      secondaryEmail: values.secondaryEmail === '' ? '' : values.secondaryEmail,
       updatePoolAddress: showAddressChangeDialog // Add flag to indicate pool address should be updated
     });
   };
