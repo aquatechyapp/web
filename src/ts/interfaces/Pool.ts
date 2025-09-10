@@ -4,6 +4,7 @@ import { Service } from './Service';
 import { Client } from './Client';
 import { Assignment } from './Assignments';
 import { ChecklistTemplate, Company } from './Company';
+import { Request } from './Request';
 
 export type Pool = {
   id: string;
@@ -81,3 +82,5 @@ export interface Filter {
 export interface Equipment {
   filter?: Filter | null;
 }
+
+// Request interface is now imported from Request.ts

@@ -4,7 +4,7 @@ import { Pool } from '@/ts/interfaces/Pool';
 import { Service } from '@/ts/interfaces/Service';
 
 import AssignmentsDatatable from './components/assignments-datatable';
-import { EquipmentTab, ChecklistTab, PoolInfoTab, ServicesTab } from './tabs';
+import { EquipmentTab, ChecklistTab, PoolInfoTab, RequestsTab, ServicesTab } from './tabs';
 
 type Props = {
   services: Service[];
@@ -12,7 +12,7 @@ type Props = {
   clientId: string;
 };
 
-export type PoolTabOptions = 'pool_info' | 'services' | 'pool_assignments' | 'equipment' | 'checklist';
+export type PoolTabOptions = 'pool_info' | 'services' | 'pool_assignments' | 'equipment' | 'checklist' | 'requests';
 
 // Add these styles at the top of your component
 const tabStyles = 'px-4 py-2 text-sm transition-colors duration-200 hover:text-gray-700 hover:cursor-pointer';
@@ -64,6 +64,12 @@ function PoolCard({ pool, services, clientId }: Props) {
             >
               Checklist
             </div>
+            <div
+              onClick={() => handleTabChange('requests')}
+              className={`${tabStyles} whitespace-nowrap ${tab === 'requests' && activeTabStyles}`}
+            >
+              Requests
+            </div>
           </div>
         </div>
       </div>
@@ -76,6 +82,7 @@ function PoolCard({ pool, services, clientId }: Props) {
           <EquipmentTab equipment={pool.equipment || null} poolId={pool.id} clientId={clientId} />
         )}
         {tab === 'checklist' && <ChecklistTab poolId={pool.id} clientId={clientId} pool={pool} />}
+        {tab === 'requests' && <RequestsTab requests={pool.requests || []} poolId={pool.id} clientId={clientId} />}
       </div>
     </div>
   );
