@@ -66,7 +66,7 @@ type Props = {
 
 export function ModalEditRequest({ request, open, setOpen }: Props) {
   const user = useUserStore((state) => state.user);
-  const { mutate: updateRequest, isPending: isPendingUpdate } = useUpdateRequest(request.id);
+  const { mutate: updateRequest, isPending: isPendingUpdate, isSuccess: isSuccessUpdate } = useUpdateRequest(request.id);
   const { mutate: deleteRequest, isPending: isPendingDelete } = useDeleteRequest(request.id);
 
   const form = useForm<EditRequest>({
@@ -101,6 +101,7 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
   }
 
   const isLoading = isPendingUpdate || isPendingDelete;
+  const clientFullName = `${request.client.firstName} ${request.client.lastName}`;
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -160,7 +161,7 @@ export function ModalEditRequest({ request, open, setOpen }: Props) {
                     <CardContent className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
                       <div className="rounded-lg bg-gray-50 p-3">
                         <div className="text-sm text-gray-500">Client Name</div>
-                        <div className="text-lg font-semibold">{request.client.fullName}</div>
+                        <div className="text-lg font-semibold">{clientFullName}</div>
                       </div>
                       <div className="rounded-lg bg-gray-50 p-3">
                         <div className="text-sm text-gray-500">Email</div>

@@ -9,22 +9,16 @@ export const useUpdateRequest = (requestId: string) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: async (data: EditRequest) =>
       await clientAxios.patch('/requests', { outcome: data.outcome, status: data.status, id: requestId }),
     onSuccess: () => {
+      // Invalidate all requests queries (for main requests page)
       queryClient.invalidateQueries({ queryKey: ['requests'] });
-      // Atualizer sem fazer nova requests, mas precisa pedir pro Kawan retornar client também
-      // queryClient.setQueryData(['requests'], (oldData) => {
-      //   const newRequests = oldData?.requests.map((request) => {
-      //     if (request.id === requestId) {
-      //       return { ...response.data.updatedRequest };
-      //     }
-      //     return { ...request };
-      //   });
-
-      //   return { requests: newRequests };
-      // });
+      
+      // Invalidate all client queries (for client-specific pages like RequestsTab)
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      
       toast({
         duration: 2000,
         title: 'Request updated successfully',
@@ -44,5 +38,5 @@ export const useUpdateRequest = (requestId: string) => {
       });
     }
   });
-  return { mutate, isPending };
+  return { mutate, isPending, isSuccess };
 };
