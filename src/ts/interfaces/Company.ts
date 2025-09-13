@@ -1,3 +1,6 @@
+import { ReadingGroup } from './ReadingGroups';
+import { ConsumableGroup } from './ConsumableGroups';
+
 type Status = 'Active' | 'Inactive';
 
 export type CompanyMember = {
@@ -43,6 +46,8 @@ export interface Company {
   };
   imageUrl?: string | null;
   checklistTemplates: ChecklistTemplate[];
+  readingGroups?: ReadingGroup[];
+  consumableGroups?: ConsumableGroup[];
 }
 
 export type ChecklistTemplate = {

@@ -22,7 +22,7 @@ import {
   EmailPreferencesCard, 
   FilterMaintenanceCard, 
   CustomChecklistCard, 
-   
+  ReadingAndConsumableGroupsCard,
 } from './components';
 import {
   Dialog,
@@ -321,6 +321,9 @@ export default function Page({ company }: { company: Company }) {
             }}
             customizationsFieldsChanged={customizationsFieldsChanged}
           />
+
+          {/* Reading and Consumable Groups Card */}
+          <ReadingAndConsumableGroupsCard company={company} />
 
         </form>
       </Form>
