@@ -112,7 +112,7 @@ export function ConsumableGroupsManager({ companyId }: ConsumableGroupsManagerPr
         <div className="space-y-4">
           {consumableGroups.map((group) => (
             <Card key={group.id}>
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Button
@@ -130,11 +130,7 @@ export function ConsumableGroupsManager({ companyId }: ConsumableGroupsManagerPr
                     <div>
                       <CardTitle className="text-base flex items-center gap-2">
                         {group.name}
-                        {group.isDefault && (
-                          <Badge variant="secondary" className="text-xs">
-                            Default
-                          </Badge>
-                        )}
+                        
                         {!group.isActive && (
                           <Badge variant="outline" className="text-xs">
                             Inactive

@@ -16,13 +16,14 @@ import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
 import { useUpdateCompanyPreferences } from '@/hooks/react-query/companies/updatePreferences';
-import { useUpdateChecklistTemplate } from '@/hooks/react-query/checklist-templates/useUpdateChecklistTemplate';
+// ChecklistTemplate hook no longer needed as it's managed separately
 import { Company, } from '@/ts/interfaces/Company';
 import { 
   EmailPreferencesCard, 
   FilterMaintenanceCard, 
-  CustomChecklistCard, 
+  ChecklistTemplatesCard,
   ReadingAndConsumableGroupsCard,
+  ServiceTypesCard,
 } from './components';
 import {
   Dialog,
@@ -43,17 +44,12 @@ const schema = z.object({
   filterCleaningIntervalDays: z.coerce.number().min(1),
   filterReplacementIntervalDays: z.coerce.number().min(1),
   filterCleaningMustHavePhotos: z.boolean(),
-  sendFilterCleaningEmails: z.boolean(),
-  customChecklistItems: z.array(z.object({
-    id: z.string().optional(),
-    label: z.string(),
-    description: z.string().optional()
-  })).default([])
+  sendFilterCleaningEmails: z.boolean()
 });
 
 export default function Page({ company }: { company: Company }) {
   const { isPending: isEmailPending, mutate: updateEmailPrefs } = useUpdateCompanyPreferences(company.id);
-  const { isPending: isChecklistPending, mutate: updateChecklistTemplate } = useUpdateChecklistTemplate(company.checklistTemplates[0].id);
+  // Checklist templates are now managed separately
   const { isFreePlan } = useUserStore(
     useShallow((state) => ({
       isFreePlan: state.isFreePlan
@@ -81,8 +77,7 @@ export default function Page({ company }: { company: Company }) {
       filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28,
       filterReplacementIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterReplacementIntervalDays || 365,
       filterCleaningMustHavePhotos: company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false,
-      sendFilterCleaningEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false,
-      customChecklistItems: company.checklistTemplates?.[0]?.items || []
+      sendFilterCleaningEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false
     }
   });
 
@@ -127,7 +122,7 @@ export default function Page({ company }: { company: Company }) {
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [formData, setFormData] = useState<any>(null);
-  const [modalType, setModalType] = useState<'email' | 'filter' | 'customizations'>('email');
+  const [modalType, setModalType] = useState<'email' | 'filter'>('email');
 
   const filterDays = form.watch('filterCleaningIntervalDays');
 
@@ -154,10 +149,7 @@ export default function Page({ company }: { company: Company }) {
     });
   };
 
-  // Check if customization fields have changed
-  const customizationsFieldsChanged = () => {
-    return form.formState.isDirty && JSON.stringify(watchedValues.customChecklistItems) !== JSON.stringify(company.checklistTemplates?.[0]?.items || []);
-  };
+  // Customizations are now handled separately in ChecklistTemplatesCard
 
   // Helper function to get original values
   const getOriginalValue = (field: string) => {
@@ -233,22 +225,7 @@ export default function Page({ company }: { company: Company }) {
     updateEmailPrefs(updateData);
   };
 
-  // Handle customizations submission
-  const handleCustomizationsSubmit = (data: z.infer<typeof schema>) => {
-    const { customChecklistItems } = data;
-
-    // Update checklist template if it exists
-    if (company.checklistTemplates?.[0]?.id && customChecklistItems.length > 0) {
-      const checklistUpdateData = {
-        templateId: company.checklistTemplates[0].id,
-        items: customChecklistItems.map((item, index) => ({
-          label: item.label,
-          order: index + 1
-        }))
-      };
-      updateChecklistTemplate(checklistUpdateData);
-    }
-  };
+  // Checklist templates are now managed separately in ChecklistTemplatesCard
 
   const ccEmail = form.watch('ccEmail');
 
@@ -269,7 +246,7 @@ export default function Page({ company }: { company: Company }) {
 
 
 
-  if (isEmailPending || isChecklistPending) {
+  if (isEmailPending) {
     return <LoadingSpinner />;
   }
 
@@ -310,20 +287,14 @@ export default function Page({ company }: { company: Company }) {
             filterFieldsChanged={filterFieldsChanged}
           />
 
-          {/* Custom Checklist Card */}
-          <CustomChecklistCard
-            company={company}
-            form={form}
-            onCustomizationsSubmit={(data) => {
-              setFormData(data);
-              setModalType('customizations');
-              setShowConfirmModal(true);
-            }}
-            customizationsFieldsChanged={customizationsFieldsChanged}
-          />
+          {/* Checklist Templates Card */}
+          <ChecklistTemplatesCard company={company} />
 
           {/* Reading and Consumable Groups Card */}
           <ReadingAndConsumableGroupsCard company={company} />
+
+          {/* Service Types Card */}
+          <ServiceTypesCard company={company} />
 
         </form>
       </Form>
@@ -334,9 +305,7 @@ export default function Page({ company }: { company: Company }) {
             <DialogTitle className="text-xl mb-4">
               {modalType === 'email' 
                 ? 'Update Email Preferences' 
-                : modalType === 'filter' 
-                  ? 'Update Filter Maintenance' 
-                  : 'Save Customizations'
+                : 'Update Filter Maintenance'
               }
             </DialogTitle>
 
@@ -351,17 +320,15 @@ export default function Page({ company }: { company: Company }) {
                     <strong>Note:</strong> In order to send service emails, both the client preferences AND company preferences must be enabled.
                   </>
                 )
-                : modalType === 'filter'
-                  ? (
-                    <>
-                      This action will change the filter maintenance preferences for all NEW CLIENTS created from now on under this company. This includes cleaning intervals, replacement schedules, and photo requirements.
-                      <br /><br />
-                      Clients created before this change will need to be updated manually in their individual settings on the clients page or using the bulk actions page. The photo requirement to filter cleaning is the only preference that will be updated for all clients including the previous ones.
-                      <br /><br />
-                      <strong>Note:</strong> In order to send filter cleaning emails, both the client preferences AND company preferences must be enabled.
-                    </>
-                  )
-                  : 'This action will update the custom checklist template for all new service reports. Existing service reports will not be affected.'
+                : (
+                  <>
+                    This action will change the filter maintenance preferences for all NEW CLIENTS created from now on under this company. This includes cleaning intervals, replacement schedules, and photo requirements.
+                    <br /><br />
+                    Clients created before this change will need to be updated manually in their individual settings on the clients page or using the bulk actions page. The photo requirement to filter cleaning is the only preference that will be updated for all clients including the previous ones.
+                    <br /><br />
+                    <strong>Note:</strong> In order to send filter cleaning emails, both the client preferences AND company preferences must be enabled.
+                  </>
+                )
               }
             </DialogDescription>
           </DialogHeader>
@@ -375,10 +342,8 @@ export default function Page({ company }: { company: Company }) {
                 if (formData) {
                   if (modalType === 'email') {
                     handleEmailSubmit(formData);
-                  } else if (modalType === 'filter') {
-                    handleFilterSubmit(formData);
                   } else {
-                    handleCustomizationsSubmit(formData);
+                    handleFilterSubmit(formData);
                   }
                 }
                 setShowConfirmModal(false);

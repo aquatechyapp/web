@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useUpdateChecklistTemplate } from '@/hooks/react-query/checklist-templates/useUpdateChecklistTemplate';
-import { ChecklistTemplateItem, Company } from '@/ts/interfaces/Company';
+import { Company } from '@/ts/interfaces/Company';
+import { ChecklistTemplateItem } from '@/ts/interfaces/ChecklistTemplates';
 
 interface CustomChecklistCardProps {
   company: Company;
@@ -22,7 +23,7 @@ export function CustomChecklistCard({
   onCustomizationsSubmit, 
   customizationsFieldsChanged 
 }: CustomChecklistCardProps) {
-  const { isPending: isChecklistPending } = useUpdateChecklistTemplate(company.checklistTemplates[0].id);
+  const { isPending: isChecklistPending } = useUpdateChecklistTemplate();
 
   const [collapsed, setCollapsed] = useState(true);
   
@@ -32,10 +33,9 @@ export function CustomChecklistCard({
   );
   const [newChecklistItem, setNewChecklistItem] = useState<ChecklistTemplateItem>({
     id: '',
-    templateId: '',
     label: '',
     order: 0,
-    createdAt: new Date()
+    createdAt: new Date().toISOString()
   });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingText, setEditingText] = useState('');
@@ -51,18 +51,16 @@ export function CustomChecklistCard({
         id: Date.now().toString(),
         label: newChecklistItem.label.trim(),
         order: customChecklist.length + 1,
-        createdAt: new Date(),
-        templateId: company.checklistTemplates?.[0]?.id || ''
+        createdAt: new Date().toISOString()
       };
       const updatedList = [...customChecklist, newItem];
       setCustomChecklist(updatedList);
       form.setValue('customChecklistItems', updatedList, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
       setNewChecklistItem({
         id: '',
-        templateId: '',
         label: '',
         order: 0,
-        createdAt: new Date()
+        createdAt: new Date().toISOString()
       });
     }
   };

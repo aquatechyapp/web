@@ -2,50 +2,50 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Edit, Trash2, GripVertical } from 'lucide-react';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useGetReadingDefinitions } from '@/hooks/react-query/reading-definitions/useGetReadingDefinitions';
-import { useCreateReadingDefinition } from '@/hooks/react-query/reading-definitions/useCreateReadingDefinition';
-import { useUpdateReadingDefinition } from '@/hooks/react-query/reading-definitions/useUpdateReadingDefinition';
-import { useDeleteReadingDefinition } from '@/hooks/react-query/reading-definitions/useDeleteReadingDefinition';
+import { useGetConsumableDefinitions } from '@/hooks/react-query/consumable-definitions/useGetConsumableDefinitions';
+import { useCreateConsumableDefinition } from '@/hooks/react-query/consumable-definitions/useCreateConsumableDefinition';
+import { useUpdateConsumableDefinition } from '@/hooks/react-query/consumable-definitions/useUpdateConsumableDefinition';
 
-import { ReadingGroup, ReadingDefinition, CreateReadingDefinitionRequest, UpdateReadingDefinitionRequest } from '@/ts/interfaces/ReadingGroups';
-import { CreateReadingDefinitionDialog } from './CreateReadingDefinitionDialog';
-import { EditReadingDefinitionDialog } from './EditReadingDefinitionDialog';
+import { ConsumableGroup, ConsumableDefinition, CreateConsumableDefinitionRequest, UpdateConsumableDefinitionRequest } from '@/ts/interfaces/ConsumableGroups';
+import { CreateConsumableDefinitionDialog } from './CreateConsumableDefinitionDialog';
+import { EditConsumableDefinitionDialog } from './EditConsumableDefinitionDialog';
 import ConfirmActionDialog from '@/components/confirm-action-dialog';
+import { useDeleteConsumableDefinition } from '@/hooks/react-query/consumable-definitions/useDeleteConsumableDefinition';
 
-interface ReadingDefinitionsManagerProps {
-  readingGroup: ReadingGroup;
+interface ConsumableDefinitionsManagerProps {
+  consumableGroup: ConsumableGroup;
   companyId: string;
 }
 
-export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDefinitionsManagerProps) {
-  const [editingDefinition, setEditingDefinition] = useState<ReadingDefinition | null>(null);
-  const [deletingDefinition, setDeletingDefinition] = useState<ReadingDefinition | null>(null);
+export function ConsumableDefinitionsManager({ consumableGroup, companyId }: ConsumableDefinitionsManagerProps) {
+  const [editingDefinition, setEditingDefinition] = useState<ConsumableDefinition | null>(null);
+  const [deletingDefinition, setDeletingDefinition] = useState<ConsumableDefinition | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  const { data: readingDefinitionsData, isLoading } = useGetReadingDefinitions(readingGroup.id);
-  const { mutate: createReadingDefinition, isPending: isCreating } = useCreateReadingDefinition(companyId);
-  const { mutate: updateReadingDefinition, isPending: isUpdating } = useUpdateReadingDefinition(companyId);
-  const { mutate: deleteReadingDefinition, isPending: isDeleting } = useDeleteReadingDefinition(companyId);
+  const { data: consumableDefinitionsData, isLoading } = useGetConsumableDefinitions(consumableGroup.id);
+  const { mutate: createConsumableDefinition, isPending: isCreating } = useCreateConsumableDefinition(companyId);
+  const { mutate: updateConsumableDefinition, isPending: isUpdating } = useUpdateConsumableDefinition(companyId);
+  const { mutate: deleteConsumableDefinition, isPending: isDeleting } = useDeleteConsumableDefinition(companyId);
 
-  const readingDefinitions = readingDefinitionsData?.readingDefinitions || [];
+  const consumableDefinitions = consumableDefinitionsData?.consumableDefinitions || [];
 
-  const handleCreateDefinition = (data: CreateReadingDefinitionRequest) => {
-    createReadingDefinition({ readingGroupId: readingGroup.id, data }, {
+  const handleCreateDefinition = (data: CreateConsumableDefinitionRequest) => {
+    createConsumableDefinition({ consumableGroupId: consumableGroup.id, data }, {
       onSuccess: () => {
         setShowCreateDialog(false);
       }
     });
   };
 
-  const handleUpdateDefinition = (data: UpdateReadingDefinitionRequest) => {
+  const handleUpdateDefinition = (data: UpdateConsumableDefinitionRequest) => {
     if (editingDefinition) {
-      updateReadingDefinition({ readingDefinitionId: editingDefinition.id, data }, {
+      updateConsumableDefinition({ consumableDefinitionId: editingDefinition.id, data }, {
         onSuccess: () => {
           setEditingDefinition(null);
         }
@@ -55,7 +55,7 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
 
   const handleDeleteDefinition = async () => {
     if (deletingDefinition) {
-      deleteReadingDefinition(deletingDefinition.id, {
+      deleteConsumableDefinition(deletingDefinition.id, {
         onSuccess: () => {
           setDeletingDefinition(null);
         }
@@ -71,9 +71,9 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h4 className="text-md font-semibold">Reading Definitions</h4>
+          <h4 className="text-md font-semibold">Consumable Definitions</h4>
           <p className="text-sm text-muted-foreground">
-            Manage the specific readings that can be recorded for this group
+            Manage the specific consumables that can be recorded for this group
           </p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)} size="sm" disabled={isCreating}>
@@ -82,12 +82,12 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
         </Button>
       </div>
 
-      {readingDefinitions.length === 0 ? (
+      {consumableDefinitions.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-6">
-            <div className="text-muted-foreground mb-2">No reading definitions</div>
+            <div className="text-muted-foreground mb-2">No consumable definitions</div>
             <p className="text-sm text-muted-foreground text-center mb-4">
-              Create reading definitions to specify what readings can be recorded for this group.
+              Create consumable definitions to specify what consumables can be recorded for this group.
             </p>
             <Button onClick={() => setShowCreateDialog(true)} size="sm">
               <Plus className="h-4 w-4 mr-2" />
@@ -104,13 +104,13 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
                 <TableHead>Name</TableHead>
                 <TableHead>Unit</TableHead>
                 <TableHead>Range</TableHead>
-                <TableHead>Goal</TableHead>
+                <TableHead>Price/Unit</TableHead>
                 <TableHead>Required</TableHead>
                 <TableHead className="w-20">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {readingDefinitions.map((definition) => (
+              {consumableDefinitions.map((definition) => (
                 <TableRow key={definition.id}>
                   <TableCell>
                     <GripVertical className="h-4 w-4 text-muted-foreground" />
@@ -136,10 +136,10 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
                     )}
                   </TableCell>
                   <TableCell>
-                    {definition.goalValue !== undefined ? (
-                      <span className="text-sm">{definition.goalValue}</span>
+                    {definition.pricePerUnit !== undefined ? (
+                      <span className="text-sm">${definition.pricePerUnit.toFixed(2)}</span>
                     ) : (
-                      <span className="text-sm text-muted-foreground">No goal</span>
+                      <span className="text-sm text-muted-foreground">No price</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -177,7 +177,7 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
       )}
 
       {/* Create Dialog */}
-      <CreateReadingDefinitionDialog
+      <CreateConsumableDefinitionDialog
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
         onSubmit={handleCreateDefinition}
@@ -185,10 +185,10 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
       />
 
       {/* Edit Dialog */}
-      <EditReadingDefinitionDialog
+      <EditConsumableDefinitionDialog
         open={!!editingDefinition}
         onOpenChange={() => setEditingDefinition(null)}
-        readingDefinition={editingDefinition}
+        consumableDefinition={editingDefinition}
         onSubmit={handleUpdateDefinition}
         isLoading={isUpdating}
       />
@@ -197,7 +197,7 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
       <ConfirmActionDialog
         open={!!deletingDefinition}
         onOpenChange={() => setDeletingDefinition(null)}
-        title="Delete Reading Definition"
+        title="Delete Consumable Definition"
         description={`Are you sure you want to delete "${deletingDefinition?.name}"? This action cannot be undone.`}
         onConfirm={handleDeleteDefinition}
         variant="destructive"
