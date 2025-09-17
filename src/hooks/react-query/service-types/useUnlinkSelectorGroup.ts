@@ -1,5 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+
+import { toast } from '@/components/ui/use-toast';
 import { clientAxios } from '@/lib/clientAxios';
+
+type ErrorResponse = {
+  message: string;
+};
 
 interface UnlinkSelectorGroupParams {
   serviceTypeId: string;
@@ -15,7 +22,18 @@ export function useUnlinkSelectorGroup() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['serviceTypes'] });
+      queryClient.invalidateQueries({ queryKey: ['service-types'] });
+      toast({
+        title: 'Selector group unlinked successfully',
+        variant: 'success'
+      });
     },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      toast({
+        title: 'Error unlinking selector group',
+        description: error.response?.data?.message || 'An error occurred',
+        variant: 'error'
+      });
+    }
   });
 }
