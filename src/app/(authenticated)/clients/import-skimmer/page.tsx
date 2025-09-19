@@ -377,8 +377,8 @@ export default function ImportFromSkimmer() {
             Export your customer data from Skimmer:
             <ul className="mt-2 list-disc pl-4 text-slate-600">
               <li>Open your Skimmer application</li>
-              <li>Go to your customer list or database</li>
-              <li>Export the data as an Excel file (.xlsx format)</li>
+              <li>Go to your settings and click on "Export"</li>
+              <li>The first option is "Export Customers". Click on "Export to Excel" and export the data as an Excel file (.xlsx format)</li>
               <li>Make sure the export includes all customer and location fields</li>
             </ul>
           </li>
@@ -387,7 +387,7 @@ export default function ImportFromSkimmer() {
             <ul className="mt-2 list-disc pl-4 text-slate-600">
               <li>Ensure the file contains the standard Skimmer columns (FullName, Email1, BillingAddress, etc.)</li>
               <li>Keep the original column headers from Skimmer</li>
-              <li>Save the file in Excel (.xlsx) format</li>
+              <li>Keep the file in Excel (.xlsx) format</li>
             </ul>
           </li>
           <li>
@@ -409,8 +409,9 @@ export default function ImportFromSkimmer() {
               <li>Create a pool for each client using location data</li>
               <li>Map Skimmer fields to Aquatechy format</li>
               <li>Set animal danger based on DogsName field</li>
-              <li>Use the Rate field as monthly payment</li>
               <li>Convert phone numbers to the correct format</li>
+              <li>It will create a client for each service location from Skimmer, so you'll have to check each client if they are not duplicates.</li>
+              <li>You'll have to create assignments for each client after the import, as Skimmer doesn't bring it on the import.</li>
             </ul>
           </Typography>
         </div>
