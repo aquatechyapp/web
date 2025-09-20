@@ -220,8 +220,8 @@ export default function ImportFromSkimmer() {
 
   // Helper function to get the best email from Skimmer data
   const getBestEmail = (row: SkimmerRow): string => {
-    const emails = [row.Email1, row.Email2, row.Email3, row.Email4].filter(Boolean);
-    return emails[0] || '';
+
+    return row.Email1;
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
