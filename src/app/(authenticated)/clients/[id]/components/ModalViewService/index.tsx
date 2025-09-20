@@ -156,7 +156,7 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
         description: 'Legacy chemicals spent',
         consumables: Object.entries(service.chemicalsSpent).map(([key, value]) => ({
           consumableDefinitionId: key,
-          value: value,
+          quantity: value,
           consumableDefinition: {
             name: key.charAt(0).toUpperCase() + key.slice(1),
             unit: key === 'liquidChlorine' || key === 'muriaticAcid' ? 'gallon' : 
@@ -370,17 +370,21 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
                           </CardHeader>
                           <CardContent className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                             {group.consumables.length > 0 ? (
-                              group.consumables.map((consumable: any, consumableIndex: number) => (
-                                <div key={consumableIndex} className="rounded-lg bg-gray-50 p-3">
-                                  <div className="text-sm text-gray-500">
-                                    {consumable.consumableDefinition?.name || consumable.consumableDefinitionId}
-                                    {consumable.consumableDefinition?.unit && ` (${consumable.consumableDefinition.unit})`}
+                              group.consumables.map((consumable: any, consumableIndex: number) => {
+                                // Find the definition from the group's consumableDefinitions
+                                const definition = group.consumableDefinitions?.find((def: any) => def.id === consumable.consumableDefinitionId);
+                                return (
+                                  <div key={consumableIndex} className="rounded-lg bg-gray-50 p-3">
+                                    <div className="text-sm text-gray-500">
+                                      {consumable.consumableDefinition?.name || definition?.name || consumable.consumableDefinitionId}
+                                      {(consumable.consumableDefinition?.unit || definition?.unit) && ` (${consumable.consumableDefinition?.unit || definition?.unit})`}
+                                    </div>
+                                    <div className="text-lg font-semibold">
+                                      {consumable.quantity ? `${consumable.quantity} ${consumable.consumableDefinition?.unit || definition?.unit || ''}` : 'N/A'}
+                                    </div>
                                   </div>
-                                  <div className="text-lg font-semibold">
-                                    {consumable.value ? `${consumable.value} ${consumable.consumableDefinition?.unit || ''}` : 'N/A'}
-                                  </div>
-                                </div>
-                              ))
+                                );
+                              })
                             ) : (
                               // Fallback for legacy structure
                               group.consumableDefinitions?.map((def: any, defIndex: number) => {
@@ -391,7 +395,7 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
                                       {def.name} {def.unit && `(${def.unit})`}
                                     </div>
                                     <div className="text-lg font-semibold">
-                                      {consumable?.value ? `${consumable.value} ${def.unit || ''}` : 'N/A'}
+                                      {consumable?.quantity ? `${consumable.quantity} ${def.unit || ''}` : 'N/A'}
                                     </div>
                                   </div>
                                 );

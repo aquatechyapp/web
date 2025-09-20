@@ -169,7 +169,7 @@ export interface Consumable {
   id: string;
   serviceId: string;
   consumableDefinitionId: string;
-  value: number | null;
+  quantity: number | null;
   consumableDefinition?: ConsumableDefinition;
 }
 
