@@ -260,7 +260,7 @@ export default function ImportFromSkimmer() {
           const lastName = row.LastName || '';
           
           // Use DisplayAsCompany or CompanyName for company field
-          const clientCompany = row.DisplayAsCompany || row.CompanyName || '';
+          const clientCompany = row.CompanyName || '';
 
           // Convert states
           const clientState = convertStateToAbbreviation(row.BillingState || '');
