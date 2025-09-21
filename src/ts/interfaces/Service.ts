@@ -138,11 +138,9 @@ export interface ReadingGroup {
 }
 
 export interface Reading {
-  id: string;
-  serviceId: string;
   readingDefinitionId: string;
+  notes: string | null;
   value: number | null;
-  readingDefinition?: ReadingDefinition;
 }
 
 export interface ConsumableDefinition {
@@ -166,11 +164,8 @@ export interface ConsumableGroup {
 }
 
 export interface Consumable {
-  id: string;
-  serviceId: string;
   consumableDefinitionId: string;
   quantity: number | null;
-  consumableDefinition?: ConsumableDefinition;
 }
 
 export interface ChecklistItem {

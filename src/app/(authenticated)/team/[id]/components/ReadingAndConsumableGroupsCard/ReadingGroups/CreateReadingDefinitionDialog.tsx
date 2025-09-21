@@ -16,14 +16,14 @@ import { CreateReadingDefinitionRequest } from '@/ts/interfaces/ReadingGroups';
 const createReadingDefinitionSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
   unit: z.string().min(1, 'Unit is required').max(20, 'Unit must be less than 20 characters'),
-  minValue: z.coerce.number().optional(),
-  maxValue: z.coerce.number().optional(),
+  minValue: z.coerce.number(),
+  maxValue: z.coerce.number(),
   goalValue: z.coerce.number().optional(),
-  step: z.coerce.number().positive('Step must be positive').optional(),
+  step: z.coerce.number().positive('Step must be positive'),
   isRequired: z.boolean().default(false),
   description: z.string().max(500, 'Description must be less than 500 characters').optional()
 }).refine((data) => {
-  if (data.minValue !== undefined && data.maxValue !== undefined) {
+  if (data.minValue !== 0 && data.maxValue !== 0) {
     return data.minValue <= data.maxValue;
   }
   return true;
@@ -45,10 +45,10 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
     defaultValues: {
       name: '',
       unit: '',
-      minValue: undefined,
-      maxValue: undefined,
+      minValue: 0,
+      maxValue: 0,
       goalValue: undefined,
-      step: undefined,
+      step: 0,
       isRequired: false,
       description: ''
     }
@@ -60,10 +60,10 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
       unit: data.unit,
       description: data.description || undefined,
       isRequired: data.isRequired,
-      ...(data.minValue !== undefined && { minValue: data.minValue }),
-      ...(data.maxValue !== undefined && { maxValue: data.maxValue }),
+      ...(data.minValue !== 0 && { minValue: data.minValue }),
+      ...(data.maxValue !== 0 && { maxValue: data.maxValue }),
       ...(data.goalValue !== undefined && { goalValue: data.goalValue }),
-      ...(data.step !== undefined && { step: data.step })
+      ...(data.step !== 0 && { step: data.step })
     };
     onSubmit(submitData);
   };
@@ -95,7 +95,7 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                     <FormControl>
                       <Input placeholder="e.g., Chlorine" {...field} />
                     </FormControl>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -109,7 +109,7 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                     <FormControl>
                       <Input placeholder="e.g., ppm" {...field} />
                     </FormControl>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -129,7 +129,7 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  {/* <FormMessage /> */} 
                 </FormItem>
               )}
             />
@@ -149,7 +149,7 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -168,7 +168,7 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -189,7 +189,7 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />
@@ -208,7 +208,7 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {/* <FormMessage /> */}
                   </FormItem>
                 )}
               />

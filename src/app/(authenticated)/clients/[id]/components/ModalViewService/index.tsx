@@ -318,15 +318,19 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
                           </CardHeader>
                           <CardContent className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                             {group.readings.length > 0 ? (
-                              group.readings.map((reading: any, readingIndex: number) => (
-                                <div key={readingIndex} className="rounded-lg bg-gray-50 p-3">
-                                  <div className="text-sm text-gray-500">
-                                    {reading.readingDefinition?.name || reading.readingDefinitionId} 
-                                    {reading.readingDefinition?.unit && ` (${reading.readingDefinition.unit})`}
+                              group.readings.map((reading: any, readingIndex: number) => {
+                                // Find the reading definition from the group's readingDefinitions
+                                const readingDefinition = group.readingDefinitions.find((def: any) => def.id === reading.readingDefinitionId);
+                                return (
+                                  <div key={readingIndex} className="rounded-lg bg-gray-50 p-3">
+                                    <div className="text-sm text-gray-500">
+                                      {readingDefinition?.name || reading.readingDefinitionId} 
+                                      {readingDefinition?.unit && ` (${readingDefinition.unit})`}
+                                    </div>
+                                    <div className="text-lg font-semibold">{reading.value || 'N/A'}</div>
                                   </div>
-                                  <div className="text-lg font-semibold">{reading.value || 'N/A'}</div>
-                                </div>
-                              ))
+                                );
+                              })
                             ) : (
                               // Fallback for legacy structure
                               group.readingDefinitions?.map((def: any, defIndex: number) => {
@@ -371,16 +375,16 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
                           <CardContent className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                             {group.consumables.length > 0 ? (
                               group.consumables.map((consumable: any, consumableIndex: number) => {
-                                // Find the definition from the group's consumableDefinitions
-                                const definition = group.consumableDefinitions?.find((def: any) => def.id === consumable.consumableDefinitionId);
+                                // Find the consumable definition from the group's consumableDefinitions
+                                const consumableDefinition = group.consumableDefinitions.find((def: any) => def.id === consumable.consumableDefinitionId);
                                 return (
                                   <div key={consumableIndex} className="rounded-lg bg-gray-50 p-3">
                                     <div className="text-sm text-gray-500">
-                                      {consumable.consumableDefinition?.name || definition?.name || consumable.consumableDefinitionId}
-                                      {(consumable.consumableDefinition?.unit || definition?.unit) && ` (${consumable.consumableDefinition?.unit || definition?.unit})`}
+                                      {consumableDefinition?.name || consumable.consumableDefinitionId}
+                                      {consumableDefinition?.unit && ` (${consumableDefinition.unit})`}
                                     </div>
                                     <div className="text-lg font-semibold">
-                                      {consumable.quantity ? `${consumable.quantity} ${consumable.consumableDefinition?.unit || definition?.unit || ''}` : 'N/A'}
+                                      {consumable.quantity ? `${consumable.quantity} ${consumableDefinition?.unit || ''}` : 'N/A'}
                                     </div>
                                   </div>
                                 );

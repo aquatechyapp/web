@@ -75,3 +75,45 @@ export interface ReadingGroupResponse {
 export interface ReadingDefinitionResponse {
   readingDefinition: ReadingDefinition;
 }
+
+// Complete CRUD interfaces for the new API
+export interface CrudReadingGroupRequest {
+  name?: string;
+  description?: string;
+  isActive?: boolean;
+  readingDefinitionsUpdates?: BatchReadingDefinitionUpdate[];
+  readingDefinitionsCreates?: BatchReadingDefinitionCreate[];
+  readingDefinitionsDeletes?: string[];
+}
+
+export interface BatchReadingDefinitionUpdate {
+  readingDefinitionId: string;
+  name?: string;
+  unit?: string;
+  minValue?: number;
+  maxValue?: number;
+  goalValue?: number;
+  step?: number;
+  isRequired?: boolean;
+  description?: string;
+  order?: number;
+}
+
+export interface BatchReadingDefinitionCreate {
+  name: string;
+  unit: string;
+  minValue?: number;
+  maxValue?: number;
+  goalValue?: number;
+  step?: number;
+  isRequired?: boolean;
+  description?: string;
+  order?: number;
+}
+
+export interface CrudReadingGroupResponse {
+  readingGroup?: ReadingGroup;
+  updatedReadingDefinitions?: ReadingDefinition[];
+  createdReadingDefinitions?: ReadingDefinition[];
+  deletedReadingDefinitionIds?: string[];
+}
