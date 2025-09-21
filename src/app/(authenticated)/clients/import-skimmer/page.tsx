@@ -288,9 +288,9 @@ export default function ImportFromSkimmer() {
             enterSide: 'Not defined',
             lockerCode: row.GateCode || row.LocationCode || '',
             poolType: 'Other' as PoolType, // Default to Other since Skimmer doesn't specify
-            poolNotes: row.LocationNotes || '',
+            poolNotes: row.CustomerNotes || row.LocationNotes || '',
             clientType: clientCompany ? 'Commercial' : 'Residential',
-            clientNotes: row.CustomerNotes || '',
+            clientNotes: row.CustomerNotes || row.LocationNotes || '',
             customerCode: row.CustomerCode || '',
             timezone: STATE_TIMEZONE_MAP[clientState.toUpperCase()] || IanaTimeZones.NY,
             monthlyPayment,
