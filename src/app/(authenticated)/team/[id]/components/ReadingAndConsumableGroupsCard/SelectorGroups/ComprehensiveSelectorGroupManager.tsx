@@ -9,7 +9,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Plus, Edit, Trash2, Settings, GripVertical, Save, X } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -194,6 +193,7 @@ export function ComprehensiveSelectorGroupManager({
   const [showCreateDefinitionDialog, setShowCreateDefinitionDialog] = useState(false);
   const [showCreateOptionDialog, setShowCreateOptionDialog] = useState(false);
   const [showSaveConfirmationDialog, setShowSaveConfirmationDialog] = useState(false);
+  const [showDeleteConfirmationDialog, setShowDeleteConfirmationDialog] = useState(false);
   
   const [localDefinitions, setLocalDefinitions] = useState<(SelectorDefinition & { localOptions?: SelectorOption[] })[]>([]);
   const [localGroup, setLocalGroup] = useState<SelectorGroup | null>(null);
@@ -647,6 +647,23 @@ export function ComprehensiveSelectorGroupManager({
     });
   };
 
+  const handleDeleteGroup = () => {
+    if (selectorGroup) {
+      const batchData: CrudSelectorGroupRequest = {
+        deleteGroup: true
+      };
+
+      batchUpdateSelectorGroup({
+        selectorGroupId: selectorGroup.id,
+        data: batchData
+      }, {
+        onSuccess: () => {
+          onOpenChange(false);
+        }
+      });
+    }
+  };
+
   if (!selectorGroup || !localGroup) {
     return null;
   }
@@ -670,7 +687,18 @@ export function ComprehensiveSelectorGroupManager({
           {/* Group Settings */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Group Settings</CardTitle>
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-lg">Group Settings</CardTitle>
+                <Button
+                  onClick={() => setShowDeleteConfirmationDialog(true)}
+                  variant="destructive"
+                  size="sm"
+                  disabled={isBulkUpdating}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Group
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -691,15 +719,6 @@ export function ComprehensiveSelectorGroupManager({
                   disabled={isBulkUpdating}
                   rows={2}
                 />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="groupActive"
-                  checked={localGroup.isActive}
-                  onCheckedChange={(checked) => handleGroupUpdate('isActive', checked)}
-                  disabled={isBulkUpdating}
-                />
-                <Label htmlFor="groupActive">Active</Label>
               </div>
             </CardContent>
           </Card>
@@ -941,6 +960,20 @@ export function ComprehensiveSelectorGroupManager({
           }}
           confirmText="Save All Changes"
           variant="default"
+        />
+
+        {/* Delete Group Confirmation Dialog */}
+        <ConfirmActionDialog
+          open={showDeleteConfirmationDialog}
+          onOpenChange={setShowDeleteConfirmationDialog}
+          title="Delete Selector Group"
+          description={`Are you sure you want to delete "${localGroup?.name}"? This action will permanently delete the entire selector group including all questions and options. This will update all open services scheduled from today onwards, expire all user sessions (users will need to log in again), and cannot be undone.`}
+          onConfirm={async () => {
+            setShowDeleteConfirmationDialog(false);
+            handleDeleteGroup();
+          }}
+          confirmText="Delete Group"
+          variant="destructive"
         />
       </DialogContent>
     </Dialog>

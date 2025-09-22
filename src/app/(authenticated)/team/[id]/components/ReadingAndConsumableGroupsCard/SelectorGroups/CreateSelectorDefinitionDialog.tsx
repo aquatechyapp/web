@@ -16,7 +16,6 @@ import { CreateSelectorDefinitionRequest } from '@/ts/interfaces/SelectorGroups'
 const createSelectorDefinitionSchema = z.object({
   question: z.string().min(1, 'Question is required').max(200, 'Question must be less than 200 characters'),
   isRequired: z.boolean(),
-  order: z.number().min(0, 'Order must be 0 or greater'),
 });
 
 type CreateSelectorDefinitionFormData = z.infer<typeof createSelectorDefinitionSchema>;
@@ -41,7 +40,6 @@ export function CreateSelectorDefinitionDialog({
     defaultValues: {
       question: '',
       isRequired: false,
-      order: 0,
     },
   });
 
@@ -51,7 +49,6 @@ export function CreateSelectorDefinitionDialog({
       form.reset({
         question: '',
         isRequired: false,
-        order: 0,
       });
     }
   }, [open, form]);
@@ -60,7 +57,6 @@ export function CreateSelectorDefinitionDialog({
     onSubmit({
       question: data.question,
       isRequired: data.isRequired,
-      order: data.order,
     });
   };
 
@@ -83,25 +79,6 @@ export function CreateSelectorDefinitionDialog({
                   <FormLabel>Question *</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., What is the pool condition?" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="order"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Display Order</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min="0"
-                      placeholder="0"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

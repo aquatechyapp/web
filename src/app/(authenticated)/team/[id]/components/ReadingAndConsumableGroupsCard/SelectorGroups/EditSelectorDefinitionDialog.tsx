@@ -16,7 +16,6 @@ import { SelectorDefinition, UpdateSelectorDefinitionRequest } from '@/ts/interf
 const updateSelectorDefinitionSchema = z.object({
   question: z.string().min(1, 'Question is required').max(200, 'Question must be less than 200 characters'),
   isRequired: z.boolean(),
-  order: z.number().min(0, 'Order must be 0 or greater'),
 });
 
 type UpdateSelectorDefinitionFormData = z.infer<typeof updateSelectorDefinitionSchema>;
@@ -43,7 +42,6 @@ export function EditSelectorDefinitionDialog({
     defaultValues: {
       question: selectorDefinition?.question || '',
       isRequired: selectorDefinition?.isRequired ?? false,
-      order: selectorDefinition?.order || 0,
     },
   });
 
@@ -53,7 +51,6 @@ export function EditSelectorDefinitionDialog({
       form.reset({
         question: selectorDefinition.question,
         isRequired: selectorDefinition.isRequired,
-        order: selectorDefinition.order,
       });
     }
   }, [selectorDefinition, form]);
@@ -62,7 +59,6 @@ export function EditSelectorDefinitionDialog({
     onSubmit({
       question: data.question,
       isRequired: data.isRequired,
-      order: data.order,
     });
   };
 
@@ -89,25 +85,6 @@ export function EditSelectorDefinitionDialog({
                   <FormLabel>Question *</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., What is the pool condition?" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="order"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Display Order</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min="0"
-                      placeholder="0"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

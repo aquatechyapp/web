@@ -100,7 +100,7 @@ export interface CreateSelectorDefinitionRequest {
   question: string;
   description?: string;
   isRequired: boolean;
-  order: number;
+  order?: number;
 }
 
 export interface UpdateSelectorDefinitionRequest {
@@ -144,6 +144,7 @@ export interface CrudSelectorGroupRequest {
   name?: string;
   description?: string;
   isActive?: boolean;
+  deleteGroup?: boolean;
   selectorDefinitionsUpdates?: BatchSelectorDefinitionUpdate[];
   selectorDefinitionsCreates?: BatchSelectorDefinitionCreate[];
   selectorDefinitionsDeletes?: string[];
