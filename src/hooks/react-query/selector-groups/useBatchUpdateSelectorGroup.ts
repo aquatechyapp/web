@@ -26,7 +26,8 @@ export const useBatchUpdateSelectorGroup = (companyId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['selector-definitions'] });
       queryClient.invalidateQueries({ queryKey: ['selector-options'] });
-      queryClient.invalidateQueries({ queryKey: ['selector-groups', companyId] });
+      queryClient.invalidateQueries({ queryKey: ['selectorGroups', companyId] });
+      queryClient.invalidateQueries({ queryKey: ['selectorGroups'] });
       queryClient.invalidateQueries({ queryKey: ['companies'] });
       toast({
         title: 'Selector definitions updated successfully',

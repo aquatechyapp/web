@@ -227,6 +227,7 @@ export function ComprehensiveSelectorGroupManager({
     if (!open) {
       setLocalDefinitions([]);
       setLocalGroup(null);
+      setManagingOptionsForDefinition(null);
       setPendingChanges({
         groupUpdates: {},
         definitionUpdates: new Map(),
