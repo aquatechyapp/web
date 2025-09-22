@@ -85,8 +85,8 @@ export function CreateSelectorOptionDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create Selector Option</DialogTitle>
-          <DialogDescription>
-            Add a new option for: "{selectorDefinition.question}"
+        <DialogDescription>
+          Add a new option for: "{selectorDefinition?.question}"
             <br />
             <span className="text-xs text-muted-foreground">
               Enter the display text and the value will be auto-generated.

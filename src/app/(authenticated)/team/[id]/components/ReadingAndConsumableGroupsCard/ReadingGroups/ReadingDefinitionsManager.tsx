@@ -41,18 +41,20 @@ interface DraggableReadingDefinitionRowProps {
   definition: ReadingDefinition;
   onEdit: (definition: ReadingDefinition) => void;
   onDelete: (definition: ReadingDefinition) => void;
-  hasPendingChanges: boolean;
-  isDeleted: boolean;
-  isNew: boolean;
+  isUpdating: boolean;
+  pendingChanges: {
+    updates: Map<string, Partial<ReadingDefinition>>;
+    deletes: Set<string>;
+    creates: BatchReadingDefinitionCreate[];
+  };
 }
 
 function DraggableReadingDefinitionRow({ 
   definition, 
   onEdit, 
   onDelete, 
-  hasPendingChanges,
-  isDeleted,
-  isNew
+  isUpdating,
+  pendingChanges
 }: DraggableReadingDefinitionRowProps) {
   const {
     attributes,
@@ -69,45 +71,45 @@ function DraggableReadingDefinitionRow({
     opacity: isDragging ? 0.5 : 1,
   };
 
+  // Determine row styling based on pending changes
+  let rowClassName = '';
+  if (definition.id.startsWith('temp-')) {
+    rowClassName = 'bg-green-50'; // New definition
+  } else if (pendingChanges.updates.has(definition.id)) {
+    rowClassName = 'bg-blue-50'; // Modified definition
+  } else if (pendingChanges.deletes.has(definition.id)) {
+    rowClassName = 'bg-red-50'; // Deleted definition
+  }
+
   return (
-    <TableRow 
-      ref={setNodeRef} 
-      style={style}
-      className={`${isDeleted ? 'opacity-50 bg-red-50' : ''} ${isNew ? 'bg-green-50' : ''} ${hasPendingChanges && !isNew ? 'bg-blue-50' : ''}`}
-    >
-      <TableCell>
-        <div
-          className="cursor-grab active:cursor-grabbing"
-          {...attributes}
-          {...listeners}
-        >
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
-        </div>
+    <TableRow ref={setNodeRef} style={style} className={`${isDragging ? 'z-50' : ''} ${rowClassName}`}>
+      <TableCell {...attributes} {...listeners}>
+        <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
       </TableCell>
       <TableCell>
-        <div className="flex items-center gap-2">
-          <div>
+        <div>
+          <div className="flex items-center gap-2">
             <div className="font-medium">{definition.name}</div>
-            {definition.description && (
-              <div className="text-sm text-muted-foreground">
-                {definition.description}
-              </div>
+            {definition.id.startsWith('temp-') && (
+              <Badge variant="default" className="bg-green-600 text-white text-xs">
+                New
+              </Badge>
+            )}
+            {pendingChanges.updates.has(definition.id) && !definition.id.startsWith('temp-') && (
+              <Badge variant="default" className="bg-blue-600 text-white text-xs">
+                Modified
+              </Badge>
+            )}
+            {pendingChanges.deletes.has(definition.id) && (
+              <Badge variant="destructive" className="text-xs">
+                Deleted
+              </Badge>
             )}
           </div>
-          {isNew && (
-            <Badge variant="outline" className="text-xs bg-green-100 text-green-700">
-              New
-            </Badge>
-          )}
-          {hasPendingChanges && !isNew && (
-            <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700">
-              Modified
-            </Badge>
-          )}
-          {isDeleted && (
-            <Badge variant="destructive" className="text-xs">
-              Deleted
-            </Badge>
+          {definition.description && (
+            <div className="text-sm text-muted-foreground">
+              {definition.description}
+            </div>
           )}
         </div>
       </TableCell>
@@ -139,7 +141,7 @@ function DraggableReadingDefinitionRow({
             variant="ghost"
             size="sm"
             onClick={() => onEdit(definition)}
-            disabled={isDeleted}
+            disabled={isUpdating}
             className="h-8 w-8 p-0"
           >
             <Edit className="h-3 w-3" />
@@ -148,7 +150,7 @@ function DraggableReadingDefinitionRow({
             variant="ghost"
             size="sm"
             onClick={() => onDelete(definition)}
-            disabled={isDeleted}
+            disabled={isUpdating}
             className="h-8 w-8 p-0 text-destructive hover:text-destructive"
           >
             <Trash2 className="h-3 w-3" />
@@ -495,26 +497,32 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
       <div className="flex justify-between items-center">
         <div>
           <h4 className="text-md font-semibold">Reading Definitions</h4>
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Manage the specific readings that can be recorded for this group. Drag and drop to reorder.
-            </p>
-            {hasPendingChanges() && (
-              <div className="mt-2 text-sm">
-                <span className="text-orange-600 font-medium">
-                  {pendingChanges.creates.length} new, {pendingChanges.updates.size} modified, {pendingChanges.deletes.size} deleted
-                </span>
-                
-              </div>
-            )}
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Manage the specific readings that can be recorded for this group
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          {hasPendingChanges() && (
-            <>
-              <Button 
-                onClick={handleDiscardChanges} 
-                size="sm" 
+        <Button onClick={() => setShowCreateDialog(true)} size="sm" disabled={isBulkUpdating}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Definition
+        </Button>
+      </div>
+
+      {/* Pending Changes Summary */}
+      {hasPendingChanges() && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-amber-800">
+                Pending Changes:
+              </span>
+              <span className="text-sm text-amber-700">
+                {pendingChanges.creates.length} new, {pendingChanges.updates.size} modified, {pendingChanges.deletes.size} deleted
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleDiscardChanges}
+                size="sm"
                 variant="outline"
                 disabled={isBulkUpdating}
               >
@@ -529,14 +537,10 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
                 <Save className="h-4 w-4 mr-2" />
                 {isBulkUpdating ? 'Saving...' : 'Save All'}
               </Button>
-            </>
-          )}
-          <Button onClick={() => setShowCreateDialog(true)} size="sm" disabled={isBulkUpdating}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Definition
-          </Button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       {readingDefinitions.length === 0 ? (
         <Card>
@@ -576,19 +580,14 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
               >
                 <TableBody>
                   {readingDefinitions.map((definition) => {
-                    const hasPendingUpdates = pendingChanges.updates.has(definition.id);
-                    const isDeleted = pendingChanges.deletes.has(definition.id);
-                    const isNew = definition.id.startsWith('temp-'); // Check if it's a temporary ID for new definitions
-                    
                     return (
                       <DraggableReadingDefinitionRow
                         key={definition.id}
                         definition={definition}
                         onEdit={setEditingDefinition}
                         onDelete={handleDeleteDefinition}
-                        hasPendingChanges={hasPendingUpdates}
-                        isDeleted={isDeleted}
-                        isNew={isNew}
+                        isUpdating={isBulkUpdating}
+                        pendingChanges={pendingChanges}
                       />
                     );
                   })}

@@ -118,7 +118,7 @@ export function PhotoGroupsManager({ companyId }: PhotoGroupsManagerProps) {
         <div className="space-y-4">
           {photoGroups.map((photoGroup) => (
             <Card key={photoGroup.id}>
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Button

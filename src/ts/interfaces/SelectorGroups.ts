@@ -138,3 +138,56 @@ export interface SelectorOptionsResponse {
 export interface SelectorOptionResponse {
   selectorOption: SelectorOption;
 }
+
+// CRUD Interfaces for Batch Operations
+export interface CrudSelectorGroupRequest {
+  name?: string;
+  description?: string;
+  isActive?: boolean;
+  selectorDefinitionsUpdates?: BatchSelectorDefinitionUpdate[];
+  selectorDefinitionsCreates?: BatchSelectorDefinitionCreate[];
+  selectorDefinitionsDeletes?: string[];
+  selectorOptionsUpdates?: BatchSelectorOptionUpdate[];
+  selectorOptionsCreates?: BatchSelectorOptionCreate[];
+  selectorOptionsDeletes?: string[];
+}
+
+export interface BatchSelectorDefinitionUpdate {
+  selectorDefinitionId: string;
+  question?: string;
+  description?: string | null;
+  isRequired?: boolean;
+  order?: number;
+}
+
+export interface BatchSelectorDefinitionCreate {
+  question: string;
+  description?: string;
+  isRequired: boolean;
+  order?: number;
+  tempId?: string;
+}
+
+export interface BatchSelectorOptionUpdate {
+  selectorOptionId: string;
+  text?: string;
+  value?: string;
+  order?: number;
+}
+
+export interface BatchSelectorOptionCreate {
+  selectorDefinitionId: string;
+  text: string;
+  value: string;
+  order?: number;
+}
+
+export interface CrudSelectorGroupResponse {
+  selectorGroup?: SelectorGroup;
+  updatedSelectorDefinitions?: SelectorDefinition[];
+  createdSelectorDefinitions?: SelectorDefinition[];
+  deletedSelectorDefinitionIds?: string[];
+  updatedSelectorOptions?: SelectorOption[];
+  createdSelectorOptions?: SelectorOption[];
+  deletedSelectorOptionIds?: string[];
+}

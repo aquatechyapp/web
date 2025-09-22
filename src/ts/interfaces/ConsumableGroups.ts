@@ -75,3 +75,45 @@ export interface ConsumableGroupResponse {
 export interface ConsumableDefinitionResponse {
   consumableDefinition: ConsumableDefinition;
 }
+
+// CRUD Interfaces for Batch Operations
+export interface CrudConsumableGroupRequest {
+  name?: string;
+  description?: string;
+  isActive?: boolean;
+  consumableDefinitionsUpdates?: BatchConsumableDefinitionUpdate[];
+  consumableDefinitionsCreates?: BatchConsumableDefinitionCreate[];
+  consumableDefinitionsDeletes?: string[];
+}
+
+export interface BatchConsumableDefinitionUpdate {
+  consumableDefinitionId: string;
+  name?: string;
+  unit?: string;
+  minValue?: number;
+  maxValue?: number;
+  pricePerUnit?: number;
+  step?: number;
+  isRequired?: boolean;
+  description?: string;
+  order?: number;
+}
+
+export interface BatchConsumableDefinitionCreate {
+  name: string;
+  unit: string;
+  minValue?: number;
+  maxValue?: number;
+  pricePerUnit?: number;
+  step?: number;
+  isRequired?: boolean;
+  description?: string;
+  order?: number;
+}
+
+export interface CrudConsumableGroupResponse {
+  consumableGroup?: ConsumableGroup;
+  updatedConsumableDefinitions?: ConsumableDefinition[];
+  createdConsumableDefinitions?: ConsumableDefinition[];
+  deletedConsumableDefinitionIds?: string[];
+}

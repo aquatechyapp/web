@@ -72,3 +72,35 @@ export interface ServicePhoto {
   createdAt: string;
   photoDefinition: PhotoDefinition;
 }
+
+// CRUD interfaces for batch operations
+export interface CrudPhotoGroupRequest {
+  name?: string;
+  description?: string;
+  isActive?: boolean;
+  photoDefinitionsUpdates?: BatchPhotoDefinitionUpdate[];
+  photoDefinitionsCreates?: BatchPhotoDefinitionCreate[];
+  photoDefinitionsDeletes?: string[];
+}
+
+export interface BatchPhotoDefinitionUpdate {
+  photoDefinitionId: string;
+  name?: string;
+  description?: string;
+  isRequired?: boolean;
+  order?: number;
+}
+
+export interface BatchPhotoDefinitionCreate {
+  name: string;
+  description?: string;
+  isRequired: boolean;
+  order?: number;
+}
+
+export interface CrudPhotoGroupResponse {
+  photoGroup?: PhotoGroup;
+  updatedPhotoDefinitions?: PhotoDefinition[];
+  createdPhotoDefinitions?: PhotoDefinition[];
+  deletedPhotoDefinitionIds?: string[];
+}

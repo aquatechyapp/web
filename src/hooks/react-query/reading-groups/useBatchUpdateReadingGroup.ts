@@ -21,7 +21,7 @@ export const useBatchUpdateReadingGroup = (companyId: string) => {
       readingGroupId: string; 
       data: CrudReadingGroupRequest 
     }): Promise<CrudReadingGroupResponse> => {
-      const response = await clientAxios.put(`/reading-groups/${readingGroupId}/crud`, data);
+      const response = await clientAxios.patch(`/reading-groups/${readingGroupId}/crud`, data);
       return response.data;
     },
     onSuccess: () => {
