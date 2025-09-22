@@ -35,6 +35,7 @@ export const useUpdateCompanyPreferences = (companyId: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['companies', companyId] });
       toast({
         title: 'Preferences updated successfully',
         variant: 'success'
