@@ -140,7 +140,6 @@ export default function Page({ company }: { company: Company }) {
   const [editingText, setEditingText] = useState('');
 
   const filterDays = form.watch('filterCleaningIntervalDays');
-  const [initialFilterDays] = useState(filterDays);
 
   // Watch form values to detect changes for each section
   const watchedValues = form.watch();
@@ -203,7 +202,8 @@ export default function Page({ company }: { company: Company }) {
       attachChemicalsReadings,
       attachChecklist,
       attachServicePhotos,
-      ccEmail
+      ccEmail,
+      sendFilterCleaningEmails
     } = data;
 
     const updateData = {
@@ -212,7 +212,8 @@ export default function Page({ company }: { company: Company }) {
         attachChemicalsReadings,
         attachChecklist,
         attachServicePhotos,
-        ccEmail
+        ccEmail,
+        sendFilterCleaningEmails
       },
       companyId: company.id
     };
@@ -226,6 +227,11 @@ export default function Page({ company }: { company: Company }) {
       filterCleaningIntervalDays, 
       filterReplacementIntervalDays, 
       filterCleaningMustHavePhotos,
+      sendEmails,
+      attachChemicalsReadings,
+      attachChecklist,
+      attachServicePhotos,
+      ccEmail,
       sendFilterCleaningEmails
     } = data;
 
@@ -236,6 +242,11 @@ export default function Page({ company }: { company: Company }) {
         filterCleaningMustHavePhotos
       },
       serviceEmailPreferences: {
+        sendEmails,
+        attachChemicalsReadings,
+        attachChecklist,
+        attachServicePhotos,
+        ccEmail,
         sendFilterCleaningEmails
       },
       companyId: company.id
@@ -273,9 +284,6 @@ export default function Page({ company }: { company: Company }) {
   }, [ccEmail, originalCcEmail, form]);
 
   useEffect(() => {
-    console.log('Form dirty state:', form.formState.isDirty);
-    console.log('Form values:', form.getValues());
-    console.log('CC Email value:', ccEmail);
   }, [form.formState.isDirty, ccEmail, form]);
 
   // Add checklist management functions
