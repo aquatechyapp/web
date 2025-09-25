@@ -18,6 +18,7 @@ const updatePhotoDefinitionSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
   description: z.string().max(500, 'Description must be less than 500 characters').optional(),
   isRequired: z.boolean(),
+  allowGallery: z.boolean(),
 });
 
 interface EditPhotoDefinitionDialogProps {
@@ -41,6 +42,7 @@ export function EditPhotoDefinitionDialog({
       name: '',
       description: '',
       isRequired: false,
+      allowGallery: false,
     }
   });
 
@@ -50,6 +52,7 @@ export function EditPhotoDefinitionDialog({
         name: photoDefinition.name,
         description: photoDefinition.description || '',
         isRequired: photoDefinition.isRequired,
+        allowGallery: photoDefinition.allowGallery,
       });
     }
   }, [photoDefinition, form]);
@@ -59,6 +62,7 @@ export function EditPhotoDefinitionDialog({
       name: data.name,
       description: data.description || undefined,
       isRequired: data.isRequired,
+      allowGallery: data.allowGallery,
     };
     onSubmit(requestData);
   };
@@ -128,6 +132,29 @@ export function EditPhotoDefinitionDialog({
                     </FormLabel>
                     <p className="text-sm text-muted-foreground">
                       Mark this photo as required for service completion
+                    </p>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="allowGallery"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Allow Gallery
+                    </FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      Allow users to select photos from gallery for this definition
                     </p>
                   </div>
                   <FormControl>

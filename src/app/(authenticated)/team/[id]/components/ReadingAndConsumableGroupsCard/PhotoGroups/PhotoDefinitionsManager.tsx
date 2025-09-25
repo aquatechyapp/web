@@ -192,6 +192,7 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
       name: data.name,
       description: data.description,
       isRequired: data.isRequired,
+      allowGallery: data.allowGallery,
       order: localDefinitions.length + 1 // Add at the end
     };
 
@@ -223,6 +224,7 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
       name: newDefinition.name,
       description: newDefinition.description || null,
       isRequired: newDefinition.isRequired,
+      allowGallery: newDefinition.allowGallery,
       order: newDefinition.order || 0,
       photoGroupId: photoGroup.id,
       createdAt: new Date().toISOString(),
@@ -353,6 +355,7 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
         name: updates.name,
         description: updates.description || undefined,
         isRequired: updates.isRequired,
+        allowGallery: updates.allowGallery,
         order: updates.order
       }));
     }
