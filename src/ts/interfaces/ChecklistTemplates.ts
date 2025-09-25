@@ -14,7 +14,7 @@ export interface ChecklistTemplateItem {
   id: string;
   label: string;
   order: number;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface CreateChecklistTemplateRequest {
