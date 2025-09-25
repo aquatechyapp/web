@@ -123,7 +123,7 @@ export function ChecklistTemplatesManager({ companyId }: ChecklistTemplatesManag
         <div className="space-y-4">
           {templates.map((template) => (
             <Card key={template.id}>
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-6" >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Button

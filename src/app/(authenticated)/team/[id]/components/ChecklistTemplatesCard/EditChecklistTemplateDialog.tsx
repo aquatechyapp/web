@@ -269,28 +269,7 @@ export function EditChecklistTemplateDialog({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="isActive"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Active
-                    </FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      Inactive templates won't be available for new services
-                    </p>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
