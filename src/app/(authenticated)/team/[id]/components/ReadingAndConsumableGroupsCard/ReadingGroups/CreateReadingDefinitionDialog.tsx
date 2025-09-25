@@ -23,7 +23,7 @@ const createReadingDefinitionSchema = z.object({
   isRequired: z.boolean().default(false),
   description: z.string().max(500, 'Description must be less than 500 characters').optional()
 }).refine((data) => {
-  if (data.minValue !== 0 && data.maxValue !== 0) {
+  if (data.minValue !== undefined && data.maxValue !== undefined) {
     return data.minValue <= data.maxValue;
   }
   return true;
@@ -60,10 +60,10 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
       unit: data.unit,
       description: data.description || undefined,
       isRequired: data.isRequired,
-      ...(data.minValue !== 0 && { minValue: data.minValue }),
-      ...(data.maxValue !== 0 && { maxValue: data.maxValue }),
+      ...(data.minValue !== undefined && data.minValue !== null && { minValue: data.minValue }),
+      ...(data.maxValue !== undefined && data.maxValue !== null && { maxValue: data.maxValue }),
       ...(data.goalValue !== undefined && { goalValue: data.goalValue }),
-      ...(data.step !== 0 && { step: data.step })
+      ...(data.step !== undefined && data.step !== null && { step: data.step })
     };
     onSubmit(submitData);
   };
