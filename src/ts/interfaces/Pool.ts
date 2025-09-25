@@ -3,8 +3,9 @@ import { EquipmentCondition, FilterType, MaintenanceType, PoolType } from '@/ts/
 import { Service } from './Service';
 import { Client } from './Client';
 import { Assignment } from './Assignments';
-import { ChecklistTemplate, Company } from './Company';
+import { Company } from './Company';
 import { Request } from './Request';
+import { ChecklistTemplate } from './ChecklistTemplates';
 
 export type Pool = {
   id: string;
