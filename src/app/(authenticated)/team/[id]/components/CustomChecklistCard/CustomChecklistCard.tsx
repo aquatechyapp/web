@@ -35,7 +35,7 @@ export function CustomChecklistCard({
     id: '',
     label: '',
     order: 0,
-    createdAt: new Date().toISOString()
+    createdAt: new Date()
   });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingText, setEditingText] = useState('');
@@ -51,7 +51,7 @@ export function CustomChecklistCard({
         id: Date.now().toString(),
         label: newChecklistItem.label.trim(),
         order: customChecklist.length + 1,
-        createdAt: new Date().toISOString()
+        createdAt: new Date()
       };
       const updatedList = [...customChecklist, newItem];
       setCustomChecklist(updatedList);
@@ -60,7 +60,7 @@ export function CustomChecklistCard({
         id: '',
         label: '',
         order: 0,
-        createdAt: new Date().toISOString()
+        createdAt: new Date()
       });
     }
   };
