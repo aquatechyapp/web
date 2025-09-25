@@ -9,7 +9,7 @@ import { Plus, Edit, Trash2, ChevronDown, ChevronRight, TestTube } from 'lucide-
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useGetReadingGroups } from '@/hooks/react-query/reading-groups/useGetReadingGroups';
 import { useCreateReadingGroup } from '@/hooks/react-query/reading-groups/useCreateReadingGroup';
-import { useUpdateReadingGroup } from '@/hooks/react-query/reading-groups/useUpdateReadingGroup';
+import { useBatchUpdateReadingGroup } from '@/hooks/react-query/reading-groups/useBatchUpdateReadingGroup';
 import { useDeleteReadingGroup } from '@/hooks/react-query/reading-groups/useDeleteReadingGroup';
 
 import { ReadingGroup, CreateReadingGroupRequest, UpdateReadingGroupRequest } from '@/ts/interfaces/ReadingGroups';
@@ -30,7 +30,7 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
 
   const { data: readingGroupsData, isLoading } = useGetReadingGroups(companyId);
   const { mutate: createReadingGroup, isPending: isCreating } = useCreateReadingGroup(companyId);
-  const { mutate: updateReadingGroup, isPending: isUpdating } = useUpdateReadingGroup(companyId);
+  const { mutate: updateReadingGroup, isPending: isUpdating } = useBatchUpdateReadingGroup(companyId);
   const { mutate: deleteReadingGroup, isPending: isDeleting } = useDeleteReadingGroup(companyId);
 
   const readingGroups = readingGroupsData?.readingGroups || [];
@@ -57,7 +57,14 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
 
   const handleUpdateGroup = (data: UpdateReadingGroupRequest) => {
     if (editingGroup) {
-      updateReadingGroup({ readingGroupId: editingGroup.id, data }, {
+      updateReadingGroup({ 
+        readingGroupId: editingGroup.id, 
+        data: {
+          name: data.name,
+          description: data.description,
+          isActive: data.isActive
+        }
+      }, {
         onSuccess: () => {
           setEditingGroup(null);
         }
