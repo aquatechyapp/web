@@ -153,7 +153,7 @@ export function ConsumableGroupsManager({ companyId }: ConsumableGroupsManagerPr
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    {!group.isDefault && (
+                    {/* {!group.isDefault && ( */}
                       <Button
                         variant="ghost"
                         size="sm"
@@ -163,7 +163,7 @@ export function ConsumableGroupsManager({ companyId }: ConsumableGroupsManagerPr
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
-                    )}
+                    {/* )} */}
                   </div>
                 </div>
               </CardHeader>

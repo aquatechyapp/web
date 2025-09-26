@@ -16,12 +16,24 @@ import { CreateReadingDefinitionRequest } from '@/ts/interfaces/ReadingGroups';
 const createReadingDefinitionSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
   unit: z.string().min(1, 'Unit is required').max(20, 'Unit must be less than 20 characters'),
-  minValue: z.coerce.number(),
-  maxValue: z.coerce.number(),
+  minValue: z.coerce.number({
+    required_error: 'Minimum value is required',
+    message: 'Minimum value is required'
+  }),
+  maxValue: z.coerce.number({
+    required_error: 'Maximum value is required',
+    message: 'Maximum value is required'
+  }),
   goalValue: z.coerce.number().optional(),
-  step: z.coerce.number().positive('Step must be positive'),
+  step: z.coerce.number({
+    required_error: 'Step is required',
+    message: 'Step is required'
+  }).positive('Step must be positive'),
   isRequired: z.boolean().default(false),
-  description: z.string().max(500, 'Description must be less than 500 characters').optional()
+  description: z.string({
+    required_error: 'Description is required',
+    message: 'Description is required'
+  }).max(500, 'Description must be less than 500 characters')
 }).refine((data) => {
   if (data.minValue !== undefined && data.maxValue !== undefined) {
     return data.minValue <= data.maxValue;
@@ -43,12 +55,9 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
   const form = useForm<z.infer<typeof createReadingDefinitionSchema>>({
     resolver: zodResolver(createReadingDefinitionSchema),
     defaultValues: {
-      name: '',
-      unit: '',
-      minValue: 0,
-      maxValue: 0,
+
       goalValue: undefined,
-      step: 0,
+      step: undefined,
       isRequired: false,
       description: ''
     }

@@ -17,9 +17,17 @@ import { Company } from '@/ts/interfaces/Company';
 
 const schema = z.object({
   sendEmails: z.boolean(),
-  attachChemicalsReadings: z.boolean(),
-  attachChecklist: z.boolean(),
-  attachServicePhotos: z.boolean(),
+  // attachChemicalsReadings: z.boolean(),
+  // attachChecklist: z.boolean(),
+  // attachServicePhotos: z.boolean(),
+
+  // New fields
+  attachReadingsGroups: z.boolean(),
+  attachConsumablesGroups: z.boolean(),
+  attachPhotoGroups: z.boolean(),
+  attachSelectorsGroups: z.boolean(),
+  attachCustomChecklist: z.boolean(),
+
   ccEmail: z.string(),
 });
 
@@ -52,19 +60,29 @@ const emailFields = [
     label: 'Include in e-mails',
     itens: [
       {
-        label: 'Chemicals Readings',
-        description: 'Send e-mails with chemicals readings.',
-        name: 'attachChemicalsReadings'
+        label: 'Consumables',
+        description: 'Send e-mails with consumables.',
+        name: 'attachConsumablesGroups'
+      },
+      {
+        label: 'Readings',
+        description: 'Send e-mails with readings.',
+        name: 'attachReadingsGroups'
+      },
+      {
+        label: 'Photos',
+        description: 'Send e-mails with photos.',
+        name: 'attachPhotoGroups'
+      },
+      {
+        label: 'Selectors',
+        description: 'Send e-mails with selectors.',
+        name: 'attachSelectorsGroups'
       },
       {
         label: 'Checklist',
         description: 'Send e-mails with checklist.',
-        name: 'attachChecklist'
-      },
-      {
-        label: 'Service Photos',
-        description: 'Send e-mails with service photos.',
-        name: 'attachServicePhotos'
+        name: 'attachCustomChecklist'
       }
     ]
   },

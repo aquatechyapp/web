@@ -5,16 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Settings } from 'lucide-react';
+import { Plus, Settings, Trash2 } from 'lucide-react';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useGetSelectorGroups } from '@/hooks/react-query/selector-groups/useGetSelectorGroups';
 import { useCreateSelectorGroup } from '@/hooks/react-query/selector-groups/useCreateSelectorGroup';
+import { useDeleteSelectorGroup } from '@/hooks/react-query/selector-groups/useDeleteSelectorGroup';
 
 import { SelectorGroup, CreateSelectorGroupRequest } from '@/ts/interfaces/SelectorGroups';
 
 import { CreateSelectorGroupDialog } from './CreateSelectorGroupDialog';
 import { ComprehensiveSelectorGroupManager } from './ComprehensiveSelectorGroupManager';
+import ConfirmActionDialog from '@/components/confirm-action-dialog';
 
 
 interface SelectorGroupsManagerProps {
@@ -24,9 +26,11 @@ interface SelectorGroupsManagerProps {
 export function SelectorGroupsManager({ companyId }: SelectorGroupsManagerProps) {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [managingDefinitionsForGroup, setManagingDefinitionsForGroup] = useState<SelectorGroup | null>(null);
+  const [deletingGroup, setDeletingGroup] = useState<SelectorGroup | null>(null);
 
   const { data: selectorGroupsData, isLoading } = useGetSelectorGroups(companyId);
   const { mutate: createSelectorGroup, isPending: isCreating } = useCreateSelectorGroup();
+  const { mutate: deleteSelectorGroup, isPending: isDeleting } = useDeleteSelectorGroup();
 
   const selectorGroups = selectorGroupsData?.selectorGroups || [];
 
@@ -36,6 +40,19 @@ export function SelectorGroupsManager({ companyId }: SelectorGroupsManagerProps)
         setShowCreateDialog(false);
       }
     });
+  };
+
+  const handleDeleteGroup = async () => {
+    if (deletingGroup) {
+      deleteSelectorGroup({ 
+        selectorGroupId: deletingGroup.id, 
+        companyId 
+      }, {
+        onSuccess: () => {
+          setDeletingGroup(null);
+        }
+      });
+    }
   };
 
   if (isLoading) {
@@ -104,15 +121,27 @@ export function SelectorGroupsManager({ companyId }: SelectorGroupsManagerProps)
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setManagingDefinitionsForGroup(selectorGroup)}
-                      className="h-8 w-8 p-0"
-                      title="Manage Selector Group"
-                    >
-                      <Settings className="h-3 w-3" />
-                    </Button>
+                    <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setManagingDefinitionsForGroup(selectorGroup)}
+                        className="h-8 w-8 p-0"
+                        title="Manage Selector Group"
+                      >
+                        <Settings className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setDeletingGroup(selectorGroup)}
+                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        title="Delete Selector Group"
+                        disabled={selectorGroup.isDefault}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -135,6 +164,15 @@ export function SelectorGroupsManager({ companyId }: SelectorGroupsManagerProps)
         onOpenChange={() => setManagingDefinitionsForGroup(null)}
         selectorGroup={managingDefinitionsForGroup}
         companyId={companyId}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmActionDialog
+        open={!!deletingGroup}
+        onOpenChange={() => setDeletingGroup(null)}
+        title="Delete Selector Group"
+        description={`Are you sure you want to delete "${deletingGroup?.name}"? This will also delete all selector definitions within this group. This action cannot be undone.`}
+        onConfirm={handleDeleteGroup}
       />
     </div>
   );

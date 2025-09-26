@@ -105,7 +105,7 @@ export function EditPhotoGroupDialog({
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="isActive"
               render={({ field }) => (
@@ -124,7 +124,7 @@ export function EditPhotoGroupDialog({
                   </FormControl>
                 </FormItem>
               )}
-            />
+            /> */}
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel

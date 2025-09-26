@@ -10,6 +10,13 @@ type ClientEmailPreferences = {
   attachChecklist: boolean;
   attachServicePhotos: boolean;
   sendFilterCleaningEmails: boolean;
+
+  // New fields
+  attachReadingsGroups: boolean;
+  attachConsumablesGroups: boolean;
+  attachPhotoGroups: boolean;
+  attachSelectorsGroups: boolean;
+  attachCustomChecklist: boolean;
 };
 
 export const useUpdateClientPreferences = (clientId: string) => {

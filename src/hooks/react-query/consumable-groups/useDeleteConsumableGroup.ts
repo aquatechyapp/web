@@ -18,6 +18,7 @@ export const useDeleteConsumableGroup = (companyId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['consumable-groups', companyId] });
       queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['service-types'] });
       toast({
         title: 'Consumable group deleted successfully',
         variant: 'success'

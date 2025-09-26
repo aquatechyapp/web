@@ -8,9 +8,17 @@ import { clientAxios } from '../../../lib/clientAxios';
 type PreferencesData = {
   serviceEmailPreferences?: {
     sendEmails?: boolean;
-    attachChemicalsReadings?: boolean;
-    attachChecklist?: boolean;
-    attachServicePhotos?: boolean;
+    // attachChemicalsReadings?: boolean;
+    // attachChecklist?: boolean;
+    // attachServicePhotos?: boolean;
+    
+    // New fields
+    attachReadingsGroups?: boolean;
+    attachConsumablesGroups?: boolean;
+    attachPhotoGroups?: boolean;
+    attachSelectorsGroups?: boolean;
+    attachCustomChecklist?: boolean;
+
     ccEmail?: string;
     sendFilterCleaningEmails?: boolean;
   };

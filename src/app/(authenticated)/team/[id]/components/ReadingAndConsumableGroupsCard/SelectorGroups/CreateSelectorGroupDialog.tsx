@@ -171,7 +171,7 @@ export function CreateSelectorGroupDialog({
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="isDefault"
                 render={({ field }) => (
@@ -191,7 +191,7 @@ export function CreateSelectorGroupDialog({
                     </FormControl>
                   </FormItem>
                 )}
-              />
+              /> */}
             </div>
 
             <Separator />

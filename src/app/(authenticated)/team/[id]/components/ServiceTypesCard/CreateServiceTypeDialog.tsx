@@ -127,7 +127,7 @@ export function CreateServiceTypeDialog({ open, onOpenChange, onSubmit, isLoadin
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="isDefault"
               render={({ field }) => (
@@ -148,7 +148,7 @@ export function CreateServiceTypeDialog({ open, onOpenChange, onSubmit, isLoadin
                   </div>
                 </FormItem>
               )}
-            />
+            /> */}
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>

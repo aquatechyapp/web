@@ -6,7 +6,6 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
-import { Settings } from 'lucide-react';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
@@ -37,9 +36,17 @@ import {
 // Update the schema to include the new fields
 const schema = z.object({
   sendEmails: z.boolean(),
-  attachChemicalsReadings: z.boolean(),
-  attachChecklist: z.boolean(),
-  attachServicePhotos: z.boolean(),
+  // attachChemicalsReadings: z.boolean(),
+  // attachChecklist: z.boolean(),
+  // attachServicePhotos: z.boolean(),
+
+  // New fields
+  attachReadingsGroups: z.boolean(),
+  attachConsumablesGroups: z.boolean(),
+  attachPhotoGroups: z.boolean(),
+  attachSelectorsGroups: z.boolean(),
+  attachCustomChecklist: z.boolean(),
+
   ccEmail: z.string(),
   filterCleaningIntervalDays: z.coerce.number().min(1),
   filterReplacementIntervalDays: z.coerce.number().min(1),
@@ -66,18 +73,25 @@ export default function Page({ company }: { company: Company }) {
     mode: 'onChange',
     defaultValues: {
       sendEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendEmails || false,
-      attachChemicalsReadings: isFreePlan
-        ? false
-        : company.preferences?.serviceEmailPreferences?.attachChemicalsReadings || false,
-      attachChecklist: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachChecklist || false,
-      attachServicePhotos: isFreePlan
-        ? false
-        : company.preferences?.serviceEmailPreferences?.attachServicePhotos || false,
+      // attachChemicalsReadings: isFreePlan
+      //   ? false
+      //   : company.preferences?.serviceEmailPreferences?.attachChemicalsReadings || false,
+      // attachChecklist: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachChecklist || false,
+      // attachServicePhotos: isFreePlan
+      //   ? false
+      //   : company.preferences?.serviceEmailPreferences?.attachServicePhotos || false,
       ccEmail: isFreePlan ? '' : company.preferences?.serviceEmailPreferences?.ccEmail || '',
       filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28,
       filterReplacementIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterReplacementIntervalDays || 365,
       filterCleaningMustHavePhotos: company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false,
-      sendFilterCleaningEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false
+      sendFilterCleaningEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false,
+
+      // New fields
+      attachReadingsGroups: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachReadingsGroups || false,
+      attachConsumablesGroups: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachConsumablesGroups || false,
+      attachPhotoGroups: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachPhotoGroups || false,
+      attachSelectorsGroups: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachSelectorsGroups || false,
+      attachCustomChecklist: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachCustomChecklist || false
     }
   });
 
@@ -86,13 +100,23 @@ export default function Page({ company }: { company: Company }) {
   // Use useCallback to prevent infinite re-renders
   const handleEmailsChange = useCallback((newSendEmails: boolean) => {
     if (newSendEmails) {
-      form.setValue('attachChemicalsReadings', true, { shouldDirty: true });
-      form.setValue('attachChecklist', true, { shouldDirty: true });
-      form.setValue('attachServicePhotos', true, { shouldDirty: true });
+      // form.setValue('attachChemicalsReadings', true, { shouldDirty: true });
+      // form.setValue('attachChecklist', true, { shouldDirty: true });
+      // form.setValue('attachServicePhotos', true, { shouldDirty: true });
+      form.setValue('attachReadingsGroups', true, { shouldDirty: true });
+      form.setValue('attachConsumablesGroups', true, { shouldDirty: true });
+      form.setValue('attachPhotoGroups', true, { shouldDirty: true });
+      form.setValue('attachSelectorsGroups', true, { shouldDirty: true });
+      form.setValue('attachCustomChecklist', true, { shouldDirty: true });
     } else {
-      form.setValue('attachChemicalsReadings', false, { shouldDirty: true });
-      form.setValue('attachChecklist', false, { shouldDirty: true });
-      form.setValue('attachServicePhotos', false, { shouldDirty: true });
+      // form.setValue('attachChemicalsReadings', false, { shouldDirty: true });
+      // form.setValue('attachChecklist', false, { shouldDirty: true });
+      // form.setValue('attachServicePhotos', false, { shouldDirty: true });
+      form.setValue('attachReadingsGroups', false, { shouldDirty: true });
+      form.setValue('attachConsumablesGroups', false, { shouldDirty: true });
+      form.setValue('attachPhotoGroups', false, { shouldDirty: true });
+      form.setValue('attachSelectorsGroups', false, { shouldDirty: true });
+      form.setValue('attachCustomChecklist', false, { shouldDirty: true });
     }
   }, [form]);
 
@@ -131,7 +155,8 @@ export default function Page({ company }: { company: Company }) {
   
   // Check if email fields have changed
   const emailFieldsChanged = () => {
-    const emailFields = ['sendEmails', 'attachChemicalsReadings', 'attachChecklist', 'attachServicePhotos', 'ccEmail'];
+    // const emailFields = ['sendEmails', 'attachChemicalsReadings', 'attachChecklist', 'attachServicePhotos', 'ccEmail'];
+    const emailFields = ['sendEmails', 'attachReadingsGroups', 'attachConsumablesGroups', 'attachPhotoGroups', 'attachSelectorsGroups', 'attachCustomChecklist', 'ccEmail'];
     return emailFields.some(field => {
       const currentValue = watchedValues[field as keyof typeof watchedValues];
       const originalValue = getOriginalValue(field);
@@ -156,12 +181,22 @@ export default function Page({ company }: { company: Company }) {
     switch (field) {
       case 'sendEmails':
         return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendEmails || false;
-      case 'attachChemicalsReadings':
-        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachChemicalsReadings || false;
-      case 'attachChecklist':
-        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachChecklist || false;
-      case 'attachServicePhotos':
-        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachServicePhotos || false;
+      // case 'attachChemicalsReadings':
+      //   return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachChemicalsReadings || false;
+      // case 'attachChecklist':
+      //   return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachChecklist || false;
+      // case 'attachServicePhotos':
+      //   return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachServicePhotos || false;
+      case 'attachReadingsGroups':
+        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachReadingsGroups || false;
+      case 'attachConsumablesGroups':
+        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachConsumablesGroups || false;
+      case 'attachPhotoGroups':
+        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachPhotoGroups || false;
+      case 'attachSelectorsGroups':
+        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachSelectorsGroups || false;
+      case 'attachCustomChecklist':
+        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachCustomChecklist || false;
       case 'ccEmail':
         return isFreePlan ? '' : company.preferences?.serviceEmailPreferences?.ccEmail || '';
       case 'filterCleaningIntervalDays':
@@ -181,18 +216,28 @@ export default function Page({ company }: { company: Company }) {
   const handleEmailSubmit = (data: z.infer<typeof schema>) => {
     const { 
       sendEmails,
-      attachChemicalsReadings,
-      attachChecklist,
-      attachServicePhotos,
+      // attachChemicalsReadings,
+      // attachChecklist,
+      // attachServicePhotos,
+      attachReadingsGroups,
+      attachConsumablesGroups,
+      attachPhotoGroups,
+      attachSelectorsGroups,
+      attachCustomChecklist,
       ccEmail
     } = data;
 
     const updateData = {
       serviceEmailPreferences: {
         sendEmails,
-        attachChemicalsReadings,
-        attachChecklist,
-        attachServicePhotos,
+        // attachChemicalsReadings,
+        // attachChecklist,
+        // attachServicePhotos,
+        attachReadingsGroups,
+        attachConsumablesGroups,
+        attachPhotoGroups,
+        attachSelectorsGroups,
+        attachCustomChecklist,
         ccEmail
       },
       companyId: company.id

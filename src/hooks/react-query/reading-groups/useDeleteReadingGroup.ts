@@ -18,6 +18,7 @@ export const useDeleteReadingGroup = (companyId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reading-groups', companyId] });
       queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['service-types'] });
       toast({
         title: 'Reading group deleted successfully',
         variant: 'success'

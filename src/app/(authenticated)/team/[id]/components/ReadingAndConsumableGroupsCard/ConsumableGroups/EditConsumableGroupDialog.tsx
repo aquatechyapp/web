@@ -106,7 +106,7 @@ export function EditConsumableGroupDialog({ open, onOpenChange, consumableGroup,
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="isActive"
               render={({ field }) => (
@@ -131,7 +131,7 @@ export function EditConsumableGroupDialog({ open, onOpenChange, consumableGroup,
                   </FormControl>
                 </FormItem>
               )}
-            />
+            /> */}
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>

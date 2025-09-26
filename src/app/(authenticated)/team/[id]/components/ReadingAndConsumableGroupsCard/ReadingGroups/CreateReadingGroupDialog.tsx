@@ -90,7 +90,7 @@ export function CreateReadingGroupDialog({ open, onOpenChange, onSubmit, isLoadi
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="isDefault"
               render={({ field }) => (
@@ -111,7 +111,7 @@ export function CreateReadingGroupDialog({ open, onOpenChange, onSubmit, isLoadi
                   </div>
                 </FormItem>
               )}
-            />
+            /> */}
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>

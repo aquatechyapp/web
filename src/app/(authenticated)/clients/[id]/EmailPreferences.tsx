@@ -27,7 +27,14 @@ const schema = z.object({
   attachChemicalsReadings: z.boolean(),
   attachChecklist: z.boolean(),
   attachServicePhotos: z.boolean(),
-  sendFilterCleaningEmails: z.boolean()
+  sendFilterCleaningEmails: z.boolean(),
+
+  // New fields
+  attachReadingsGroups: z.boolean(),
+  attachConsumablesGroups: z.boolean(),
+  attachPhotoGroups: z.boolean(),
+  attachSelectorsGroups: z.boolean(),
+  attachCustomChecklist: z.boolean(),
 });
 
 export default function EmailPreferences({ client }: { client: Client }) {
@@ -41,7 +48,14 @@ export default function EmailPreferences({ client }: { client: Client }) {
       attachChemicalsReadings: client.preferences?.serviceEmailPreferences?.attachChemicalsReadings || false,
       attachChecklist: client.preferences?.serviceEmailPreferences?.attachChecklist || false,
       attachServicePhotos: client.preferences?.serviceEmailPreferences?.attachServicePhotos || false,
-      sendFilterCleaningEmails: client.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false
+      sendFilterCleaningEmails: client.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false,
+
+      // New fields
+      attachReadingsGroups: client.preferences?.serviceEmailPreferences?.attachReadingsGroups || false,
+      attachConsumablesGroups: client.preferences?.serviceEmailPreferences?.attachConsumablesGroups || false,
+      attachPhotoGroups: client.preferences?.serviceEmailPreferences?.attachPhotoGroups || false,
+      attachSelectorsGroups: client.preferences?.serviceEmailPreferences?.attachSelectorsGroups || false,
+      attachCustomChecklist: client.preferences?.serviceEmailPreferences?.attachCustomChecklist || false,
     }
   });
 
@@ -50,13 +64,23 @@ export default function EmailPreferences({ client }: { client: Client }) {
 
   function handleEmailsChange() {
     if (sendEmails) {
-      form.setValue('attachChemicalsReadings', true);
-      form.setValue('attachChecklist', true);
-      form.setValue('attachServicePhotos', true);
+      // form.setValue('attachChemicalsReadings', true);
+      // form.setValue('attachChecklist', true);
+      // form.setValue('attachServicePhotos', true);
+      form.setValue('attachReadingsGroups', true);
+      form.setValue('attachConsumablesGroups', true);
+      form.setValue('attachPhotoGroups', true);
+      form.setValue('attachSelectorsGroups', true);
+      form.setValue('attachCustomChecklist', true);
     } else {
-      form.setValue('attachChemicalsReadings', false);
-      form.setValue('attachChecklist', false);
-      form.setValue('attachServicePhotos', false);
+      // form.setValue('attachChemicalsReadings', false);
+      // form.setValue('attachChecklist', false);
+      // form.setValue('attachServicePhotos', false);
+      form.setValue('attachReadingsGroups', false);
+      form.setValue('attachConsumablesGroups', false);
+      form.setValue('attachPhotoGroups', false);
+      form.setValue('attachSelectorsGroups', false);
+      form.setValue('attachCustomChecklist', false);
     }
   }
 
@@ -184,20 +208,45 @@ const fields: Fields = [
     description: 'Select the information you want to send in the service e-mails.',
     label: 'Include in service e-mails',
     itens: [
+      // {
+      //   label: 'Chemicals Readings',
+      //   description: 'Send service e-mails with chemicals readings.',
+      //   name: 'attachChemicalsReadings'
+      // },
+      // {
+      //   label: 'Checklist',
+      //   description: 'Send service e-mails with checklist.',
+      //   name: 'attachChecklist'
+      // },
+      // {
+      //   label: 'Service Photos',
+      //   description: 'Send service e-mails with service photos.',
+      //   name: 'attachServicePhotos'
+      // }
       {
-        label: 'Chemicals Readings',
-        description: 'Send service e-mails with chemicals readings.',
-        name: 'attachChemicalsReadings'
+        label: 'Readings',
+        description: 'Send service e-mails with readings.',
+        name: 'attachReadingsGroups'
+      },
+      {
+        label: 'Consumables',
+        description: 'Send service e-mails with consumables.',
+        name: 'attachConsumablesGroups'
+      },
+      {
+        label: 'Photos',
+        description: 'Send service e-mails with photos.',
+        name: 'attachPhotoGroups'
+      },
+      {
+        label: 'Selectors',
+        description: 'Send service e-mails with selectors.',
+        name: 'attachSelectorsGroups'
       },
       {
         label: 'Checklist',
         description: 'Send service e-mails with checklist.',
-        name: 'attachChecklist'
-      },
-      {
-        label: 'Service Photos',
-        description: 'Send service e-mails with service photos.',
-        name: 'attachServicePhotos'
+        name: 'attachCustomChecklist'
       }
     ]
   },

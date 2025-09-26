@@ -106,7 +106,7 @@ export function EditReadingGroupDialog({ open, onOpenChange, readingGroup, onSub
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="isActive"
               render={({ field }) => (
@@ -131,7 +131,7 @@ export function EditReadingGroupDialog({ open, onOpenChange, readingGroup, onSub
                   </FormControl>
                 </FormItem>
               )}
-            />
+            /> */}
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>

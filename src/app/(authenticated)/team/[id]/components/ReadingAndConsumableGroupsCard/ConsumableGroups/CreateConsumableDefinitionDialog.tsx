@@ -16,12 +16,15 @@ import { CreateConsumableDefinitionRequest } from '@/ts/interfaces/ConsumableGro
 const createConsumableDefinitionSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
   unit: z.string().min(1, 'Unit is required').max(20, 'Unit must be less than 20 characters'),
-  minValue: z.coerce.number().optional(),
-  maxValue: z.coerce.number().optional(),
-  step: z.coerce.number().positive('Step must be positive').optional(),
+  minValue: z.coerce.number({ required_error: 'Minimum value is required', message: 'Minimum value is required' }),
+  maxValue: z.coerce.number({ required_error: 'Maximum value is required', message: 'Minimum value is required' }),
+  step: z.coerce.number({ required_error: 'Step is required', message: 'Step is required' }).positive('Step must be positive'),
   isRequired: z.boolean().default(false),
   description: z.string().max(500, 'Description must be less than 500 characters').optional(),
-  pricePerUnit: z.coerce.number().min(0, 'Price must be non-negative').optional()
+  pricePerUnit: z.coerce.number({
+    required_error: 'Price per unit is required',
+    message: 'Price per unit is required'
+  }).min(0, 'Price must be non-negative')
 }).refine((data) => {
   if (data.minValue !== undefined && data.maxValue !== undefined) {
     return data.minValue <= data.maxValue;

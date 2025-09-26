@@ -39,6 +39,13 @@ export interface Company {
       attachServicePhotos: boolean;
       ccEmail: string;
       sendFilterCleaningEmails: boolean;
+
+      // New fields
+      attachReadingsGroups: boolean;
+      attachConsumablesGroups: boolean;
+      attachPhotoGroups: boolean;
+      attachSelectorsGroups: boolean;
+      attachCustomChecklist: boolean;
     };
     equipmentMaintenancePreferences: {
       filterCleaningIntervalDays: number;

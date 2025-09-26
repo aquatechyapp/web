@@ -90,7 +90,7 @@ export function CreateConsumableGroupDialog({ open, onOpenChange, onSubmit, isLo
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="isDefault"
               render={({ field }) => (
@@ -111,7 +111,7 @@ export function CreateConsumableGroupDialog({ open, onOpenChange, onSubmit, isLo
                   </div>
                 </FormItem>
               )}
-            />
+            /> */}
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
