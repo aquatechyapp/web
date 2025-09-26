@@ -94,17 +94,32 @@ export default function BulkActionsPage() {
         if (originalPrefs?.sendEmails !== currentPrefs.sendEmails) {
           modifiedPreferences.sendEmails = currentPrefs.sendEmails;
         }
-        if (originalPrefs?.attachChemicalsReadings !== currentPrefs.attachChemicalsReadings) {
-          modifiedPreferences.attachChemicalsReadings = currentPrefs.attachChemicalsReadings;
-        }
-        if (originalPrefs?.attachChecklist !== currentPrefs.attachChecklist) {
-          modifiedPreferences.attachChecklist = currentPrefs.attachChecklist;
-        }
-        if (originalPrefs?.attachServicePhotos !== currentPrefs.attachServicePhotos) {
-          modifiedPreferences.attachServicePhotos = currentPrefs.attachServicePhotos;
-        }
+        // if (originalPrefs?.attachChemicalsReadings !== currentPrefs.attachChemicalsReadings) {
+        //   modifiedPreferences.attachChemicalsReadings = currentPrefs.attachChemicalsReadings;
+        // }
+        // if (originalPrefs?.attachChecklist !== currentPrefs.attachChecklist) {
+        //   modifiedPreferences.attachChecklist = currentPrefs.attachChecklist;
+        // }
+        // if (originalPrefs?.attachServicePhotos !== currentPrefs.attachServicePhotos) {
+        //   modifiedPreferences.attachServicePhotos = currentPrefs.attachServicePhotos;
+        // }
         if (originalPrefs?.sendFilterCleaningEmails !== currentPrefs.sendFilterCleaningEmails) {
           modifiedPreferences.sendFilterCleaningEmails = currentPrefs.sendFilterCleaningEmails;
+        }
+        if (originalPrefs?.attachReadingsGroups !== currentPrefs.attachReadingsGroups) {
+          modifiedPreferences.attachReadingsGroups = currentPrefs.attachReadingsGroups;
+        }
+        if (originalPrefs?.attachConsumablesGroups !== currentPrefs.attachConsumablesGroups) {
+          modifiedPreferences.attachConsumablesGroups = currentPrefs.attachConsumablesGroups;
+        }
+        if (originalPrefs?.attachPhotoGroups !== currentPrefs.attachPhotoGroups) {
+          modifiedPreferences.attachPhotoGroups = currentPrefs.attachPhotoGroups;
+        }
+        if (originalPrefs?.attachSelectorsGroups !== currentPrefs.attachSelectorsGroups) {
+          modifiedPreferences.attachSelectorsGroups = currentPrefs.attachSelectorsGroups;
+        }
+        if (originalPrefs?.attachCustomChecklist !== currentPrefs.attachCustomChecklist) {
+          modifiedPreferences.attachCustomChecklist = currentPrefs.attachCustomChecklist;
         }
       }
 
@@ -203,9 +218,14 @@ export default function BulkActionsPage() {
               <TableHead>Client Name</TableHead>
               <TableHead>Address</TableHead>
               <TableHead className="text-center">Send Service E-mails</TableHead>
-              <TableHead className="text-center">Include Chemical Readings</TableHead>
+              {/* <TableHead className="text-center">Include Chemical Readings</TableHead>
               <TableHead className="text-center">Include Checklist</TableHead>
-              <TableHead className="text-center">Include Service Photos</TableHead>
+              <TableHead className="text-center">Include Service Photos</TableHead> */}
+              <TableHead className="text-center">Include Readings</TableHead>
+              <TableHead className="text-center">Include Consumables</TableHead>
+              <TableHead className="text-center">Include Photos</TableHead>
+              <TableHead className="text-center">Include Selectors</TableHead>
+              <TableHead className="text-center">Include Checklist</TableHead>
               <TableHead className="text-center">Filter Cleaning Notifications</TableHead>
             </TableRow>
           </TableHeader>
@@ -240,7 +260,7 @@ export default function BulkActionsPage() {
                     }}
                   />
                 </TableCell>
-                <TableCell className="text-center">
+                {/* <TableCell className="text-center">
                   <Checkbox
                     checked={client.preferences?.serviceEmailPreferences?.attachChemicalsReadings || false}
                     onCheckedChange={(checked) => {
@@ -269,6 +289,66 @@ export default function BulkActionsPage() {
                     checked={client.preferences?.serviceEmailPreferences?.attachServicePhotos || false}
                     onCheckedChange={(checked) => {
                       handlePreferenceChange(client.id, 'attachServicePhotos', checked as boolean);
+                      // Automatically select the row when preference changes
+                      if (!selectedClients.has(client.id)) {
+                        setSelectedClients(prev => new Set([...Array.from(prev), client.id]));
+                      }
+                    }}
+                  />
+                </TableCell> */}
+                <TableCell className="text-center"> 
+                  <Checkbox
+                    checked={client.preferences?.serviceEmailPreferences?.attachReadingsGroups || false}
+                    onCheckedChange={(checked) => {
+                      handlePreferenceChange(client.id, 'attachReadingsGroups', checked as boolean);
+                      // Automatically select the row when preference changes
+                      if (!selectedClients.has(client.id)) {
+                        setSelectedClients(prev => new Set([...Array.from(prev), client.id]));
+                      }
+                    }}
+                  />
+                </TableCell>
+                <TableCell className="text-center">
+                  <Checkbox
+                    checked={client.preferences?.serviceEmailPreferences?.attachConsumablesGroups || false}
+                    onCheckedChange={(checked) => {
+                      handlePreferenceChange(client.id, 'attachConsumablesGroups', checked as boolean);
+                      // Automatically select the row when preference changes
+                      if (!selectedClients.has(client.id)) {
+                        setSelectedClients(prev => new Set([...Array.from(prev), client.id]));
+                      }
+                    }}
+                  />
+                </TableCell>
+                <TableCell className="text-center">
+                  <Checkbox
+                    checked={client.preferences?.serviceEmailPreferences?.attachPhotoGroups || false}
+                    onCheckedChange={(checked) => {
+                      handlePreferenceChange(client.id, 'attachPhotoGroups', checked as boolean);
+                      // Automatically select the row when preference changes
+                      if (!selectedClients.has(client.id)) {
+                        setSelectedClients(prev => new Set([...Array.from(prev), client.id]));
+                      }
+                    }}
+                  />
+                </TableCell>
+                <TableCell className="text-center">
+                  <Checkbox
+                    checked={client.preferences?.serviceEmailPreferences?.attachSelectorsGroups || false}
+                    onCheckedChange={(checked) => {
+                      handlePreferenceChange(client.id, 'attachSelectorsGroups', checked as boolean);
+                      // Automatically select the row when preference changes
+                      if (!selectedClients.has(client.id)) {
+                        setSelectedClients(prev => new Set([...Array.from(prev), client.id]));
+                      }
+                    }}
+                  />
+                </TableCell>
+                <TableCell className="text-center">
+                  <Checkbox
+                    checked={client.preferences?.serviceEmailPreferences?.attachCustomChecklist || false}
+                    onCheckedChange={(checked) => {
+                      handlePreferenceChange(client.id, 'attachCustomChecklist', checked as boolean);
                       // Automatically select the row when preference changes
                       if (!selectedClients.has(client.id)) {
                         setSelectedClients(prev => new Set([...Array.from(prev), client.id]));
