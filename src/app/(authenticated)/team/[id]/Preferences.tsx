@@ -80,7 +80,7 @@ export default function Page({ company }: { company: Company }) {
       // attachServicePhotos: isFreePlan
       //   ? false
       //   : company.preferences?.serviceEmailPreferences?.attachServicePhotos || false,
-      ccEmail: isFreePlan ? '' : company.preferences?.serviceEmailPreferences?.ccEmail || '',
+      ccEmail: company.preferences?.serviceEmailPreferences?.ccEmail || undefined,
       filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28,
       filterReplacementIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterReplacementIntervalDays || 365,
       filterCleaningMustHavePhotos: company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false,
@@ -198,7 +198,7 @@ export default function Page({ company }: { company: Company }) {
       case 'attachCustomChecklist':
         return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachCustomChecklist || false;
       case 'ccEmail':
-        return isFreePlan ? '' : company.preferences?.serviceEmailPreferences?.ccEmail || '';
+        return isFreePlan ? undefined : company.preferences?.serviceEmailPreferences?.ccEmail || undefined;
       case 'filterCleaningIntervalDays':
         return company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28;
       case 'filterReplacementIntervalDays':
@@ -274,7 +274,7 @@ export default function Page({ company }: { company: Company }) {
 
   const ccEmail = form.watch('ccEmail');
 
-  const originalCcEmail = company.preferences?.serviceEmailPreferences?.ccEmail || '';
+  const originalCcEmail = company.preferences?.serviceEmailPreferences?.ccEmail || undefined;
   
   useEffect(() => {
     if (ccEmail !== originalCcEmail) {

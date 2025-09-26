@@ -20,6 +20,7 @@ export const useCreateChecklistTemplate = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['checklist-templates'] });
       queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['service-types'] });
       toast({
         title: 'Checklist template created successfully',
         variant: 'success'
