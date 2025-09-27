@@ -235,7 +235,7 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    {service?.photosSnapshot ? (
+                    {service?.photosSnapshot && service?.photosSnapshot.length > 0 ? (
                       // New structured photos
                       <div className="space-y-4">
                         {getPhotoGroups().map((group: any, groupIndex: number) => (
@@ -250,7 +250,7 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
                               {group.photos.length > 0 ? (
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                                   {group.photos.map((photo: any, photoIndex: number) => {
-                                    const photoDefinition = group.photoDefinitions.find((def: any) => def.id === photo.photoDefinitionId);
+                                    const photoDefinition = group.photoDefinitions?.find((def: any) => def.id === photo.photoDefinitionId);
                                     return (
                                       <div key={photoIndex} className="space-y-2">
                                         <div className="relative aspect-square overflow-hidden rounded-lg">
@@ -320,7 +320,7 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
                             {group.readings.length > 0 ? (
                               group.readings.map((reading: any, readingIndex: number) => {
                                 // Find the reading definition from the group's readingDefinitions
-                                const readingDefinition = group.readingDefinitions.find((def: any) => def.id === reading.readingDefinitionId);
+                                const readingDefinition = group.readingDefinitions?.find((def: any) => def.id === reading.readingDefinitionId);
                                 return (
                                   <div key={readingIndex} className="rounded-lg bg-gray-50 p-3">
                                     <div className="text-sm text-gray-500">
@@ -376,7 +376,7 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
                             {group.consumables.length > 0 ? (
                               group.consumables.map((consumable: any, consumableIndex: number) => {
                                 // Find the consumable definition from the group's consumableDefinitions
-                                const consumableDefinition = group.consumableDefinitions.find((def: any) => def.id === consumable.consumableDefinitionId);
+                                const consumableDefinition = group.consumableDefinitions?.find((def: any) => def.id === consumable.consumableDefinitionId);
                                 return (
                                   <div key={consumableIndex} className="rounded-lg bg-gray-50 p-3">
                                     <div className="text-sm text-gray-500">
