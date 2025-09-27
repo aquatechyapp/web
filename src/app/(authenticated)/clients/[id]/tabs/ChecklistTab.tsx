@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { useCreateChecklistTemplate } from '@/hooks/react-query/checklist-templates/useCreateChecklistTemplate';
 import { useUpdateChecklistTemplate } from '@/hooks/react-query/checklist-templates/useUpdateChecklistTemplate';
 import { useDeleteChecklistTemplate } from '@/hooks/react-query/checklist-templates/useDeleteChecklistTemplate';
-import { ChecklistTemplateItem } from '@/ts/interfaces/Company';
 import { Pool } from '@/ts/interfaces/Pool';
+import { ChecklistTemplateItem } from '@/ts/interfaces/ChecklistTemplates';
 
 interface ChecklistTabProps {
   poolId: string;
@@ -19,14 +19,13 @@ export default function ChecklistTab({ poolId, clientId, pool }: ChecklistTabPro
   const existingTemplate = pool.checklistTemplates?.[0];
   
   const [customChecklist, setCustomChecklist] = useState<ChecklistTemplateItem[]>(
-    existingTemplate?.items?.map(item => ({
+    existingTemplate?.items?.map((item: any) => ({
       ...item,
       createdAt: new Date(item.createdAt)
     })) || []
   );
   const [newChecklistItem, setNewChecklistItem] = useState<ChecklistTemplateItem>({
     id: '',
-    templateId: '',
     label: '',
     order: 0,
     createdAt: new Date()
@@ -35,9 +34,9 @@ export default function ChecklistTab({ poolId, clientId, pool }: ChecklistTabPro
   const [editingText, setEditingText] = useState('');
 
   // Use the custom hooks
-  const { mutate: createChecklistTemplate, isPending: isCreatingTemplate } = useCreateChecklistTemplate(clientId);
-  const { mutate: updateChecklistTemplate, isPending: isUpdatingTemplate } = useUpdateChecklistTemplate(clientId);
-  const { mutate: deleteChecklistTemplate, isPending: isDeletingTemplate } = useDeleteChecklistTemplate(clientId);
+  const { mutate: createChecklistTemplate, isPending: isCreatingTemplate } = useCreateChecklistTemplate();
+  const { mutate: updateChecklistTemplate, isPending: isUpdatingTemplate } = useUpdateChecklistTemplate();
+  const { mutate: deleteChecklistTemplate, isPending: isDeletingTemplate } = useDeleteChecklistTemplate();
   
   // Combine all loading states
   const isSaving = isCreatingTemplate || isUpdatingTemplate || isDeletingTemplate;
@@ -52,13 +51,11 @@ export default function ChecklistTab({ poolId, clientId, pool }: ChecklistTabPro
         id: Date.now().toString(),
         label: newChecklistItem.label.trim(),
         order: customChecklist.length + 1,
-        createdAt: new Date(),
-        templateId: ''
+        createdAt: new Date()
       };
       setCustomChecklist([...customChecklist, newItem]);
       setNewChecklistItem({
         id: '',
-        templateId: '',
         label: '',
         order: 0,
         createdAt: new Date()
@@ -109,7 +106,7 @@ export default function ChecklistTab({ poolId, clientId, pool }: ChecklistTabPro
       updateChecklistTemplate(
         {
           templateId: existingTemplate.id,
-          items
+          data: { items }
         },
         {
           onSuccess: (data) => {
@@ -129,7 +126,6 @@ export default function ChecklistTab({ poolId, clientId, pool }: ChecklistTabPro
             // Reset the new item input field
             setNewChecklistItem({
               id: '',
-              templateId: '',
               label: '',
               order: 0,
               createdAt: new Date()
@@ -144,7 +140,6 @@ export default function ChecklistTab({ poolId, clientId, pool }: ChecklistTabPro
       createChecklistTemplate(
         {
           companyId,
-          poolId,
           name: poolId,
           items
         },
@@ -166,7 +161,6 @@ export default function ChecklistTab({ poolId, clientId, pool }: ChecklistTabPro
             // Reset the new item input field
             setNewChecklistItem({
               id: '',
-              templateId: '',
               label: '',
               order: 0,
               createdAt: new Date()
@@ -192,7 +186,6 @@ export default function ChecklistTab({ poolId, clientId, pool }: ChecklistTabPro
         setEditingText('');
         setNewChecklistItem({
           id: '',
-          templateId: '',
           label: '',
           order: 0,
           createdAt: new Date()

@@ -1,3 +1,8 @@
+import { ReadingGroup } from './ReadingGroups';
+import { ConsumableGroup } from './ConsumableGroups';
+import { ServiceType } from './ServiceTypes';
+import { ChecklistTemplate } from './ChecklistTemplates';
+
 type Status = 'Active' | 'Inactive';
 
 export type CompanyMember = {
@@ -34,6 +39,13 @@ export interface Company {
       attachServicePhotos: boolean;
       ccEmail: string;
       sendFilterCleaningEmails: boolean;
+
+      // New fields
+      attachReadingsGroups: boolean;
+      attachConsumablesGroups: boolean;
+      attachPhotoGroups: boolean;
+      attachSelectorsGroups: boolean;
+      attachCustomChecklist: boolean;
     };
     equipmentMaintenancePreferences: {
       filterCleaningIntervalDays: number;
@@ -43,26 +55,12 @@ export interface Company {
   };
   imageUrl?: string | null;
   checklistTemplates: ChecklistTemplate[];
+  readingGroups?: ReadingGroup[];
+  consumableGroups?: ConsumableGroup[];
+  serviceTypes?: ServiceType[];
 }
 
-export type ChecklistTemplate = {
-  id: string;
-  name: string;
-  description?: string | null;
-  companyId: string;
-  isActive: boolean;
-  isDefault: boolean;
-  createdAt: string;
-  items: ChecklistTemplateItem[];
-}
-
-export type ChecklistTemplateItem = {
-  id: string;
-  templateId: string;
-  label: string;
-  order: number;
-  createdAt: Date;
-};
+// ChecklistTemplate and ChecklistTemplateItem are now imported from ChecklistTemplates.ts
 
 export interface CreateCompany {
   name: string;

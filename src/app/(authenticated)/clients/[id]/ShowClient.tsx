@@ -34,6 +34,7 @@ export default function ShowClient({ client }: Props) {
   const { mutate: deleteClient, isPending: isDeleting } = useDeleteClient();
   const router = useRouter();
 
+  console.log(client.pools[0].services);
   const [tab, setTab] = useState<'client_info' | 'pools' | 'email_preferences'>('client_info');
 
   if (isPending || isDeleting) return <LoadingSpinner />;

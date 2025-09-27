@@ -35,6 +35,19 @@ export interface Service {
   completedAt: string | null;
   photos: string[];
   companyOwnerId: string;
+  // New structured properties
+  structuredPhotos?: StructuredPhoto[];
+  photosSnapshot?: PhotoGroup[];
+  readingsSnapshot?: ReadingGroup[];
+  readings?: Reading[];
+  consumablesSnapshot?: ConsumableGroup[];
+  consumables?: Consumable[];
+  checklistSnapshot?: ChecklistItem[];
+  customChecklist?: Record<string, boolean>;
+  selectorsSnapshot?: SelectorGroup[];
+  selectors?: Selector[];
+  serviceTypeId?: string;
+  checklistTemplateId?: string;
 }
 
 export interface ChemicalsSpent {
@@ -78,3 +91,108 @@ export type TransferService = {
   assignedToId: string;
   scheduledTo: string;
 };
+
+// New structured data interfaces
+export interface StructuredPhoto {
+  id: string;
+  serviceId: string;
+  photoDefinitionId: string;
+  url: string;
+  notes: string | null;
+  createdAt: string;
+}
+
+export interface PhotoDefinition {
+  id: string;
+  name: string;
+  description: string;
+  isRequired: boolean;
+  order: number;
+}
+
+export interface PhotoGroup {
+  id: string;
+  name: string;
+  description: string;
+  photoDefinitions: PhotoDefinition[];
+}
+
+export interface ReadingDefinition {
+  id: string;
+  name: string;
+  description: string;
+  unit: string;
+  minValue: number;
+  maxValue: number;
+  goalValue: number;
+  step: number;
+  isRequired: boolean;
+  order: number;
+}
+
+export interface ReadingGroup {
+  id: string;
+  name: string;
+  description: string;
+  readingDefinitions: ReadingDefinition[];
+}
+
+export interface Reading {
+  readingDefinitionId: string;
+  notes: string | null;
+  value: number | null;
+}
+
+export interface ConsumableDefinition {
+  id: string;
+  name: string;
+  description: string;
+  unit: string;
+  minValue: number;
+  maxValue: number;
+  step: number;
+  isRequired: boolean;
+  order: number;
+  pricePerUnit: number;
+}
+
+export interface ConsumableGroup {
+  id: string;
+  name: string;
+  description: string;
+  consumableDefinitions: ConsumableDefinition[];
+}
+
+export interface Consumable {
+  consumableDefinitionId: string;
+  quantity: number | null;
+}
+
+export interface ChecklistItem {
+  id: string;
+  label: string;
+  order: number;
+}
+
+export interface SelectorDefinition {
+  id: string;
+  name: string;
+  description: string;
+  isRequired: boolean;
+  order: number;
+}
+
+export interface SelectorGroup {
+  id: string;
+  name: string;
+  description: string;
+  selectorDefinitions: SelectorDefinition[];
+}
+
+export interface Selector {
+  id: string;
+  serviceId: string;
+  selectorDefinitionId: string;
+  value: string | null;
+  selectorDefinition?: SelectorDefinition;
+}

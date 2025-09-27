@@ -1,0 +1,2 @@
+export { EmailPreferencesCard } from './EmailPreferencesCard';
+
