@@ -235,7 +235,7 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    {service?.photosSnapshot && service?.photosSnapshot.length > 0 ? (
+                    {service?.photosSnapshot && service?.photosSnapshot.length > 0 && service?.photos?.length === 0 ? (
                       // New structured photos
                       <div className="space-y-4">
                         {getPhotoGroups().map((group: any, groupIndex: number) => (
