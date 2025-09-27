@@ -102,7 +102,7 @@ function DraggableConsumableDefinitionRow({ definition, onEdit, onDelete, isUpda
         )}
       </TableCell>
       <TableCell>
-        {definition.pricePerUnit !== undefined ? (
+        {definition.pricePerUnit !== undefined && definition.pricePerUnit !== null ? (
           <span className="text-sm">${definition.pricePerUnit.toFixed(2)}</span>
         ) : (
           <span className="text-sm text-muted-foreground">No price</span>
