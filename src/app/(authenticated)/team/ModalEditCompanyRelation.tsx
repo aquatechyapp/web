@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useState } from 'react';
 
 import InputField from '@/components/InputField';
 import { Form } from '@/components/ui/form';
@@ -56,6 +57,7 @@ type PropsView = {
 };
 
 export function ModalEditCompanyRelation({ children, companyId }: PropsView) {
+  const [open, setOpen] = useState(false);
   const { data: companies, isLoading } = useGetCompanies();
   const user = useUserStore((state) => state.user);
   const { mutate: handleAcceptUserCompanyInvitation } = useAcceptCompanyInvitation();
@@ -76,27 +78,44 @@ export function ModalEditCompanyRelation({ children, companyId }: PropsView) {
     }
   });
 
-  function handleInvitation() {
+  function handleInvitation(e: React.FormEvent) {
+    e.preventDefault(); // Prevent default form submission behavior
     const values = form.getValues();
     const companyId = selectedCompany?.id;
     if (!companyId) return;
+    
     if (selectedCompany?.status === 'Inactive') {
-      handleAcceptUserCompanyInvitation({ userCompanyId: values.userCompanyId, status: 'Active' });
+      handleAcceptUserCompanyInvitation(
+        { userCompanyId: values.userCompanyId, status: 'Active' },
+        {
+          onSuccess: () => {
+            setOpen(false); // Close modal on success
+          }
+        }
+      );
     } else {
-      handleDeleteUserCompanyRelation({
-        companyId: selectedCompany!.id,
-        memberId: user.id
-      });
+      handleDeleteUserCompanyRelation(
+        {
+          companyId: selectedCompany!.id,
+          memberId: user.id
+        },
+        {
+          onSuccess: () => {
+            setOpen(false); // Close modal on success
+          }
+        }
+      );
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent>
-        <DialogTitle>Edit company relation</DialogTitle>
-        <DialogHeader></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Edit company relation</DialogTitle>
+        </DialogHeader>
         <Form {...form}>
           <form onSubmit={handleInvitation}>
             <div className="inline-flex w-full flex-col items-start justify-start gap-8">
@@ -108,11 +127,13 @@ export function ModalEditCompanyRelation({ children, companyId }: PropsView) {
                   <InputField name="role" disabled label="Role" placeholder="role" />
                 </div>
               </div>
-              <DialogTrigger asChild>
-                <Button className="w-full" type="submit">
-                  {selectedCompany?.status === 'Active' ? 'Quit' : 'Accept'}
-                </Button>
-              </DialogTrigger>
+              <Button 
+                className="w-full" 
+                type="submit" 
+                disabled={isPending}
+              >
+                {isPending ? 'Processing...' : (selectedCompany?.status === 'Active' ? 'Quit' : 'Accept')}
+              </Button>
             </div>
           </form>
         </Form>

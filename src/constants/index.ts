@@ -145,6 +145,13 @@ export const routes: Menu[] = [
         title: 'Import Clients from CSV',
         icon: Import,
         description: 'Import clients using our CSV template'
+      },
+      importSkimmer: {
+        text: 'Skimmer Import',
+        href: '/clients/import-skimmer',
+        title: 'Import Clients from Skimmer',
+        icon: Import,
+        description: 'Import clients from Skimmer Excel file'
       }
     },
     icon: Users
