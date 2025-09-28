@@ -265,6 +265,11 @@ export default function Page({ company }: { company: Company }) {
       attachChemicalsReadings,
       attachChecklist,
       attachServicePhotos,
+      attachReadingsGroups,
+      attachConsumablesGroups,
+      attachPhotoGroups,
+      attachSelectorsGroups,
+      attachCustomChecklist,
       ccEmail,
       sendFilterCleaningEmails
     } = data;
@@ -280,6 +285,11 @@ export default function Page({ company }: { company: Company }) {
         attachChemicalsReadings,
         attachChecklist,
         attachServicePhotos,
+        attachReadingsGroups,
+        attachConsumablesGroups,
+        attachPhotoGroups,
+        attachSelectorsGroups,
+        attachCustomChecklist,
         ccEmail,
         sendFilterCleaningEmails
       },
