@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { useCreateAssignment } from '@/hooks/react-query/assignments/createAssignment';
+import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
 import { useMembersStore } from '@/store/members';
 import { useWeekdayStore } from '@/store/weekday';
 import { Pool } from '@/ts/interfaces/Pool';
@@ -38,6 +39,10 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
   );
   const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
   
+  // Get service types based on the pool's company
+  const companyId = pool?.companyOwnerId || '';
+  const { data: serviceTypesData, isLoading: isServiceTypesLoading } = useGetServiceTypes(companyId);
+  
   const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
     {
       name: string;
@@ -59,6 +64,7 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
       assignmentToId: '',
       poolId: pool?.id || '', // Set the pool ID
       client: '', // This will be empty since we're assigning directly to a pool
+      serviceTypeId: '',
       weekday: selectedWeekday,
       frequency: 'WEEKLY',
       startOn: undefined,
@@ -91,6 +97,7 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
       mutate({
         assignmentToId: form.watch('assignmentToId'),
         poolId: pool.id,
+        serviceTypeId: form.watch('serviceTypeId'),
         weekday: form.watch('weekday'),
         frequency: form.watch('frequency'),
         startOn: form.watch('startOn'),
@@ -230,6 +237,24 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
                   value={form.watch('weekday') as WeekdaysUppercase}
                   onChange={(weekday: WeekdaysUppercase) => form.setValue('weekday', weekday)}
                 />
+              </div>
+
+              <div className="flex gap-4">
+                <div className="basis-full">
+                  <SelectField
+                    name="serviceTypeId"
+                    disabled={!companyId || isServiceTypesLoading}
+                    placeholder={serviceTypesData?.serviceTypes?.length ? "Service Type" : "No service types available"}
+                    label="Service Type"
+                    options={serviceTypesData?.serviceTypes
+                      ?.filter((serviceType) => serviceType.isActive)
+                      .map((serviceType) => ({
+                        key: serviceType.id,
+                        name: serviceType.name,
+                        value: serviceType.id
+                      })) || []}
+                  />
+                </div>
               </div>
 
               <div className="flex gap-4">
