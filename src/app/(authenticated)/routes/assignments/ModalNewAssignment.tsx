@@ -45,6 +45,7 @@ export function DialogNewAssignment() {
       mutate({
         assignmentToId,
         poolId: form.watch('poolId'),
+        serviceTypeId: form.watch('serviceTypeId'),
         weekday: form.watch('weekday'),
         frequency: form.watch('frequency'),
         startOn: form.watch('startOn'),

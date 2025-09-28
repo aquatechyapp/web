@@ -247,8 +247,18 @@ export function EditServiceTypeDialog({
                     <FormItem>
                       <FormLabel>Name *</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Pool Cleaning" {...field} />
+                        <Input 
+                          placeholder="e.g., Pool Cleaning" 
+                          {...field} 
+                          disabled={currentServiceType.name === "Pool Cleaning"}
+                          className={currentServiceType.name === "Pool Cleaning" ? "bg-muted cursor-not-allowed" : ""}
+                        />
                       </FormControl>
+                      {currentServiceType.name === "Pool Cleaning" && (
+                        <p className="text-xs text-muted-foreground mt-2">
+                          The "Pool Cleaning" service name cannot be modified as it's a default service type.
+                        </p>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}

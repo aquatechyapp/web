@@ -31,9 +31,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AddressInput } from '@/components/AddressInput';
 import { useCreateClientWithMultipleAssignments, Assignment, CreateClientWithAssignmentsData } from '@/hooks/react-query/clients/createClientWithMultipleAssignments';
 import { useToast } from '@/components/ui/use-toast';
+import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
 // Update the schema to remove the old assignment fields
 const assignmentSchema = z.object({
   assignmentToId: z.string().min(1),
+  serviceTypeId: z.string().min(1, 'Service type is required'),
   weekday: defaultSchemas.weekday,
   frequency: defaultSchemas.frequency,
   startOn: z.string().min(1),
@@ -85,6 +87,7 @@ export default function Page() {
   const [assignments, setAssignments] = useState<Assignment[]>([
     {
       assignmentToId: '',
+      serviceTypeId: '',
       weekday: 'SUNDAY' as const, // or any default weekday
       frequency: Frequency.WEEKLY,
       startOn: '',
@@ -211,6 +214,10 @@ export default function Page() {
     }
   });
 
+  // Get service types based on the selected company
+  const selectedCompanyId = form.watch('companyOwnerId');
+  const { data: serviceTypesData, isLoading: isServiceTypesLoading } = useGetServiceTypes(selectedCompanyId || '');
+
   useEffect(() => {
     if (user.firstName === '') {
       router.push('/account');
@@ -323,6 +330,7 @@ export default function Page() {
   const addAssignment = () => {
     const newAssignment: Assignment = {
       assignmentToId: '',
+      serviceTypeId: '',
       weekday: 'SUNDAY' as const, // or any default weekday
       frequency: Frequency.WEEKLY,
       startOn: '',
@@ -406,7 +414,7 @@ export default function Page() {
 
     // Check if all assignments have required fields
     const invalidAssignments = assignments.filter(
-      assignment => !assignment.assignmentToId || !assignment.weekday || !assignment.frequency || !assignment.startOn || !assignment.endAfter
+      assignment => !assignment.assignmentToId || !assignment.serviceTypeId || !assignment.weekday || !assignment.frequency || !assignment.startOn || !assignment.endAfter
     );
 
     if (invalidAssignments.length > 0) {
@@ -460,6 +468,7 @@ export default function Page() {
       form.reset();
       setAssignments([{
         assignmentToId: '',
+        serviceTypeId: '',
         weekday: 'SUNDAY' as const, // or any default weekday
         frequency: Frequency.WEEKLY,
         startOn: '',
@@ -740,6 +749,28 @@ export default function Page() {
                       />
                       {members.length === 0 && <FormDescription>No technicians available</FormDescription>}
                     </FormItem>
+                    <FormItem className="w-full">
+                      <SelectField
+                        name={`serviceTypeId-${index}`} // Make name unique
+                        disabled={!selectedCompanyId || isServiceTypesLoading}
+                        placeholder={serviceTypesData?.serviceTypes?.length ? "Service Type" : "No service types available"}
+                        label="Service Type"
+                        options={serviceTypesData?.serviceTypes
+                          ?.filter((serviceType) => serviceType.isActive)
+                          .map((serviceType) => ({
+                            key: serviceType.id,
+                            name: serviceType.name,
+                            value: serviceType.id
+                          })) || []}
+                        value={assignment.serviceTypeId}
+                        onValueChange={(value) => updateAssignment(index, 'serviceTypeId', value)}
+                      />
+                      {!selectedCompanyId && <FormDescription>Please select a company first</FormDescription>}
+                      {selectedCompanyId && !serviceTypesData?.serviceTypes?.length && <FormDescription>No service types available for this company</FormDescription>}
+                    </FormItem>
+                  </div>
+
+                  <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                     <SelectField 
                       name={`weekday-${index}`} // Make name unique
                       label="Weekday" 

@@ -175,7 +175,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
             <AvatarFallback>{getInitials(name)}</AvatarFallback>
           </Avatar>
           <div className="inline-flex flex-col items-start justify-center gap-1">
-            <div className="text-pretty text-sm font-medium">{name}</div>
+            <div className="text-pretty text-sm font-medium">{`${name} ${assignment.serviceType?.name ? `(${assignment.serviceType?.name})` : ''}`}</div>
             {isOnlyAt ? (
               <div className="text-xs text-red-500">{startsOn}</div>
             ) : (

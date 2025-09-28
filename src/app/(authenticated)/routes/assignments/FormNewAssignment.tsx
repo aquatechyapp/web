@@ -15,9 +15,12 @@ import { Client } from '@/ts/interfaces/Client';
 import { buildSelectOptions } from '@/utils/formUtils';
 import { FormSchema } from './page';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
+import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
+import { useUserStore } from '@/store/user';
 
 export const FormNewAssignment = () => {
   const form = useFormContext<FormSchema>();
+  const { user } = useUserStore();
 
   const [startOn, weekday] = form.watch(['startOn', 'weekday']);
   const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
@@ -37,6 +40,9 @@ export const FormNewAssignment = () => {
 
   // const disabledWeekdays = useDisabledWeekdays();
   const { data: clients = [], isLoading } = useGetAllClients();
+  const clientId = form.watch('client');
+  const selectedClient = clients.find((c: Client) => c.id === clientId);
+  const { data: serviceTypesData, isLoading: isServiceTypesLoading } = useGetServiceTypes(selectedClient?.companyOwnerId || '');
 
   useEffect(() => {
     form.resetField('startOn');
@@ -49,11 +55,12 @@ export const FormNewAssignment = () => {
     getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn'));
   }, [form.watch('startOn')]);
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading || isServiceTypesLoading) return <LoadingSpinner />;
 
-  const clientId = form.watch('client');
+  const serviceTypes = serviceTypesData?.serviceTypes || [];
 
   const hasClients = clients.length > 0;
+  const hasServiceTypes = serviceTypes.length > 0;
 
   function getNext10DatesForStartOnBasedOnWeekday(weekday: string) {
     // Convert weekday string to a number (0=Sunday, 1=Monday, ..., 6=Saturday)
@@ -165,6 +172,20 @@ export const FormNewAssignment = () => {
                 label="Location"
                 placeholder="Location"
                 name="poolId"
+              />
+            )}
+            {clientId && (
+              <SelectField
+                options={serviceTypes
+                  .filter((serviceType) => serviceType.isActive)
+                  .map((serviceType) => ({
+                    key: serviceType.id,
+                    name: serviceType.name,
+                    value: serviceType.id
+                  }))}
+                label="Service Type"
+                placeholder={hasServiceTypes ? 'Select service type' : 'No service types available'}
+                name="serviceTypeId"
               />
             )}
           </div>

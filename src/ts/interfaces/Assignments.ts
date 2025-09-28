@@ -17,11 +17,16 @@ export type Assignment = {
   status: 'Active' | 'Inactive';
   pool: Pool;
   timezone?: string | null | undefined;
+  serviceType?: {
+    id: string;
+    name: string;
+  };
 };
 
 export type CreateAssignment = {
   assignmentToId: string;
   poolId: string;
+  serviceTypeId: string;
   weekday: string;
   frequency: string;
   startOn: Date;

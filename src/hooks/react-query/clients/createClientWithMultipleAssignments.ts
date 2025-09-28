@@ -10,6 +10,7 @@ import { Frequency } from '@/ts/enums/enums';
 // Update the Assignment interface to match the form schema
 export interface Assignment {
   assignmentToId: string;
+  serviceTypeId: string;
   weekday: "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
   frequency: Frequency;
   startOn: string;

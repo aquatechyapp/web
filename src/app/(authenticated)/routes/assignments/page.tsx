@@ -78,6 +78,8 @@ export default function Page() {
     defaultValues: {
       assignmentToId: assignmentToId,
       poolId: '',
+      client: '',
+      serviceTypeId: '',
       weekday: format(new Date(), 'EEEE').toUpperCase() as WeekdaysUppercase,
       frequency: 'WEEKLY',
       startOn: undefined,

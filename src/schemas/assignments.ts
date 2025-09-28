@@ -35,6 +35,7 @@ export const newAssignmentSchema = z
     assignmentToId: z.string().min(1),
     poolId: z.string(),
     client: z.string(),
+    serviceTypeId: z.string().min(1, 'Service type is required'),
     frequency: defaultSchemas.frequency,
     weekday: defaultSchemas.weekday
   })
