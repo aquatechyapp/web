@@ -16,9 +16,12 @@ import { buildSelectOptions } from '@/utils/formUtils';
 import { FormSchema } from './page';
 import { Weekdays } from '@/ts/interfaces/Weekday';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
+import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
+import { useUserStore } from '@/store/user';
 
 export const FormNewService = () => {
   const form = useFormContext<FormSchema>();
+  const { user } = useUserStore();
 
   const [next10Days, setNext10Days] = useState<
     {
@@ -30,16 +33,20 @@ export const FormNewService = () => {
 
   // const disabledWeekdays = useDisabledWeekdays();
   const { data: clients = [], isLoading } = useGetAllClients();
+  const clientId = form.watch('clientId');
+  const selectedClient = clients.find((c: Client) => c.id === clientId);
+  const { data: serviceTypesData, isLoading: isServiceTypesLoading } = useGetServiceTypes(selectedClient?.companyOwnerId || '');
 
   useEffect(() => {
     getNext10Dates();
   }, []);
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading || isServiceTypesLoading) return <LoadingSpinner />;
 
-  const clientId = form.watch('clientId');
+  const serviceTypes = serviceTypesData?.serviceTypes || [];
 
   const hasClients = clients.length > 0;
+  const hasServiceTypes = serviceTypes.length > 0;
 
   function getNext10Dates() {
     const startDate = new Date();
@@ -100,6 +107,20 @@ export const FormNewService = () => {
                 label="Location"
                 placeholder="Location"
                 name="poolId"
+              />
+            )}
+            {clientId && (
+              <SelectField
+                options={serviceTypes
+                  .filter((serviceType) => serviceType.isActive)
+                  .map((serviceType) => ({
+                    key: serviceType.id,
+                    name: serviceType.name,
+                    value: serviceType.id
+                  }))}
+                label="Service Type"
+                placeholder={hasServiceTypes ? 'Select service type' : 'No service types available'}
+                name="serviceTypeId"
               />
             )}
           </div>

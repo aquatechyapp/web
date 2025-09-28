@@ -75,7 +75,7 @@ export function ServiceItem({ id, service, shouldPermitChangeOrder }: ServiceIte
             <AvatarFallback>{getInitials(name!)}</AvatarFallback>
           </Avatar>
           <div className="inline-flex flex-col items-start justify-center gap-1 text-pretty">
-            <div className="text-pretty text-sm font-medium">{name}</div>
+            <div className="text-pretty text-sm font-medium">{`${name} ${service.serviceType?.name ? `(${service.serviceType?.name})` : ''}`}</div>
             <div className="overflow-hidden text-xs text-gray-500">{address}</div>
           </div>
         </div>

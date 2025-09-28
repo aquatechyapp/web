@@ -43,7 +43,8 @@ export function DialogNewService() {
       mutate({
         poolId: form.watch('poolId'),
         assignedToId,
-        scheduledTo: form.watch('scheduledTo')
+        scheduledTo: form.watch('scheduledTo'),
+        serviceTypeId: form.watch('serviceTypeId')
       });
       // preciso guardar o assignmentToId selecionado antes de dar reset, se não vai bugar ao criar 2 assignments seguidos
       // em um technician que não é o user logado

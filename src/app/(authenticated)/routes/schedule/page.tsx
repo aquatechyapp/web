@@ -67,7 +67,9 @@ export default function Page() {
     defaultValues: {
       assignedToId: assignedToId,
       poolId: '',
-      scheduledTo: ''
+      scheduledTo: '',
+      clientId: '',
+      serviceTypeId: ''
     }
   });
 

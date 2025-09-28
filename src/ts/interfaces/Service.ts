@@ -47,6 +47,10 @@ export interface Service {
   selectorsSnapshot?: SelectorGroup[];
   selectors?: Selector[];
   serviceTypeId?: string;
+  serviceType?: {
+    id: string;
+    name: string;
+  };
   checklistTemplateId?: string;
 }
 
@@ -85,6 +89,7 @@ export type CreateService = {
   assignedToId: string;
   poolId: string;
   scheduledTo: string;
+  serviceTypeId: string;
 };
 
 export type TransferService = {

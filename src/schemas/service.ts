@@ -59,5 +59,12 @@ export const newServiceSchema = z.object({
       invalid_type_error: 'clientId must be a string.'
     })
     .trim()
-    .min(1, { message: 'clientId must be at least 1 character.' })
+    .min(1, { message: 'clientId must be at least 1 character.' }),
+  serviceTypeId: z
+    .string({
+      required_error: 'serviceTypeId is required.',
+      invalid_type_error: 'serviceTypeId must be a string.'
+    })
+    .trim()
+    .min(1, { message: 'serviceTypeId must be at least 1 character.' })
 });
