@@ -42,7 +42,8 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
       enterSide: pool.enterSide || '',
       poolType: pool.poolType,
       notes: pool.notes || '',
-      zip: pool.zip || ''
+      zip: pool.zip || '',
+      animalDanger: pool.animalDanger || false
     }
   });
 
@@ -105,6 +106,17 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
             label="Chemical type"
           />
         </div>
+        
+        <div className="flex flex-col gap-2 mt-2">
+          <div className="inline-flex items-start justify-start gap-2">
+            <InputField
+              name="animalDanger"
+              type={FieldType.Checkbox}
+              placeholder="Is there a danger of animal attack?"
+            />
+          </div>
+        </div>
+        
         <div className="mt-2 w-full">
           <InputField type={FieldType.TextArea} name="notes" placeholder="Location notes..." />
         </div>
