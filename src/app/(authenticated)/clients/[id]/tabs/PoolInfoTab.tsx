@@ -11,14 +11,12 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { AddressInput } from '@/components/AddressInput';
 import { PoolTypes } from '@/constants';
-import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 import { editPoolSchema } from '@/schemas/pool';
 import { FieldType } from '@/ts/enums/enums';
 import { Pool } from '@/ts/interfaces/Pool';
 import { isEmpty } from '@/utils';
 import { findDifferenceBetweenTwoObjects } from '@/utils/others';
-import { ModalDeletePool } from '../ModalDeletePool';
 
 interface PoolInfoTabProps {
   pool: Pool;
@@ -27,8 +25,7 @@ interface PoolInfoTabProps {
 
 export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
   const { mutate, isPending: isPendingUpdatePool } = useUpdatePool();
-  const { mutate: deletePool, isPending: isPendingDeletePool } = useDeletePool(['clients', clientId], pool.id);
-  const isPending = isPendingUpdatePool || isPendingDeletePool;
+  const isPending = isPendingUpdatePool;
 
   const form = useForm<z.infer<typeof editPoolSchema>>({
     resolver: zodResolver(editPoolSchema),
@@ -69,9 +66,6 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
           <Typography element="h3" className="text-md">
             Basic information
           </Typography>
-          <div className="flex gap-4 text-lg">
-            <ModalDeletePool deletePool={() => deletePool()} />
-          </div>
         </div>
         
         <AddressInput

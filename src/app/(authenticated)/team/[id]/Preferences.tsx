@@ -282,6 +282,11 @@ export default function Page({ company }: { company: Company }) {
       },
       serviceEmailPreferences: {
         sendEmails,
+        attachReadingsGroups,
+        attachConsumablesGroups,
+        attachPhotoGroups,
+        attachSelectorsGroups,
+        attachCustomChecklist,
         attachChemicalsReadings,
         attachChecklist,
         attachServicePhotos,
