@@ -7,6 +7,7 @@ import { PlusIcon } from '@radix-ui/react-icons';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useUserStore } from '@/store/user';
 
 import { CompanyMember } from '@/ts/interfaces/Company';
@@ -18,7 +19,7 @@ export default function Page() {
   const user = useUserStore((state) => state.user);
   const router = useRouter();
 
-  const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
+  const { data: members, isLoading } = useGetMembersOfAllCompaniesByUserId(user.id);
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -31,6 +32,8 @@ export default function Page() {
       return router.push('/account');
     }
   }, [user]);
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="p-2">
