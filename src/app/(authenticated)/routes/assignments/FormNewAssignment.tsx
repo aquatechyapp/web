@@ -8,8 +8,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 import { Frequencies } from '@/constants';
 
-import useGetClients from '@/hooks/react-query/clients/getClients';
-
 import { Client } from '@/ts/interfaces/Client';
 
 import { buildSelectOptions } from '@/utils/formUtils';

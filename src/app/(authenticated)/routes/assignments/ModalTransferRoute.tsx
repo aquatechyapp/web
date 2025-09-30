@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
 
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -81,9 +80,20 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
     return false;
   };
 
-  const { mutate: transferPermanently, isPending: isPendingPermanently } = useTransferPermanentlyRoute(assignment);
+  const handleTransferSuccess = () => {
+    setManualLoading(false); // Clear manual loading state
+    form.reset();
+    setOpen(false);
+  };
 
-  const isPending = isPendingPermanently;
+  const handleTransferError = () => {
+    setManualLoading(false); // Clear manual loading state on error
+  };
+
+  const { mutate: transferPermanently, isPending: isPendingPermanently } = useTransferPermanentlyRoute(assignment, handleTransferSuccess, handleTransferError);
+  const [manualLoading, setManualLoading] = useState(false);
+
+  const isPending = isPendingPermanently || manualLoading;
 
   const buildPayload = () => {
     const { weekday, startOn, endAfter } = form.getValues();
@@ -103,9 +113,8 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
     const isValid = await validateForm();
     if (isValid) {
       const payload = buildPayload();
+      setManualLoading(true); // Set manual loading state
       transferPermanently(payload as TransferAssignment);
-      form.reset();
-      setOpen(false);
       return;
     }
     setOpen(true);
@@ -210,74 +219,79 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
   }, [form.watch('startOn')]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={isPending ? undefined : setOpen}>
       <DialogContent className="max-h-screen w-96 max-w-[580px] overflow-y-scroll rounded-md md:w-[580px]">
         <DialogTitle>Transfer Route</DialogTitle>
         {isPending ? (
-          <LoadingSpinner />
+          <div className="flex flex-col items-center gap-4 py-8">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"></div>
+            <p className="text-sm text-gray-600">Transferring assignments...</p>
+          </div>
         ) : (
-          <Form {...form}>
-            <form className="flex flex-col gap-4">
-              <div className="flex gap-4">
-                <div className="basis-full">
-                  <SelectField
-                    name="assignmentToId"
-                    placeholder="Technician..."
-                    label="Technician"
-                    options={uniqueMembers.map((m) => ({
-                      key: m.id,
-                      value: m.id,
-                      name: `${m.firstName} ${m.lastName}`
-                    }))}
+          <>
+            <Form {...form}>
+              <form className="flex flex-col gap-4">
+                <div className="flex gap-4">
+                  <div className="basis-full">
+                    <SelectField
+                      name="assignmentToId"
+                      placeholder="Technician..."
+                      label="Technician"
+                      options={uniqueMembers.map((m) => ({
+                        key: m.id,
+                        value: m.id,
+                        name: `${m.firstName} ${m.lastName}`
+                      }))}
+                    />
+                  </div>
+
+                  <WeekdaySelect
+                    value={form.watch('weekday')}
+                    onChange={(weekday: WeekdaysUppercase) => form.setValue('weekday', weekday)}
                   />
                 </div>
 
-                <WeekdaySelect
-                  value={form.watch('weekday')}
-                  onChange={(weekday: WeekdaysUppercase) => form.setValue('weekday', weekday)}
-                />
-              </div>
-
-              <div className="mt-1">
-                <div className="flex flex-col gap-4 md:flex-row">
-                  <SelectField
-                    label="Start on"
-                    name="startOn"
-                    placeholder="Start on"
-                    options={next10WeekdaysStartOn.map((date) => ({
-                      key: date.key,
-                      name: date.name,
-                      value: date.value
-                    }))}
-                  />
-                  <SelectField
-                    label="End after"
-                    name="endAfter"
-                    placeholder="End after"
-                    options={next10WeekdaysEndAfter.map((date) => ({
-                      key: date.key,
-                      name: date.name,
-                      value: date.value
-                    }))}
-                  />
+                <div className="mt-1">
+                  <div className="flex flex-col gap-4 md:flex-row">
+                    <SelectField
+                      label="Start on"
+                      name="startOn"
+                      placeholder="Start on"
+                      options={next10WeekdaysStartOn.map((date) => ({
+                        key: date.key,
+                        name: date.name,
+                        value: date.value
+                      }))}
+                    />
+                    <SelectField
+                      label="End after"
+                      name="endAfter"
+                      placeholder="End after"
+                      options={next10WeekdaysEndAfter.map((date) => ({
+                        key: date.key,
+                        name: date.name,
+                        value: date.value
+                      }))}
+                    />
+                  </div>
                 </div>
-              </div>
-            </form>
-          </Form>
+              </form>
+            </Form>
+            <div className="flex justify-around">
+              <Button onClick={transferRoute}>Accept</Button>
+
+              <Button
+                variant="outline"
+                onClick={() => {
+                  form.reset();
+                  setOpen(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </>
         )}
-        <div className="flex justify-around">
-          <Button onClick={transferRoute}>Accept</Button>
-
-          <Button
-            variant="outline"
-            onClick={() => {
-              form.reset();
-              setOpen(false);
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
       </DialogContent>
     </Dialog>
   );
