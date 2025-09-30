@@ -36,9 +36,9 @@ import {
 // Update the schema to include the new fields
 const schema = z.object({
   sendEmails: z.boolean(),
-  // attachChemicalsReadings: z.boolean(),
-  // attachChecklist: z.boolean(),
-  // attachServicePhotos: z.boolean(),
+  attachChemicalsReadings: z.boolean(),
+  attachChecklist: z.boolean(),
+  attachServicePhotos: z.boolean(),
 
   // New fields
   attachReadingsGroups: z.boolean(),
@@ -241,7 +241,7 @@ export default function Page({ company }: { company: Company }) {
         attachPhotoGroups,
         attachSelectorsGroups,
         attachCustomChecklist,
-        ccEmail
+        ccEmail,
 
         attachChemicalsReadings,
         attachChecklist,
@@ -265,6 +265,11 @@ export default function Page({ company }: { company: Company }) {
       attachChemicalsReadings,
       attachChecklist,
       attachServicePhotos,
+      attachReadingsGroups,
+      attachConsumablesGroups,
+      attachPhotoGroups,
+      attachSelectorsGroups,
+      attachCustomChecklist,
       ccEmail,
       sendFilterCleaningEmails
     } = data;
@@ -277,6 +282,11 @@ export default function Page({ company }: { company: Company }) {
       },
       serviceEmailPreferences: {
         sendEmails,
+        attachReadingsGroups,
+        attachConsumablesGroups,
+        attachPhotoGroups,
+        attachSelectorsGroups,
+        attachCustomChecklist,
         attachChemicalsReadings,
         attachChecklist,
         attachServicePhotos,

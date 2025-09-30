@@ -34,7 +34,6 @@ export default function ShowClient({ client }: Props) {
   const { mutate: deleteClient, isPending: isDeleting } = useDeleteClient();
   const router = useRouter();
 
-  console.log(client.pools[0].services);
   const [tab, setTab] = useState<'client_info' | 'pools' | 'email_preferences'>('client_info');
 
   if (isPending || isDeleting) return <LoadingSpinner />;
@@ -222,7 +221,21 @@ export default function ShowClient({ client }: Props) {
             {tab === 'client_info' ? (
               <ClientInfo client={client} />
             ) : tab === 'pools' ? (
-              <PoolHeader pools={client.pools} clientId={client.id} />
+              client.pools.length > 0 ? (
+                <PoolHeader pools={client.pools} clientId={client.id} />
+              ) : (
+                <div className="flex flex-col items-center w-full justify-center gap-4 py-12">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No Pools Found</h3>
+                    <p className="text-gray-500 mb-4">
+                      This client doesn't have any pools yet. Add a pool to get started with services.
+                    </p>
+                  </div>
+                  <Button onClick={handleAddPool} className="px-6">
+                    Create Pool
+                  </Button>
+                </div>
+              )
             ) : (
               <EmailPreferences client={client} />
             )}
