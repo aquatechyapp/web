@@ -148,7 +148,7 @@ export const FormNewAssignment = () => {
           <div className="flex flex-col gap-4">
             <SelectField
               options={clients
-                .filter((c: Client) => c.pools.length > 0)
+                .filter((c: Client) => c.isActive && c.pools.length > 0)
                 .map((c: Client) => ({
                   key: c.id,
                   name: `${c.firstName} ${c.lastName}`,
@@ -162,7 +162,7 @@ export const FormNewAssignment = () => {
               <SelectField
                 options={buildSelectOptions(
                   // Procura a piscina somente quando seleciona o cliente
-                  clients.find((c: Client) => c.id === clientId)?.pools,
+                  clients.find((c: Client) => c.id === clientId)?.pools?.filter(pool => pool.isActive),
                   {
                     key: 'id',
                     name: 'name',
