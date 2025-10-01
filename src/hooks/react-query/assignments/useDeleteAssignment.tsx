@@ -11,30 +11,27 @@ export const useDeleteAssignment = () => {
   const userId = Cookies.get('userId');
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (assignmentId: string) => await clientAxios.delete('/assignments', { data: { assignmentId } }),
-    onSuccess: () => {
+    mutationFn: async (assignmentId: string) => {
+      return await clientAxios.delete('/assignments', { data: { assignmentId } });
+    },
+    onSuccess: (_data, assignmentId) => {
+      // Invalidate and refetch assignments and schedule
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
+
       toast({
         duration: 2000,
         title: 'Assignment deleted successfully',
         variant: 'success'
       });
     },
-    onError: (
-      error: AxiosError<{
-        message: string;
-      }>
-    ) => {
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.error('Delete assignment error:', error);
       toast({
         variant: 'error',
         title: 'Error deleting assignment',
-        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
+        description: error.response?.data?.message || error.message || 'Internal server error'
       });
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
-      queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
     }
   });
   return { mutate, isPending };

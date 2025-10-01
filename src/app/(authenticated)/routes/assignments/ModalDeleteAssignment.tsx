@@ -10,29 +10,41 @@ type Props = {
 };
 
 export function DialogDeleteAssignment({ assignment, open, setOpen }: Props) {
-  const { mutate } = useDeleteAssignment();
+  const { mutate, isPending } = useDeleteAssignment();
   if (!assignment) return null;
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogTitle>{assignment.pool.name}</DialogTitle>
-        <DialogDescription>Are you sure you want to delete this assignment?</DialogDescription>
-        <div className="flex justify-around">
-          <DialogTrigger asChild>
+    <Dialog open={open} onOpenChange={isPending ? undefined : setOpen}>
+      <DialogContent className="max-w-md">
+        <DialogTitle className="mb-2">Delete Assignment</DialogTitle>
+        <DialogDescription className="mb-4">
+          Are you sure you want to delete the assignment?<br />
+          This action cannot be undone.
+        </DialogDescription>
+        {isPending ? (
+          <div className="flex flex-col items-center gap-4 py-8">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-red-600"></div>
+            <p className="text-sm text-gray-600">Deleting assignment...</p>
+          </div>
+        ) : (
+          <div className="flex gap-4 pt-4">
             <Button
               variant="destructive"
+              className="w-full"
               onClick={() => {
-                mutate(assignment.id);
-                setOpen(false);
+                mutate(assignment.id, {
+                  onSuccess: () => {
+                    setOpen(false);
+                  }
+                });
               }}
             >
               Delete
             </Button>
-          </DialogTrigger>
-          <DialogTrigger asChild>
-            <Button onClick={() => setOpen(false)}>Cancel</Button>
-          </DialogTrigger>
-        </div>
+            <Button variant="outline" className="w-full" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

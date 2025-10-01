@@ -11,29 +11,44 @@ type Props = {
 };
 
 export function DialogDeleteService({ service, open, setOpen, clientId }: Props) {
-  const { mutate } = useDeleteService(clientId);
+  const { mutate, isPending } = useDeleteService(clientId);
   if (!service) return null;
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogTitle>{service.pool?.name}</DialogTitle>
-        <DialogDescription>Are you sure you want to delete this service?</DialogDescription>
-        <div className="flex justify-around">
-          <DialogTrigger>
+    <Dialog open={open} onOpenChange={isPending ? undefined : setOpen}>
+      <DialogContent className="max-w-md">
+        <DialogTitle className="mb-2">Delete Service</DialogTitle>
+        <DialogDescription className="mb-4">
+          Are you sure you want to delete the service?<br />
+          This action cannot be undone.
+        </DialogDescription>
+        {isPending ? (
+          <div className="flex flex-col items-center gap-4 py-8">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-red-600"></div>
+            <p className="text-sm text-gray-600">Deleting service...</p>
+          </div>
+        ) : (
+          <div className="flex gap-4 pt-4">
             <Button
               variant="destructive"
+              className="w-full"
               onClick={() => {
-                mutate({ serviceId: service.id, assignmentId: service.assignmentId });
-                setOpen(false);
+                mutate(
+                  { serviceId: service.id, assignmentId: service.assignmentId },
+                  {
+                    onSuccess: () => {
+                      setOpen(false);
+                    }
+                  }
+                );
               }}
             >
               Delete
             </Button>
-          </DialogTrigger>
-          <DialogTrigger>
-            <Button onClick={() => setOpen(false)}>Cancel</Button>
-          </DialogTrigger>
-        </div>
+            <Button variant="outline" className="w-full" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

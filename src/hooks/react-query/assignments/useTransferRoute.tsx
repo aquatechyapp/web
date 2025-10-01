@@ -12,7 +12,7 @@ async function transferPermanently(data: Partial<Assignment>[]) {
   return response.data;
 }
 
-export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | undefined) => {
+export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | undefined, onSuccessCallback?: () => void, onErrorCallback?: () => void) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { assignments } = useAssignmentsContext();
@@ -42,6 +42,10 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
         title: 'Error creating assignment',
         description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
+      // Call the error callback to clear manual loading state
+      if (onErrorCallback) {
+        onErrorCallback();
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
@@ -51,6 +55,10 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
         title: 'Assignment transferred successfully',
         variant: 'success'
       });
+      // Call the success callback to close the modal
+      if (onSuccessCallback) {
+        onSuccessCallback();
+      }
     }
   });
   return { mutate, isPending };
