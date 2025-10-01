@@ -15,11 +15,25 @@ export const useDeleteService = (clientId: string) => {
       await clientAxios.delete('/services', {
         data: { serviceId, assignmentId }
       }),
-    onSuccess: () => {
+    onSuccess: (_data, { serviceId }) => {
+      // Optimistically update the cache by removing the deleted service
+      queryClient.setQueryData(['schedule', userId], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          services: oldData.services?.filter((service: any) => service.id !== serviceId) || []
+        };
+      });
+
+      queryClient.setQueryData(['services', userId], (oldData: any) => {
+        if (!oldData) return oldData;
+        return oldData.filter((service: any) => service.id !== serviceId);
+      });
+
+      // Still invalidate assignments and clients to ensure consistency
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
-      queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
-      queryClient.invalidateQueries({ queryKey: ['services', userId] });
       queryClient.invalidateQueries({ queryKey: ['clients', clientId] });
+
       toast({
         duration: 2000,
         title: 'Deleted service successfully',

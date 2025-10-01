@@ -277,11 +277,12 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                 </div>
               </form>
             </Form>
-            <div className="flex justify-around">
-              <Button onClick={transferRoute}>Accept</Button>
+            <div className="flex justify-around gap-4 pt-4">
+              <Button onClick={transferRoute} className='w-full'>Transfer</Button>
 
               <Button
                 variant="outline"
+                className='w-full'
                 onClick={() => {
                   form.reset();
                   setOpen(false);

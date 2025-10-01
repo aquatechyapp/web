@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
 
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 import SelectField from '@/components/SelectField';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -97,9 +96,14 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
     const isValid = await validateForm();
     if (isValid) {
       const payload = buildPayload();
-      setOpen(false);
-      mutate(payload as TransferService);
-      form.reset();
+      mutate(payload as TransferService, {
+        onSuccess: () => {
+          form.reset();
+          setWeekday(selectedWeekday);
+          setNext10DatesWithChosenWeekday([]);
+          setOpen(false);
+        }
+      });
       return;
     }
     setOpen(true);
@@ -155,21 +159,28 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
   return (
     <Dialog
       open={open}
-      onOpenChange={(isOpen) => {
-        setOpen(isOpen);
-        if (!isOpen) {
-          setTimeout(() => {
-            form.reset();
-            setWeekday(selectedWeekday);
-            setNext10DatesWithChosenWeekday([]);
-          }, 0);
-        }
-      }}
+      onOpenChange={
+        isPending
+          ? undefined
+          : (isOpen) => {
+              setOpen(isOpen);
+              if (!isOpen) {
+                setTimeout(() => {
+                  form.reset();
+                  setWeekday(selectedWeekday);
+                  setNext10DatesWithChosenWeekday([]);
+                }, 0);
+              }
+            }
+      }
     >
       <DialogContent className="max-h-screen w-96 max-w-[580px] overflow-y-scroll rounded-md md:w-[580px]">
         <DialogTitle>Transfer Service</DialogTitle>
         {isPending ? (
-          <LoadingSpinner />
+          <div className="flex flex-col items-center gap-4 py-8">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+            <p className="text-sm text-gray-600">Transferring service...</p>
+          </div>
         ) : (
           <Form {...form}>
             <form className="flex flex-col gap-4">
@@ -207,20 +218,25 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
             </form>
           </Form>
         )}
-        <div className="flex justify-around">
-          <Button onClick={transferService}>Transfer</Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              form.reset();
-              setWeekday(selectedWeekday);
-              setNext10DatesWithChosenWeekday([]);
-              setOpen(false);
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
+        {!isPending && (
+          <div className="flex justify-around gap-4 pt-4">
+            <Button className="w-full" onClick={transferService}>
+              Transfer
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                form.reset();
+                setWeekday(selectedWeekday);
+                setNext10DatesWithChosenWeekday([]);
+                setOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
