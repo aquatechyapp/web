@@ -59,7 +59,8 @@ export function AssignmentsList({ handleDragEnd }: Props) {
 
   const [assignment, setAssignment] = useState<Assignment>();
 
-  const shouldPermitChangeOrder = assignmentToId !== user?.id || width < 900;
+  // const shouldPermitChangeOrder = assignmentToId !== user?.id || width < 900;
+  const shouldPermitChangeOrder = width < 900;
 
   const [active, setActive] = useState<number | null>(null);
 
