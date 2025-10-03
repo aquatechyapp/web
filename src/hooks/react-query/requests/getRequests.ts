@@ -20,6 +20,7 @@ export default function useGetRequests(params: UseGetRequestsParams) {
   const query = useQuery({
     queryKey: ['requests', params],
     queryFn: async () => {
+      console.log('API call with params:', params); // Debug log
       const response = await clientAxios.get('/requests', { params });
       response?.data?.requests.forEach((request: Request) => {
         request.client.fullName = `${request.client.firstName} ${request.client.lastName}`;
@@ -30,6 +31,7 @@ export default function useGetRequests(params: UseGetRequestsParams) {
   });
 
   const refetch = async (newParams: UseGetRequestsParams) => {
+    console.log('Refetch with params:', newParams); // Debug log
     return queryClient.fetchQuery({
       queryKey: ['requests', newParams],
       queryFn: async () => {

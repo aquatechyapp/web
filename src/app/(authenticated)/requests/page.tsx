@@ -85,12 +85,19 @@ export default function Page() {
     }
   }, [user]);
 
+  // Sync form with current filters when they change
+  useEffect(() => {
+    filtersForm.reset(currentFilters);
+  }, [currentFilters, filtersForm]);
+
   const onSubmit = async (formData: UseGetRequestsParams) => {
+    console.log('Form data submitted:', formData); // Debug log
     const newFilters = {
       ...formData,
       page: 1, // Reset to first page when applying filters
       limit: itemsPerPage
     };
+    console.log('New filters being applied:', newFilters); // Debug log
     setCurrentPage(1);
     setCurrentFilters(newFilters);
     await requestsQuery.refetch(newFilters);
@@ -258,7 +265,15 @@ export default function Page() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <SelectField placeholder="Select category" {...field} options={Categories} />
+                            <SelectField 
+                              placeholder="Select category" 
+                              {...field} 
+                              options={Categories}
+                              onValueChange={(value) => {
+                                console.log('Category selected:', value); // Debug log
+                                field.onChange(value);
+                              }}
+                            />
                           </FormControl>
                         </FormItem>
                       )}
