@@ -93,6 +93,12 @@ export enum MaintenanceType {
   Other = 'Other'
 }
 
+export enum RequestCategory {
+  other = 'Other',
+  filterCleaning = 'Filter Cleaning',
+  filterReplacement = 'Filter Replacement',
+}
+
 export const STATE_TIMEZONE_MAP: { [key: string]: IanaTimeZones } = {
   // Eastern Time Zone
   CT: IanaTimeZones.NY,

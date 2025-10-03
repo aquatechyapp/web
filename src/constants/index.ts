@@ -319,6 +319,16 @@ export const Categories = [
     value: 'other',
     name: 'Other',
     key: 'other'
+  },
+  {
+    value: 'filterCleaning',
+    name: 'Filter Cleaning',
+    key: 'filterCleaning'
+  },
+  {
+    value: 'filterReplacement',
+    name: 'Filter Replacement',
+    key: 'filterReplacement'
   }
 ];
 

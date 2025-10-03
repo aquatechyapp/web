@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { Categories } from '@/constants';
 import { Request } from '@/ts/interfaces/Request';
+import { RequestCategory } from '@/ts/enums/enums';
 import { format } from 'date-fns';
 
 const statusOptions = {
@@ -33,6 +34,21 @@ export const columns: ColumnDef<Request>[] = [
           <div className="flex flex-col">
             <span>{pool.name}</span>
           </div>
+        </div>
+      );
+    }
+  },
+  {
+    accessorKey: 'category',
+    accessorFn: (row) => row.category,
+    header: 'Category',
+    cell: ({ row: { original } }) => {
+      const categoryName = RequestCategory[original.category as keyof typeof RequestCategory] || original.category;
+      return (
+        <div className="flex items-center">
+          <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+            {categoryName}
+          </span>
         </div>
       );
     }
@@ -80,11 +96,5 @@ export const columns: ColumnDef<Request>[] = [
       );
     }
   }
-  // Implementar Delete
-  // {
-  //   id: 'actions',
-  //   cell: ({ row: { original } }) => {
-  //     return ;
-  //   }
-  // },
+  
 ];
