@@ -37,15 +37,19 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
       }>
     ) => {
       toast({
-        duration: 2000,
+        duration: 10000,
         variant: 'error',
         title: 'Error creating assignment',
         description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
+      // Necessary because it can return an error but some assignments may have been transferred successfully
+      queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       // Call the error callback to clear manual loading state
       if (onErrorCallback) {
         onErrorCallback();
       }
+      
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });

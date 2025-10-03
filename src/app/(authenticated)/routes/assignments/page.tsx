@@ -186,14 +186,14 @@ export default function Page() {
                     />
                   </div>
 
-                  {assignmentToId !== user?.id && (
+                  {/* {assignmentToId !== user?.id && (
                     <div className="mt-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-600">
                       Note: Only the assigned technician can reorganize their routes when logged into their account.
                     </div>
-                  )}
+                  )} */}
 
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-                    {assignments.current.length > 0 && assignmentToId === user?.id && (
+                    {assignments.current.length > 0 && (
                       <Button
                         type="button"
                         className="mt-2 w-full bg-blue-500 hover:bg-blue-700"
@@ -216,8 +216,9 @@ export default function Page() {
                           )
                         }
                         className="mt-2 w-full bg-green-500 hover:bg-green-700"
+                        disabled={assignmentToId !== user?.id}
                       >
-                        Save
+                        {assignmentToId !== user?.id ?  'Save (only your technicians)' : 'Save'}
                       </Button>
                     )}
                   </div>

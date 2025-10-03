@@ -59,7 +59,8 @@ export function AssignmentsList({ handleDragEnd }: Props) {
 
   const [assignment, setAssignment] = useState<Assignment>();
 
-  const shouldPermitChangeOrder = assignmentToId !== user?.id || width < 900;
+  // const shouldPermitChangeOrder = assignmentToId !== user?.id || width < 900;
+  const shouldPermitChangeOrder = width < 900;
 
   const [active, setActive] = useState<number | null>(null);
 
@@ -142,6 +143,9 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
   const endsAfter = zonedEndAfter.getFullYear() > 2100 ? 'No end' : format(zonedEndAfter, 'LLL, do, y');
 
   const isOnlyAt = startsOn === endsAfter;
+  
+  // Check if assignment is expired (endAfter is in the past and not "No end")
+  const isExpired = zonedEndAfter.getFullYear() <= 2100 && zonedEndAfter < new Date();
 
   const frequencyMap = {
     WEEKLY: 'Weekly',
@@ -157,7 +161,9 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
   };
   return (
     <div
-      className="inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 bg-gray-50 px-1"
+      className={`inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 px-1 ${
+        isExpired ? 'bg-red-50 opacity-75' : 'bg-gray-50'
+      }`}
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -175,19 +181,26 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
             <AvatarFallback>{getInitials(name)}</AvatarFallback>
           </Avatar>
           <div className="inline-flex flex-col items-start justify-center gap-1">
-            <div className="text-pretty text-sm font-medium">{`${name} ${assignment.serviceType?.name ? `(${assignment.serviceType?.name})` : ''}`}</div>
+            <div className={`text-pretty text-sm font-medium ${isExpired ? 'text-gray-600' : ''}`}>
+              {`${name} ${assignment.serviceType?.name ? `(${assignment.serviceType?.name})` : ''}`}
+              {isExpired && <span className="ml-2 text-xs font-semibold text-red-600">(EXPIRED)</span>}
+            </div>
             {isOnlyAt ? (
-              <div className="text-xs text-red-500">{startsOn}</div>
+              <div className={`text-xs ${isExpired ? 'text-red-600' : 'text-red-500'}`}>{startsOn}</div>
             ) : (
-              <div className="text-xs text-gray-500">
+              <div className={`text-xs ${isExpired ? 'text-red-600' : 'text-gray-500'}`}>
                 {startsOn} - {endsAfter} - {frequencyMap[assignment.frequency as keyof typeof frequencyMap]}
               </div>
             )}
           </div>
         </div>
       </div>
-      <div className="flex h-8 w-8 items-center justify-center gap-1 rounded-lg border border-gray-100">
-        <div className="shrink grow basis-0 text-center text-sm font-semibold text-gray-800">{assignment.order}</div>
+      <div className={`flex h-8 w-8 items-center justify-center gap-1 rounded-lg border ${
+        isExpired ? 'border-red-200 bg-red-100' : 'border-gray-100'
+      }`}>
+        <div className={`shrink grow basis-0 text-center text-sm font-semibold ${
+          isExpired ? 'text-red-700' : 'text-gray-800'
+        }`}>{assignment.order}</div>
       </div>
     </div>
   );

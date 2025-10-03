@@ -31,6 +31,11 @@ export function OptimizeRouteModal({ open, onOpenChange, onOptimize, assignments
           <DialogTitle>Optimize Route</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Note:</strong> To optimize your route, first set your preferred first and last assignments on the assignments list, then return to this modal to optimize the route.
+            </p>
+          </div>
           <div>
             <h4 className="mb-4 font-medium">Starting Point</h4>
             <RadioGroup value={origin} onValueChange={(value: 'home' | 'first') => setOrigin(value)}>
