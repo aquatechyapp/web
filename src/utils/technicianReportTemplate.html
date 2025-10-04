@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technician Performance Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #262626;
+            background-color: #fafafa;
+        }
+
+        .report-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .report-header {
+            background: linear-gradient(135deg, #364D9D 0%, #647AC7 100%);
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            max-height: 50px;
+            width: auto;
+        }
+
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .report-title {
+            text-align: right;
+        }
+
+        .report-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-title .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            padding: 2rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #364D9D;
+        }
+
+        .summary-card h3 {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .summary-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #364D9D;
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-card .label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .period-info {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .period-info h2 {
+            font-size: 1.25rem;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .period-info h2::before {
+            content: '📅';
+            font-size: 1.2rem;
+        }
+
+        .period-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .period-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .period-item .label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .period-item .value {
+            font-size: 1rem;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        /* Technician Summary */
+        .technician-summary {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .technician-summary h2 {
+            font-size: 1.25rem;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .technician-summary h2::before {
+            content: '👨‍🔧';
+            font-size: 1.2rem;
+        }
+
+        .technician-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .technician-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #364D9D;
+        }
+
+        .total-services {
+            background: linear-gradient(135deg, #364D9D, #647AC7);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .total-services .number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .total-services .label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        /* Weekday Summary */
+        .weekday-summary {
+            margin-top: 1.5rem;
+        }
+
+        .weekday-summary h3 {
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weekday-summary h3::before {
+            content: '📊';
+            font-size: 1rem;
+        }
+
+        .weekday-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .weekday-item {
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .weekday-item .day {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .weekday-item .count {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #364D9D;
+        }
+
+        /* Detailed Services Section */
+        .services-section {
+            padding: 2rem;
+        }
+
+        .services-section h2 {
+            font-size: 1.5rem;
+            color: #374151;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .services-section h2::before {
+            content: '📋';
+            font-size: 1.5rem;
+        }
+
+        .services-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .services-table th {
+            background: linear-gradient(135deg, #364D9D, #647AC7);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .services-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.875rem;
+        }
+
+        .services-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .services-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-completed {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Footer */
+        .report-footer {
+            background: #f8fafc;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .report-container {
+                box-shadow: none;
+                max-width: none;
+            }
+            
+            .report-header {
+                background: #364D9D !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .summary-section {
+                background: #f8fafc !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .services-table th {
+                background: #364D9D !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .total-services {
+                background: #364D9D !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .status-completed {
+                background-color: #dcfce7 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .status-pending {
+                background-color: #fef3c7 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .status-cancelled {
+                background-color: #fee2e2 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .report-title {
+                text-align: center;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .period-details {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .technician-info {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .weekday-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .services-table {
+                font-size: 0.75rem;
+            }
+            
+            .services-table th,
+            .services-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .report-header {
+                padding: 1rem;
+            }
+            
+            .summary-section,
+            .services-section {
+                padding: 1rem;
+            }
+            
+            .weekday-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <!-- Header -->
+        <header class="report-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="/images/logoHor.png" alt="Company Logo" class="logo" onerror="this.style.display='none'">
+                    <div class="company-name">Aquatechy</div>
+                </div>
+                <div class="report-title">
+                    <h1>Technician Performance Report</h1>
+                    <div class="subtitle">Generated on <span id="generated-date"></span></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Summary Section -->
+        <section class="summary-section">
+            <!-- Period Information -->
+            <div class="period-info">
+                <h2>Report Period</h2>
+                <div class="period-details">
+                    <div class="period-item">
+                        <span class="label">From Date</span>
+                        <span class="value" id="from-date">Loading...</span>
+                    </div>
+                    <div class="period-item">
+                        <span class="label">To Date</span>
+                        <span class="value" id="to-date">Loading...</span>
+                    </div>
+                    <div class="period-item">
+                        <span class="label">Total Duration</span>
+                        <span class="value" id="duration">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Total Services</h3>
+                    <div class="value" id="total-services">0</div>
+                    <div class="label">Services Completed</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Completion Rate</h3>
+                    <div class="value" id="completion-rate">0%</div>
+                    <div class="label">Successfully Completed</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Average per Day</h3>
+                    <div class="value" id="avg-per-day">0</div>
+                    <div class="label">Services per Day</div>
+                </div>
+            </div>
+
+            <!-- Technician Summary -->
+            <div class="technician-summary">
+                <h2>Technician Summary</h2>
+                <div class="technician-info">
+                    <div class="technician-name" id="technician-name">Loading...</div>
+                    <div class="total-services">
+                        <span class="number" id="technician-total">0</span>
+                        <span class="label">Total Services</span>
+                    </div>
+                </div>
+
+                <!-- Services by Weekday -->
+                <div class="weekday-summary">
+                    <h3>Services by Day of Week</h3>
+                    <div class="weekday-grid" id="weekday-grid">
+                        <!-- Weekday items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Services Section -->
+        <section class="services-section">
+            <h2>Detailed Services List</h2>
+            <table class="services-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Pool Address</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="services-table-body">
+                    <!-- Service rows will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Footer -->
+        <footer class="report-footer">
+            <p>Report generated on <span id="footer-date"></span> | Aquatechy Technician Performance Report</p>
+        </footer>
+    </div>
+
+    <script>
+        // Sample data structure - this would be replaced with actual data
+        const reportData = {
+            Technician: "John Smith",
+            From: "2024-01-01",
+            To: "2024-01-31",
+            TotalServicesMade: 45,
+            ServicesByWeekday: [
+                // Sunday (index 0)
+                [
+                    {
+                        id: "1",
+                        status: "Completed",
+                        completedAt: "2024-01-07T10:30:00Z",
+                        clientOwner: { firstName: "Alice", lastName: "Johnson" },
+                        pool: { address: "123 Main St, Miami, FL" }
+                    }
+                ],
+                // Monday (index 1)
+                [
+                    {
+                        id: "2",
+                        status: "Completed",
+                        completedAt: "2024-01-08T09:15:00Z",
+                        clientOwner: { firstName: "Bob", lastName: "Wilson" },
+                        pool: { address: "456 Oak Ave, Miami, FL" }
+                    },
+                    {
+                        id: "3",
+                        status: "Completed",
+                        completedAt: "2024-01-08T14:30:00Z",
+                        clientOwner: { firstName: "Carol", lastName: "Davis" },
+                        pool: { address: "789 Pine Rd, Miami, FL" }
+                    }
+                ],
+                // Tuesday through Saturday would follow similar pattern...
+                [], [], [], [], [], []
+            ]
+        };
+
+        // Utility functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatDateTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function calculateDuration(fromDate, toDate) {
+            const from = new Date(fromDate);
+            const to = new Date(toDate);
+            const diffTime = Math.abs(to - from);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays + 1; // Include both start and end dates
+        }
+
+        function getStatusBadgeClass(status) {
+            switch (status.toLowerCase()) {
+                case 'completed':
+                    return 'status-completed';
+                case 'pending':
+                    return 'status-pending';
+                case 'cancelled':
+                    return 'status-cancelled';
+                default:
+                    return 'status-pending';
+            }
+        }
+
+        // Populate the report
+        function populateReport(data) {
+            // Set dates
+            document.getElementById('from-date').textContent = formatDate(data.From);
+            document.getElementById('to-date').textContent = formatDate(data.To);
+            document.getElementById('duration').textContent = calculateDuration(data.From, data.To) + ' days';
+
+            // Set totals
+            document.getElementById('total-services').textContent = data.TotalServicesMade;
+            document.getElementById('technician-total').textContent = data.TotalServicesMade;
+            document.getElementById('technician-name').textContent = data.Technician;
+
+            // Calculate completion rate
+            const allServices = data.ServicesByWeekday.flat();
+            const completedServices = allServices.filter(s => s.status === 'Completed').length;
+            const completionRate = allServices.length > 0 ? Math.round((completedServices / allServices.length) * 100) : 0;
+            document.getElementById('completion-rate').textContent = completionRate + '%';
+
+            // Calculate average per day
+            const duration = calculateDuration(data.From, data.To);
+            const avgPerDay = Math.round(data.TotalServicesMade / duration * 10) / 10;
+            document.getElementById('avg-per-day').textContent = avgPerDay;
+
+            // Populate weekday grid
+            const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const weekdayGrid = document.getElementById('weekday-grid');
+            weekdayGrid.innerHTML = '';
+
+            data.ServicesByWeekday.forEach((dayServices, index) => {
+                const weekdayItem = document.createElement('div');
+                weekdayItem.className = 'weekday-item';
+                weekdayItem.innerHTML = `
+                    <div class="day">${weekdayNames[index]}</div>
+                    <div class="count">${dayServices.length}</div>
+                `;
+                weekdayGrid.appendChild(weekdayItem);
+            });
+
+            // Populate services table
+            const servicesTableBody = document.getElementById('services-table-body');
+            servicesTableBody.innerHTML = '';
+
+            // Flatten and sort all services
+            const allServicesSorted = allServices.sort((a, b) => 
+                new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()
+            );
+
+            allServicesSorted.forEach(service => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${service.clientOwner.firstName} ${service.clientOwner.lastName}</td>
+                    <td>${service.pool.address}</td>
+                    <td>${formatDateTime(service.completedAt)}</td>
+                    <td><span class="status-badge ${getStatusBadgeClass(service.status)}">${service.status}</span></td>
+                `;
+                servicesTableBody.appendChild(row);
+            });
+
+            // Set generated date
+            const now = new Date();
+            const generatedDate = now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('generated-date').textContent = generatedDate;
+            document.getElementById('footer-date').textContent = generatedDate;
+        }
+
+        // Initialize the report when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            populateReport(reportData);
+        });
+
+        // Function to update report data (for external use)
+        function updateReportData(newData) {
+            populateReport(newData);
+        }
+    </script>
+</body>
+</html>
