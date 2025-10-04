@@ -18,24 +18,24 @@ export default function ServiceReportsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => window.location.href = '/reports/services/technician'}>
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <FileBarChartIcon className="h-5 w-5 text-blue-600" />
                 Technician Performance Report
               </CardTitle>
-              <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                Coming Soon
+              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                Available
               </Badge>
             </div>
             <CardDescription>
-              Track technician efficiency and service quality
+              Generate detailed reports by technician and date range
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-gray-600">
-              Monitor service completion rates, time efficiency, and chemical usage per technician.
+              Generate comprehensive reports showing service completion rates, efficiency metrics, and detailed service history for specific technicians.
             </p>
           </CardContent>
         </Card>
