@@ -10,9 +10,12 @@ import {
   Mail,
   Download,
   MapPin,
-  FileText
+  FileText,
+  Trash2,
+  Plus
 } from 'lucide-react';
 import Image from 'next/image';
+import { useState, useRef, useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -23,6 +26,9 @@ import { format } from 'date-fns';
 import { Service } from '@/ts/interfaces/Service';
 import { generateServicePDF } from '@/utils/generateServicePDF';
 import { useResendServiceEmail } from '@/hooks/react-query/services/useResendServiceEmail';
+import { useDeleteServicePhoto } from '@/hooks/react-query/services/useDeleteServicePhoto';
+import { useAddServicePhotos } from '@/hooks/react-query/services/useAddServicePhotos';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 type Props = {
   service: Service;
@@ -32,6 +38,20 @@ type Props = {
 
 export function ModalViewService({ service, open, setOpen }: Props) {
   const resendEmailMutation = useResendServiceEmail();
+  const deletePhotoMutation = useDeleteServicePhoto();
+  const addPhotosMutation = useAddServicePhotos();
+  
+  const [photoToDelete, setPhotoToDelete] = useState<any>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showAddPhotoDialog, setShowAddPhotoDialog] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [currentService, setCurrentService] = useState<Service>(service);
+
+  useEffect(() => {
+    setCurrentService(service);
+  }, [service]);
 
   const getStatusMessage = (status: string) => {
     switch (status) {
@@ -47,9 +67,9 @@ export function ModalViewService({ service, open, setOpen }: Props) {
   };
 
   const handleResendEmail = () => {
-    if (service?.id) {
+    if (currentService?.id) {
       resendEmailMutation.mutate(
-        { serviceId: service.id },
+        { serviceId: currentService.id },
         {
           onSuccess: () => {
             alert('Email resent successfully!');
@@ -62,19 +82,94 @@ export function ModalViewService({ service, open, setOpen }: Props) {
     }
   };
 
+  const handleDeletePhoto = (photo: any) => {
+    setPhotoToDelete(photo);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDeletePhoto = () => {
+    if (photoToDelete && currentService?.id) {
+      deletePhotoMutation.mutate(
+        { serviceId: currentService.id, photoToDelete, currentService: currentService },
+        {
+          onSuccess: (updatedService) => {
+            setShowDeleteDialog(false);
+            setPhotoToDelete(null);
+            setCurrentService(updatedService.service);
+          }
+        }
+      );
+    }
+  };
+
+  const handleAddPhotos = () => {
+    setShowAddPhotoDialog(true);
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    setSelectedFiles(files);
+  };
+
+  const confirmAddPhotos = () => {
+    if (selectedFiles.length > 0 && currentService?.id) {
+      // Get photo definitions from the service
+      const photoDefinitions = currentService.photosSnapshot?.flatMap(group => group.photoDefinitions) || [];
+      
+      // Filter for "After service" photo definitions
+      const afterServiceDefinitions = photoDefinitions.filter(def => 
+        def.name.toLowerCase().includes('after service') || 
+        def.name.toLowerCase().includes('after-service') ||
+        def.name.toLowerCase().includes('after')
+      );
+      
+      // Use the first "After service" definition, or fallback to first available, or create a default one
+      const photoDefinitionId = afterServiceDefinitions.length > 0 
+        ? afterServiceDefinitions[0].id 
+        : photoDefinitions.length > 0 
+        ? photoDefinitions[0].id 
+        : 'default-photo-definition';
+
+      const newPhotos = selectedFiles.map(file => ({
+        photoDefinitionId,
+        file,
+        notes: `Added photo - ${file.name}`
+      }));
+
+      addPhotosMutation.mutate(
+        { 
+          serviceId: currentService.id, 
+          newPhotos, 
+          photoDefinitions,
+          currentService: currentService
+        },
+        {
+          onSuccess: (updatedService) => {
+            setShowAddPhotoDialog(false);
+            setSelectedFiles([]);
+            if (fileInputRef.current) {
+              fileInputRef.current.value = '';
+            }
+            setCurrentService(updatedService.service);
+          }
+        }
+      );
+    }
+  };
+
   // Helper functions for new structured data
   const getStructuredPhotos = () => {
-    if (service?.structuredPhotos && service.structuredPhotos.length > 0) {
-      return service.structuredPhotos;
+    if (currentService?.structuredPhotos && currentService.structuredPhotos.length > 0) {
+      return currentService.structuredPhotos;
     }
     // Fallback to old photos array
-    if (service?.photos && service.photos.length > 0) {
-      return service.photos.map((photo: string, index: number) => ({
+    if (currentService?.photos && currentService.photos.length > 0) {
+      return currentService.photos.map((photo: string, index: number) => ({
         id: `legacy-${index}`,
         url: photo,
         photoDefinitionId: 'legacy',
         notes: null,
-        createdAt: service.completedAt || new Date().toISOString()
+        createdAt: currentService.completedAt || new Date().toISOString()
       }));
     }
     return [];
@@ -91,10 +186,10 @@ export function ModalViewService({ service, open, setOpen }: Props) {
   };
 
   const getPhotoGroups = () => {
-    if (!service?.photosSnapshot) return [];
+    if (!currentService?.photosSnapshot) return [];
     
-    return service.photosSnapshot.map((group: any) => {
-      const groupPhotos = service?.structuredPhotos?.filter(
+    return currentService.photosSnapshot.map((group: any) => {
+      const groupPhotos = currentService?.structuredPhotos?.filter(
         (photo: any) => group.photoDefinitions.some((def: any) => def.id === photo.photoDefinitionId)
       ) || [];
       
@@ -106,22 +201,22 @@ export function ModalViewService({ service, open, setOpen }: Props) {
   };
 
   const getReadingGroups = () => {
-    if (service?.readingsSnapshot) {
-      return service.readingsSnapshot.map((group: any) => ({
+    if (currentService?.readingsSnapshot) {
+      return currentService.readingsSnapshot.map((group: any) => ({
         ...group,
-        readings: service?.readings?.filter((reading: any) => 
+        readings: currentService?.readings?.filter((reading: any) => 
           group.readingDefinitions.some((def: any) => def.id === reading.readingDefinitionId)
         ) || []
       }));
     }
     
     // Fallback to old structure
-    if (service?.chemicalsReading) {
+    if (currentService?.chemicalsReading) {
       return [{
         id: 'legacy',
         name: 'Chemical Readings',
         description: 'Legacy chemical readings',
-        readings: Object.entries(service.chemicalsReading).map(([key, value]) => ({
+        readings: Object.entries(currentService.chemicalsReading).map(([key, value]) => ({
           readingDefinitionId: key,
           value: value,
           readingDefinition: {
@@ -136,22 +231,22 @@ export function ModalViewService({ service, open, setOpen }: Props) {
   };
 
   const getConsumableGroups = () => {
-    if (service?.consumablesSnapshot) {
-      return service.consumablesSnapshot.map((group: any) => ({
+    if (currentService?.consumablesSnapshot) {
+      return currentService.consumablesSnapshot.map((group: any) => ({
         ...group,
-        consumables: service?.consumables?.filter((consumable: any) => 
+        consumables: currentService?.consumables?.filter((consumable: any) => 
           group.consumableDefinitions.some((def: any) => def.id === consumable.consumableDefinitionId)
         ) || []
       }));
     }
     
     // Fallback to old structure
-    if (service?.chemicalsSpent) {
+    if (currentService?.chemicalsSpent) {
       return [{
         id: 'legacy',
         name: 'Chemicals Spent',
         description: 'Legacy chemicals spent',
-        consumables: Object.entries(service.chemicalsSpent).map(([key, value]) => ({
+        consumables: Object.entries(currentService.chemicalsSpent).map(([key, value]) => ({
           consumableDefinitionId: key,
           quantity: value,
           consumableDefinition: {
@@ -168,23 +263,23 @@ export function ModalViewService({ service, open, setOpen }: Props) {
 
   const getChecklistItems = () => {
     // Use new structured checklist if available
-    if (service?.checklistSnapshot && service?.customChecklist) {
-      return service.checklistSnapshot.map((item: any) => ({
+    if (currentService?.checklistSnapshot && currentService?.customChecklist) {
+      return currentService.checklistSnapshot.map((item: any) => ({
         ...item,
-        completed: service.customChecklist![item.id] || false
+        completed: currentService.customChecklist![item.id] || false
       }));
     }
     
     // Fallback to old checklist structure
-    if (service?.checklist) {
+    if (currentService?.checklist) {
       return [
-        { id: 'poolVacuumed', label: 'Pool Vacuumed', completed: service.checklist.poolVacuumed },
-        { id: 'skimmerCleaned', label: 'Skimmer Cleaned', completed: service.checklist.skimmerCleaned },
-        { id: 'tilesBrushed', label: 'Tiles Brushed', completed: service.checklist.tilesBrushed },
-        { id: 'pumpBasketCleaned', label: 'Pump Basket Cleaned', completed: service.checklist.pumpBasketCleaned },
-        { id: 'filterWashed', label: 'Filter Washed', completed: service.checklist.filterWashed },
-        { id: 'filterChanged', label: 'Filter Changed', completed: service.checklist.filterChanged },
-        { id: 'chemicalsAdjusted', label: 'Chemicals Adjusted', completed: service.checklist.chemicalsAdjusted }
+        { id: 'poolVacuumed', label: 'Pool Vacuumed', completed: currentService.checklist.poolVacuumed },
+        { id: 'skimmerCleaned', label: 'Skimmer Cleaned', completed: currentService.checklist.skimmerCleaned },
+        { id: 'tilesBrushed', label: 'Tiles Brushed', completed: currentService.checklist.tilesBrushed },
+        { id: 'pumpBasketCleaned', label: 'Pump Basket Cleaned', completed: currentService.checklist.pumpBasketCleaned },
+        { id: 'filterWashed', label: 'Filter Washed', completed: currentService.checklist.filterWashed },
+        { id: 'filterChanged', label: 'Filter Changed', completed: currentService.checklist.filterChanged },
+        { id: 'chemicalsAdjusted', label: 'Chemicals Adjusted', completed: currentService.checklist.chemicalsAdjusted }
       ];
     }
     
@@ -200,12 +295,12 @@ export function ModalViewService({ service, open, setOpen }: Props) {
             <DialogTitle className="text-xl font-semibold">Service Report</DialogTitle>
           </div>
 
-          {service.status === 'Completed' && (
+          {currentService.status === 'Completed' && (
             <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
               <div className="flex-1">
-                {format(new Date(service?.completedAt || new Date()), "EEEE, MMMM do 'at' h:mm a")}
+                {format(new Date(currentService?.completedAt || new Date()), "EEEE, MMMM do 'at' h:mm a")}
                 <span className="ml-1 font-medium">
-                  by {service?.completedByUser?.firstName || ''} {service?.completedByUser?.lastName || ''}
+                  by {currentService?.completedByUser?.firstName || ''} {currentService?.completedByUser?.lastName || ''}
                 </span>
               </div>
             </div>
@@ -214,85 +309,148 @@ export function ModalViewService({ service, open, setOpen }: Props) {
           <div className="mt-1 flex items-center gap-1 text-sm text-gray-500">
             <MapPin className="h-4 w-4" />
             <span>
-              {service?.pool?.address}, {service?.pool?.city}, {service?.pool?.state}, {service?.pool?.zip}
+              {currentService?.pool?.address}, {currentService?.pool?.city}, {currentService?.pool?.state}, {currentService?.pool?.zip}
             </span>
           </div>
         </DialogHeader>
 
-        {service.status === 'Completed' ? (
+        {currentService.status === 'Completed' ? (
           <>
-            <Accordion type="single" collapsible defaultValue={hasPhotos() ? "photos" : "readings"} className="mt-4">
-              {/* Service Photos Section - First and Default */}
-              {hasPhotos() && (
-                <AccordionItem value="photos">
-                  <AccordionTrigger className="text-lg">
-                    <div className="flex items-center gap-2">
-                      <ImageIcon className="h-5 w-5 text-[#364D9D]" />
-                      <span className="text-md">Service Photos</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    {service?.photosSnapshot && service?.photosSnapshot.length > 0 && service?.photos?.length === 0 ? (
-                      // New structured photos
-                      <div className="space-y-4">
-                        {getPhotoGroups().map((group: any, groupIndex: number) => (
-                          <Card key={groupIndex}>
-                            <CardHeader>
-                              <CardTitle className="text-lg">{group.name}</CardTitle>
-                              {group.description && (
-                                <p className="text-sm text-gray-600">{group.description}</p>
-                              )}
-                            </CardHeader>
-                            <CardContent>
-                              {group.photos.length > 0 ? (
-                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                                  {group.photos.map((photo: any, photoIndex: number) => {
-                                    const photoDefinition = group.photoDefinitions?.find((def: any) => def.id === photo.photoDefinitionId);
-                                    return (
-                                      <div key={photoIndex} className="space-y-2">
-                                        <div className="relative aspect-square overflow-hidden rounded-lg">
-                                          <Image
-                                            src={photo.url}
-                                            alt={photoDefinition?.name || `Service photo ${photoIndex + 1}`}
-                                            layout="fill"
-                                            className="object-cover transition-transform hover:scale-105"
-                                          />
+            <Accordion type="single" collapsible defaultValue="photos" className="mt-4">
+              {/* Service Photos Section - Always show */}
+              <AccordionItem value="photos">
+                <AccordionTrigger className="text-lg">
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="h-5 w-5 text-[#364D9D]" />
+                    <span className="text-md">Service Photos</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  {hasPhotos() ? (
+                    <>
+                      {currentService?.photosSnapshot && currentService?.photosSnapshot.length > 0 && currentService?.photos?.length === 0 ? (
+                        // New structured photos
+                        <div className="space-y-4">
+                          {getPhotoGroups().map((group: any, groupIndex: number) => (
+                            <Card key={groupIndex}>
+                              <CardHeader>
+                                <CardTitle className="text-lg">{group.name}</CardTitle>
+                                {group.description && (
+                                  <p className="text-sm text-gray-600">{group.description}</p>
+                                )}
+                              </CardHeader>
+                              <CardContent>
+                                {group.photos.length > 0 ? (
+                                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                                    {group.photos.map((photo: any, photoIndex: number) => {
+                                      const photoDefinition = group.photoDefinitions?.find((def: any) => def.id === photo.photoDefinitionId);
+                                      return (
+                                        <div key={photoIndex} className="space-y-2">
+                                          <div className="group relative aspect-square overflow-hidden rounded-lg">
+                                            <Image
+                                              src={photo.url}
+                                              alt={photoDefinition?.name || `Service photo ${photoIndex + 1}`}
+                                              layout="fill"
+                                              className="object-cover transition-transform hover:scale-105"
+                                            />
+                                            {/* Delete button on hover */}
+                                            <button
+                                              onClick={() => handleDeletePhoto(photo)}
+                                              className="absolute right-2 top-2 hidden rounded-full bg-red-500 p-1.5 text-white shadow-lg transition-all hover:bg-red-600 group-hover:block"
+                                              disabled={deletePhotoMutation.isPending}
+                                            >
+                                              <Trash2 className="h-3 w-3" />
+                                            </button>
+                                          </div>
+                                          {photoDefinition && (
+                                            <p className="text-sm font-medium text-gray-700">{photoDefinition.name}</p>
+                                          )}
+                                          {photo.notes && (
+                                            <p className="text-xs text-gray-500">{photo.notes}</p>
+                                          )}
                                         </div>
-                                        {photoDefinition && (
-                                          <p className="text-sm font-medium text-gray-700">{photoDefinition.name}</p>
-                                        )}
-                                        {photo.notes && (
-                                          <p className="text-xs text-gray-500">{photo.notes}</p>
-                                        )}
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              ) : (
-                                <p className="text-sm text-gray-500">No photos available for this group.</p>
-                              )}
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    ) : (
-                      // Legacy photos
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                        {getStructuredPhotos()?.map((photo: any, index: number) => (
-                          <div key={index} className="relative aspect-square overflow-hidden rounded-lg">
-                            <Image
-                              src={photo.url}
-                              alt={`Service photo ${index + 1}`}
-                              layout="fill"
-                              className="object-cover transition-transform hover:scale-105"
-                            />
+                                      );
+                                    })}
+                                    {/* Add photo button */}
+                                    <div className="space-y-2">
+                                      <button
+                                        onClick={handleAddPhotos}
+                                        className="flex aspect-square w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition-colors hover:border-gray-400 hover:bg-gray-100"
+                                        disabled={addPhotosMutation.isPending}
+                                      >
+                                        <Plus className="h-8 w-8 text-gray-400" />
+                                      </button>
+                                      <p className="text-sm font-medium text-gray-700">Add Photo</p>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center justify-center space-y-4">
+                                    <p className="text-sm text-gray-500">No photos available for this group.</p>
+                                    <button
+                                      onClick={handleAddPhotos}
+                                      className="flex aspect-square w-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition-colors hover:border-gray-400 hover:bg-gray-100"
+                                      disabled={addPhotosMutation.isPending}
+                                    >
+                                      <Plus className="h-8 w-8 text-gray-400" />
+                                    </button>
+                                    <p className="text-sm font-medium text-gray-700">Add Photo</p>
+                                  </div>
+                                )}
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      ) : (
+                        // Legacy photos
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                          {getStructuredPhotos()?.map((photo: any, index: number) => (
+                            <div key={index} className="group relative aspect-square overflow-hidden rounded-lg">
+                              <Image
+                                src={photo.url}
+                                alt={`Service photo ${index + 1}`}
+                                layout="fill"
+                                className="object-cover transition-transform hover:scale-105"
+                              />
+                              {/* Delete button on hover for legacy photos */}
+                              <button
+                                onClick={() => handleDeletePhoto(photo)}
+                                className="absolute right-2 top-2 hidden rounded-full bg-red-500 p-1.5 text-white shadow-lg transition-all hover:bg-red-600 group-hover:block"
+                                disabled={deletePhotoMutation.isPending}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </div>
+                          ))}
+                          {/* Add photo button for legacy photos */}
+                          <div className="space-y-2">
+                            <button
+                              onClick={handleAddPhotos}
+                              className="flex aspect-square w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition-colors hover:border-gray-400 hover:bg-gray-100"
+                              disabled={addPhotosMutation.isPending}
+                            >
+                              <Plus className="h-8 w-8 text-gray-400" />
+                            </button>
+                            <p className="text-sm font-medium text-gray-700">Add Photo</p>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </AccordionContent>
-                </AccordionItem>
-              )}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    // No photos - show add photo button
+                    <div className="flex flex-col items-center justify-center space-y-4 py-8">
+                      <p className="text-sm text-gray-500">No photos have been added to this service yet.</p>
+                      <button
+                        onClick={handleAddPhotos}
+                        className="flex aspect-square w-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition-colors hover:border-gray-400 hover:bg-gray-100"
+                        disabled={addPhotosMutation.isPending}
+                      >
+                        <Plus className="h-8 w-8 text-gray-400" />
+                      </button>
+                      <p className="text-sm font-medium text-gray-700">Add Photos</p>
+                    </div>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
 
               {/* Readings Section */}
               {getReadingGroups().length > 0 && (
@@ -480,10 +638,92 @@ export function ModalViewService({ service, open, setOpen }: Props) {
           </>
         ) : (
           <div className="flex h-40 items-center justify-center text-lg text-gray-500">
-            {getStatusMessage(service.status)}
+            {getStatusMessage(currentService.status)}
           </div>
         )}
       </DialogContent>
+
+      {/* Delete Photo Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Photo</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this photo? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeletePhoto}
+              className="bg-red-600 hover:bg-red-700"
+              disabled={deletePhotoMutation.isPending}
+            >
+              {deletePhotoMutation.isPending ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Add Photos Dialog */}
+      <Dialog open={showAddPhotoDialog} onOpenChange={setShowAddPhotoDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Photos</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="photo-upload" className="block text-sm font-medium text-gray-700 mb-2">
+                Select photos to upload
+              </label>
+              <input
+                ref={fileInputRef}
+                id="photo-upload"
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleFileSelect}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+
+            {selectedFiles.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-700">Selected files:</p>
+                <div className="space-y-1">
+                  {selectedFiles.map((file, index) => (
+                    <div key={index} className="text-sm text-gray-600">
+                      {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowAddPhotoDialog(false);
+                setSelectedFiles([]);
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = '';
+                }
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmAddPhotos}
+              disabled={selectedFiles.length === 0 || addPhotosMutation.isPending}
+            >
+              {addPhotosMutation.isPending ? 'Uploading...' : 'Upload Photos'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
