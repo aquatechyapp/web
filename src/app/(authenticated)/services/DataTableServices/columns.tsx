@@ -30,28 +30,45 @@ export const columns: ColumnDef<Service>[] = [
     accessorKey: 'client',
     header: 'Client',
     cell: ({ row: { original } }) => (
+      original.pool?.clientOwner ? (
       <>
         <div>
-          {original.pool!.clientOwner!.firstName} {original.pool!.clientOwner!.lastName}
+          {original.pool?.clientOwner?.firstName} {original.pool?.clientOwner?.lastName}
         </div>
         <div>
-          {original.pool!.address}, {original.pool!.city}, {original.pool!.state}, {original.pool!.zip}
+          {original.pool?.address}, {original.pool?.city}, {original.pool?.state}, {original.pool?.zip}
         </div>
       </>
+      ) : (
+        <>
+          <div>
+            {original.clientOwner?.firstName} {original.clientOwner?.lastName}
+          </div>
+          <div>
+            {original.pool?.address}, {original.pool?.city}, {original.pool?.state}, {original.pool?.zip}
+          </div>
+        </>
+      )
     )
   },
   {
     accessorKey: 'completedAt',
     header: 'Date',
-    cell: ({ row: { original } }) => <div>{format(new Date(original.completedAt!), "EEEE, MMMM do 'at' h:mm a")}</div>,
+    cell: ({ row: { original } }) => (
+      <div>
+        {original.completedAt ? format(new Date(original.completedAt), "EEEE, MMMM do 'at' h:mm a") : 'N/A'}
+      </div>
+    ),
     filterFn: (row, columnId, value) => {
-      let date: string | Date = row.original.completedAt!;
+      let date: string | Date | null = row.original.completedAt;
 
       const [start, end] = value; // value => two date input values
       //If one filter defined and date is null filter it
       if ((start || end) && !date) return false;
       // vem do back como string
       if (typeof date === 'string') date = new Date(date);
+      if (!date) return false;
+      
       if (start && !end) {
         return date.getTime() >= start.getTime();
       } else if (!start && end) {
@@ -85,11 +102,12 @@ export const columns: ColumnDef<Service>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row: { original } }) => {
+      const statusConfig = statusOptions[original.status] || { className: 'bg-gray-100 text-gray-600' };
       return (
         <div
-          className={`max-w-28 rounded-lg px-2 py-2 text-center font-semibold ${statusOptions[original.status].className}`}
+          className={`max-w-28 rounded-lg px-2 py-2 text-center font-semibold ${statusConfig.className}`}
         >
-          {original.status}
+          {original.status || 'Unknown'}
         </div>
       );
     }
