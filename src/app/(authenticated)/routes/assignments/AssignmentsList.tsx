@@ -140,7 +140,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
   const startsOn = format(zonedStartOn, 'LLL, do, y');
 
   const zonedEndAfter = toZonedTime(assignment.endAfter, 'UTC');
-  const endsAfter = zonedEndAfter.getFullYear() > 2100 ? 'No end' : format(zonedEndAfter, 'LLL, do, y');
+  const endsAfter = zonedEndAfter.getFullYear() > 2030 ? 'No end' : format(zonedEndAfter, 'LLL, do, y');
 
   const isOnlyAt = startsOn === endsAfter;
   
@@ -161,7 +161,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
   };
   return (
     <div
-      className={`inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 px-1 ${
+      className={`inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 px-1 py-3 ${
         isExpired ? 'bg-red-50 opacity-75' : 'bg-gray-50'
       }`}
       ref={setNodeRef}
@@ -170,16 +170,16 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
       {...listeners}
     >
       <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 px-1 py-2">
-        <div className="flex items-center justify-start gap-2">
+        <div className="flex items-center justify-start gap-2 ">
           {!shouldPermitChangeOrder && (
             <div className="min-w-4">
               <MdDragIndicator size={16} />
             </div>
           )}
-          <Avatar className="cursor-pointer text-sm">
+          {/* <Avatar className="cursor-pointer text-sm">
             <AvatarImage src={''} />
             <AvatarFallback>{getInitials(name)}</AvatarFallback>
-          </Avatar>
+          </Avatar> */}
           <div className="inline-flex flex-col items-start justify-center gap-1">
             <div className={`text-pretty text-sm font-medium ${isExpired ? 'text-gray-600' : ''}`}>
               {`${name} ${assignment.serviceType?.name ? `(${assignment.serviceType?.name})` : ''}`}
