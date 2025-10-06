@@ -58,11 +58,14 @@ type ServiceItemProps = {
 };
 
 export function ServiceItem({ id, service, shouldPermitChangeOrder }: ServiceItemProps) {
+  const { width = 0 } = useWindowDimensions();
   const name = `${service?.clientOwner?.firstName} ${service?.clientOwner?.lastName}`;
   const address = `${service?.clientOwner?.address}, ${service?.clientOwner?.city}, ${service?.clientOwner?.state}, ${service?.clientOwner?.zip}`;
+  
+  const mdScreen = width < 900;
 
   return (
-    <div className="inline-flex w-full items-center justify-between self-stretch border-b border-gray-100 bg-gray-50 px-1">
+    <div className={`inline-flex w-full items-center justify-between self-stretch border-b border-gray-100 bg-gray-50 px-1 ${mdScreen ? 'py-3' : ''}`}>
       <div className="flex h-[60px] items-center justify-start gap-2 py-2">
         <div className="flex items-center justify-start gap-2">
           {!shouldPermitChangeOrder && (
@@ -70,10 +73,12 @@ export function ServiceItem({ id, service, shouldPermitChangeOrder }: ServiceIte
               <MdDragIndicator size={16} />
             </div>
           )}
-          <Avatar className="cursor-pointer text-sm">
-            <AvatarImage src={''} />
-            <AvatarFallback>{getInitials(name!)}</AvatarFallback>
-          </Avatar>
+          {!mdScreen && (
+            <Avatar className="cursor-pointer text-sm">
+              <AvatarImage src={''} />
+              <AvatarFallback>{getInitials(name!)}</AvatarFallback>
+            </Avatar>
+          )}
           <div className="inline-flex flex-col items-start justify-center gap-1 text-pretty">
             <div className="text-pretty text-sm font-medium">{`${name} ${service.serviceType?.name ? `(${service.serviceType?.name})` : ''}`}</div>
             <div className="overflow-hidden text-xs text-gray-500">{address}</div>

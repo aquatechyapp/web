@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Form } from '@/components/ui/form';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 
@@ -78,16 +78,26 @@ export default function Page() {
     form.setValue('assignedToId', memberId);
   }
 
-  function getDateRange(): { date: string; formatted: string }[] {
+  function getDateRange(): { date: string; formatted: string; displayText: string }[] {
     const today = new Date();
 
-    // Create array from -3 to +3 (7 days total)
-    return Array.from({ length: 7 }, (_, index) => {
-      // Subtract 3 from index to start 3 days ago
-      const dateAt12PMUTC = normalizeToUTC12(addDays(today, index - 3).toISOString());
+    // Create array from -7 to +21 (29 days total)
+    return Array.from({ length: 29 }, (_, index) => {
+      // Subtract 7 from index to start 7 days ago
+      const dateAt12PMUTC = normalizeToUTC12(addDays(today, index - 7).toISOString());
+      const isToday = index === 7; // Today is at index 7 (7 days ago + 7 = today)
+      const isPast = index < 7;
+      
+      const formattedDate = format(dateAt12PMUTC, 'EEEE, MMMM do');
+      
       return {
         date: dateAt12PMUTC.toISOString(),
-        formatted: format(dateAt12PMUTC, 'MM/dd')
+        formatted: formattedDate,
+        displayText: isToday 
+          ? `Today - ${formattedDate}`
+          : isPast 
+            ? `${formattedDate}`
+            : `${formattedDate}`
       };
     });
   }
@@ -104,37 +114,36 @@ export default function Page() {
           className={`flex h-[100%] w-full items-start justify-start gap-2 bg-gray-50 p-2 ${mdScreen ? 'flex-col' : ''}`}
         >
           <div className={`w-[50%] ${mdScreen && 'w-full'}`}>
-            <Tabs
-              onValueChange={handleChangeDay}
-              defaultValue={selectedDay || getDateRange()[3].date}
-              value={selectedDay}
-              className="w-full"
-            >
-              <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
-                <Form {...form}>
-                  <form className="w-full">
-                    <TabsList className="grid h-12 w-full grid-cols-7">
-                      {dateRange.map((day, index) => (
-                        <TabsTrigger
-                          className="px-0 text-xs data-[state=active]:px-0"
-                          key={day.formatted}
-                          value={day.date}
-                        >
-                          {day.formatted}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
+            <div className="inline-flex w-full flex-col items-center justify-start gap-2 rounded-lg bg-gray-50 py-2">
+              <Form {...form}>
+                <form className="w-full">
+                  <div className="mb-4">
+                    <Select
+                      value={selectedDay || getDateRange()[7].date}
+                      onValueChange={handleChangeDay}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a date" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {dateRange.map((day) => (
+                          <SelectItem key={day.date} value={day.date}>
+                            {day.displayText}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                    <MemberSelect onChange={handleChangeMember} />
-                    <DialogNewService />
-                  </form>
-                </Form>
+                  <MemberSelect onChange={handleChangeMember} />
+                  <DialogNewService />
+                </form>
+              </Form>
 
-                <TabsContent value={selectedDay || getDateRange()[3].date} className="w-full">
-                  <ServicesList />
-                </TabsContent>
+              <div className="w-full">
+                <ServicesList />
               </div>
-            </Tabs>
+            </div>
           </div>
           <div className={`h-fit w-[50%] ${mdScreen && 'w-full'}`}>
             <Map
