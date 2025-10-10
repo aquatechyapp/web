@@ -1,9 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addDays, format, set } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
@@ -23,11 +23,11 @@ import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/g
 
 import MemberSelect from './MemberSelect';
 import { ServicesList } from './ServicesList';
-import { ServicesProvider, useServicesContext } from '@/context/services';
+import { useServicesContext } from '@/context/services';
 import { newServiceSchema } from '@/schemas/service';
 import { useMapServicesUtils } from '@/hooks/useMapServicesUtils';
 import { DialogNewService } from './ModalNewService';
-import { useAssignmentsContext } from '@/context/assignments';
+import { DialogTransferMultipleServices } from './ModalTransferMultipleServices';
 export default function Page() {
   const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapServicesUtils();
 
@@ -136,7 +136,10 @@ export default function Page() {
                   </div>
 
                   <MemberSelect onChange={handleChangeMember} />
-                  <DialogNewService />
+                  <div className="flex gap-2 mb-2 mt-2">
+                    <DialogNewService />
+                    <DialogTransferMultipleServices />
+                  </div>
                 </form>
               </Form>
 

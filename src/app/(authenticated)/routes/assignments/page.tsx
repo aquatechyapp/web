@@ -34,8 +34,8 @@ import MemberSelect from './MemberSelect';
 import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 
 import { newAssignmentSchema } from '@/schemas/assignments';
-import { DialogTransferRoute } from './ModalTransferRoute';
 import { OptimizeRouteModal } from './OptimizeRouteModal';
+import { DialogTransferCompleteRoute } from './ModalTransferCompleteRoute';
 
 export default function Page() {
   const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapAssignmentsUtils();
@@ -167,7 +167,7 @@ export default function Page() {
 
                   <MemberSelect onChange={handleChangeMember} />
 
-                  <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                  <div className="mt-2 flex flex-col gap-2 sm:flex-row mt-4">
                     <DialogNewAssignment />
                     {assignments.current.length > 0 && (
                       <Button
@@ -179,7 +179,7 @@ export default function Page() {
                         Transfer Route
                       </Button>
                     )}
-                    <DialogTransferRoute
+                    <DialogTransferCompleteRoute
                       open={openTransferDialog}
                       setOpen={setOpenTransferDialog}
                       isEntireRoute={true}

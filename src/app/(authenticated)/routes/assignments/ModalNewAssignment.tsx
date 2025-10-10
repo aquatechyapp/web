@@ -1,4 +1,4 @@
-import { format, getDay } from 'date-fns';
+import { addDays, format, getDay } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { useCreateAssignment } from '@/hooks/react-query/assignments/createAssignment';
+import { useCreateAssignmentForSpecificService } from '@/hooks/react-query/assignments/createAssignmentForSpecificService';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
 import { isEmpty } from '@/utils';
@@ -15,6 +16,7 @@ import { buildSelectOptions } from '@/utils/formUtils';
 import { Frequencies } from '@/constants';
 import { Client } from '@/ts/interfaces/Client';
 import { useUserStore } from '@/store/user';
+import { Frequency } from '@/ts/enums/enums';
 
 import { FormSchema } from './page';
 
@@ -23,7 +25,7 @@ export function DialogNewAssignment() {
   const { user } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [startOn, weekday] = form.watch(['startOn', 'weekday']);
+  const [startOn, weekday, frequency] = form.watch(['startOn', 'weekday', 'frequency']);
   const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
     {
       name: string;
@@ -32,6 +34,13 @@ export function DialogNewAssignment() {
     }[]
   >([]);
   const [next10WeekdaysEndAfter, setNext10WeekdaysEndAfter] = useState<
+    {
+      name: string;
+      key: string;
+      value: string;
+    }[]
+  >([]);
+  const [scheduledToOptions, setScheduledToOptions] = useState<
     {
       name: string;
       key: string;
@@ -47,12 +56,15 @@ export function DialogNewAssignment() {
   );
 
   const { mutate, isPending } = useCreateAssignment();
+  const { mutate: mutateSpecificService, isPending: isPendingSpecificService } = useCreateAssignmentForSpecificService();
+
+  const isOnlyOnce = frequency === Frequency.ONCE;
 
   useEffect(() => {
     if (weekday) {
       form.resetField('startOn');
       form.resetField('endAfter');
-      getNext10DatesForEndAfterBasedOnWeekday(startOn);
+      getNext10DatesForEndAfterBasedOnWeekday(startOn!);
       getNext10DatesForStartOnBasedOnWeekday(weekday);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,6 +76,13 @@ export function DialogNewAssignment() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startOn]);
+
+  useEffect(() => {
+    if (isOnlyOnce) {
+      generateScheduledToOptions();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOnlyOnce]);
 
   const serviceTypes = serviceTypesData?.serviceTypes || [];
   const hasClients = clients.length > 0;
@@ -137,6 +156,25 @@ export function DialogNewAssignment() {
     setNext10WeekdaysEndAfter(dates);
   }
 
+  function generateScheduledToOptions() {
+    const today = new Date();
+    const dates: { name: string; key: string; value: string }[] = [];
+
+    for (let i = 0; i < 28; i++) {
+      const nextDate = addDays(today, i);
+      const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
+      const isoDate = String(nextDate);
+
+      dates.push({
+        name: formattedDate,
+        key: isoDate,
+        value: isoDate
+      });
+    }
+
+    setScheduledToOptions(dates);
+  }
+
   const validateForm = async (): Promise<boolean> => {
     const isValid = await form.trigger();
 
@@ -161,35 +199,58 @@ export function DialogNewAssignment() {
       const weekday = form.watch('weekday');
       const assignmentToId = form.watch('assignmentToId');
 
-      mutate(
-        {
-          assignmentToId,
-          poolId: form.watch('poolId'),
-          serviceTypeId: form.watch('serviceTypeId'),
-          weekday: form.watch('weekday'),
-          frequency: form.watch('frequency'),
-          startOn: form.watch('startOn'),
-          endAfter: form.watch('endAfter')
-        },
-        {
-          onSuccess: () => {
-            // preciso guardar o assignmentToId selecionado antes de dar reset, se não vai bugar ao criar 2 assignments seguidos
-            // em um technician que não é o user logado
-            form.reset();
-            form.setValue('assignmentToId', assignmentToId);
-            form.setValue('weekday', weekday);
-            setIsModalOpen(false);
+      if (isOnlyOnce) {
+        // Create assignment for specific service
+        mutateSpecificService(
+          {
+            assignmentToId,
+            poolId: form.watch('poolId'),
+            serviceTypeId: form.watch('serviceTypeId'),
+            specificDate: form.watch('scheduledTo') || ''
+          },
+          {
+            onSuccess: () => {
+              form.reset();
+              form.setValue('assignmentToId', assignmentToId);
+              form.setValue('weekday', weekday);
+              setIsModalOpen(false);
+            }
           }
-        }
-      );
+        );
+      } else {
+        // Create regular recurring assignment
+        mutate(
+          {
+            assignmentToId,
+            poolId: form.watch('poolId'),
+            serviceTypeId: form.watch('serviceTypeId'),
+            weekday: form.watch('weekday'),
+            frequency: form.watch('frequency'),
+            startOn: form.watch('startOn')!,
+            endAfter: form.watch('endAfter')!
+          },
+          {
+            onSuccess: () => {
+              // preciso guardar o assignmentToId selecionado antes de dar reset, se não vai bugar ao criar 2 assignments seguidos
+              // em um technician que não é o user logado
+              form.reset();
+              form.setValue('assignmentToId', assignmentToId);
+              form.setValue('weekday', weekday);
+              setIsModalOpen(false);
+            }
+          }
+        );
+      }
       return;
     }
 
     setIsModalOpen(true);
   }
 
+  const isCreating = isPending || isPendingSpecificService;
+
   return (
-    <Dialog open={isModalOpen} onOpenChange={isPending ? undefined : setIsModalOpen}>
+    <Dialog open={isModalOpen} onOpenChange={isCreating ? undefined : setIsModalOpen}>
       <DialogTrigger asChild className="w-full">
         <Button className="w-full" type="button">
           New Assignment
@@ -197,7 +258,7 @@ export function DialogNewAssignment() {
       </DialogTrigger>
       <DialogContent className="max-h-screen w-96 rounded-md md:w-[680px]">
         <DialogTitle>Create Assignment</DialogTitle>
-        {isPending ? (
+        {isCreating ? (
           <div className="flex flex-col items-center gap-4 py-8">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
             <p className="text-sm text-gray-600">Creating assignment...</p>
@@ -257,33 +318,48 @@ export function DialogNewAssignment() {
                   <SelectField name="frequency" placeholder="Frequency" label="Frequency" options={Frequencies} />
                 </div>
 
-                <div className="mt-4 flex gap-4">
-                  <SelectField
-                    label="Start on"
-                    name="startOn"
-                    placeholder="Start on"
-                    options={next10WeekdaysStartOn.map((date) => ({
-                      key: date.key,
-                      name: date.name,
-                      value: date.value
-                    }))}
-                  />
-                  <SelectField
-                    label="End after"
-                    name="endAfter"
-                    placeholder="End after"
-                    options={next10WeekdaysEndAfter.map((date) => ({
-                      key: date.key,
-                      name: date.name,
-                      value: date.value
-                    }))}
-                  />
-                </div>
+                {isOnlyOnce ? (
+                  <div className="mt-4 flex gap-4">
+                    <SelectField
+                      label="Scheduled to"
+                      name="scheduledTo"
+                      placeholder="Scheduled to"
+                      options={scheduledToOptions.map((date) => ({
+                        key: date.key,
+                        name: date.name,
+                        value: date.value
+                      }))}
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-4 flex gap-4">
+                    <SelectField
+                      label="Start on"
+                      name="startOn"
+                      placeholder="Start on"
+                      options={next10WeekdaysStartOn.map((date) => ({
+                        key: date.key,
+                        name: date.name,
+                        value: date.value
+                      }))}
+                    />
+                    <SelectField
+                      label="End after"
+                      name="endAfter"
+                      placeholder="End after"
+                      options={next10WeekdaysEndAfter.map((date) => ({
+                        key: date.key,
+                        name: date.name,
+                        value: date.value
+                      }))}
+                    />
+                  </div>
+                )}
               </div>
             </form>
           </Form>
         )}
-        {!isPending && !isLoading && !isServiceTypesLoading && (
+        {!isCreating && !isLoading && !isServiceTypesLoading && (
           <div className="flex justify-around gap-4 pt-4">
             <Button className='w-full' onClick={createNewAssignment}>Create</Button>
 

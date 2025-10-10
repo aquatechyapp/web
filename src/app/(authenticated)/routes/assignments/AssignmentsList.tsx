@@ -16,7 +16,7 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { format } from 'date-fns';
+import { addDays, differenceInDays, format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
@@ -142,10 +142,13 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
   const zonedEndAfter = toZonedTime(assignment.endAfter, 'UTC');
   const endsAfter = zonedEndAfter.getFullYear() > 2030 ? 'No end' : format(zonedEndAfter, 'LLL, do, y');
 
-  const isOnlyAt = startsOn === endsAfter;
+
+  // Here I want to check how many days are between the start and end date, considering they are more than 10 years apart, bringuing for example 3650 days
+  const daysBetween = differenceInDays(new Date(zonedEndAfter), new Date(zonedStartOn));
   
-  // Check if assignment is expired (endAfter is in the past and not "No end")
-  const isExpired = zonedEndAfter.getFullYear() <= 2100 && zonedEndAfter < new Date();
+  const isOneServiceOnly = daysBetween < 7;
+  // Check if assignment is expired (endAfter + 1 day is in the past and not "No end")
+  const isExpired = zonedEndAfter.getFullYear() <= 2100 && addDays(zonedEndAfter, 1) < new Date();
 
   const frequencyMap = {
     WEEKLY: 'Weekly',
@@ -155,13 +158,17 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
     ONCE: 'Once'
   };
 
+  // Check width
+  const { width = 0 } = useWindowDimensions();
+  const isMobile = width < 900;
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition
   };
   return (
     <div
-      className={`inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 px-1 py-3 ${
+      className={`inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 px-1 ${isMobile ? 'py-2' : ''} ${
         isExpired ? 'bg-red-50 opacity-75' : 'bg-gray-50'
       }`}
       ref={setNodeRef}
@@ -169,24 +176,26 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
       {...attributes}
       {...listeners}
     >
-      <div className="flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 px-1 py-2">
+      <div className={`flex h-[60px] shrink grow basis-0 items-center justify-start gap-2 border-b border-gray-100 px-1 py-2`}>
         <div className="flex items-center justify-start gap-2 ">
           {!shouldPermitChangeOrder && (
             <div className="min-w-4">
               <MdDragIndicator size={16} />
             </div>
           )}
-          {/* <Avatar className="cursor-pointer text-sm">
-            <AvatarImage src={''} />
-            <AvatarFallback>{getInitials(name)}</AvatarFallback>
-          </Avatar> */}
+          {!isMobile && (
+            <Avatar className="cursor-pointer text-sm">
+              <AvatarImage src={''} />
+              <AvatarFallback>{getInitials(name)}</AvatarFallback>
+            </Avatar>
+          )}
           <div className="inline-flex flex-col items-start justify-center gap-1">
             <div className={`text-pretty text-sm font-medium ${isExpired ? 'text-gray-600' : ''}`}>
               {`${name} ${assignment.serviceType?.name ? `(${assignment.serviceType?.name})` : ''}`}
               {isExpired && <span className="ml-2 text-xs font-semibold text-red-600">(EXPIRED)</span>}
             </div>
-            {isOnlyAt ? (
-              <div className={`text-xs ${isExpired ? 'text-red-600' : 'text-red-500'}`}>{startsOn}</div>
+            {isOneServiceOnly ? (
+              <div className={`text-xs text-blue-500'`}><span className="font-semibold">One service only</span></div>
             ) : (
               <div className={`text-xs ${isExpired ? 'text-red-600' : 'text-gray-500'}`}>
                 {startsOn} - {endsAfter} - {frequencyMap[assignment.frequency as keyof typeof frequencyMap]}

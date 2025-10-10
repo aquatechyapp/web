@@ -16,6 +16,7 @@ import { Client } from '@/ts/interfaces/Client';
 import { useUserStore } from '@/store/user';
 
 import { FormSchema } from './page';
+import { useCreateAssignmentForSpecificService } from '@/hooks/react-query/assignments/createAssignmentForSpecificService';
 
 export function DialogNewService() {
   const form = useFormContext<FormSchema>();
@@ -37,7 +38,7 @@ export function DialogNewService() {
     selectedClient?.companyOwnerId || ''
   );
 
-  const { mutate, isPending } = useCreateService();
+  const { mutate, isPending } = useCreateAssignmentForSpecificService();
 
   useEffect(() => {
     getNext10Dates();
@@ -93,9 +94,9 @@ export function DialogNewService() {
 
       mutate(
         {
+          assignmentToId: assignedToId,
           poolId: form.watch('poolId'),
-          assignedToId,
-          scheduledTo: form.watch('scheduledTo'),
+          specificDate: form.watch('scheduledTo'),
           serviceTypeId: form.watch('serviceTypeId')
         },
         {
