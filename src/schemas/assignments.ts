@@ -16,6 +16,7 @@ export const transferAssignmentsSchema = z.object({
     required_error: 'isEntireRoute is required',
     invalid_type_error: 'isEntireRoute must be a boolean'
   }),
+  scheduledTo: z.string().optional(),
   startOn: z.coerce
     .date({
       required_error: 'startOn is required',

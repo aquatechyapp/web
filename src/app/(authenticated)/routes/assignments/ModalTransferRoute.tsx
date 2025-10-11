@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format, getDay } from 'date-fns';
+import { addDays, differenceInDays, format, getDay } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -52,6 +52,18 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
       value: string;
     }[]
   >([]);
+  const [scheduledToOptions, setScheduledToOptions] = useState<
+    {
+      name: string;
+      key: string;
+      value: string;
+    }[]
+  >([]);
+
+  // Check if assignment is a one-time service (difference between startOn and endAfter < 7 days)
+  const isOneTimeService = assignment 
+    ? differenceInDays(new Date(assignment.endAfter), new Date(assignment.startOn)) < 7
+    : false;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(transferAssignmentsSchema),
@@ -60,6 +72,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
       weekday: selectedWeekday,
       startOn: undefined,
       endAfter: undefined,
+      scheduledTo: undefined,
       isEntireRoute
     }
   });
@@ -95,18 +108,76 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
 
   const isPending = isPendingPermanently || manualLoading;
 
+  function generateScheduledToOptions(weekday: string) {
+    if (!weekday) return;
+    
+    const weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const targetWeekday = weekdays.indexOf(weekday.toLowerCase());
+
+    if (targetWeekday === -1) {
+      return;
+    }
+
+    const today = new Date();
+    const todayWeekday = getDay(today);
+    let daysToNext = (targetWeekday - todayWeekday + 7) % 7;
+
+    if (daysToNext === 0) {
+      daysToNext = 0;
+    } else {
+      daysToNext = daysToNext || 7;
+    }
+
+    const dates: { name: string; key: string; value: string }[] = [];
+
+    // Generate next 10 occurrences of the selected weekday
+    for (let i = 0; i < 10; i++) {
+      const nextDate = new Date(today);
+      nextDate.setDate(today.getDate() + daysToNext + i * 7);
+
+      const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
+      const isoDate = String(nextDate);
+
+      dates.push({
+        name: formattedDate,
+        key: isoDate,
+        value: isoDate
+      });
+    }
+
+    setScheduledToOptions(dates);
+  }
+
   const buildPayload = () => {
-    const { weekday, startOn, endAfter } = form.getValues();
+    const { weekday, scheduledTo } = form.getValues();
     const assignmentToId = form.watch('assignmentToId');
 
-    const payload = {
-      assignmentToId,
-      startOn,
-      endAfter,
-      weekday
-    };
+    if (isOneTimeService && scheduledTo) {
+      // For one-time services, use scheduledTo as startOn and set endAfter 1 minute later
+      const startOnDate = scheduledTo;
+      const endAfterDate = new Date(scheduledTo);
+      endAfterDate.setMinutes(endAfterDate.getMinutes() + 1);
 
-    return payload;
+      const payload = {
+        assignmentToId,
+        startOn: startOnDate,
+        endAfter: String(endAfterDate),
+        weekday
+      };
+
+      return payload;
+    } else {
+      // For recurring assignments, use the regular startOn and endAfter
+      const { startOn, endAfter } = form.getValues();
+      const payload = {
+        assignmentToId,
+        startOn,
+        endAfter,
+        weekday
+      };
+
+      return payload;
+    }
   };
 
   async function transferRoute() {
@@ -202,26 +273,37 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
   );
 
   useEffect(() => {
-    form.resetField('startOn');
-    form.resetField('endAfter');
-
-    if (startOn) {
-      getNext10DatesForEndAfterBasedOnWeekday(startOn);
+    if (isOneTimeService && weekday) {
+      generateScheduledToOptions(weekday);
     }
-
-    getNext10DatesForStartOnBasedOnWeekday(weekday);
-  }, [form.watch('weekday')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOneTimeService, weekday, open]);
 
   useEffect(() => {
-    if (startOn) {
-      getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn')!);
+    if (weekday) {
+      if (isOneTimeService) {
+        form.resetField('scheduledTo');
+      } else {
+        form.resetField('startOn');
+        form.resetField('endAfter');
+        getNext10DatesForEndAfterBasedOnWeekday(startOn!);
+        getNext10DatesForStartOnBasedOnWeekday(weekday);
+      }
     }
-  }, [form.watch('startOn')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weekday]);
+
+  useEffect(() => {
+    if (startOn && !isOneTimeService) {
+      getNext10DatesForEndAfterBasedOnWeekday(startOn);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startOn]);
 
   return (
     <Dialog open={open} onOpenChange={isPending ? undefined : setOpen}>
       <DialogContent className="max-h-screen w-96 max-w-[580px] overflow-y-scroll rounded-md md:w-[580px]">
-        <DialogTitle>Transfer Route</DialogTitle>
+        <DialogTitle className='mb-2'>Transfer assignment</DialogTitle>
         {isPending ? (
           <div className="flex flex-col items-center gap-4 py-8">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"></div>
@@ -251,30 +333,45 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
                   />
                 </div>
 
-                <div className="mt-1">
-                  <div className="flex flex-col gap-4 md:flex-row">
+                {isOneTimeService ? (
+                  <div className="mt-4 flex gap-4">
                     <SelectField
-                      label="Start on"
-                      name="startOn"
-                      placeholder="Start on"
-                      options={next10WeekdaysStartOn.map((date) => ({
-                        key: date.key,
-                        name: date.name,
-                        value: date.value
-                      }))}
-                    />
-                    <SelectField
-                      label="End after"
-                      name="endAfter"
-                      placeholder="End after"
-                      options={next10WeekdaysEndAfter.map((date) => ({
+                      label="Scheduled to"
+                      name="scheduledTo"
+                      placeholder="Scheduled to"
+                      options={scheduledToOptions.map((date) => ({
                         key: date.key,
                         name: date.name,
                         value: date.value
                       }))}
                     />
                   </div>
-                </div>
+                ) : (
+                  <div className="mt-1">
+                    <div className="flex flex-col gap-4 md:flex-row">
+                      <SelectField
+                        label="Start on"
+                        name="startOn"
+                        placeholder="Start on"
+                        options={next10WeekdaysStartOn.map((date) => ({
+                          key: date.key,
+                          name: date.name,
+                          value: date.value
+                        }))}
+                      />
+                      <SelectField
+                        label="End after"
+                        name="endAfter"
+                        placeholder="End after"
+                        options={next10WeekdaysEndAfter.map((date) => ({
+                          key: date.key,
+                          name: date.name,
+                          value: date.value
+                        }))}
+                      />
+                    </div>
+                  </div>
+                )}
               </form>
             </Form>
             <div className="flex justify-around gap-4 pt-4">

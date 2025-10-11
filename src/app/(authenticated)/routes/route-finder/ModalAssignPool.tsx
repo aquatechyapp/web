@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format, getDay } from 'date-fns';
+import { addDays, format, getDay } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { useCreateAssignment } from '@/hooks/react-query/assignments/createAssignment';
+import { useCreateAssignmentForSpecificService } from '@/hooks/react-query/assignments/createAssignmentForSpecificService';
 import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
 import { useMembersStore } from '@/store/members';
 import { useWeekdayStore } from '@/store/weekday';
@@ -18,6 +19,7 @@ import { Pool } from '@/ts/interfaces/Pool';
 import { WeekdaysUppercase } from '@/ts/interfaces/Weekday';
 import { isEmpty } from '@/utils';
 import { Frequencies } from '@/constants';
+import { Frequency } from '@/ts/enums/enums';
 import { newAssignmentSchema } from '@/schemas/assignments'; // Import the same schema
 
 import WeekdaySelect from '../assignments/WeekdaySelect';
@@ -57,6 +59,13 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
       value: string;
     }[]
   >([]);
+  const [scheduledToOptions, setScheduledToOptions] = useState<
+    {
+      name: string;
+      key: string;
+      value: string;
+    }[]
+  >([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(newAssignmentSchema), // Use the same schema
@@ -72,7 +81,9 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
     }
   });
 
-  const [startOn, weekday] = form.watch(['startOn', 'weekday']);
+  const [startOn, weekday, frequency] = form.watch(['startOn', 'weekday', 'frequency']);
+
+  const isOnlyOnce = frequency === Frequency.ONCE;
 
   const validateForm = async (): Promise<boolean> => {
     form.formState.errors;
@@ -89,22 +100,68 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
   };
 
   const { mutate, isPending } = useCreateAssignment();
+  const { mutate: mutateSpecificService, isPending: isPendingSpecificService } = useCreateAssignmentForSpecificService();
+
+  function generateScheduledToOptions() {
+    const today = new Date();
+    const dates: { name: string; key: string; value: string }[] = [];
+
+    for (let i = 0; i < 28; i++) {
+      const nextDate = addDays(today, i);
+      const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
+      const isoDate = String(nextDate);
+
+      dates.push({
+        name: formattedDate,
+        key: isoDate,
+        value: isoDate
+      });
+    }
+
+    setScheduledToOptions(dates);
+  }
 
   async function assignPool() {
     const isValid = await validateForm();
     if (isValid && pool) {
-      // Use the same pattern as ModalNewAssignment
-      mutate({
-        assignmentToId: form.watch('assignmentToId'),
-        poolId: pool.id,
-        serviceTypeId: form.watch('serviceTypeId'),
-        weekday: form.watch('weekday'),
-        frequency: form.watch('frequency'),
-        startOn: form.watch('startOn'),
-        endAfter: form.watch('endAfter')
-      });
-      form.reset();
-      setOpen(false);
+      const assignmentToId = form.watch('assignmentToId');
+
+      if (isOnlyOnce) {
+        // Create assignment for specific service
+        mutateSpecificService(
+          {
+            assignmentToId,
+            poolId: pool.id,
+            serviceTypeId: form.watch('serviceTypeId'),
+            specificDate: form.watch('scheduledTo') || ''
+          },
+          {
+            onSuccess: () => {
+              form.reset();
+              setOpen(false);
+            }
+          }
+        );
+      } else {
+        // Create regular recurring assignment
+        mutate(
+          {
+            assignmentToId,
+            poolId: pool.id,
+            serviceTypeId: form.watch('serviceTypeId'),
+            weekday: form.watch('weekday'),
+            frequency: form.watch('frequency'),
+            startOn: form.watch('startOn')!,
+            endAfter: form.watch('endAfter')!
+          },
+          {
+            onSuccess: () => {
+              form.reset();
+              setOpen(false);
+            }
+          }
+        );
+      }
       return;
     }
     setOpen(true);
@@ -185,21 +242,28 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
   );
 
   useEffect(() => {
-    form.resetField('startOn');
-    form.resetField('endAfter');
-
-    if (startOn) {
-      getNext10DatesForEndAfterBasedOnWeekday(startOn);
+    if (isOnlyOnce) {
+      generateScheduledToOptions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOnlyOnce]);
 
-    getNext10DatesForStartOnBasedOnWeekday(weekday);
-  }, [form.watch('weekday')]);
+  useEffect(() => {
+    if (weekday) {
+      form.resetField('startOn');
+      form.resetField('endAfter');
+      getNext10DatesForEndAfterBasedOnWeekday(startOn!);
+      getNext10DatesForStartOnBasedOnWeekday(weekday);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weekday]);
 
   useEffect(() => {
     if (startOn) {
-      getNext10DatesForEndAfterBasedOnWeekday(form.watch('startOn')!);
+      getNext10DatesForEndAfterBasedOnWeekday(startOn);
     }
-  }, [form.watch('startOn')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startOn]);
 
   // Update form when pool changes
   useEffect(() => {
@@ -210,12 +274,17 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
 
   if (!pool) return null;
 
+  const isCreating = isPending || isPendingSpecificService;
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={isCreating ? undefined : setOpen}>
       <DialogContent className="max-h-screen w-96 max-w-[580px] overflow-y-scroll rounded-md md:w-[580px]">
         <DialogTitle>Assign Pool: {pool.name}</DialogTitle>
-        {isPending ? (
-          <LoadingSpinner />
+        {isCreating ? (
+          <div className="flex flex-col items-center gap-4 py-8">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+            <p className="text-sm text-gray-600">Creating assignment...</p>
+          </div>
         ) : (
           <Form {...form}>
             <form className="flex flex-col gap-4">
@@ -266,30 +335,45 @@ export function DialogAssignPool({ open, setOpen, pool }: Props) {
                 />
               </div>
 
-              <div className="mt-1">
-                <div className="flex flex-col gap-4 md:flex-row">
+              {isOnlyOnce ? (
+                <div className="mt-4 flex gap-4">
                   <SelectField
-                    label="Start on"
-                    name="startOn"
-                    placeholder="Start on"
-                    options={next10WeekdaysStartOn.map((date) => ({
-                      key: date.key,
-                      name: date.name,
-                      value: date.value
-                    }))}
-                  />
-                  <SelectField
-                    label="End after"
-                    name="endAfter"
-                    placeholder="End after"
-                    options={next10WeekdaysEndAfter.map((date) => ({
+                    label="Scheduled to"
+                    name="scheduledTo"
+                    placeholder="Scheduled to"
+                    options={scheduledToOptions.map((date) => ({
                       key: date.key,
                       name: date.name,
                       value: date.value
                     }))}
                   />
                 </div>
-              </div>
+              ) : (
+                <div className="mt-1">
+                  <div className="flex flex-col gap-4 md:flex-row">
+                    <SelectField
+                      label="Start on"
+                      name="startOn"
+                      placeholder="Start on"
+                      options={next10WeekdaysStartOn.map((date) => ({
+                        key: date.key,
+                        name: date.name,
+                        value: date.value
+                      }))}
+                    />
+                    <SelectField
+                      label="End after"
+                      name="endAfter"
+                      placeholder="End after"
+                      options={next10WeekdaysEndAfter.map((date) => ({
+                        key: date.key,
+                        name: date.name,
+                        value: date.value
+                      }))}
+                    />
+                  </div>
+                </div>
+              )}
             </form>
           </Form>
         )}

@@ -59,6 +59,11 @@ export const useTransferPermanentlyRoute = (
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       
+      // Invalidate specific client query if we have the client ID from the assignment
+      if (assignmentToTransfer?.pool?.clientOwnerId) {
+        queryClient.invalidateQueries({ queryKey: ['clients', assignmentToTransfer.pool.clientOwnerId] });
+      }
+      
       // Call the error callback to display error in dialog
       if (onErrorCallback) {
         onErrorCallback(errorMessage);
@@ -68,6 +73,12 @@ export const useTransferPermanentlyRoute = (
     onSuccess: (data: TransferResponse) => {
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      
+      // Invalidate specific client query if we have the client ID from the assignment
+      if (assignmentToTransfer?.pool?.clientOwnerId) {
+        queryClient.invalidateQueries({ queryKey: ['clients', assignmentToTransfer.pool.clientOwnerId] });
+      }
       
       // Show toast based on results
       if (data.failureCount === 0) {
