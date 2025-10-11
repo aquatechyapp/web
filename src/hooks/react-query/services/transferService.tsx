@@ -2,24 +2,36 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import { useToast } from '@/components/ui/use-toast';
-import { useAssignmentsContext } from '@/context/assignments';
 import { clientAxios } from '@/lib/clientAxios';
-import { Assignment, TransferAssignment } from '@/ts/interfaces/Assignments';
 import Cookies from 'js-cookie';
-import { Service, TransferService } from '@/ts/interfaces/Service';
-import { useServicesContext } from '@/context/services';
-import { createFormData } from '@/utils/formUtils';
+import { TransferService } from '@/ts/interfaces/Service';
 
-export const useTransferService = () => {
+export interface ServiceTransferResult {
+  serviceId: string;
+  success: boolean;
+  message?: string;
+}
+
+export interface ServiceTransferResponse {
+  totalProcessed: number;
+  successCount: number;
+  failureCount: number;
+  results: ServiceTransferResult[];
+}
+
+export const useTransferService = (
+  onSuccessCallback?: (result: ServiceTransferResponse) => void,
+  onErrorCallback?: (errorMessage: string) => void
+) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const userId = Cookies.get('userId');
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (form: TransferService) => {
-      const response = await clientAxios.patch('/services', createFormData(form), {
+    mutationFn: async (transfers: TransferService[]): Promise<ServiceTransferResponse> => {
+      const response = await clientAxios.post<ServiceTransferResponse>('/services/transfer', transfers, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json'
         }
       });
       return response.data;
@@ -27,23 +39,63 @@ export const useTransferService = () => {
     onError: (
       error: AxiosError<{
         message: string;
+        issues?: Array<{
+          code: string;
+          path: (string | number)[];
+          message: string;
+        }>;
       }>
     ) => {
-      toast({
-        duration: 5000,
-        variant: 'error',
-        title: 'Error transferring service',
-        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
-      });
-    },
-    onSuccess: () => {
+      const errorMessage = error.response?.data?.message || 'Internal server error';
+      const issues = error.response?.data?.issues;
+      
+      // Necessary because it can return an error but some services may have been transferred successfully
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
-      toast({
-        duration: 5000,
-        title: 'Service transferred successfully',
-        variant: 'success'
-      });
+      
+      const fullErrorMessage = issues 
+        ? `${errorMessage}: ${issues.map(i => i.message).join(', ')}` 
+        : errorMessage;
+      
+      // Call the error callback to display error in dialog
+      if (onErrorCallback) {
+        onErrorCallback(fullErrorMessage);
+      } else {
+        // Fallback to toast if no callback provided
+        toast({
+          duration: 5000,
+          variant: 'error',
+          title: 'Error transferring service',
+          description: fullErrorMessage
+        });
+      }
+    },
+    onSuccess: (data: ServiceTransferResponse) => {
+      queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
+      
+      // Show toast based on results
+      if (data.failureCount === 0) {
+        toast({
+          duration: 2000,
+          title: data.totalProcessed > 1 
+            ? `All ${data.totalProcessed} services transferred successfully` 
+            : 'Service transferred successfully',
+          variant: 'success'
+        });
+      } else if (data.successCount > 0) {
+        toast({
+          duration: 3000,
+          title: `${data.successCount} of ${data.totalProcessed} services transferred`,
+          description: 'Some transfers failed. Check the details.',
+          variant: 'default'
+        });
+      }
+      
+      // Call the success callback with the result data
+      if (onSuccessCallback) {
+        onSuccessCallback(data);
+      }
     }
   });
   return { mutate, isPending };

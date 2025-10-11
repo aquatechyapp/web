@@ -8,13 +8,6 @@ export const transferServiceSchema = z.object({
     })
     .trim()
     .min(1, { message: 'serviceId must be at least 1 character.' }),
-  poolId: z
-    .string({
-      required_error: 'poolId is required.',
-      invalid_type_error: 'poolId must be a string.'
-    })
-    .trim()
-    .min(1, { message: 'poolId must be at least 1 character.' }),
   assignedToId: z
     .string({
       required_error: 'assignedToId is required.',

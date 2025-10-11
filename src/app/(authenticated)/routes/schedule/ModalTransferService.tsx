@@ -77,13 +77,12 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
   const { mutate, isPending } = useTransferService();
 
   const buildPayload = () => {
-    const { assignedToId, poolId, scheduledTo, serviceId } = form.getValues();
+    const { assignedToId, scheduledTo, serviceId } = form.getValues();
 
-    const payload = {
+    const payload: TransferService = {
+      serviceId,
       assignedToId,
-      poolId,
-      scheduledTo,
-      serviceId
+      scheduledTo
     };
 
     return payload;
@@ -91,12 +90,12 @@ export function DialogTransferService({ open, setOpen, service }: Props) {
 
   async function transferService() {
     form.setValue('serviceId', service.id);
-    form.setValue('poolId', service.pool!.id);
 
     const isValid = await validateForm();
     if (isValid) {
       const payload = buildPayload();
-      mutate(payload as TransferService, {
+      // Send as array with single item to match new API
+      mutate([payload], {
         onSuccess: () => {
           form.reset();
           setWeekday(selectedWeekday);

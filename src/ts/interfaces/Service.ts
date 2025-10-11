@@ -93,6 +93,7 @@ export type CreateService = {
 };
 
 export type TransferService = {
+  serviceId: string;
   assignedToId: string;
   scheduledTo: string;
 };

@@ -40,6 +40,11 @@ export const Frequencies = [
     value: Frequency.E4WEEKS,
     name: 'Each 4 weeks',
     key: 'Each4Weeks'
+  },
+  {
+    value: Frequency.ONCE,
+    name: 'Only once',
+    key: 'OnlyOnce'
   }
 ];
 

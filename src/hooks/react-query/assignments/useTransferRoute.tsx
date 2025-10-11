@@ -7,12 +7,29 @@ import { clientAxios } from '@/lib/clientAxios';
 import { Assignment, TransferAssignment } from '@/ts/interfaces/Assignments';
 import Cookies from 'js-cookie';
 
-async function transferPermanently(data: Partial<Assignment>[]) {
-  const response = await clientAxios.post('/assignments/transferpermanently', data);
+export interface TransferResult {
+  assignmentId: string;
+  success: boolean;
+  message?: string;
+}
+
+export interface TransferResponse {
+  totalProcessed: number;
+  successCount: number;
+  failureCount: number;
+  results: TransferResult[];
+}
+
+async function transferPermanently(data: Partial<Assignment>[]): Promise<TransferResponse> {
+  const response = await clientAxios.post<TransferResponse>('/assignments/transferpermanently', data);
   return response.data;
 }
 
-export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | undefined, onSuccessCallback?: () => void, onErrorCallback?: () => void) => {
+export const useTransferPermanentlyRoute = (
+  assignmentToTransfer: Assignment | undefined, 
+  onSuccessCallback?: (result: TransferResponse) => void, 
+  onErrorCallback?: (errorMessage: string) => void
+) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { assignments } = useAssignmentsContext();
@@ -36,32 +53,52 @@ export const useTransferPermanentlyRoute = (assignmentToTransfer: Assignment | u
         message: string;
       }>
     ) => {
-      toast({
-        duration: 10000,
-        variant: 'error',
-        title: 'Error creating assignment',
-        description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
-      });
+      const errorMessage = error.response?.data?.message ? error.response.data.message : 'Internal server error';
+      
       // Necessary because it can return an error but some assignments may have been transferred successfully
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
-      // Call the error callback to clear manual loading state
+      
+      // Invalidate specific client query if we have the client ID from the assignment
+      if (assignmentToTransfer?.pool?.clientOwnerId) {
+        queryClient.invalidateQueries({ queryKey: ['clients', assignmentToTransfer.pool.clientOwnerId] });
+      }
+      
+      // Call the error callback to display error in dialog
       if (onErrorCallback) {
-        onErrorCallback();
+        onErrorCallback(errorMessage);
       }
       
     },
-    onSuccess: () => {
+    onSuccess: (data: TransferResponse) => {
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
-      toast({
-        duration: 2000,
-        title: 'Assignment transferred successfully',
-        variant: 'success'
-      });
-      // Call the success callback to close the modal
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      
+      // Invalidate specific client query if we have the client ID from the assignment
+      if (assignmentToTransfer?.pool?.clientOwnerId) {
+        queryClient.invalidateQueries({ queryKey: ['clients', assignmentToTransfer.pool.clientOwnerId] });
+      }
+      
+      // Show toast based on results
+      if (data.failureCount === 0) {
+        toast({
+          duration: 2000,
+          title: 'All assignments transferred successfully',
+          variant: 'success'
+        });
+      } else if (data.successCount > 0) {
+        toast({
+          duration: 3000,
+          title: `${data.successCount} of ${data.totalProcessed} assignments transferred`,
+          description: 'Some transfers failed. Check the details.',
+          variant: 'default'
+        });
+      }
+      
+      // Call the success callback with the result data
       if (onSuccessCallback) {
-        onSuccessCallback();
+        onSuccessCallback(data);
       }
     }
   });

@@ -16,6 +16,7 @@ export const transferAssignmentsSchema = z.object({
     required_error: 'isEntireRoute is required',
     invalid_type_error: 'isEntireRoute must be a boolean'
   }),
+  scheduledTo: z.string().optional(),
   startOn: z.coerce
     .date({
       required_error: 'startOn is required',
@@ -37,6 +38,34 @@ export const newAssignmentSchema = z
     client: z.string(),
     serviceTypeId: z.string().min(1, 'Service type is required'),
     frequency: defaultSchemas.frequency,
-    weekday: defaultSchemas.weekday
+    weekday: defaultSchemas.weekday,
+    scheduledTo: z.string().optional(),
+    startOn: z.coerce.date().optional(),
+    endAfter: z.string().optional()
   })
-  .and(dateSchema);
+  .refine(
+    (data) => {
+      // If frequency is ONCE, scheduledTo is required
+      if (data.frequency === 'ONCE') {
+        return !!data.scheduledTo;
+      }
+      return true;
+    },
+    {
+      message: 'Scheduled date is required for one-time assignments',
+      path: ['scheduledTo']
+    }
+  )
+  .refine(
+    (data) => {
+      // If frequency is NOT ONCE, startOn and endAfter are required
+      if (data.frequency !== 'ONCE') {
+        return !!data.startOn && !!data.endAfter;
+      }
+      return true;
+    },
+    {
+      message: 'Start date and end date are required for recurring assignments',
+      path: ['startOn']
+    }
+  );
