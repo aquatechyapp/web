@@ -135,6 +135,19 @@ export default function Page() {
     }
   };
 
+  //new
+  useEffect(() => {
+    if (
+      isLoaded &&
+      assignments.current.length > 0 &&
+      user?.addressCoords &&
+      !directions
+    ) {
+      getDirectionsFromGoogleMaps(false, 'first', 'last', user.addressCoords);
+    }
+  }, [isLoaded, assignments.current.length, user?.addressCoords]);
+
+
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
   return (
