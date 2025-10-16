@@ -7,15 +7,21 @@ import { useRouter } from 'next/navigation';
 import { AccountDropdownMenu } from './AccountDropdownMenu';
 import { PageTitle } from './PageTitle';
 import { MobileSideMenu } from './SideMenuNav';
+import { useUserStore } from '@/store/user';
 
 export default function PageHeader() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const resetUser = useUserStore((state) => state.resetUser);
 
   const handleLogout = () => {
     Cookies.remove('accessToken');
     Cookies.remove('userId');
     queryClient.resetQueries();
+    queryClient.removeQueries();
+    localStorage.clear();
+    sessionStorage.clear();
+    resetUser();
     router.push('/login');
   };
   return (

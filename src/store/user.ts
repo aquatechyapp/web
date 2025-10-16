@@ -17,6 +17,7 @@ type Store = {
 type Actions = {
   setUser: (user: User) => void;
   setDashboard: (dashboard: Dashboard) => void;
+  resetUser: () => void;
 };
 
 const poolsLimitBySubscription = {
@@ -38,6 +39,15 @@ export const useUserStore = create<Store & Actions>()(
     dashboard: {} as Dashboard,
     setDashboard: (dashboard: Dashboard) => {
       set({ dashboard });
+    },
+    resetUser: () => {
+      set({
+        user: {} as User,
+        dashboard: {} as Dashboard,
+        isFreePlan: false,
+        reachedPoolLimit: false,
+        shouldDisableNewPools: false,
+      });
     },
     isFreePlan: false,
     reachedPoolLimit: false,

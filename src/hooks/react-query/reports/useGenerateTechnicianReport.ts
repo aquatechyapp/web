@@ -7,24 +7,26 @@ import { generateTechnicianReportPDF } from '@/utils/generateTechnicianReportPDF
 interface GenerateTechnicianReportParams {
     assignedToId: string;
     companyId: string;
+  serviceTypeId: string;
     fromDate: string;
     toDate: string;
 }
 
 export const useGenerateTechnicianReport = () => {
   return useMutation({
-    mutationFn: async ({ assignedToId, companyId, fromDate, toDate }: GenerateTechnicianReportParams) => {
+    mutationFn: async ({ assignedToId, companyId, serviceTypeId, fromDate, toDate }: GenerateTechnicianReportParams) => {
       const params: any = {
         from: fromDate,
         to: toDate,
         assignedToId,
         companyId: companyId,
+        serviceTypeId: serviceTypeId,
         format: 'json'
       };
 
       // Get JSON data from backend
       const response = await clientAxios.get('/services/reports', { params });
-      
+
       // Generate PDF from JSON data
       await generateTechnicianReportPDF(
         response.data,

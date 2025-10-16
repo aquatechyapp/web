@@ -40,7 +40,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
   const resendEmailMutation = useResendServiceEmail();
   const deletePhotoMutation = useDeleteServicePhoto();
   const addPhotosMutation = useAddServicePhotos();
-  
+
   const [photoToDelete, setPhotoToDelete] = useState<any>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddPhotoDialog, setShowAddPhotoDialog] = useState(false);
@@ -115,19 +115,19 @@ export function ModalViewService({ service, open, setOpen }: Props) {
     if (selectedFiles.length > 0 && currentService?.id) {
       // Get photo definitions from the service
       const photoDefinitions = currentService.photosSnapshot?.flatMap(group => group.photoDefinitions) || [];
-      
+
       // Filter for "After service" photo definitions
-      const afterServiceDefinitions = photoDefinitions.filter(def => 
-        def.name.toLowerCase().includes('after service') || 
+      const afterServiceDefinitions = photoDefinitions.filter(def =>
+        def.name.toLowerCase().includes('after service') ||
         def.name.toLowerCase().includes('after-service') ||
         def.name.toLowerCase().includes('after')
       );
-      
+
       // Use the first "After service" definition, or fallback to first available, or create a default one
-      const photoDefinitionId = afterServiceDefinitions.length > 0 
-        ? afterServiceDefinitions[0].id 
-        : photoDefinitions.length > 0 
-        ? photoDefinitions[0].id 
+      const photoDefinitionId = afterServiceDefinitions.length > 0
+        ? afterServiceDefinitions[0].id
+        : photoDefinitions.length > 0
+        ? photoDefinitions[0].id
         : 'default-photo-definition';
 
       const newPhotos = selectedFiles.map(file => ({
@@ -137,9 +137,9 @@ export function ModalViewService({ service, open, setOpen }: Props) {
       }));
 
       addPhotosMutation.mutate(
-        { 
-          serviceId: currentService.id, 
-          newPhotos, 
+        {
+          serviceId: currentService.id,
+          newPhotos,
           photoDefinitions,
           currentService: currentService
         },
@@ -187,12 +187,12 @@ export function ModalViewService({ service, open, setOpen }: Props) {
 
   const getPhotoGroups = () => {
     if (!currentService?.photosSnapshot) return [];
-    
+
     return currentService.photosSnapshot.map((group: any) => {
       const groupPhotos = currentService?.structuredPhotos?.filter(
         (photo: any) => group.photoDefinitions.some((def: any) => def.id === photo.photoDefinitionId)
       ) || [];
-      
+
       return {
         ...group,
         photos: groupPhotos
@@ -204,12 +204,12 @@ export function ModalViewService({ service, open, setOpen }: Props) {
     if (currentService?.readingsSnapshot) {
       return currentService.readingsSnapshot.map((group: any) => ({
         ...group,
-        readings: currentService?.readings?.filter((reading: any) => 
+        readings: currentService?.readings?.filter((reading: any) =>
           group.readingDefinitions.some((def: any) => def.id === reading.readingDefinitionId)
         ) || []
       }));
     }
-    
+
     // Fallback to old structure
     if (currentService?.chemicalsReading) {
       return [{
@@ -226,7 +226,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
         }))
       }];
     }
-    
+
     return [];
   };
 
@@ -234,12 +234,12 @@ export function ModalViewService({ service, open, setOpen }: Props) {
     if (currentService?.consumablesSnapshot) {
       return currentService.consumablesSnapshot.map((group: any) => ({
         ...group,
-        consumables: currentService?.consumables?.filter((consumable: any) => 
+        consumables: currentService?.consumables?.filter((consumable: any) =>
           group.consumableDefinitions.some((def: any) => def.id === consumable.consumableDefinitionId)
         ) || []
       }));
     }
-    
+
     // Fallback to old structure
     if (currentService?.chemicalsSpent) {
       return [{
@@ -251,13 +251,13 @@ export function ModalViewService({ service, open, setOpen }: Props) {
           quantity: value,
           consumableDefinition: {
             name: key.charAt(0).toUpperCase() + key.slice(1),
-            unit: key === 'liquidChlorine' || key === 'muriaticAcid' ? 'gallon' : 
+            unit: key === 'liquidChlorine' || key === 'muriaticAcid' ? 'gallon' :
                   key === 'tablet' ? 'unit' : 'oz'
           }
         }))
       }];
     }
-    
+
     return [];
   };
 
@@ -269,7 +269,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
         completed: currentService.customChecklist![item.id] || false
       }));
     }
-    
+
     // Fallback to old checklist structure
     if (currentService?.checklist) {
       return [
@@ -282,7 +282,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
         { id: 'chemicalsAdjusted', label: 'Chemicals Adjusted', completed: currentService.checklist.chemicalsAdjusted }
       ];
     }
-    
+
     return [];
   };
 
@@ -346,6 +346,12 @@ export function ModalViewService({ service, open, setOpen }: Props) {
                                       const photoDefinition = group.photoDefinitions?.find((def: any) => def.id === photo.photoDefinitionId);
                                       return (
                                         <div key={photoIndex} className="space-y-2">
+                                          {photoDefinition && (
+                                            <p className="text-sm font-medium text-gray-700">{photoDefinition.name}</p>
+                                          )}
+                                          {photo.notes && (
+                                            <p className="text-xs text-gray-500">{photo.notes}</p>
+                                          )}
                                           <div className="group relative aspect-square overflow-hidden rounded-lg">
                                             <Image
                                               src={photo.url}
@@ -362,12 +368,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
                                               <Trash2 className="h-3 w-3" />
                                             </button>
                                           </div>
-                                          {photoDefinition && (
-                                            <p className="text-sm font-medium text-gray-700">{photoDefinition.name}</p>
-                                          )}
-                                          {photo.notes && (
-                                            <p className="text-xs text-gray-500">{photo.notes}</p>
-                                          )}
+
                                         </div>
                                       );
                                     })}
@@ -479,7 +480,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
                                 return (
                                   <div key={readingIndex} className="rounded-lg bg-gray-50 p-3">
                                     <div className="text-sm text-gray-500">
-                                      {readingDefinition?.name || reading.readingDefinitionId} 
+                                      {readingDefinition?.name || reading.readingDefinitionId}
                                       {readingDefinition?.unit && ` (${readingDefinition.unit})`}
                                     </div>
                                     <div className="text-lg font-semibold">{reading.value || 'N/A'}</div>
@@ -599,7 +600,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
             </Accordion>
 
             {/* Actions */}
-            <div className="mt-6 flex justify-center gap-3">
+            <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3 sm:px-0 sm:py-0">
               <Button
                 onClick={handleResendEmail}
                 variant="outline"
@@ -671,7 +672,7 @@ export function ModalViewService({ service, open, setOpen }: Props) {
           <DialogHeader>
             <DialogTitle>Add Photos</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <label htmlFor="photo-upload" className="block text-sm font-medium text-gray-700 mb-2">
