@@ -10,6 +10,7 @@ import { useDeactivatePool } from '@/hooks/react-query/pools/deactivatePool';
 
 import AssignmentsDatatable from './components/assignments-datatable';
 import { EquipmentTab, ChecklistTab, PoolInfoTab, RequestsTab, ServicesTab } from './tabs';
+import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 
 type Props = {
   services: Service[];
@@ -28,13 +29,23 @@ function PoolCard({ pool, services, clientId }: Props) {
   const [tab, setTab] = useState<PoolTabOptions>('pool_info');
   const { mutate: deletePool, isPending: isPendingDeletePool } = useDeletePool(['clients', clientId], pool.id);
   const { mutate: deactivatePool, isPending: isPendingDeactivatePool } = useDeactivatePool(['clients', clientId], pool.id);
+  const { mutate, isPending: isPendingUpdatePool } = useUpdatePool();
 
   const handleTabChange = (tab: PoolTabOptions) => {
     setTab(tab);
   };
 
-  const handleDeactivate = () => {
-    deactivatePool();
+  const handleToggleActive = () => {
+    if (pool.isActive) {
+      deactivatePool();
+    } else {
+      mutate({
+        data: {
+          poolId: pool.id,
+          isActive: true,
+        },
+      });
+    }
   };
 
   return (
@@ -52,11 +63,17 @@ function PoolCard({ pool, services, clientId }: Props) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleDeactivate}
+                onClick={handleToggleActive}
                 className="text-sm"
-                disabled={isPendingDeactivatePool}
+                disabled={isPendingDeactivatePool || isPendingUpdatePool}
               >
-                {isPendingDeactivatePool ? 'Deactivating...' : 'Deactivate'}
+                {isPendingDeactivatePool
+                  ? 'Deactivating...'
+                  : isPendingUpdatePool
+                    ? 'Activating...'
+                    : pool.isActive
+                      ? 'Deactivate'
+                      : 'Activate'}
               </Button>
               <Dialog>
                 <DialogTrigger asChild>

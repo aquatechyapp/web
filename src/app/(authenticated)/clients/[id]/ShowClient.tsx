@@ -40,7 +40,7 @@ export default function ShowClient({ client }: Props) {
 
   const selectedTabStyles = 'text-gray-800 font-semibold';
 
- 
+
 
   const handleDeactivateClient = () => {
     updateClient({ isActive: false });
@@ -140,9 +140,9 @@ export default function ShowClient({ client }: Props) {
                 </Button>
               <Separator className="w-full bg-gray-200 opacity-50" />
               <div className="flex w-full justify-center gap-2">
-                  <Button 
-                    onClick={() => setDeactivateModalOpen(true)} 
-                    className="w-full" 
+                  <Button
+                    onClick={() => setDeactivateModalOpen(true)}
+                    className="w-full"
                     variant={client.isActive ? 'destructive' : 'default'}
                   >
                     {client.isActive ? 'Deactivate' : 'Activate'}

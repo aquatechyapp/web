@@ -136,23 +136,32 @@ export default function Page() {
   return (
     <div>
       <Form {...filtersForm}>
-        <form className="flex w-full flex-col gap-4" onSubmit={filtersForm.handleSubmit(onSubmit)}>
-          <div className="flex flex-wrap items-center gap-2 p-4">
+        <form
+          className="flex w-full flex-col gap-4"
+          onSubmit={filtersForm.handleSubmit(onSubmit)}
+        >
+          <div className="flex flex-col md:flex-row flex-wrap items-start md:items-center gap-2 p-4">
             <ModalAddRequest />
+
             <Input
-              className="w-[250px]"
+              className="w-full md:w-[250px]"
               placeholder="Filter clients..."
               value={filtersForm.watch('clientId') || ''}
-              onChange={(event) => filtersForm.setValue('clientId', event.target.value, { shouldDirty: true })}
+              onChange={(event) =>
+                filtersForm.setValue('clientId', event.target.value, { shouldDirty: true })
+              }
             />
 
-            <FormItem className="flex items-center gap-2">
+            <FormItem className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full md:w-auto">
               <FormLabel className="whitespace-nowrap">From</FormLabel>
-              <FormControl>
+              <FormControl className="w-full md:w-auto">
                 <DatePicker
-                  // className="w-full"
                   placeholder="Created From"
-                  value={filtersForm.watch('from') ? new Date(filtersForm.watch('from')) : undefined}
+                  value={
+                    filtersForm.watch('from')
+                      ? new Date(filtersForm.watch('from'))
+                      : undefined
+                  }
                   onChange={(date) => {
                     if (date) {
                       const localDate = new Date(date.setHours(0, 0, 0, 0));
@@ -165,13 +174,16 @@ export default function Page() {
               </FormControl>
             </FormItem>
 
-            <FormItem className="flex items-center gap-2">
+            <FormItem className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full md:w-auto">
               <FormLabel className="whitespace-nowrap">To</FormLabel>
-              <FormControl>
+              <FormControl className="w-full md:w-auto">
                 <DatePicker
-                  // className="w-full"
                   placeholder="Created To"
-                  value={filtersForm.watch('to') ? new Date(filtersForm.watch('to')) : undefined}
+                  value={
+                    filtersForm.watch('to')
+                      ? new Date(filtersForm.watch('to'))
+                      : undefined
+                  }
                   onChange={(date) => {
                     if (date) {
                       const localDate = new Date(date.setHours(23, 59, 59, 999));
@@ -184,18 +196,9 @@ export default function Page() {
               </FormControl>
             </FormItem>
 
-            <Dialog
-              open={dialogOpen}
-              onOpenChange={(open) => {
-                if (!open) {
-                  handleDialogClose();
-                } else {
-                  setDialogOpen(true);
-                }
-              }}
-            >
+            <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button className="flex items-center gap-2 w-full md:w-auto">
                   More filters
                   {filtersForm.formState.isDirty && (
                     <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
@@ -265,9 +268,9 @@ export default function Page() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <SelectField 
-                              placeholder="Select category" 
-                              {...field} 
+                            <SelectField
+                              placeholder="Select category"
+                              {...field}
                               options={Categories}
                               onValueChange={(value) => {
                                 console.log('Category selected:', value); // Debug log
@@ -337,13 +340,25 @@ export default function Page() {
               </DialogContent>
             </Dialog>
 
-            <Button type="submit" size="sm" disabled={!filtersForm.formState.isDirty && appliedFilters === 0}>
-              {requestsQuery.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button
+              type="submit"
+              size="sm"
+              className="w-full md:w-auto"
+              disabled={!filtersForm.formState.isDirty && appliedFilters === 0}
+            >
+              {requestsQuery.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Apply
             </Button>
 
             {appliedFilters > 0 && (
-              <Button variant="outline" onClick={handleClearFilters} size="sm">
+              <Button
+                variant="outline"
+                onClick={handleClearFilters}
+                size="sm"
+                className="w-full md:w-auto"
+              >
                 <span className="mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
                   {appliedFilters}
                 </span>
@@ -354,6 +369,7 @@ export default function Page() {
           </div>
         </form>
       </Form>
+
 
       {requestsQuery.isPending || requestsQuery.isLoading ? (
         <DataTableRequestsSkeleton />
