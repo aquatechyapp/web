@@ -3,7 +3,12 @@
 import { useState, useMemo } from 'react';
 import { ArrowLeft, Download, FileBarChartIcon, CalendarIcon, Building2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,6 +18,7 @@ import { useUserStore } from '@/store/user';
 import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 import { useGenerateTechnicianReport } from '@/hooks/react-query/reports/useGenerateTechnicianReport';
 import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
+import { MultiSelect } from '@/components/MultiSelect';
 
 export default function TechnicianReportPage() {
   const router = useRouter();
@@ -27,7 +33,7 @@ export default function TechnicianReportPage() {
   const [fromDateString, setFromDateString] = useState<string | undefined>(undefined);
   const [toDateString, setToDateString] = useState<string | undefined>(new Date().toISOString());
 
-  const [selectedServiceType, setSelectedServiceType] = useState<string>('');
+  const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>([]);
  const { data: serviceTypesData, isLoading: isServiceTypesLoading } = useGetServiceTypes(
    selectedCompany || ''
   );
@@ -68,7 +74,7 @@ export default function TechnicianReportPage() {
       await generateReportMutation.mutateAsync({
         assignedToId: selectedTechnician,
         companyId: selectedCompany,
-        serviceTypeId: selectedServiceType,
+        serviceTypeId: selectedServiceTypes,
         fromDate: fromDateString!,
         toDate: toDateString!,
         // assignedToId: '68583a38ee3703ae8bbc6814',
@@ -86,7 +92,7 @@ export default function TechnicianReportPage() {
   const canGenerateReport =
     selectedCompany &&
     selectedTechnician &&
-    selectedServiceType &&
+    selectedServiceTypes.length > 0 &&
     fromDateString &&
     toDateString;
 
@@ -172,22 +178,16 @@ export default function TechnicianReportPage() {
 
             <div>
               <label className="text-sm font-medium mb-2 block">Type of Service</label>
-              <Select
-                disabled={!selectedCompany}
-                value={selectedServiceType}
-                onValueChange={setSelectedServiceType}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a service type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {filteredTypeOfService.map((service) => (
-                    <SelectItem key={service.id} value={service.id}>
-                      {service.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect
+                options={filteredTypeOfService.map((service) => ({
+                  label: service.name,
+                  value: service.id,
+                }))}
+                selected={selectedServiceTypes}
+                onChange={setSelectedServiceTypes}
+                placeholder="Select service types"
+                className="w-full"
+              />
             </div>
 
             <div>
