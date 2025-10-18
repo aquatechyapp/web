@@ -10,7 +10,9 @@ import {
   Settings2,
   UserPlus,
   Users,
-  PlayCircle
+  PlayCircle,
+  ClipboardList,
+  Calendar
 } from 'lucide-react';
 
 import RouteIcon from '@/components/ui/route-icon';
@@ -203,6 +205,29 @@ export const routes: Menu[] = [
     icon: ListChecks,
     title: 'Services',
     description: 'Look services made by your company'
+  },
+  {
+    text: 'Work Orders',
+    href: '/work-orders',
+    icon: CheckSquare,
+    title: 'Work Orders',
+    description: 'Manage work orders and track their progress',
+    submenu: {
+      add: {
+        text: 'Add',
+        href: '/work-orders/add',
+        title: 'Add Work Order',
+        description: 'Create a new work order',
+        icon: ClipboardList
+      },
+      schedule: {
+        text: 'Schedule',
+        href: '/work-orders/schedule',
+        title: 'Schedule Work Orders',
+        description: 'View and manage work order schedules',
+        icon: Calendar
+      }
+    }
   },
   {
     text: 'Reports',

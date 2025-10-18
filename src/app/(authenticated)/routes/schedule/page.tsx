@@ -69,7 +69,8 @@ export default function Page() {
       poolId: '',
       scheduledTo: '',
       clientId: '',
-      serviceTypeId: ''
+      serviceTypeId: '',
+      instructions: ''
     }
   });
 

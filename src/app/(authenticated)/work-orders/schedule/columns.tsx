@@ -52,11 +52,38 @@ export const columns: ColumnDef<Service>[] = [
     )
   },
   {
-    accessorKey: 'completedAt',
-    header: 'Date',
+    accessorKey: 'scheduledTo',
+    header: 'Scheduled',
     cell: ({ row: { original } }) => (
       <div>
-        {original.completedAt ? format(new Date(original.completedAt), "EEEE, MMMM do 'at' h:mm a") : 'N/A'}
+        {format(new Date(original.scheduledTo), "EEE, MMM do")}
+      </div>
+    ),
+    filterFn: (row, columnId, value) => {
+      let date: string | Date | null = row.original.scheduledTo;
+
+      const [start, end] = value; // value => two date input values
+      //If one filter defined and date is null filter it
+      if ((start || end) && !date) return false;
+      // vem do back como string
+      if (typeof date === 'string') date = new Date(date);
+      if (!date) return false;
+      
+      if (start && !end) {
+        return date.getTime() >= start.getTime();
+      } else if (!start && end) {
+        return date.getTime() <= end.getTime();
+      } else if (start && end) {
+        return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
+      } else return true;
+    }
+  },
+  {
+    accessorKey: 'completedAt',
+    header: 'Completed',
+    cell: ({ row: { original } }) => (
+      <div>
+        {original.completedAt ? format(new Date(original.completedAt), "EEE, MMM do") : "Open"}
       </div>
     ),
     filterFn: (row, columnId, value) => {
@@ -88,22 +115,22 @@ export const columns: ColumnDef<Service>[] = [
     )
   },
   {
-    accessorKey: 'notes',
-    header: 'Notes',
+    accessorKey: 'instructions',
+    header: 'Instructions',
     cell: ({ row: { original } }) => (
-      original.notes && original.notes !== 'N/A' ? (
-        <div className="truncate max-w-[200px]" title={original.notes}>
-          {original.notes}
+      original.instructions && original.instructions !== 'N/A' ? (
+        <div className="truncate max-w-[200px]" title={original.instructions}>
+          {original.instructions}
         </div>
       ) : null
     )
   },
   {
     accessorKey: 'completedByUserId',
-    header: 'Member',
+    header: 'Assigned to',
     cell: ({ row: { original } }) => (
       <div>
-        {original.completedByUser?.firstName} {original.completedByUser?.lastName}
+        {original.assignedTo?.firstName} {original.assignedTo?.lastName}
       </div>
     )
   },

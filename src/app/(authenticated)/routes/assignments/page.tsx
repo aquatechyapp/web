@@ -83,7 +83,8 @@ export default function Page() {
       weekday: format(new Date(), 'EEEE').toUpperCase() as WeekdaysUppercase,
       frequency: 'WEEKLY',
       startOn: undefined,
-      endAfter: undefined
+      endAfter: undefined,
+      instructions: ''
     }
   });
 

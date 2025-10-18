@@ -3,9 +3,11 @@ import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import SelectField from '@/components/SelectField';
+import InputField from '@/components/InputField';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
+import { FieldType } from '@/ts/enums/enums';
 import { useCreateAssignment } from '@/hooks/react-query/assignments/createAssignment';
 import { useCreateAssignmentForSpecificService } from '@/hooks/react-query/assignments/createAssignmentForSpecificService';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
@@ -87,6 +89,11 @@ export function DialogNewAssignment() {
   const serviceTypes = serviceTypesData?.serviceTypes || [];
   const hasClients = clients.length > 0;
   const hasServiceTypes = serviceTypes.length > 0;
+  
+  // Watch serviceTypeId to check if it's "Pool Cleaning"
+  const serviceTypeId = form.watch('serviceTypeId');
+  const selectedServiceType = serviceTypes.find(st => st.id === serviceTypeId);
+  const showInstructions = selectedServiceType?.name !== 'Pool Cleaning';
 
   function getNext10DatesForStartOnBasedOnWeekday(weekday: string) {
     if (!weekday) return;
@@ -206,7 +213,8 @@ export function DialogNewAssignment() {
             assignmentToId,
             poolId: form.watch('poolId'),
             serviceTypeId: form.watch('serviceTypeId'),
-            specificDate: form.watch('scheduledTo') || ''
+            specificDate: form.watch('scheduledTo') || '',
+            instructions: form.watch('instructions') || undefined
           },
           {
             onSuccess: () => {
@@ -227,7 +235,8 @@ export function DialogNewAssignment() {
             weekday: form.watch('weekday'),
             frequency: form.watch('frequency'),
             startOn: form.watch('startOn')!,
-            endAfter: form.watch('endAfter')!
+            endAfter: form.watch('endAfter')!,
+            instructions: form.watch('instructions') || undefined
           },
           {
             onSuccess: () => {
@@ -311,6 +320,14 @@ export function DialogNewAssignment() {
                       label="Service Type"
                       placeholder={hasServiceTypes ? 'Select service type' : 'No service types available'}
                       name="serviceTypeId"
+                    />
+                  )}
+                  {clientId && serviceTypeId && showInstructions && (
+                    <InputField
+                      name="instructions"
+                      label="Instructions"
+                      placeholder="Enter detailed instructions for this assignment"
+                      type={FieldType.TextArea}
                     />
                   )}
                 </div>

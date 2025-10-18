@@ -3,9 +3,11 @@ import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import SelectField from '@/components/SelectField';
+import InputField from '@/components/InputField';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
+import { FieldType } from '@/ts/enums/enums';
 import { useCreateService } from '@/hooks/react-query/services/createService';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
@@ -47,6 +49,11 @@ export function DialogNewService() {
   const serviceTypes = serviceTypesData?.serviceTypes || [];
   const hasClients = clients.length > 0;
   const hasServiceTypes = serviceTypes.length > 0;
+  
+  // Watch serviceTypeId to check if it's "Pool Cleaning"
+  const serviceTypeId = form.watch('serviceTypeId');
+  const selectedServiceType = serviceTypes.find(st => st.id === serviceTypeId);
+  const showInstructions = selectedServiceType?.name !== 'Pool Cleaning';
 
   function getNext10Dates() {
     const startDate = new Date();
@@ -97,7 +104,8 @@ export function DialogNewService() {
           assignmentToId: assignedToId,
           poolId: form.watch('poolId'),
           specificDate: form.watch('scheduledTo'),
-          serviceTypeId: form.watch('serviceTypeId')
+          serviceTypeId: form.watch('serviceTypeId'),
+          instructions: form.watch('instructions') || undefined
         },
         {
           onSuccess: () => {
@@ -177,6 +185,14 @@ export function DialogNewService() {
                       label="Service Type"
                       placeholder={hasServiceTypes ? 'Select service type' : 'No service types available'}
                       name="serviceTypeId"
+                    />
+                  )}
+                  {clientId && serviceTypeId && showInstructions && (
+                    <InputField
+                      name="instructions"
+                      label="Instructions"
+                      placeholder="Enter detailed instructions for this service"
+                      type={FieldType.TextArea}
                     />
                   )}
                 </div>
