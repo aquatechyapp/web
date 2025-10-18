@@ -408,7 +408,7 @@ export default function AddWorkOrderPage() {
             {clientId && (
               <SelectField
                 options={serviceTypesData?.serviceTypes
-                  ?.filter((serviceType) => serviceType.isActive)
+                  ?.filter((serviceType) => serviceType.isActive && serviceType.name !== "Pool Cleaning")
                   .map((serviceType) => ({
                     key: serviceType.id,
                     name: serviceType.name,
