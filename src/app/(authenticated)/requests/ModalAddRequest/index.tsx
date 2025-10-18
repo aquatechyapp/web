@@ -74,7 +74,7 @@ export function ModalAddRequest() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="w-full md:w-auto flex items-center justify-center">
           <PlusIcon className="mr-2" />
           Add request
         </Button>

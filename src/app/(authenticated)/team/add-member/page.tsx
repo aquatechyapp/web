@@ -143,17 +143,29 @@ export default function AddMemberPage() {
   if (!step) {
     return (
       <div className="w-full p-5 lg:p-8 flex flex-col items-center justify-center min-h-[60vh]">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Add New Member</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+          Add New Member
+        </h1>
+
         <div className="flex flex-col gap-4 w-full max-w-md">
-          <Button className="w-full" onClick={() => setStep('new')}>
+          <Button
+            className="w-full py-4 min-h-[3rem] text-center md:py-2 md:min-h-auto"
+            onClick={() => setStep('new')}
+          >
             The user is new on Aquatechy
           </Button>
-          <Button className="w-full" variant="outline" onClick={() => setStep('existing')}>
+
+          <Button
+            className="w-full py-4 min-h-[3rem] text-center md:py-2 md:min-h-auto"
+            variant="outline"
+            onClick={() => setStep('existing')}
+          >
             The user already has an account on Aquatechy
           </Button>
-          
         </div>
+
       </div>
+
     );
   }
 
@@ -248,23 +260,23 @@ export default function AddMemberPage() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <InputField name="firstName" label="First Name" placeholder="Enter first name" />
               <InputField name="lastName" label="Last Name" placeholder="Enter last name" />
-              <InputField 
-                name="company" 
-                label="Company" 
-                placeholder="Enter company name" 
+              <InputField
+                name="company"
+                label="Company"
+                placeholder="Enter company name"
               />
             </div>
-            
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <InputField
                 name="email"
                 label="Email"
                 placeholder="Enter email address"
               />
-              <InputField 
-                name="phone" 
-                label="Phone" 
-                placeholder="Enter phone number" 
+              <InputField
+                name="phone"
+                label="Phone"
+                placeholder="Enter phone number"
                 type={FieldType.Phone}
               />
             </div>

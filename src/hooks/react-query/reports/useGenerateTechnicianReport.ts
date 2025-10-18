@@ -7,7 +7,7 @@ import { generateTechnicianReportPDF } from '@/utils/generateTechnicianReportPDF
 interface GenerateTechnicianReportParams {
     assignedToId: string;
     companyId: string;
-  serviceTypeId: string;
+  serviceTypeId: string[];
     fromDate: string;
     toDate: string;
 }
@@ -20,7 +20,7 @@ export const useGenerateTechnicianReport = () => {
         to: toDate,
         assignedToId,
         companyId: companyId,
-        serviceTypeId: serviceTypeId,
+        serviceTypeId: serviceTypeId.join(','),
         format: 'json'
       };
 
