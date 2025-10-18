@@ -27,12 +27,18 @@ const headerStyles = 'bg-gray-50 shadow-sm  rounded-t-lg';
 
 function PoolCard({ pool, services, clientId }: Props) {
   const [tab, setTab] = useState<PoolTabOptions>('pool_info');
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+
   const { mutate: deletePool, isPending: isPendingDeletePool } = useDeletePool(['clients', clientId], pool.id);
   const { mutate: deactivatePool, isPending: isPendingDeactivatePool } = useDeactivatePool(['clients', clientId], pool.id);
   const { mutate, isPending: isPendingUpdatePool } = useUpdatePool();
 
   const handleTabChange = (tab: PoolTabOptions) => {
     setTab(tab);
+  };
+
+  const handleConfirmToggle = () => {
+    setIsConfirmDialogOpen(true);
   };
 
   const handleToggleActive = () => {
@@ -46,9 +52,11 @@ function PoolCard({ pool, services, clientId }: Props) {
         },
       });
     }
+    setIsConfirmDialogOpen(false);
   };
 
   return (
+    <>
     <div className="flex w-full flex-col rounded-lg border border-gray-200 bg-white">
       <div className="w-full">
         <div className={headerStyles}>
@@ -59,22 +67,53 @@ function PoolCard({ pool, services, clientId }: Props) {
                 <span className="text-sm text-red-500 font-medium">(Deactivated)</span>
               )}
             </div>
+
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleToggleActive}
-                className="text-sm"
-                disabled={isPendingDeactivatePool || isPendingUpdatePool}
-              >
-                {isPendingDeactivatePool
-                  ? 'Deactivating...'
-                  : isPendingUpdatePool
-                    ? 'Activating...'
-                    : pool.isActive
-                      ? 'Deactivate'
-                      : 'Activate'}
-              </Button>
+                <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleConfirmToggle}
+                      className="text-sm"
+                      disabled={isPendingDeactivatePool || isPendingUpdatePool}
+                    >
+                      {isPendingDeactivatePool
+                        ? 'Deactivating...'
+                        : isPendingUpdatePool
+                          ? 'Activating...'
+                          : pool.isActive
+                            ? 'Deactivate'
+                            : 'Activate'}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>
+                        {pool.isActive ? 'Deactivate Pool' : 'Activate Pool'}
+                      </DialogTitle>
+                      <DialogDescription>
+                        {pool.isActive
+                          ? 'Are you sure you want to deactivate this pool?'
+                          : 'Are you sure you want to activate this pool?'}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-end gap-3 pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsConfirmDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant={pool.isActive ? 'destructive' : 'default'}
+                        onClick={handleToggleActive}
+                      >
+                        {pool.isActive ? 'Deactivate' : 'Activate'}
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
@@ -159,6 +198,7 @@ function PoolCard({ pool, services, clientId }: Props) {
         {tab === 'requests' && <RequestsTab requests={pool.requests || []} poolId={pool.id} clientId={clientId} />}
       </div>
     </div>
+    </>
   );
 }
 
