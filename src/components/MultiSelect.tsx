@@ -18,11 +18,12 @@ interface MultiSelectProps {
   onChange: (selected: string[]) => void;
   className?: string;
   placeholder: string;
+  disabled?: boolean;
 }
 
 // Atualmente não será usado, mas futuramente provavelmente será
 
-function MultiSelect({ options, selected, onChange, placeholder, ...props }: MultiSelectProps) {
+function MultiSelect({ options, selected, onChange, placeholder, disabled, ...props }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 
   const handleUnselect = (item: string) => {
@@ -31,8 +32,8 @@ function MultiSelect({ options, selected, onChange, placeholder, ...props }: Mul
 
   return (
     <div className="w-[100%]">
-      <Popover open={open} onOpenChange={setOpen} {...props}>
-        <PopoverTrigger asChild>
+      <Popover open={open} onOpenChange={setOpen}  {...props}>
+        <PopoverTrigger disabled={disabled} asChild>
           <Button
             variant="outline"
             role="combobox"
@@ -41,26 +42,31 @@ function MultiSelect({ options, selected, onChange, placeholder, ...props }: Mul
             onClick={() => setOpen(!open)}
           >
             <div className="flex flex-wrap gap-1">
-              {selected.map((item) => (
-                <Badge variant="secondary" key={item} className="mb-1 mr-1" onClick={() => handleUnselect(item)}>
-                  {item ? item : 'cityes'}
-                  <button
-                    className="ring-offset-background focus:ring-ring ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleUnselect(item);
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    onClick={() => handleUnselect(item)}
+              {selected.map((value) => {
+                const option = options.find((opt) => opt.value === value);
+                return (
+                  <Badge
+                    variant="secondary"
+                    key={value}
+                    className="mb-1 mr-1 flex items-center"
+                    onClick={() => handleUnselect(value)}
                   >
-                    <X className="text-muted-foreground hover:text-foreground h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
+                    {option ? option.label : value}
+                    <button
+                      className="ring-offset-background focus:ring-ring ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2"
+                      onKeyDown={(e) => e.key === 'Enter' && handleUnselect(value)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onClick={() => handleUnselect(value)}
+                    >
+                      <X className="text-muted-foreground hover:text-foreground h-3 w-3" />
+                    </button>
+                  </Badge>
+                );
+              })}
+
             </div>
             {!selected.length && <p className="w-full text-start text-slate-500">{placeholder}</p>}
             <ChevronsUpDown className="h-4 w-4 shrink-0 text-slate-500 opacity-50" />
