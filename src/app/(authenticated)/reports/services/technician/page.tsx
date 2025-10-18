@@ -92,15 +92,15 @@ export default function TechnicianReportPage() {
   const canGenerateReport =
     selectedCompany &&
     selectedTechnician &&
-    selectedServiceTypes.length > 0 &&
-    fromDateString &&
-    toDateString;
+    selectedServiceTypes.length > 0
+    // fromDateString &&
+    // toDateString;
+
+  console.log('selectedServiceTypes', selectedServiceTypes)
 
   if (membersLoading || isServiceTypesLoading) {
     return <LoadingSpinner />;
   }
-
-  console.log('serviceTypesData', serviceTypesData);
 
   return (
     <div className="p-6">
@@ -179,6 +179,7 @@ export default function TechnicianReportPage() {
             <div>
               <label className="text-sm font-medium mb-2 block">Type of Service</label>
               <MultiSelect
+              disabled={!selectedCompany}
                 options={filteredTypeOfService.map((service) => ({
                   label: service.name,
                   value: service.id,
@@ -198,7 +199,6 @@ export default function TechnicianReportPage() {
                 className='w-full'
                 onChange={(date) => {
                   if (date) {
-                    // Set to start of day (00:00:00.000)
                     const startOfDay = new Date(date);
                     startOfDay.setHours(0, 0, 0, 0);
                     setFromDate(startOfDay);
@@ -219,7 +219,6 @@ export default function TechnicianReportPage() {
                 className='w-full'
                 onChange={(date) => {
                   if (date) {
-                    // Set to end of day (23:59:59.999)
                     const endOfDay = new Date(date);
                     endOfDay.setHours(23, 59, 59, 999);
                     setToDate(endOfDay);
