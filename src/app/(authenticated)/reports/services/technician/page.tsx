@@ -26,12 +26,20 @@ export default function TechnicianReportPage() {
   const { data: members, isLoading: membersLoading } = useGetMembersOfAllCompaniesByUserId(user.id);
   const generateReportMutation = useGenerateTechnicianReport();
 
+  // define 'from' como 1 dia antes do 'to'
+  const defaultFrom = useMemo(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }, []);
+
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedTechnician, setSelectedTechnician] = useState<string>('');
-  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
+  const [fromDate, setFromDate] = useState<Date | undefined>(defaultFrom);
   const [toDate, setToDate] = useState<Date | undefined>(new Date());
-  const [fromDateString, setFromDateString] = useState<string | undefined>(undefined);
   const [toDateString, setToDateString] = useState<string | undefined>(new Date().toISOString());
+  const [fromDateString, setFromDateString] = useState<string | undefined>(defaultFrom.toISOString());
 
   const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>([]);
  const { data: serviceTypesData, isLoading: isServiceTypesLoading } = useGetServiceTypes(
@@ -83,6 +91,7 @@ export default function TechnicianReportPage() {
         // toDate: new Date('2025-10-04')
       });
       console.log('Report generation completed successfully');
+      setSelectedServiceTypes([])
     } catch (error) {
       console.error('Error generating report:', error);
       alert('Failed to generate report. Please check the console for details.');
@@ -95,8 +104,6 @@ export default function TechnicianReportPage() {
     selectedServiceTypes.length > 0
     // fromDateString &&
     // toDateString;
-
-  console.log('selectedServiceTypes', selectedServiceTypes)
 
   if (membersLoading || isServiceTypesLoading) {
     return <LoadingSpinner />;
@@ -124,7 +131,6 @@ export default function TechnicianReportPage() {
       </div>
 
       <div className="max-w-full">
-        {/* Filters Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -143,7 +149,7 @@ export default function TechnicianReportPage() {
               </label>
               <Select value={selectedCompany} onValueChange={(value) => {
                 setSelectedCompany(value);
-                setSelectedTechnician(''); // Reset technician when company changes
+                setSelectedTechnician('');
               }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a company" />
