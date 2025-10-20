@@ -37,20 +37,22 @@ export default function Page() {
 
   return (
     <div className="p-2">
-      <div className="flex flex-col items-start justify-start gap-4 md:flex-row">
-        <Button onClick={() => router.push('/team/add-member')}>
+      <div className="flex flex-col items-start justify-start gap-2 md:flex-row md:items-center md:gap-4 w-full">
+        <Button className="w-full md:w-auto mb-2 md:mb-0" onClick={() => router.push('/team/add-member')}>
           <PlusIcon className="mr-2" />
           Add member
         </Button>
-        <Button onClick={() => router.push('/team/add-company')}>
+
+        <Button className="w-full md:w-auto mb-2 md:mb-0" onClick={() => router.push('/team/add-company')}>
           <PlusIcon className="mr-2" />
           Add company
         </Button>
+
         <Input
           placeholder="Filter by name"
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
-          className="w-full md:max-w-sm"
+          className="w-full md:w-auto md:max-w-sm"
         />
       </div>
 

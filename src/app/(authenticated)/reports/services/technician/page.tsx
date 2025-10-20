@@ -3,7 +3,12 @@
 import { useState, useMemo } from 'react';
 import { ArrowLeft, Download, FileBarChartIcon, CalendarIcon, Building2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,13 +17,15 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useUserStore } from '@/store/user';
 import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 import { useGenerateTechnicianReport } from '@/hooks/react-query/reports/useGenerateTechnicianReport';
+import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
+import { MultiSelect } from '@/components/MultiSelect';
 
 export default function TechnicianReportPage() {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
   const { data: members, isLoading: membersLoading } = useGetMembersOfAllCompaniesByUserId(user.id);
   const generateReportMutation = useGenerateTechnicianReport();
-  
+
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedTechnician, setSelectedTechnician] = useState<string>('');
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
@@ -26,6 +33,10 @@ export default function TechnicianReportPage() {
   const [fromDateString, setFromDateString] = useState<string | undefined>(undefined);
   const [toDateString, setToDateString] = useState<string | undefined>(new Date().toISOString());
 
+  const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>([]);
+ const { data: serviceTypesData, isLoading: isServiceTypesLoading } = useGetServiceTypes(
+   selectedCompany || ''
+  );
   // Get unique companies from members
   const companies = useMemo(() => {
     if (!members) return [];
@@ -48,6 +59,12 @@ export default function TechnicianReportPage() {
     return members.filter(member => member.company.id === selectedCompany);
   }, [members, selectedCompany]);
 
+  // Filter Type of service based on selected company
+  const filteredTypeOfService = useMemo(() => {
+    if (!serviceTypesData?.serviceTypes) return [];
+    return serviceTypesData.serviceTypes.filter((service) => service.isActive);
+  }, [serviceTypesData]);
+
   const handleGenerateReport = async () => {
     // if (!selectedCompany || !selectedTechnician || !fromDate || !toDate) {
     //   return;
@@ -57,6 +74,7 @@ export default function TechnicianReportPage() {
       await generateReportMutation.mutateAsync({
         assignedToId: selectedTechnician,
         companyId: selectedCompany,
+        serviceTypeId: selectedServiceTypes,
         fromDate: fromDateString!,
         toDate: toDateString!,
         // assignedToId: '68583a38ee3703ae8bbc6814',
@@ -71,9 +89,16 @@ export default function TechnicianReportPage() {
     }
   };
 
-  const canGenerateReport = selectedCompany && selectedTechnician && fromDateString && toDateString;
+  const canGenerateReport =
+    selectedCompany &&
+    selectedTechnician &&
+    selectedServiceTypes.length > 0
+    // fromDateString &&
+    // toDateString;
 
-  if (membersLoading) {
+  console.log('selectedServiceTypes', selectedServiceTypes)
+
+  if (membersLoading || isServiceTypesLoading) {
     return <LoadingSpinner />;
   }
 
@@ -88,7 +113,7 @@ export default function TechnicianReportPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Service Reports
         </Button>
-        
+
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <FileBarChartIcon className="h-6 w-6 text-blue-600" />
           Technician Performance Report
@@ -135,7 +160,9 @@ export default function TechnicianReportPage() {
 
             <div>
               <label className="text-sm font-medium mb-2 block">Technician</label>
-              <Select value={selectedTechnician} onValueChange={setSelectedTechnician}>
+              <Select
+              disabled={!selectedCompany}
+               value={selectedTechnician} onValueChange={setSelectedTechnician}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a technician" />
                 </SelectTrigger>
@@ -150,6 +177,21 @@ export default function TechnicianReportPage() {
             </div>
 
             <div>
+              <label className="text-sm font-medium mb-2 block">Type of Service</label>
+              <MultiSelect
+              disabled={!selectedCompany}
+                options={filteredTypeOfService.map((service) => ({
+                  label: service.name,
+                  value: service.id,
+                }))}
+                selected={selectedServiceTypes}
+                onChange={setSelectedServiceTypes}
+                placeholder="Select service types"
+                className="w-full"
+              />
+            </div>
+
+            <div>
               <label className="text-sm font-medium mb-2 block">From Date</label>
               <DatePicker
                 placeholder="Select start date"
@@ -157,7 +199,6 @@ export default function TechnicianReportPage() {
                 className='w-full'
                 onChange={(date) => {
                   if (date) {
-                    // Set to start of day (00:00:00.000)
                     const startOfDay = new Date(date);
                     startOfDay.setHours(0, 0, 0, 0);
                     setFromDate(startOfDay);
@@ -178,7 +219,6 @@ export default function TechnicianReportPage() {
                 className='w-full'
                 onChange={(date) => {
                   if (date) {
-                    // Set to end of day (23:59:59.999)
                     const endOfDay = new Date(date);
                     endOfDay.setHours(23, 59, 59, 999);
                     setToDate(endOfDay);

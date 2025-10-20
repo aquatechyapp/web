@@ -119,35 +119,34 @@ export default function AddCompanyPage() {
 
       {/* Form */}
       <Form {...form}>
-        <form 
-          className="flex flex-col gap-6" 
+        <form
+          className="flex flex-col gap-6"
           onSubmit={form.handleSubmit(handleSubmit)}
         >
           <div className="space-y-6">
             {/* Basic Information */}
             <div className="space-y-4">
-              
-              
-                <InputField 
-                  name="name" 
-                  label="Company Name" 
-                  placeholder="Enter company name" 
+
+                <InputField
+                  name="name"
+                  label="Company Name"
+                  placeholder="Enter company name"
                 />
-               
-              
+
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <InputField 
-                    name="email" 
-                    label="Email" 
-                    placeholder="Enter email address" 
+                <InputField
+                  name="email"
+                  label="Email"
+                  placeholder="Enter email address"
                 />
-                <InputField 
-                  name="phone" 
-                  label="Phone" 
-                  placeholder="Enter phone number" 
-                  type={FieldType.Phone} 
+                <InputField
+                  name="phone"
+                  label="Phone"
+                  placeholder="Enter phone number"
+                  type={FieldType.Phone}
                 />
               </div>
+
             </div>
 
             {/* Address Information */}
@@ -155,7 +154,7 @@ export default function AddCompanyPage() {
               <Typography element="h2" className="text-lg font-medium">
                 Address Information
               </Typography>
-              
+
               <div className="space-y-4">
                 <AddressInput
                   name="address"
@@ -169,13 +168,13 @@ export default function AddCompanyPage() {
                     }, 500);
                   }}
                 />
-                
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-2">
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <CompanyStateAndCitySelect stateName="state" cityName="city" />
-                  <InputField 
-                    name="zip" 
-                    label="Zip Code" 
-                    placeholder="Enter zip code" 
+                  <InputField
+                    name="zip"
+                    label="Zip Code"
+                    placeholder="Enter zip code"
                   />
                 </div>
               </div>
@@ -183,10 +182,10 @@ export default function AddCompanyPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-4 mt-4">
-            
-            <Button 
-              type="submit" 
+          <div className="flex flex-col gap-4 mt-4 md:flex-row">
+
+            <Button
+              type="submit"
               className="flex-1"
               disabled={isPendingCreate}
             >
@@ -199,9 +198,9 @@ export default function AddCompanyPage() {
                 'Create Company'
               )}
             </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => router.back()}
               className="flex-1"
             >
