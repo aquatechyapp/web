@@ -150,6 +150,7 @@ export default function TechnicianReportPage() {
               <Select value={selectedCompany} onValueChange={(value) => {
                 setSelectedCompany(value);
                 setSelectedTechnician('');
+                setSelectedServiceTypes([]);
               }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a company" />

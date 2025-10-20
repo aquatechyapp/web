@@ -65,9 +65,9 @@ export default function CompanyInfo({ company }: { company: Company }) {
           {/* <InputField name="status" placeholder="Status" label="Status" /> */}
         </div>
         <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
-          <AddressInput 
-            name="address" 
-            label="Address" 
+          <AddressInput
+            name="address"
+            label="Address"
             placeholder="Enter company address"
             onAddressSelect={handleAddressSelect}
           />
