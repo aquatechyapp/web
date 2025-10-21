@@ -21,7 +21,7 @@ export function ChecklistTemplatesCard({ company }: ChecklistTemplatesCardProps)
 
   return (
     <Card className="w-full border-2 border-purple-200">
-      <CardHeader 
+      <CardHeader
         className="bg-gradient-to-r from-purple-50 to-violet-50 border-b border-purple-200 cursor-pointer hover:from-purple-100 hover:to-violet-100 transition-colors"
         onClick={toggleCollapsed}
       >
@@ -37,7 +37,7 @@ export function ChecklistTemplatesCard({ company }: ChecklistTemplatesCardProps)
               </CardDescription>
             </div>
           </div>
-          <ChevronDown 
+          <ChevronDown
             className={cn(
               "h-5 w-5 text-purple-600 transition-transform duration-200",
               collapsed ? "rotate-180" : "rotate-0"

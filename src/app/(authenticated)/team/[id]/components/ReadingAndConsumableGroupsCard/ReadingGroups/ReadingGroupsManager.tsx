@@ -57,8 +57,8 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
 
   const handleUpdateGroup = (data: UpdateReadingGroupRequest) => {
     if (editingGroup) {
-      updateReadingGroup({ 
-        readingGroupId: editingGroup.id, 
+      updateReadingGroup({
+        readingGroupId: editingGroup.id,
         data: {
           name: data.name,
           description: data.description,
@@ -137,7 +137,7 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
                     <div>
                       <CardTitle className="text-base flex items-center gap-2">
                         {group.name}
-                        
+
                         {!group.isActive && (
                           <Badge variant="outline" className="text-xs">
                             Inactive
