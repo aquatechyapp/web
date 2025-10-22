@@ -65,14 +65,14 @@ export function CompanyCard({ companyId, name, email, phone, role, status, image
   };
 
   return (
-    <div className="relative inline-flex w-96 flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:w-56 px-2">
+    <div className="relative inline-flex w-full max-w-xs flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 sm:max-w-[14rem] md:max-w-56">
       {/* Pending Acceptance Strip */}
       {isPendingAcceptance && (
         <div className="absolute -top-0 left-0 rounded-tl-lg bg-yellow-500 px-3 py-1 text-center text-xs font-medium text-white">
           Pending Acceptance
         </div>
       )}
-      
+
       {companyId ? <DropdownMenuCompany companyId={companyId} /> : null}
       <div className="flex h-[138px] flex-col items-center justify-start gap-4 self-stretch mt-2">
         <div className={`relative ${canEditLogo ? 'group cursor-pointer' : ''}`} onClick={handleImageSelect}>

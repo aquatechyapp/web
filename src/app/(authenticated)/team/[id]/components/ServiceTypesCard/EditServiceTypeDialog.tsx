@@ -339,7 +339,7 @@ export function EditServiceTypeDialog({
                   )}
                 />
 
-                <div className="flex justify-end gap-2 pt-4">
+                <div className="flex flex-col sm:flex-row gap-2 sm:justify-end w-full">
                   <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
                     Cancel
                   </Button>
@@ -757,9 +757,10 @@ export function EditServiceTypeDialog({
               {/* Add Selector Groups */}
               {availableSelectorGroupsToLink.length > 0 && (
                 <div className="border-t pt-4">
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-3 gap-2 md:gap-0">
                     <h4 className="text-sm font-medium">Available Selector Groups</h4>
-                    <div className="flex items-center gap-2">
+
+                    <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto">
                       <Button
                         onClick={() => {
                           const allIds = availableSelectorGroupsToLink.map(g => g.id);
@@ -767,7 +768,7 @@ export function EditServiceTypeDialog({
                         }}
                         variant="outline"
                         size="sm"
-                        className="text-xs"
+                        className="text-xs w-full md:w-auto"
                         disabled={availableSelectorGroupsToLink.length === 0}
                       >
                         Select All
@@ -776,13 +777,14 @@ export function EditServiceTypeDialog({
                         onClick={() => setSelectedSelectorGroups([])}
                         variant="outline"
                         size="sm"
-                        className="text-xs"
+                        className="text-xs w-full md:w-auto"
                         disabled={selectedSelectorGroups.length === 0}
                       >
                         Clear All
                       </Button>
                     </div>
                   </div>
+
 
                   <div className="space-y-2 mb-4">
                     {availableSelectorGroupsToLink.map((group) => (

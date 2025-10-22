@@ -29,12 +29,12 @@ interface EditPhotoDefinitionDialogProps {
   isLoading: boolean;
 }
 
-export function EditPhotoDefinitionDialog({ 
-  open, 
-  onOpenChange, 
-  photoDefinition, 
-  onSubmit, 
-  isLoading 
+export function EditPhotoDefinitionDialog({
+  open,
+  onOpenChange,
+  photoDefinition,
+  onSubmit,
+  isLoading
 }: EditPhotoDefinitionDialogProps) {
   const form = useForm<z.infer<typeof updatePhotoDefinitionSchema>>({
     resolver: zodResolver(updatePhotoDefinitionSchema),
@@ -109,7 +109,7 @@ export function EditPhotoDefinitionDialog({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Brief description of what this photo should capture..."
                       className="resize-none"
                       rows={3}
@@ -167,7 +167,7 @@ export function EditPhotoDefinitionDialog({
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end w-full">
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
                 Cancel
               </Button>
