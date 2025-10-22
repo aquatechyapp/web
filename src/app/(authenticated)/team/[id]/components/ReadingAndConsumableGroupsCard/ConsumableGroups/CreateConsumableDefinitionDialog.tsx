@@ -125,7 +125,7 @@ export function CreateConsumableDefinitionDialog({ open, onOpenChange, onSubmit,
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Brief description of this consumable..."
                       className="resize-none"
                       rows={2}
@@ -145,10 +145,10 @@ export function CreateConsumableDefinitionDialog({ open, onOpenChange, onSubmit,
                   <FormItem>
                     <FormLabel>Minimum Value</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 0.0" 
+                        placeholder="e.g., 0.0"
                         {...field}
                       />
                     </FormControl>
@@ -164,10 +164,10 @@ export function CreateConsumableDefinitionDialog({ open, onOpenChange, onSubmit,
                   <FormItem>
                     <FormLabel>Maximum Value</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 10.0" 
+                        placeholder="e.g., 10.0"
                         {...field}
                       />
                     </FormControl>
@@ -185,10 +185,10 @@ export function CreateConsumableDefinitionDialog({ open, onOpenChange, onSubmit,
                   <FormItem>
                     <FormLabel>Step Size</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 0.25" 
+                        placeholder="e.g., 0.25"
                         {...field}
                       />
                     </FormControl>
@@ -204,10 +204,10 @@ export function CreateConsumableDefinitionDialog({ open, onOpenChange, onSubmit,
                   <FormItem>
                     <FormLabel>Price per Unit</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="0.01"
-                        placeholder="e.g., 15.00" 
+                        placeholder="e.g., 15.00"
                         {...field}
                       />
                     </FormControl>
@@ -240,7 +240,7 @@ export function CreateConsumableDefinitionDialog({ open, onOpenChange, onSubmit,
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end w-full">
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
                 Cancel
               </Button>

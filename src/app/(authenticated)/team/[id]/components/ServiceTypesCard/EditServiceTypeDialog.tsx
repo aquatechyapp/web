@@ -54,13 +54,13 @@ interface EditServiceTypeDialogProps {
   onUnlinkSelectorGroup: (serviceTypeId: string, selectorGroupId: string) => void;
 }
 
-export function EditServiceTypeDialog({ 
-  open, 
-  onOpenChange, 
-  serviceType, 
+export function EditServiceTypeDialog({
+  open,
+  onOpenChange,
+  serviceType,
   companyId,
-  onSubmit, 
-  isLoading, 
+  onSubmit,
+  isLoading,
   checklistTemplates,
   readingGroups,
   consumableGroups,
@@ -200,7 +200,7 @@ export function EditServiceTypeDialog({
   const linkedConsumableGroupIds = currentServiceType?.consumableGroups?.map(g => g.id) || [];
   const linkedPhotoGroupIds = currentServiceType?.photoGroups?.map(g => g.id) || [];
   const linkedSelectorGroupIds = currentServiceType?.selectorGroups?.map(g => g.id) || [];
-  
+
   const availableReadingGroupsToLink = readingGroups.filter(
     group => !linkedReadingGroupIds.includes(group.id)
   );
@@ -229,7 +229,10 @@ export function EditServiceTypeDialog({
         </DialogHeader>
 
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="
+    flex flex-col sm:grid sm:grid-cols-5
+    w-full gap-2 sm:gap-0 h-auto
+  ">
             <TabsTrigger value="basic">Basic Info</TabsTrigger>
             <TabsTrigger value="reading-groups">Readings</TabsTrigger>
             <TabsTrigger value="consumable-groups">Consumables</TabsTrigger>
@@ -247,9 +250,9 @@ export function EditServiceTypeDialog({
                     <FormItem>
                       <FormLabel>Name *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="e.g., Pool Cleaning" 
-                          {...field} 
+                        <Input
+                          placeholder="e.g., Pool Cleaning"
+                          {...field}
                           disabled={currentServiceType.name === "Pool Cleaning"}
                           className={currentServiceType.name === "Pool Cleaning" ? "bg-muted cursor-not-allowed" : ""}
                         />
@@ -271,7 +274,7 @@ export function EditServiceTypeDialog({
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Textarea 
+                        <Textarea
                           placeholder="Brief description of what this service type includes..."
                           className="resize-none"
                           rows={3}
@@ -319,7 +322,7 @@ export function EditServiceTypeDialog({
                           Active
                         </FormLabel>
                         <p className="text-sm text-muted-foreground">
-                          {currentServiceType.isDefault 
+                          {currentServiceType.isDefault
                             ? 'This is a default service type and cannot be deactivated'
                             : 'Deactivate to hide this service type from new services'
                           }
@@ -356,7 +359,7 @@ export function EditServiceTypeDialog({
                   {currentServiceType.readingGroups?.length || 0} linked
                 </Badge>
               </div>
-              
+
               {/* Linked Reading Groups */}
               <div className="space-y-3">
                 {currentServiceType.readingGroups && currentServiceType.readingGroups.length > 0 ? (
@@ -366,7 +369,7 @@ export function EditServiceTypeDialog({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-medium text-sm">{group.name}</h4>
-                           
+
                           </div>
                           <p className="text-sm text-muted-foreground mb-2">
                             {group.description || 'No description provided'}
@@ -405,7 +408,7 @@ export function EditServiceTypeDialog({
                       </Badge>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2 mb-4">
                     {availableReadingGroupsToLink.map((group) => (
                       <div key={group.id} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors">
@@ -422,33 +425,33 @@ export function EditServiceTypeDialog({
                                 {group.description || 'No description'}
                               </div>
                             </div>
-                            
+
                           </div>
                         </label>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex gap-2">
-                    <Button 
+                  <div className="flex flex-col sm:flex-row gap-2 w-full">
+                    <Button
                       onClick={() => setSelectedReadingGroups(availableReadingGroupsToLink.map(g => g.id))}
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="w-full sm:flex-1"
                     >
                       Select All
                     </Button>
-                    <Button 
+                    <Button
                       onClick={() => setSelectedReadingGroups([])}
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="w-full sm:flex-1"
                       disabled={selectedReadingGroups.length === 0}
                     >
                       Clear All
                     </Button>
-                    <Button 
-                      onClick={handleLinkReadingGroups} 
+                    <Button
+                      onClick={handleLinkReadingGroups}
                       disabled={selectedReadingGroups.length === 0}
                       size="sm"
                     >
@@ -475,7 +478,7 @@ export function EditServiceTypeDialog({
                   {currentServiceType.consumableGroups?.length || 0} linked
                 </Badge>
               </div>
-              
+
               {/* Linked Consumable Groups */}
               <div className="space-y-3">
                 {currentServiceType.consumableGroups && currentServiceType.consumableGroups.length > 0 ? (
@@ -485,7 +488,7 @@ export function EditServiceTypeDialog({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-medium text-sm">{group.name}</h4>
-                            
+
                           </div>
                           <p className="text-sm text-muted-foreground mb-2">
                             {group.description || 'No description provided'}
@@ -524,7 +527,7 @@ export function EditServiceTypeDialog({
                       </Badge>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2 mb-4">
                     {availableConsumableGroupsToLink.map((group) => (
                       <div key={group.id} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors">
@@ -541,33 +544,33 @@ export function EditServiceTypeDialog({
                                 {group.description || 'No description'}
                               </div>
                             </div>
-                            
+
                           </div>
                         </label>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex gap-2">
-                    <Button 
+                  <div className="flex flex-col sm:flex-row gap-2 w-full">
+                    <Button
                       onClick={() => setSelectedConsumableGroups(availableConsumableGroupsToLink.map(g => g.id))}
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="w-full sm:flex-1"
                     >
                       Select All
                     </Button>
-                    <Button 
+                    <Button
                       onClick={() => setSelectedConsumableGroups([])}
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="w-full sm:flex-1"
                       disabled={selectedConsumableGroups.length === 0}
                     >
                       Clear All
                     </Button>
-                    <Button 
-                      onClick={handleLinkConsumableGroups} 
+                    <Button
+                      onClick={handleLinkConsumableGroups}
                       disabled={selectedConsumableGroups.length === 0}
                       size="sm"
                     >
@@ -594,7 +597,7 @@ export function EditServiceTypeDialog({
                   {currentServiceType.photoGroups?.length || 0} linked
                 </Badge>
               </div>
-              
+
               {/* Linked Photo Groups */}
               <div className="space-y-3">
                 {currentServiceType.photoGroups && currentServiceType.photoGroups.length > 0 ? (
@@ -604,7 +607,7 @@ export function EditServiceTypeDialog({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-medium text-sm">{group.name}</h4>
-                            
+
                           </div>
                           <p className="text-sm text-muted-foreground mb-2">
                             {group.description || 'No description provided'}
@@ -643,7 +646,7 @@ export function EditServiceTypeDialog({
                       </Badge>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2 mb-4">
                     {availablePhotoGroupsToLink.map((group) => (
                       <div key={group.id} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors">
@@ -660,33 +663,33 @@ export function EditServiceTypeDialog({
                                 {group.description || 'No description'}
                               </div>
                             </div>
-                           
+
                           </div>
                         </label>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex gap-2">
-                    <Button 
+                  <div className="flex flex-col sm:flex-row gap-2 w-full">
+                    <Button
                       onClick={() => setSelectedPhotoGroups(availablePhotoGroupsToLink.map(g => g.id))}
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="w-full sm:flex-1"
                     >
                       Select All
                     </Button>
-                    <Button 
+                    <Button
                       onClick={() => setSelectedPhotoGroups([])}
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="w-full sm:flex-1"
                       disabled={selectedPhotoGroups.length === 0}
                     >
                       Clear All
                     </Button>
-                    <Button 
-                      onClick={handleLinkPhotoGroups} 
+                    <Button
+                      onClick={handleLinkPhotoGroups}
                       disabled={selectedPhotoGroups.length === 0}
                       size="sm"
                     >
@@ -713,7 +716,7 @@ export function EditServiceTypeDialog({
                   {currentServiceType.selectorGroups?.length || 0} linked
                 </Badge>
               </div>
-              
+
               {/* Linked Selector Groups */}
               <div className="space-y-3">
                 {currentServiceType.selectorGroups && currentServiceType.selectorGroups.length > 0 ? (
@@ -723,7 +726,7 @@ export function EditServiceTypeDialog({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-medium text-sm">{group.name}</h4>
-                            
+
                           </div>
                           <p className="text-sm text-muted-foreground mb-2">
                             {group.description || 'No description provided'}
@@ -792,7 +795,7 @@ export function EditServiceTypeDialog({
                         <label htmlFor={`selector-${group.id}`} className="flex-1 cursor-pointer">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium text-sm">{group.name}</span>
-                            
+
                           </div>
                           <p className="text-xs text-muted-foreground">
                             {group.description || 'No description provided'}
@@ -803,7 +806,7 @@ export function EditServiceTypeDialog({
                   </div>
 
                   <div className="flex gap-2">
-                    <Button 
+                    <Button
                       onClick={() => setSelectedSelectorGroups([])}
                       variant="outline"
                       size="sm"
@@ -812,8 +815,8 @@ export function EditServiceTypeDialog({
                     >
                       Clear All
                     </Button>
-                    <Button 
-                      onClick={handleLinkSelectorGroups} 
+                    <Button
+                      onClick={handleLinkSelectorGroups}
                       disabled={selectedSelectorGroups.length === 0}
                       size="sm"
                     >

@@ -49,10 +49,10 @@ interface DraggableReadingDefinitionRowProps {
   };
 }
 
-function DraggableReadingDefinitionRow({ 
-  definition, 
-  onEdit, 
-  onDelete, 
+function DraggableReadingDefinitionRow({
+  definition,
+  onEdit,
+  onDelete,
   isUpdating,
   pendingChanges
 }: DraggableReadingDefinitionRowProps) {
@@ -203,7 +203,7 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
 
   const handleCreateDefinition = (data: CreateReadingDefinitionRequest) => {
     console.log('Creating new definition:', data);
-    
+
     // Add to pending creates instead of immediately creating
     const newDefinition: BatchReadingDefinitionCreate = {
       name: data.name,
@@ -219,17 +219,17 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
 
     setPendingChanges(prev => {
       console.log('Current creates before adding:', prev.creates);
-      
+
       // Check if a definition with the same name and unit already exists in creates
-      const existingCreate = prev.creates.find(create => 
+      const existingCreate = prev.creates.find(create =>
         create.name === newDefinition.name && create.unit === newDefinition.unit
       );
-      
+
       if (existingCreate) {
         console.log('Definition with same name/unit already exists in creates, skipping duplicate');
         return prev;
       }
-      
+
       const newCreates = [...prev.creates, newDefinition];
       console.log('New creates after adding:', newCreates);
       return {
@@ -269,9 +269,9 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
       }));
 
       // Update local state immediately for UI feedback
-      setLocalDefinitions(prev => 
-        prev.map(def => 
-          def.id === editingDefinition.id 
+      setLocalDefinitions(prev =>
+        prev.map(def =>
+          def.id === editingDefinition.id
             ? { ...def, ...data }
             : def
         )
@@ -283,14 +283,14 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
 
   const handleDeleteDefinition = (definition: ReadingDefinition) => {
     console.log('Deleting definition:', definition);
-    
+
     // Don't delete temporary (new) definitions - just remove them from creates and local state
     if (definition.id.startsWith('temp-')) {
       console.log('Removing temporary definition from creates');
       // Remove from pending creates
       setPendingChanges(prev => ({
         ...prev,
-        creates: prev.creates.filter(create => 
+        creates: prev.creates.filter(create =>
           !(create.name === definition.name && create.unit === definition.unit)
         )
       }));
@@ -308,7 +308,7 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
     }
 
     // Remove from local state immediately for UI feedback
-    setLocalDefinitions(prev => 
+    setLocalDefinitions(prev =>
       prev.filter(def => def.id !== definition.id)
     );
   };
@@ -326,18 +326,18 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
           ...def,
           order: index + 1
         }));
-        
+
         setLocalDefinitions(updatedDefinitions);
 
         // Update pending changes with new order for all definitions
         setPendingChanges(prev => {
           const newUpdates = new Map(prev.updates);
           const newCreates = [...prev.creates];
-          
+
           updatedDefinitions.forEach((def, index) => {
             if (def.id.startsWith('temp-')) {
               // For new definitions, update the order in the creates array instead of updates
-              const createIndex = newCreates.findIndex(create => 
+              const createIndex = newCreates.findIndex(create =>
                 create.name === def.name && create.unit === def.unit
               );
               if (createIndex !== -1) {
@@ -349,9 +349,9 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
               newUpdates.set(def.id, { ...existingUpdate, order: index + 1 });
             }
           });
-          
-          return { 
-            ...prev, 
+
+          return {
+            ...prev,
             updates: newUpdates,
             creates: newCreates
           };
@@ -391,8 +391,8 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
           // For new definitions, we can't have exact conflicts since they don't have real IDs yet
           // But we can check for similar definitions (same name/unit) being deleted
           const deletedDefinition = localDefinitions.find(def => def.id === deleteId);
-          return deletedDefinition && 
-                 deletedDefinition.name === create.name && 
+          return deletedDefinition &&
+                 deletedDefinition.name === create.name &&
                  deletedDefinition.unit === create.unit;
         });
 
@@ -415,8 +415,8 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
           // Use original definitions data instead of localDefinitions (which might have been modified)
           const deletedDefinition = readingDefinitionsData?.readingDefinitions?.find(def => def.id === deleteId);
           if (deletedDefinition) {
-            const conflictingCreate = pendingChanges.creates.find(create => 
-              create.name === deletedDefinition.name && 
+            const conflictingCreate = pendingChanges.creates.find(create =>
+              create.name === deletedDefinition.name &&
               create.unit === deletedDefinition.unit
             );
 
@@ -494,14 +494,20 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h4 className="text-md font-semibold">Reading Definitions</h4>
           <p className="text-sm text-muted-foreground">
             Manage the specific readings that can be recorded for this group
           </p>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)} size="sm" disabled={isBulkUpdating}>
+
+        <Button
+          onClick={() => setShowCreateDialog(true)}
+          size="sm"
+          disabled={isBulkUpdating}
+          className="w-full sm:w-auto"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Definition
         </Button>
@@ -510,29 +516,29 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
       {/* Pending Changes Summary */}
       {hasPendingChanges() && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-amber-800">
-                Pending Changes:
-              </span>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span className="text-sm font-medium text-amber-800">Pending Changes:</span>
               <span className="text-sm text-amber-700">
                 {pendingChanges.creates.length} new, {pendingChanges.updates.size} modified, {pendingChanges.deletes.size} deleted
               </span>
             </div>
-            <div className="flex gap-2">
+
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 onClick={handleDiscardChanges}
                 size="sm"
                 variant="outline"
                 disabled={isBulkUpdating}
+                className="w-full sm:w-auto"
               >
                 Discard Changes
               </Button>
-              <Button 
-                onClick={() => setShowSaveConfirmationDialog(true)} 
-                size="sm" 
+              <Button
+                onClick={() => setShowSaveConfirmationDialog(true)}
+                size="sm"
                 disabled={isBulkUpdating}
-                className="bg-green-600 hover:bg-green-700"
+                className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
               >
                 <Save className="h-4 w-4 mr-2" />
                 {isBulkUpdating ? 'Saving...' : 'Save All'}

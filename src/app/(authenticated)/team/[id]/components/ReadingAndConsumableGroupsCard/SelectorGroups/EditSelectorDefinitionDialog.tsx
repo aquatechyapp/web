@@ -110,7 +110,7 @@ export function EditSelectorDefinitionDialog({
                 </FormItem>
               )}
             />
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>

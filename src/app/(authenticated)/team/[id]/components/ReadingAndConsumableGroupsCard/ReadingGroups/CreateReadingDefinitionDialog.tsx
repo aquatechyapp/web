@@ -131,14 +131,14 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Brief description of this reading..."
                       className="resize-none"
                       rows={2}
                       {...field}
                     />
                   </FormControl>
-                  {/* <FormMessage /> */} 
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -151,10 +151,10 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                   <FormItem>
                     <FormLabel>Minimum Value</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 0.0" 
+                        placeholder="e.g., 0.0"
                         {...field}
                       />
                     </FormControl>
@@ -170,10 +170,10 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                   <FormItem>
                     <FormLabel>Maximum Value</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 10.0" 
+                        placeholder="e.g., 10.0"
                         {...field}
                       />
                     </FormControl>
@@ -191,10 +191,10 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                   <FormItem>
                     <FormLabel>Goal Value</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 3.0" 
+                        placeholder="e.g., 3.0"
                         {...field}
                       />
                     </FormControl>
@@ -210,10 +210,10 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
                   <FormItem>
                     <FormLabel>Step Size</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 0.1" 
+                        placeholder="e.g., 0.1"
                         {...field}
                       />
                     </FormControl>
@@ -246,7 +246,7 @@ export function CreateReadingDefinitionDialog({ open, onOpenChange, onSubmit, is
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end w-full">
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
                 Cancel
               </Button>

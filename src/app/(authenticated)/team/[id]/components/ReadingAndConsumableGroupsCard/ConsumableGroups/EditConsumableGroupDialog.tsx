@@ -94,7 +94,7 @@ export function EditConsumableGroupDialog({ open, onOpenChange, consumableGroup,
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Brief description of what consumables this group contains..."
                       className="resize-none"
                       rows={3}
@@ -116,7 +116,7 @@ export function EditConsumableGroupDialog({ open, onOpenChange, consumableGroup,
                       Active
                     </FormLabel>
                     <p className="text-sm text-muted-foreground">
-                      {consumableGroup.isDefault 
+                      {consumableGroup.isDefault
                         ? 'This is a default group and cannot be deactivated'
                         : 'Deactivate to hide this group from new service reports'
                       }
@@ -133,7 +133,7 @@ export function EditConsumableGroupDialog({ open, onOpenChange, consumableGroup,
               )}
             /> */}
 
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end w-full">
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
                 Cancel
               </Button>

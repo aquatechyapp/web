@@ -125,7 +125,7 @@ export function EditPhotoGroupDialog({
                 </FormItem>
               )}
             /> */}
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end w-full">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>

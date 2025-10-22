@@ -143,7 +143,7 @@ export function EditReadingDefinitionDialog({ open, onOpenChange, readingDefinit
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Brief description of this reading..."
                       className="resize-none"
                       rows={2}
@@ -163,10 +163,10 @@ export function EditReadingDefinitionDialog({ open, onOpenChange, readingDefinit
                   <FormItem>
                     <FormLabel>Minimum Value</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 0.0" 
+                        placeholder="e.g., 0.0"
                         {...field}
                       />
                     </FormControl>
@@ -182,10 +182,10 @@ export function EditReadingDefinitionDialog({ open, onOpenChange, readingDefinit
                   <FormItem>
                     <FormLabel>Maximum Value</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 10.0" 
+                        placeholder="e.g., 10.0"
                         {...field}
                       />
                     </FormControl>
@@ -203,10 +203,10 @@ export function EditReadingDefinitionDialog({ open, onOpenChange, readingDefinit
                   <FormItem>
                     <FormLabel>Goal Value</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 3.0" 
+                        placeholder="e.g., 3.0"
                         {...field}
                       />
                     </FormControl>
@@ -222,10 +222,10 @@ export function EditReadingDefinitionDialog({ open, onOpenChange, readingDefinit
                   <FormItem>
                     <FormLabel>Step Size</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         step="any"
-                        placeholder="e.g., 0.1" 
+                        placeholder="e.g., 0.1"
                         {...field}
                       />
                     </FormControl>
@@ -258,14 +258,26 @@ export function EditReadingDefinitionDialog({ open, onOpenChange, readingDefinit
               )}
             />
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end w-full">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={isLoading}
+                className="w-full sm:w-auto"
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading}>
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full sm:w-auto"
+              >
                 {isLoading ? 'Updating...' : 'Update Definition'}
               </Button>
             </DialogFooter>
+
           </form>
         </Form>
       </DialogContent>
