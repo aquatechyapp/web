@@ -64,10 +64,10 @@ export default function CompanyInfo({ company }: { company: Company }) {
           <InputField name="name" placeholder="Name" label="Name" />
           {/* <InputField name="status" placeholder="Status" label="Status" /> */}
         </div>
-        <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
-          <AddressInput 
-            name="address" 
-            label="Address" 
+        <div className="flex flex-col gap-4 md:flex-row md:flex-nowrap w-full [&>*]:flex-1">
+          <AddressInput
+            name="address"
+            label="Address"
             placeholder="Enter company address"
             onAddressSelect={handleAddressSelect}
           />

@@ -26,7 +26,7 @@ export function ReadingAndConsumableGroupsCard({ company }: ReadingAndConsumable
 
   return (
     <Card className="w-full border-2 border-orange-200">
-      <CardHeader 
+      <CardHeader
         className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-200 cursor-pointer hover:from-orange-100 hover:to-amber-100 transition-colors"
         onClick={toggleCollapsed}
       >
@@ -42,7 +42,7 @@ export function ReadingAndConsumableGroupsCard({ company }: ReadingAndConsumable
               </CardDescription>
             </div>
           </div>
-          <ChevronDown 
+          <ChevronDown
             className={cn(
               "h-5 w-5 text-orange-600 transition-transform duration-200",
               collapsed ? "rotate-180" : "rotate-0"
@@ -53,53 +53,76 @@ export function ReadingAndConsumableGroupsCard({ company }: ReadingAndConsumable
       {!collapsed && (
         <CardContent className="px-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-orange-100 border border-orange-200">
-              <TabsTrigger 
-                value="reading" 
-                className="flex items-center gap-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:text-orange-700 data-[state=inactive]:hover:text-orange-800 data-[state=inactive]:hover:bg-orange-200"
+            <TabsList
+              className="
+      flex flex-wrap justify-start gap-2
+      w-full bg-orange-100 border border-orange-200 h-auto
+    "
+            >
+              <TabsTrigger
+                value="reading"
+                className="flex-1 min-w-[45%] sm:min-w-0 flex items-center justify-center gap-2 text-sm
+        data-[state=active]:bg-orange-600 data-[state=active]:text-white
+        data-[state=inactive]:text-orange-700 data-[state=inactive]:hover:text-orange-800
+        data-[state=inactive]:hover:bg-orange-200 rounded-md px-2 py-2 transition-colors"
               >
                 <TestTube className="h-4 w-4" />
-                Reading Groups
+                Reading
               </TabsTrigger>
-              <TabsTrigger 
-                value="consumable" 
-                className="flex items-center gap-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:text-orange-700 data-[state=inactive]:hover:text-orange-800 data-[state=inactive]:hover:bg-orange-200"
+
+              <TabsTrigger
+                value="consumable"
+                className="flex-1 min-w-[45%] sm:min-w-0 flex items-center justify-center gap-2 text-sm
+        data-[state=active]:bg-orange-600 data-[state=active]:text-white
+        data-[state=inactive]:text-orange-700 data-[state=inactive]:hover:text-orange-800
+        data-[state=inactive]:hover:bg-orange-200 rounded-md px-2 py-2 transition-colors"
               >
                 <Package className="h-4 w-4" />
-                Consumable Groups
+                Consumables
               </TabsTrigger>
-              <TabsTrigger 
-                value="photo" 
-                className="flex items-center gap-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:text-orange-700 data-[state=inactive]:hover:text-orange-800 data-[state=inactive]:hover:bg-orange-200"
+
+              <TabsTrigger
+                value="photo"
+                className="flex-1 min-w-[45%] sm:min-w-0 flex items-center justify-center gap-2 text-sm
+        data-[state=active]:bg-orange-600 data-[state=active]:text-white
+        data-[state=inactive]:text-orange-700 data-[state=inactive]:hover:text-orange-800
+        data-[state=inactive]:hover:bg-orange-200 rounded-md px-2 py-2 transition-colors"
               >
                 <Camera className="h-4 w-4" />
-                Photo Groups
+                Photos
               </TabsTrigger>
-              <TabsTrigger 
-                value="selector" 
-                className="flex items-center gap-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=inactive]:text-orange-700 data-[state=inactive]:hover:text-orange-800 data-[state=inactive]:hover:bg-orange-200"
+
+              <TabsTrigger
+                value="selector"
+                className="flex-1 min-w-[45%] sm:min-w-0 flex items-center justify-center gap-2 text-sm
+        data-[state=active]:bg-orange-600 data-[state=active]:text-white
+        data-[state=inactive]:text-orange-700 data-[state=inactive]:hover:text-orange-800
+        data-[state=inactive]:hover:bg-orange-200 rounded-md px-2 py-2 transition-colors"
               >
                 <CheckSquare className="h-4 w-4" />
-                Selector Groups
+                Selectors
               </TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="reading" className="mt-6 px-6">
-              <ReadingGroupsManager companyId={company.id} />
-            </TabsContent>
-            
-            <TabsContent value="consumable" className="mt-6 px-6">
-              <ConsumableGroupsManager companyId={company.id} />
-            </TabsContent>
-            
-            <TabsContent value="photo" className="mt-6 px-6">
-              <PhotoGroupsManager companyId={company.id} />
-            </TabsContent>
-            
-            <TabsContent value="selector" className="mt-6 px-6">
-              <SelectorGroupsManager companyId={company.id} />
-            </TabsContent>
+
+            <div className="mt-4 w-full relative">
+              <TabsContent value="reading" className="mt-6 px-4 w-full">
+                <ReadingGroupsManager companyId={company.id} />
+              </TabsContent>
+
+              <TabsContent value="consumable" className="mt-6 px-4 w-full">
+                <ConsumableGroupsManager companyId={company.id} />
+              </TabsContent>
+
+              <TabsContent value="photo" className="mt-6 px-4 w-full">
+                <PhotoGroupsManager companyId={company.id} />
+              </TabsContent>
+
+              <TabsContent value="selector" className="mt-6 px-4 w-full">
+                <SelectorGroupsManager companyId={company.id} />
+              </TabsContent>
+            </div>
           </Tabs>
+
         </CardContent>
       )}
     </Card>

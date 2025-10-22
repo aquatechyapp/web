@@ -80,7 +80,7 @@ function DraggableChecklistItem({ field, index, control, onRemove, canRemove }: 
           render={({ field: inputField }) => (
             <FormItem>
               <FormControl>
-                <Input 
+                <Input
                   placeholder={`Item ${index + 1} (e.g., Vacuum pool floor)`}
                   {...inputField}
                 />
@@ -126,12 +126,12 @@ interface EditChecklistTemplateDialogProps {
   isLoading: boolean;
 }
 
-export function EditChecklistTemplateDialog({ 
-  open, 
-  onOpenChange, 
-  template, 
-  onSubmit, 
-  isLoading 
+export function EditChecklistTemplateDialog({
+  open,
+  onOpenChange,
+  template,
+  onSubmit,
+  isLoading
 }: EditChecklistTemplateDialogProps) {
   const form = useForm<z.infer<typeof updateChecklistTemplateSchema>>({
     resolver: zodResolver(updateChecklistTemplateSchema),
@@ -203,9 +203,9 @@ export function EditChecklistTemplateDialog({
   };
 
   const addItem = () => {
-    append({ 
-      label: '', 
-      order: fields.length + 1 
+    append({
+      label: '',
+      order: fields.length + 1
     });
   };
 
@@ -257,7 +257,7 @@ export function EditChecklistTemplateDialog({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Brief description of what this template covers..."
                       className="resize-none"
                       rows={2}
@@ -269,7 +269,7 @@ export function EditChecklistTemplateDialog({
               )}
             />
 
-            
+
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -305,7 +305,7 @@ export function EditChecklistTemplateDialog({
               </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end w-full">
               <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
                 Cancel
               </Button>

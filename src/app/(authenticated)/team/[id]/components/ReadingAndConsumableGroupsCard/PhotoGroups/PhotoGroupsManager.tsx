@@ -88,7 +88,7 @@ export function PhotoGroupsManager({ companyId }: PhotoGroupsManagerProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h3 className="text-lg font-semibold">Photo Groups</h3>
           <p className="text-sm text-muted-foreground">
@@ -119,8 +119,10 @@ export function PhotoGroupsManager({ companyId }: PhotoGroupsManagerProps) {
           {photoGroups.map((photoGroup) => (
             <Card key={photoGroup.id}>
               <CardHeader className="pb-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 w-full sm:w-auto items-start">
+
                     <Button
                       variant="ghost"
                       size="sm"
@@ -133,8 +135,9 @@ export function PhotoGroupsManager({ companyId }: PhotoGroupsManagerProps) {
                         <ChevronRight className="h-4 w-4" />
                       )}
                     </Button>
-                    <div>
-                      <CardTitle className="text-base flex items-center gap-2">
+
+                    <div className="text-start sm:text-start">
+                      <CardTitle className="text-base flex items-center justify-start sm:justify-start gap-2">
                         {photoGroup.name}
                         {photoGroup.isDefault && (
                           <Badge variant="outline" className="text-xs">
@@ -143,14 +146,16 @@ export function PhotoGroupsManager({ companyId }: PhotoGroupsManagerProps) {
                         )}
                       </CardTitle>
                       {photoGroup.description && (
-                        <CardDescription className="text-sm">
-                          {photoGroup.description}
-                        </CardDescription>
+                        <CardDescription className="text-sm">{photoGroup.description}</CardDescription>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={photoGroup.isActive ? "default" : "outline"} className="text-xs">
+
+                  <div className="flex flex-row gap-2 mt-2 sm:mt-0 w-full sm:w-auto justify-start">
+                    <Badge
+                      variant={photoGroup.isActive ? "default" : "outline"}
+                      className="text-xs"
+                    >
                       {photoGroup.isActive ? "Active" : "Inactive"}
                     </Badge>
                     <Button
@@ -176,13 +181,15 @@ export function PhotoGroupsManager({ companyId }: PhotoGroupsManagerProps) {
                       </Button>
                     )}
                   </div>
+
                 </div>
               </CardHeader>
+
               {expandedGroups.has(photoGroup.id) && (
                 <CardContent>
-                  <PhotoDefinitionsManager 
-                    photoGroup={photoGroup} 
-                    companyId={companyId} 
+                  <PhotoDefinitionsManager
+                    photoGroup={photoGroup}
+                    companyId={companyId}
                   />
                 </CardContent>
               )}

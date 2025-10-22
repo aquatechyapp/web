@@ -101,11 +101,11 @@ const emailFields = [
   }
 ];
 
-export function EmailPreferencesCard({ 
-  company, 
-  form, 
-  onEmailSubmit, 
-  emailFieldsChanged 
+export function EmailPreferencesCard({
+  company,
+  form,
+  onEmailSubmit,
+  emailFieldsChanged
 }: EmailPreferencesCardProps) {
   const { isPending: isEmailPending } = useUpdateCompanyPreferences(company.id);
   const { isFreePlan } = useUserStore(
@@ -125,7 +125,7 @@ export function EmailPreferencesCard({
     <Card className={cn('w-full border-2', {
       'opacity-50': isFreePlan
     })}>
-      <CardHeader 
+      <CardHeader
         className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b cursor-pointer hover:from-blue-100 hover:to-indigo-100 transition-colors"
         onClick={toggleCollapsed}
       >
@@ -141,7 +141,7 @@ export function EmailPreferencesCard({
               </CardDescription>
             </div>
           </div>
-          <ChevronDown 
+          <ChevronDown
             className={cn(
               "h-5 w-5 text-blue-600 transition-transform duration-200",
               collapsed ? "rotate-180" : "rotate-0"
@@ -208,13 +208,13 @@ export function EmailPreferencesCard({
               </div>
             ))}
           </CardContent>
-          
+
           {/* Email Preferences Save Button */}
           <div className="border-t bg-gray-50 p-4">
             <div className="flex justify-center">
-              <Button 
+              <Button
                 type="button"
-                disabled={!emailFieldsChanged() || isFreePlan || isEmailPending} 
+                disabled={!emailFieldsChanged() || isFreePlan || isEmailPending}
                 className="w-full max-w-xs"
                 onClick={() => {
                   const formData = form.getValues();

@@ -93,14 +93,18 @@ export function ChecklistTemplatesManager({ companyId }: ChecklistTemplatesManag
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0">
         <div>
           <h3 className="text-lg font-semibold">Checklist Templates</h3>
           <p className="text-sm text-muted-foreground">
             Create and manage checklist templates for your service reports
           </p>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)} disabled={isCreating}>
+        <Button
+          onClick={() => setShowCreateDialog(true)}
+          disabled={isCreating}
+          className="w-full sm:w-auto"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Template
         </Button>
@@ -124,9 +128,9 @@ export function ChecklistTemplatesManager({ companyId }: ChecklistTemplatesManag
           {templates.map((template) => (
             <Card key={template.id}>
               <CardHeader className="pb-6" >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Button
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">                    <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleTemplateExpansion(template.id)}
@@ -141,7 +145,7 @@ export function ChecklistTemplatesManager({ companyId }: ChecklistTemplatesManag
                     <div>
                       <CardTitle className="text-base flex items-center gap-2">
                         {template.name}
-                       
+
                         {!template.isActive && (
                           <Badge variant="outline" className="text-xs">
                             Inactive
@@ -153,11 +157,11 @@ export function ChecklistTemplatesManager({ companyId }: ChecklistTemplatesManag
                           {template.description}
                         </CardDescription>
                       )}
-                      
+
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    
+
                     <Button
                       variant="ghost"
                       size="sm"
@@ -177,6 +181,7 @@ export function ChecklistTemplatesManager({ companyId }: ChecklistTemplatesManag
                     </Button>
                   </div>
                 </div>
+
               </CardHeader>
               {expandedTemplates.has(template.id) && (
                 <CardContent>

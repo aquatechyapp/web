@@ -181,10 +181,10 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
 
   const handleCreateDefinition = (data: any) => {
     // Check if a definition with the same name and unit already exists in creates
-    const existingCreate = pendingChanges.creates.find(create => 
+    const existingCreate = pendingChanges.creates.find(create =>
       create.name === data.name && create.unit === data.unit
     );
-    
+
     if (existingCreate) {
       return; // Prevent duplicate creation
     }
@@ -235,7 +235,7 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
         // Update the create in pending changes
         setPendingChanges(prev => ({
           ...prev,
-          creates: prev.creates.map(create => 
+          creates: prev.creates.map(create =>
             create.name === editingDefinition.name && create.unit === editingDefinition.unit
               ? { ...create, ...data }
               : create
@@ -305,7 +305,7 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
 
       if (oldIndex !== -1 && newIndex !== -1) {
         const newDefinitions = arrayMove(consumableDefinitions, oldIndex, newIndex);
-        
+
         // Update order for each definition
         const updatedDefinitions = newDefinitions.map((def, index) => ({
           ...def,
@@ -320,7 +320,7 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
             // Update order in creates array
             setPendingChanges(prev => ({
               ...prev,
-              creates: prev.creates.map(create => 
+              creates: prev.creates.map(create =>
                 create.name === def.name && create.unit === def.unit
                   ? { ...create, order: index }
                   : create
@@ -341,8 +341,8 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
   };
 
   const hasPendingChanges = () => {
-    return pendingChanges.updates.size > 0 || 
-           pendingChanges.deletes.size > 0 || 
+    return pendingChanges.updates.size > 0 ||
+           pendingChanges.deletes.size > 0 ||
            pendingChanges.creates.length > 0;
   };
 
@@ -462,7 +462,7 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
     if (consumableDefinitionsData?.consumableDefinitions) {
       setLocalDefinitions(consumableDefinitionsData.consumableDefinitions);
     }
-    
+
     // Clear pending changes
     setPendingChanges({
       updates: new Map(),
@@ -477,7 +477,7 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h4 className="text-md font-semibold">Consumable Definitions</h4>
           <p className="text-sm text-muted-foreground">
@@ -493,37 +493,40 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
       {/* Pending Changes Summary */}
       {hasPendingChanges() && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-amber-800">
-                Pending Changes:
-              </span>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span className="text-sm font-medium text-amber-800">Pending Changes:</span>
               <span className="text-sm text-amber-700">
                 {pendingChanges.creates.length} new, {pendingChanges.updates.size} modified, {pendingChanges.deletes.size} deleted
               </span>
             </div>
-            <div className="flex gap-2">
+
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 onClick={handleDiscardChanges}
                 size="sm"
                 variant="outline"
                 disabled={isBulkUpdating}
+                className="w-full sm:w-auto"
               >
                 Discard Changes
               </Button>
-              <Button 
-                onClick={() => setShowSaveConfirmationDialog(true)} 
-                size="sm" 
+              <Button
+                onClick={() => setShowSaveConfirmationDialog(true)}
+                size="sm"
                 disabled={isBulkUpdating}
-                className="bg-green-600 hover:bg-green-700"
+                className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
               >
                 <Save className="h-4 w-4 mr-2" />
                 {isBulkUpdating ? 'Saving...' : 'Save All'}
               </Button>
             </div>
+
           </div>
         </div>
       )}
+
 
       {consumableDefinitions.length === 0 ? (
         <Card>

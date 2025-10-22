@@ -49,10 +49,10 @@ interface DraggablePhotoDefinitionRowProps {
   };
 }
 
-function DraggablePhotoDefinitionRow({ 
-  definition, 
-  onEdit, 
-  onDelete, 
+function DraggablePhotoDefinitionRow({
+  definition,
+  onEdit,
+  onDelete,
   isUpdating,
   pendingChanges
 }: DraggablePhotoDefinitionRowProps) {
@@ -186,29 +186,30 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
 
   const handleCreateDefinition = (data: CreatePhotoDefinitionRequest) => {
     console.log('Creating new definition:', data);
-    
+
     // Add to pending creates instead of immediately creating
     const newDefinition: BatchPhotoDefinitionCreate = {
       name: data.name,
       description: data.description,
       isRequired: data.isRequired,
       allowGallery: data.allowGallery,
+      sendOnEmail: data.sendOnEmail,
       order: localDefinitions.length + 1 // Add at the end
     };
 
     setPendingChanges(prev => {
       console.log('Current creates before adding:', prev.creates);
-      
+
       // Check if a definition with the same name already exists in creates
-      const existingCreate = prev.creates.find(create => 
+      const existingCreate = prev.creates.find(create =>
         create.name === newDefinition.name
       );
-      
+
       if (existingCreate) {
         console.log('Definition with same name already exists in creates, skipping duplicate');
         return prev;
       }
-      
+
       const newCreates = [...prev.creates, newDefinition];
       console.log('New creates after adding:', newCreates);
       return {
@@ -225,6 +226,7 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
       description: newDefinition.description || null,
       isRequired: newDefinition.isRequired,
       allowGallery: newDefinition.allowGallery,
+      sendOnEmail: newDefinition.sendOnEmail,
       order: newDefinition.order || 0,
       photoGroupId: photoGroup.id,
       createdAt: new Date().toISOString(),
@@ -238,7 +240,7 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
   const handleUpdateDefinition = (data: UpdatePhotoDefinitionRequest) => {
     if (editingDefinition) {
       console.log('Updating definition:', editingDefinition.id, data);
-      
+
       // If it's a temporary definition, update the create entry
       if (editingDefinition.id.startsWith('temp-')) {
         const tempIndex = editingDefinition.id.split('-')[1];
@@ -262,16 +264,16 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
       }
 
       // Update local state immediately for UI feedback
-      setLocalDefinitions(prev => prev.map(def => 
+      setLocalDefinitions(prev => prev.map(def =>
         def.id === editingDefinition.id ? { ...def, ...data } : def
       ));
-      
+
       setEditingDefinition(null);
     }
   };
 
   const handleDeleteDefinition = (definition: PhotoDefinition) => {
-    
+
     if (definition.id.startsWith('temp-')) {
       // Remove from creates and local state
       const tempIndex = parseInt(definition.id.split('-')[1]);
@@ -303,13 +305,13 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
           ...def,
           order: index + 1
         }));
-        
+
         setLocalDefinitions(updatedDefinitions);
 
         // Update order in pending changes
         updatedDefinitions.forEach((def, index) => {
           const newOrder = index + 1;
-          
+
           if (def.id.startsWith('temp-')) {
             // Update order in creates array
             const tempIndex = parseInt(def.id.split('-')[1]);
@@ -337,14 +339,14 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
   };
 
   const hasPendingChanges = () => {
-    return pendingChanges.updates.size > 0 || 
-           pendingChanges.deletes.size > 0 || 
+    return pendingChanges.updates.size > 0 ||
+           pendingChanges.deletes.size > 0 ||
            pendingChanges.creates.length > 0;
   };
 
   const handleSaveAllChanges = () => {
     console.log('Saving all changes:', pendingChanges);
-    
+
     // Build the batch data
     const batchData: CrudPhotoGroupRequest = {};
 
@@ -356,7 +358,8 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
         description: updates.description || undefined,
         isRequired: updates.isRequired,
         allowGallery: updates.allowGallery,
-        order: updates.order
+        order: updates.order,
+        sendOnEmail: updates.sendOnEmail
       }));
     }
 
@@ -408,7 +411,7 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
       const sortedDefinitions = [...photoDefinitionsData.photoDefinitions].sort((a, b) => a.order - b.order);
       setLocalDefinitions(sortedDefinitions);
     }
-    
+
     // Clear pending changes
     setPendingChanges({
       updates: new Map(),
@@ -423,7 +426,7 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h4 className="text-md font-semibold">Photo Definitions</h4>
           <p className="text-sm text-muted-foreground">
@@ -439,34 +442,36 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
       {/* Pending Changes Summary */}
       {hasPendingChanges() && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-amber-800">
-                Pending Changes:
-              </span>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span className="text-sm font-medium text-amber-800">Pending Changes:</span>
               <span className="text-sm text-amber-700">
                 {pendingChanges.creates.length} new, {pendingChanges.updates.size} modified, {pendingChanges.deletes.size} deleted
               </span>
             </div>
-            <div className="flex gap-2">
+
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 onClick={handleDiscardChanges}
                 size="sm"
                 variant="outline"
                 disabled={isBulkUpdating}
+                className="w-full sm:w-auto"
               >
                 Discard Changes
               </Button>
-              <Button 
-                onClick={() => setShowSaveConfirmationDialog(true)} 
-                size="sm" 
+              <Button
+                onClick={() => setShowSaveConfirmationDialog(true)}
+                size="sm"
                 disabled={isBulkUpdating}
-                className="bg-green-600 hover:bg-green-700"
+                className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
               >
                 <Save className="h-4 w-4 mr-2" />
                 {isBulkUpdating ? 'Saving...' : 'Save All'}
               </Button>
             </div>
+
           </div>
         </div>
       )}

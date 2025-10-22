@@ -44,9 +44,9 @@ export function SelectorGroupsManager({ companyId }: SelectorGroupsManagerProps)
 
   const handleDeleteGroup = async () => {
     if (deletingGroup) {
-      deleteSelectorGroup({ 
-        selectorGroupId: deletingGroup.id, 
-        companyId 
+      deleteSelectorGroup({
+        selectorGroupId: deletingGroup.id,
+        companyId
       }, {
         onSuccess: () => {
           setDeletingGroup(null);
@@ -61,7 +61,7 @@ export function SelectorGroupsManager({ companyId }: SelectorGroupsManagerProps)
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h3 className="text-lg font-semibold">Selector Groups</h3>
           <p className="text-sm text-muted-foreground">

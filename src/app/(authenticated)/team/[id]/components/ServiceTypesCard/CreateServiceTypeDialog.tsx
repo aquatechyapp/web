@@ -89,7 +89,7 @@ export function CreateServiceTypeDialog({ open, onOpenChange, onSubmit, isLoadin
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Brief description of what this service type includes..."
                       className="resize-none"
                       rows={3}
@@ -150,14 +150,26 @@ export function CreateServiceTypeDialog({ open, onOpenChange, onSubmit, isLoadin
               )}
             /> */}
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={isLoading}
+                className="w-full sm:w-auto"
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading}>
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full sm:w-auto"
+              >
                 {isLoading ? 'Creating...' : 'Create Service Type'}
               </Button>
             </DialogFooter>
+
           </form>
         </Form>
       </DialogContent>

@@ -24,6 +24,7 @@ export default function PageHeader() {
     resetUser();
     router.push('/login');
   };
+
   return (
     <div className="inline-flex max-h-20 w-full items-center bg-gray-800 px-4 py-2 shadow-inner lg:bg-gray-50 lg:py-4">
       <div className="lg:hidden">
