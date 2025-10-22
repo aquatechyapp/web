@@ -65,9 +65,9 @@ export function EmailPreferencesCard({
     <Card className={cn('w-full border-2', {
       'opacity-50': isFreePlan
     })}>
-      <CardHeader
+      <CardHeader 
         className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b cursor-pointer hover:from-blue-100 hover:to-indigo-100 transition-colors"
-        onClick={toggleCollapsed}
+        onClick={toggleMainCardCollapsed}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -77,71 +77,32 @@ export function EmailPreferencesCard({
             <div>
               <CardTitle className="text-xl text-blue-900">Email Notifications</CardTitle>
               <CardDescription className="text-blue-700">
-                Configure how and when to send service completion emails
+                Configure email preferences for each service type
               </CardDescription>
             </div>
           </div>
-          <ChevronDown
+          <ChevronDown 
             className={cn(
               "h-5 w-5 text-blue-600 transition-transform duration-200",
-              collapsed ? "rotate-180" : "rotate-0"
+              mainCardCollapsed ? "rotate-180" : "rotate-0"
             )}
           />
         </div>
       </CardHeader>
-      {!collapsed && (
-        <>
-          <CardContent className="p-6 space-y-6">
-            {emailFields.map((field) => (
-              <div key={field.label} className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">
-                <div className="col-span-8 row-auto flex flex-col">
-                  <label htmlFor={field.label} className="flex flex-col space-y-1">
-                    <span className="text-sm font-semibold text-gray-800">{field.label}</span>
-                  </label>
-                  <span className="text-muted-foreground text-sm font-normal">{field.description}</span>
-    <div className="w-full space-y-4">
-      <Card className={cn('w-full border-2', {
-        'opacity-50': isFreePlan
-      })}>
-        <CardHeader 
-          className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b cursor-pointer hover:from-blue-100 hover:to-indigo-100 transition-colors"
-          onClick={toggleMainCardCollapsed}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Mail className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <CardTitle className="text-xl text-blue-900">Email Notifications</CardTitle>
-                <CardDescription className="text-blue-700">
-                  Configure email preferences for each service type
-                </CardDescription>
-              </div>
-            </div>
-            <ChevronDown 
-              className={cn(
-                "h-5 w-5 text-blue-600 transition-transform duration-200",
-                mainCardCollapsed ? "rotate-180" : "rotate-0"
-              )}
-            />
-          </div>
-        </CardHeader>
-        
-        {!mainCardCollapsed && (
-          <EmailPreferencesContent 
-            company={company}
-            form={form}
-            onEmailSubmit={onEmailSubmit}
-            emailFieldsChanged={emailFieldsChanged}
-            isEmailPending={isEmailPending}
-            isFreePlan={isFreePlan}
-            collapsedServiceTypes={collapsedServiceTypes}
-            setCollapsedServiceTypes={setCollapsedServiceTypes}
-          />
-        )}
-      </Card>
-    </div>
+      
+      {!mainCardCollapsed && (
+        <EmailPreferencesContent 
+          company={company}
+          form={form}
+          onEmailSubmit={onEmailSubmit}
+          emailFieldsChanged={emailFieldsChanged}
+          isEmailPending={isEmailPending}
+          isFreePlan={isFreePlan}
+          collapsedServiceTypes={collapsedServiceTypes}
+          setCollapsedServiceTypes={setCollapsedServiceTypes}
+        />
+      )}
+    </Card>
   );
 }
 
