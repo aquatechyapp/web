@@ -19,6 +19,7 @@ const updatePhotoDefinitionSchema = z.object({
   description: z.string().max(500, 'Description must be less than 500 characters').optional(),
   isRequired: z.boolean(),
   allowGallery: z.boolean(),
+  sendOnEmail: z.boolean(),
 });
 
 interface EditPhotoDefinitionDialogProps {
@@ -43,6 +44,7 @@ export function EditPhotoDefinitionDialog({
       description: '',
       isRequired: false,
       allowGallery: false,
+      sendOnEmail: false
     }
   });
 
@@ -53,6 +55,7 @@ export function EditPhotoDefinitionDialog({
         description: photoDefinition.description || '',
         isRequired: photoDefinition.isRequired,
         allowGallery: photoDefinition.allowGallery,
+        sendOnEmail: photoDefinition.sendOnEmail
       });
     }
   }, [photoDefinition, form]);
@@ -63,6 +66,7 @@ export function EditPhotoDefinitionDialog({
       description: data.description || undefined,
       isRequired: data.isRequired,
       allowGallery: data.allowGallery,
+      sendOnEmail: data.sendOnEmail
     };
     onSubmit(requestData);
   };
@@ -76,6 +80,7 @@ export function EditPhotoDefinitionDialog({
     return null;
   }
 
+  console.log('photoDefinition', photoDefinition)
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
@@ -155,6 +160,29 @@ export function EditPhotoDefinitionDialog({
                     </FormLabel>
                     <p className="text-sm text-muted-foreground">
                       Allow users to select photos from gallery for this definition
+                    </p>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="sendOnEmail"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Send On Email
+                    </FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      Enable this option to send notifications or updates directly to the recipient’s email address when an action occurs.
                     </p>
                   </div>
                   <FormControl>

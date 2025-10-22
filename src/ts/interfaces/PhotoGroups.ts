@@ -4,6 +4,7 @@ export interface PhotoDefinition {
   description: string | null;
   isRequired: boolean;
   allowGallery: boolean;
+  sendOnEmail: boolean;
   order: number;
   photoGroupId: string;
   createdAt: string;
@@ -39,6 +40,7 @@ export interface CreatePhotoDefinitionRequest {
   description?: string;
   isRequired: boolean;
   allowGallery: boolean;
+  sendOnEmail: boolean;
   order: number;
 }
 
@@ -48,6 +50,7 @@ export interface UpdatePhotoDefinitionRequest {
   isRequired?: boolean;
   allowGallery?: boolean;
   order?: number;
+  sendOnEmail?: boolean;
 }
 
 export interface PhotoDefinitionsResponse {
@@ -100,6 +103,7 @@ export interface BatchPhotoDefinitionCreate {
   description?: string;
   isRequired: boolean;
   allowGallery: boolean;
+  sendOnEmail: boolean;
   order?: number;
 }
 
