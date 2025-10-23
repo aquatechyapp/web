@@ -10,8 +10,7 @@ import {
   Settings2,
   UserPlus,
   Users,
-  PlayCircle,
-  DollarSign
+  PlayCircle
 } from 'lucide-react';
 
 import RouteIcon from '@/components/ui/route-icon';
@@ -283,13 +282,6 @@ export const routes: Menu[] = [
     href: '/account',
     icon: CircleUser,
     title: 'My Account'
-  },
-  {
-    text: 'Invoices',
-    href: '/invoices',
-    icon: DollarSign ,
-    title: 'Invoices',
-    description: 'View and manage all your invoices in one place'
   },
 ];
 
