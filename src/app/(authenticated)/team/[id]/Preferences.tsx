@@ -212,41 +212,47 @@ export default function Page({ company }: { company: Company }) {
     }
   };
 
+  // Handle CC email submission
+  const handleCcEmailSubmit = (ccEmail: string) => {
+    const updateData = {
+      serviceEmailPreferences: {
+        sendEmails: form.getValues('sendEmails'),
+        attachReadingsGroups: form.getValues('attachReadingsGroups'),
+        attachConsumablesGroups: form.getValues('attachConsumablesGroups'),
+        attachPhotoGroups: form.getValues('attachPhotoGroups'),
+        attachSelectorsGroups: form.getValues('attachSelectorsGroups'),
+        attachCustomChecklist: form.getValues('attachCustomChecklist'),
+        ccEmail,
+        sendFilterCleaningEmails: form.getValues('sendFilterCleaningEmails')
+      },
+      companyId: company.id
+    };
+
+    updateEmailPrefs(updateData);
+  };
+
   // Handle email preferences submission
   const handleEmailSubmit = (data: z.infer<typeof schema>) => {
     const {
       sendEmails,
-
       attachReadingsGroups,
       attachConsumablesGroups,
       attachPhotoGroups,
       attachSelectorsGroups,
       attachCustomChecklist,
       ccEmail,
-
-      attachChemicalsReadings,
-      attachChecklist,
-      attachServicePhotos,
-
       sendFilterCleaningEmails
-
     } = data;
 
     const updateData = {
       serviceEmailPreferences: {
         sendEmails,
-
         attachReadingsGroups,
         attachConsumablesGroups,
         attachPhotoGroups,
         attachSelectorsGroups,
         attachCustomChecklist,
         ccEmail,
-
-        attachChemicalsReadings,
-        attachChecklist,
-        attachServicePhotos,
-
         sendFilterCleaningEmails
       },
       companyId: company.id
@@ -262,9 +268,6 @@ export default function Page({ company }: { company: Company }) {
       filterReplacementIntervalDays,
       filterCleaningMustHavePhotos,
       sendEmails,
-      attachChemicalsReadings,
-      attachChecklist,
-      attachServicePhotos,
       attachReadingsGroups,
       attachConsumablesGroups,
       attachPhotoGroups,
@@ -287,9 +290,6 @@ export default function Page({ company }: { company: Company }) {
         attachPhotoGroups,
         attachSelectorsGroups,
         attachCustomChecklist,
-        attachChemicalsReadings,
-        attachChecklist,
-        attachServicePhotos,
         ccEmail,
         sendFilterCleaningEmails
       },
@@ -343,6 +343,7 @@ export default function Page({ company }: { company: Company }) {
               setModalType('email');
               setShowConfirmModal(true);
             }}
+            onCcEmailSubmit={handleCcEmailSubmit}
             emailFieldsChanged={emailFieldsChanged}
           />
 

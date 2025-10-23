@@ -32,12 +32,16 @@ const serviceTypeEmailSchema = z.object({
   sendChecklist: z.boolean(),
 });
 
-const schema = z.record(z.string(), serviceTypeEmailSchema);
+const schema = z.object({
+  ccEmail: z.string().optional(),
+  serviceTypes: z.record(z.string(), serviceTypeEmailSchema)
+});
 
 interface EmailPreferencesCardProps {
   company: Company;
   form: any;
   onEmailSubmit: (data: z.infer<typeof schema>) => void;
+  onCcEmailSubmit: (ccEmail: string) => void;
   emailFieldsChanged: () => boolean;
 }
 
@@ -45,6 +49,7 @@ export function EmailPreferencesCard({
   company,
   form,
   onEmailSubmit,
+  onCcEmailSubmit,
   emailFieldsChanged
 }: EmailPreferencesCardProps) {
   const { isPending: isEmailPending } = useUpdateCompanyPreferences(company.id);
@@ -95,6 +100,7 @@ export function EmailPreferencesCard({
           company={company}
           form={form}
           onEmailSubmit={onEmailSubmit}
+          onCcEmailSubmit={onCcEmailSubmit}
           emailFieldsChanged={emailFieldsChanged}
           isEmailPending={isEmailPending}
           isFreePlan={isFreePlan}
@@ -111,6 +117,7 @@ function EmailPreferencesContent({
   company, 
   form, 
   onEmailSubmit, 
+  onCcEmailSubmit,
   emailFieldsChanged,
   isEmailPending,
   isFreePlan,
@@ -120,6 +127,7 @@ function EmailPreferencesContent({
   company: Company;
   form: any;
   onEmailSubmit: (data: any) => void;
+  onCcEmailSubmit: (ccEmail: string) => void;
   emailFieldsChanged: () => boolean;
   isEmailPending: boolean;
   isFreePlan: boolean;
@@ -162,6 +170,9 @@ function EmailPreferencesContent({
 
   // Set default values when service types data loads
   useEffect(() => {
+    // Set CC email value
+    form.setValue('ccEmail', company.preferences?.serviceEmailPreferences?.ccEmail || '');
+    
     if (serviceTypes.length > 0) {
       serviceTypes.forEach((serviceType) => {
         const emailPrefs = getServiceTypeEmailPreferences(serviceType);
@@ -177,7 +188,7 @@ function EmailPreferencesContent({
         form.setValue(`${serviceType.id}.sendChecklist`, emailPrefs.sendChecklist);
       });
     }
-  }, [serviceTypes, form]);
+  }, [serviceTypes, form, company.preferences?.serviceEmailPreferences?.ccEmail]);
 
   if (isLoading) {
     return (
@@ -203,6 +214,62 @@ function EmailPreferencesContent({
 
   return (
     <CardContent className="p-6">
+      {/* CC Email Section */}
+      <div className="mb-8">
+        <Card className="border border-gray-200">
+          <CardHeader className="bg-gray-50">
+            <CardTitle className="text-lg text-gray-900">Email Configuration</CardTitle>
+            <CardDescription className="text-gray-600">
+              Set up the CC email address for service notifications
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">
+              <div className="col-span-8 row-auto flex flex-col">
+                <label className="flex flex-col space-y-1">
+                  <span className="text-sm font-semibold text-gray-800">CC Email Address</span>
+                </label>
+                <span className="text-muted-foreground text-sm font-normal">
+                  Email address to receive copies of service notifications
+                </span>
+              </div>
+              <div className="col-span-4">
+                <input
+                  {...form.register('ccEmail')}
+                  type="email"
+                  placeholder="Enter CC email address"
+                  disabled={isFreePlan}
+                  className={cn(
+                    "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                    isFreePlan && "opacity-50 cursor-not-allowed bg-gray-100"
+                  )}
+                />
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-center">
+              <Button 
+                type="button"
+                disabled={isFreePlan || isEmailPending} 
+                className="w-full max-w-xs"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const ccEmail = form.getValues('ccEmail');
+                  onCcEmailSubmit(ccEmail);
+                }}
+              >
+                {isEmailPending ? (
+                  <div className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em]" />
+                ) : (
+                  'Save CC Email'
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="space-y-4">
         {serviceTypes.map((serviceType) => {
           const isCollapsed = collapsedServiceTypes[serviceType.id] ?? true;
