@@ -18,9 +18,34 @@ export default function PageHeader() {
     Cookies.remove('accessToken');
     Cookies.remove('userId');
     queryClient.resetQueries();
+    queryClient.clear();
     queryClient.removeQueries();
-    localStorage.clear();
-    sessionStorage.clear();
+
+    // localStorage.clear();
+    // sessionStorage.clear();
+    // queryClient.invalidateQueries({ queryKey: ['companies'] });
+    // queryClient.invalidateQueries({ queryKey: ['clients'] });
+    // queryClient.invalidateQueries({ queryKey: ['services'] });
+    // queryClient.invalidateQueries({ queryKey: ['assignments'] });
+    // queryClient.invalidateQueries({ queryKey: ['schedule'] });
+    // queryClient.invalidateQueries({ queryKey: ['checklist-templates'] });
+    // queryClient.invalidateQueries({ queryKey: ['service-types'] });
+    // queryClient.invalidateQueries({ queryKey: ['allClients'] });
+    // queryClient.invalidateQueries({ queryKey: ['allAssignments'] });
+    // queryClient.invalidateQueries({ queryKey: ['companyMembers'] });
+    // queryClient.invalidateQueries({ queryKey: ['consumable-definitions'] });
+    // queryClient.invalidateQueries({ queryKey: ['consumable-groups'] });
+    // queryClient.invalidateQueries({ queryKey: ['photo-definitions'] });
+    // queryClient.invalidateQueries({ queryKey: ['photo-groups'] });
+    // queryClient.invalidateQueries({ queryKey: ['pools'] });
+    // queryClient.invalidateQueries({ queryKey: ['reading-definitions'] });
+    // queryClient.invalidateQueries({ queryKey: ['reading-groups'] });
+    // queryClient.invalidateQueries({ queryKey: ['requests'] });
+    // queryClient.invalidateQueries({ queryKey: ['selectorDefinitions'] });
+    // queryClient.invalidateQueries({ queryKey: ['selectorGroups'] });
+    // queryClient.invalidateQueries({ queryKey: ['selectorOptions'] });
+    // queryClient.invalidateQueries({ queryKey: ['user'] });
+
     resetUser();
     router.push('/login');
   };
