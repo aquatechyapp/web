@@ -10,7 +10,7 @@ import DropdownMenuCompanyMember from './DropdownMenuCompanyMember';
 
 export function CompanyMemberCard({ status, company, id, firstName, lastName, email, phone, role }: CompanyMember) {
   return (
-    <div className="relative flex w-full flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:w-56">
+    <div className="relative flex w-full flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:w-80">
       {id && (
         <DropdownMenuCompanyMember
           status={status}

@@ -65,7 +65,7 @@ export function CompanyCard({ companyId, name, email, phone, role, status, image
   };
 
   return (
-    <div className="relative inline-flex w-full max-w-xs flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 sm:max-w-[14rem] md:max-w-56">
+    <div className="relative inline-flex w-full flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:max-w-80">
       {/* Pending Acceptance Strip */}
       {isPendingAcceptance && (
         <div className="absolute -top-0 left-0 rounded-tl-lg bg-yellow-500 px-3 py-1 text-center text-xs font-medium text-white">
@@ -139,14 +139,14 @@ export function CompanyCard({ companyId, name, email, phone, role, status, image
         {role && (
           <div className="inline-flex items-center justify-start gap-1 self-stretch">
             <div className="w-14 text-xs font-normal leading-[18px] text-gray-500">My role</div>
-            <div className="h-[18px] w-fit max-w-36 shrink grow basis-0 overflow-hidden text-ellipsis text-right text-xs font-medium leading-[18px] text-gray-400">
+            <div className="h-[18px] w-fit shrink grow basis-0 overflow-hidden text-ellipsis text-right text-xs font-medium leading-[18px] text-gray-400">
               {role}
             </div>
           </div>
         )}
         <div className="inline-flex items-center justify-start gap-1 self-stretch">
           <div className="w-14 text-xs font-normal leading-[18px] text-gray-500">E-mail</div>
-          <div className="h-[18px] w-fit max-w-36 shrink grow basis-0 overflow-hidden text-ellipsis text-right text-xs font-medium leading-[18px] text-gray-400">
+          <div className="h-[18px] w-fit shrink grow basis-0 overflow-hidden text-ellipsis text-right text-xs font-medium leading-[18px] text-gray-400">
             {email}
           </div>
         </div>
