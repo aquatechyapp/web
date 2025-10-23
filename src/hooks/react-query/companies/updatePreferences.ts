@@ -101,6 +101,7 @@ export const useUpdateCompanyPreferences = (companyId: string) => {
       });
     },
     onError: (error: AxiosError<ErrorResponse>) => {
+      console.log('error', error);
       toast({
         title: 'Error updating preferences',
         description: error.response?.data?.message || 'An error occurred',
