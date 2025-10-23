@@ -94,8 +94,8 @@ export function SelectorGroupsManager({ companyId }: SelectorGroupsManagerProps)
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead>Questions</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="hidden md:table-cell">Questions</TableHead>
+                <TableHead className="hidden md:table-cell">Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -110,12 +110,12 @@ export function SelectorGroupsManager({ companyId }: SelectorGroupsManagerProps)
                       {selectorGroup.description || 'No description'}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <div className="text-sm text-muted-foreground">
                       {selectorGroup.selectorDefinitions?.length || 0} questions
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <Badge variant={selectorGroup.isActive ? "default" : "outline"} className="text-xs">
                       {selectorGroup.isActive ? "Active" : "Inactive"}
                     </Badge>

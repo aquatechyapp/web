@@ -126,15 +126,13 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
             <Card key={group.id}>
               <CardHeader className="pb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-
-                  <div className="flex flex-col sm:flex-row sm:items-start
-                   gap-2 sm:gap-3 w-full sm:w-auto items-start">
-
+                  {/* Mobile: Single row with arrow, text, and action buttons - centered */}
+                  <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleGroupExpansion(group.id)}
-                      className="h-8 w-8 p-0"
+                      className="h-8 w-8 p-0 flex-shrink-0"
                     >
                       {expandedGroups.has(group.id) ? (
                         <ChevronDown className="h-4 w-4" />
@@ -143,8 +141,8 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
                       )}
                     </Button>
 
-                    <div className="text-start sm:text-start">
-                      <CardTitle className="text-base flex items-center justify-start sm:justify-start gap-2">
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base flex items-center justify-start gap-2">
                         {group.name}
                         {!group.isActive && (
                           <Badge variant="outline" className="text-xs">
@@ -156,31 +154,30 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
                         <CardDescription className="text-sm">{group.description}</CardDescription>
                       )}
                     </div>
-                  </div>
 
-                  <div className="flex flex-row justify-start sm:justify-start
-                  gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setEditingGroup(group)}
-                      disabled={isUpdating}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    {!group.isDefault && (
+                    {/* Action buttons - positioned on the right */}
+                    <div className="flex gap-2 flex-shrink-0">
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setDeletingGroup(group)}
-                        disabled={isDeleting}
-                        className="text-destructive hover:text-destructive"
+                        onClick={() => setEditingGroup(group)}
+                        disabled={isUpdating}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Edit className="h-4 w-4" />
                       </Button>
-                    )}
+                      {!group.isDefault && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDeletingGroup(group)}
+                          disabled={isDeleting}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-
                 </div>
               </CardHeader>
 
