@@ -17,9 +17,9 @@ import { FieldType } from '@/ts/enums/enums';
 import { useUpdateCompanyPreferences } from '@/hooks/react-query/companies/updatePreferences';
 // ChecklistTemplate hook no longer needed as it's managed separately
 import { Company, } from '@/ts/interfaces/Company';
-import { 
-  EmailPreferencesCard, 
-  FilterMaintenanceCard, 
+import {
+  EmailPreferencesCard,
+  FilterMaintenanceCard,
   ChecklistTemplatesCard,
   ReadingAndConsumableGroupsCard,
   ServiceTypesCard,
@@ -152,7 +152,7 @@ export default function Page({ company }: { company: Company }) {
 
   // Watch form values to detect changes for each section
   const watchedValues = form.watch();
-  
+
   // Check if email fields have changed
   const emailFieldsChanged = () => {
     // const emailFields = ['sendEmails', 'attachChemicalsReadings', 'attachChecklist', 'attachServicePhotos', 'ccEmail'];
@@ -212,41 +212,47 @@ export default function Page({ company }: { company: Company }) {
     }
   };
 
+  // Handle CC email submission
+  const handleCcEmailSubmit = (ccEmail: string) => {
+    const updateData = {
+      serviceEmailPreferences: {
+        sendEmails: form.getValues('sendEmails'),
+        attachReadingsGroups: form.getValues('attachReadingsGroups'),
+        attachConsumablesGroups: form.getValues('attachConsumablesGroups'),
+        attachPhotoGroups: form.getValues('attachPhotoGroups'),
+        attachSelectorsGroups: form.getValues('attachSelectorsGroups'),
+        attachCustomChecklist: form.getValues('attachCustomChecklist'),
+        ccEmail,
+        sendFilterCleaningEmails: form.getValues('sendFilterCleaningEmails')
+      },
+      companyId: company.id
+    };
+
+    updateEmailPrefs(updateData);
+  };
+
   // Handle email preferences submission
   const handleEmailSubmit = (data: z.infer<typeof schema>) => {
-    const { 
+    const {
       sendEmails,
-
       attachReadingsGroups,
       attachConsumablesGroups,
       attachPhotoGroups,
       attachSelectorsGroups,
       attachCustomChecklist,
       ccEmail,
-
-      attachChemicalsReadings,
-      attachChecklist,
-      attachServicePhotos,
-      
       sendFilterCleaningEmails
-
     } = data;
 
     const updateData = {
       serviceEmailPreferences: {
         sendEmails,
-
         attachReadingsGroups,
         attachConsumablesGroups,
         attachPhotoGroups,
         attachSelectorsGroups,
         attachCustomChecklist,
         ccEmail,
-
-        attachChemicalsReadings,
-        attachChecklist,
-        attachServicePhotos,
-        
         sendFilterCleaningEmails
       },
       companyId: company.id
@@ -257,14 +263,11 @@ export default function Page({ company }: { company: Company }) {
 
   // Handle filter maintenance submission
   const handleFilterSubmit = (data: z.infer<typeof schema>) => {
-    const { 
-      filterCleaningIntervalDays, 
-      filterReplacementIntervalDays, 
+    const {
+      filterCleaningIntervalDays,
+      filterReplacementIntervalDays,
       filterCleaningMustHavePhotos,
       sendEmails,
-      attachChemicalsReadings,
-      attachChecklist,
-      attachServicePhotos,
       attachReadingsGroups,
       attachConsumablesGroups,
       attachPhotoGroups,
@@ -287,9 +290,6 @@ export default function Page({ company }: { company: Company }) {
         attachPhotoGroups,
         attachSelectorsGroups,
         attachCustomChecklist,
-        attachChemicalsReadings,
-        attachChecklist,
-        attachServicePhotos,
         ccEmail,
         sendFilterCleaningEmails
       },
@@ -304,7 +304,7 @@ export default function Page({ company }: { company: Company }) {
   const ccEmail = form.watch('ccEmail');
 
   const originalCcEmail = company.preferences?.serviceEmailPreferences?.ccEmail || undefined;
-  
+
   useEffect(() => {
     if (ccEmail !== originalCcEmail) {
       // Force the form to recognize the change
@@ -321,19 +321,19 @@ export default function Page({ company }: { company: Company }) {
     return <LoadingSpinner />;
   }
 
- 
-  return (
-    <div className="w-full space-y-8">
-      
 
+  return (
+    <div
+    className="w-full space-y-4 md:space-y-8">
       <Form {...form}>
-        <form className="w-full space-y-8"
+        <form
+          className="w-full space-y-4 md:space-y-8"
           onSubmit={(e) => {
             e.preventDefault();
             // Form submission is now handled by individual buttons
           }}
         >
-          
+
           {/* Email Preferences Card */}
           <EmailPreferencesCard
             company={company}
@@ -343,6 +343,7 @@ export default function Page({ company }: { company: Company }) {
               setModalType('email');
               setShowConfirmModal(true);
             }}
+            onCcEmailSubmit={handleCcEmailSubmit}
             emailFieldsChanged={emailFieldsChanged}
           />
 
@@ -374,14 +375,14 @@ export default function Page({ company }: { company: Company }) {
         <DialogContent>
           <DialogHeader className="text-left">
             <DialogTitle className="text-xl mb-4">
-              {modalType === 'email' 
-                ? 'Update Email Preferences' 
+              {modalType === 'email'
+                ? 'Update Email Preferences'
                 : 'Update Filter Maintenance'
               }
             </DialogTitle>
 
             <DialogDescription className="mt-4 text-left">
-              {modalType === 'email' 
+              {modalType === 'email'
                 ? (
                   <>
                     This action will set the email notification preferences for all NEW CLIENTS created from now on under this company.
@@ -426,7 +427,7 @@ export default function Page({ company }: { company: Company }) {
         </DialogContent>
       </Dialog>
 
-     
+
     </div>
   );
 }

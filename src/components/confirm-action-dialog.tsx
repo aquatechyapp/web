@@ -69,7 +69,7 @@ export default function ConfirmActionDialog({
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className="flex flex-col sm:flex-row sm:justify-end gap-2">
           <Button variant={variant} size={size} onClick={handleConfirm} disabled={isLoading}>
             {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
             <span>{confirmText}</span>

@@ -13,6 +13,7 @@ export interface ServiceType {
   consumableGroups?: (ConsumableGroup & { consumableDefinitions?: any[] })[];
   photoGroups?: (PhotoGroup & { photoDefinitions?: any[] })[];
   selectorGroups?: (SelectorGroup & { selectorDefinitions?: any[] })[];
+  serviceTypeEmailPreferences?: ServiceTypeEmailPreferences;
   defaultChecklist?: {
     id: string;
     name: string;
@@ -32,6 +33,7 @@ import { ReadingGroup } from './ReadingGroups';
 import { ConsumableGroup } from './ConsumableGroups';
 import { PhotoGroup } from './PhotoGroups';
 import { SelectorGroup } from './SelectorGroups';
+import { ServiceTypeEmailPreferences } from './ServiceTypeEmailPreferences';
 
 export interface CreateServiceTypeRequest {
   name: string;

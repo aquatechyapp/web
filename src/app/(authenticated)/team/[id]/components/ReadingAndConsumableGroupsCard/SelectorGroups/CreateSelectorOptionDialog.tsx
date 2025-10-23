@@ -72,7 +72,7 @@ export function CreateSelectorOptionDialog({
   const handleSubmit = (data: CreateSelectorOptionFormData) => {
     const value = generateValueFromText(data.text);
     const order = getNextOrder();
-    
+
     onSubmit({
       text: data.text,
       value: value,
@@ -102,19 +102,19 @@ export function CreateSelectorOptionDialog({
                 <FormItem>
                   <FormLabel>Display Text *</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="e.g., Excellent, Good, Fair, Poor, Yes, No, High, Medium, Low" 
+                    <Input
+                      placeholder="e.g., Excellent, Good, Fair, Poor, Yes, No, High, Medium, Low"
                       disabled={isLoading}
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
-            
-            <DialogFooter>
+
+
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
                 Cancel
               </Button>

@@ -143,10 +143,10 @@ export function CreateSelectorGroupDialog({
                   <FormItem>
                     <FormLabel>Name *</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="e.g., Basic Questions, Equipment Status" 
+                      <Input
+                        placeholder="e.g., Basic Questions, Equipment Status"
                         disabled={isLoading}
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -198,23 +198,26 @@ export function CreateSelectorGroupDialog({
 
             {/* Advanced Options */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 w-full">
                 <div>
                   <h3 className="text-lg font-medium">Questions & Options</h3>
                   <p className="text-sm text-muted-foreground">
                     Add questions and multiple choice options to this group
                   </p>
                 </div>
+
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setShowAdvanced(!showAdvanced)}
                   disabled={isLoading}
+                  className="w-full sm:w-auto mt-2 sm:mt-0"
                 >
                   {showAdvanced ? 'Hide' : 'Add Questions'}
                 </Button>
               </div>
+
 
               {showAdvanced && (
                 <div className="space-y-4">
@@ -243,10 +246,10 @@ export function CreateSelectorGroupDialog({
                             <FormItem>
                               <FormLabel>Question *</FormLabel>
                               <FormControl>
-                                <Input 
-                                  placeholder="e.g., Was the gate closed?" 
+                                <Input
+                                  placeholder="e.g., Was the gate closed?"
                                   disabled={isLoading}
-                                  {...field} 
+                                  {...field}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -274,7 +277,7 @@ export function CreateSelectorGroupDialog({
                             </FormItem>
                           )}
                         />
-                        
+
                         {/* Options for this question */}
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
@@ -296,7 +299,7 @@ export function CreateSelectorGroupDialog({
                               Add Option
                             </Button>
                           </div>
-                          
+
                           {form.watch(`selectorDefinitions.${index}.options`)?.map((option, optionIndex) => (
                             <div key={optionIndex} className="flex items-center space-x-2">
                               <GripVertical className="h-4 w-4 text-muted-foreground" />
@@ -306,10 +309,10 @@ export function CreateSelectorGroupDialog({
                                 render={({ field }) => (
                                   <FormItem className="flex-1">
                                     <FormControl>
-                                      <Input 
-                                        placeholder="e.g., Yes, No, Excellent, Good" 
+                                      <Input
+                                        placeholder="e.g., Yes, No, Excellent, Good"
                                         disabled={isLoading}
-                                        {...field} 
+                                        {...field}
                                       />
                                     </FormControl>
                                     <FormMessage />
@@ -356,7 +359,7 @@ export function CreateSelectorGroupDialog({
               )}
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
                 Cancel
               </Button>

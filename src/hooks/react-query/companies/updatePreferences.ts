@@ -4,6 +4,7 @@ import { AxiosError } from 'axios';
 import { toast } from '@/components/ui/use-toast';
 
 import { clientAxios } from '../../../lib/clientAxios';
+import { Company } from '@/ts/interfaces/Company';
 
 type PreferencesData = {
   serviceEmailPreferences?: {
@@ -41,9 +42,59 @@ export const useUpdateCompanyPreferences = (companyId: string) => {
     mutationFn: async (data: PreferencesData) => {
       return await clientAxios.patch(`/companies/${companyId}/preferences`, data);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['companies'] });
-      queryClient.invalidateQueries({ queryKey: ['companies', companyId] });
+    onSuccess: (response, variables) => {
+      // Update the company cache directly instead of invalidating
+      queryClient.setQueryData(['companies', companyId], (oldData: Company | undefined) => {
+        if (!oldData) return oldData;
+        
+        return {
+          ...oldData,
+          preferences: {
+            ...oldData.preferences,
+            ...(variables.serviceEmailPreferences && {
+              serviceEmailPreferences: {
+                ...oldData.preferences.serviceEmailPreferences,
+                ...variables.serviceEmailPreferences
+              }
+            }),
+            ...(variables.equipmentMaintenancePreferences && {
+              equipmentMaintenancePreferences: {
+                ...oldData.preferences.equipmentMaintenancePreferences,
+                ...variables.equipmentMaintenancePreferences
+              }
+            })
+          }
+        };
+      });
+
+      // Also update the companies list cache if it exists
+      queryClient.setQueryData(['companies'], (oldData: Company[] | undefined) => {
+        if (!oldData) return oldData;
+        
+        return oldData.map(company => 
+          company.id === companyId 
+            ? {
+                ...company,
+                preferences: {
+                  ...company.preferences,
+                  ...(variables.serviceEmailPreferences && {
+                    serviceEmailPreferences: {
+                      ...company.preferences.serviceEmailPreferences,
+                      ...variables.serviceEmailPreferences
+                    }
+                  }),
+                  ...(variables.equipmentMaintenancePreferences && {
+                    equipmentMaintenancePreferences: {
+                      ...company.preferences.equipmentMaintenancePreferences,
+                      ...variables.equipmentMaintenancePreferences
+                    }
+                  })
+                }
+              }
+            : company
+        );
+      });
+
       toast({
         title: 'Preferences updated successfully',
         variant: 'success'

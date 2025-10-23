@@ -57,8 +57,8 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
 
   const handleUpdateGroup = (data: UpdateReadingGroupRequest) => {
     if (editingGroup) {
-      updateReadingGroup({ 
-        readingGroupId: editingGroup.id, 
+      updateReadingGroup({
+        readingGroupId: editingGroup.id,
         data: {
           name: data.name,
           description: data.description,
@@ -88,18 +88,23 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
         <div>
           <h3 className="text-lg font-semibold">Reading Groups</h3>
           <p className="text-sm text-muted-foreground">
             Manage reading groups and their definitions for service reports
           </p>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)} disabled={isCreating}>
+        <Button
+          onClick={() => setShowCreateDialog(true)}
+          disabled={isCreating}
+          className="w-full md:w-auto"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Group
         </Button>
       </div>
+
 
       {readingGroups.length === 0 ? (
         <Card>
@@ -120,8 +125,11 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
           {readingGroups.map((group) => (
             <Card key={group.id}>
               <CardHeader className="pb-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                  <div className="flex flex-col sm:flex-row sm:items-start
+                   gap-2 sm:gap-3 w-full sm:w-auto items-start">
+
                     <Button
                       variant="ghost"
                       size="sm"
@@ -134,10 +142,10 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
                         <ChevronRight className="h-4 w-4" />
                       )}
                     </Button>
-                    <div>
-                      <CardTitle className="text-base flex items-center gap-2">
+
+                    <div className="text-start sm:text-start">
+                      <CardTitle className="text-base flex items-center justify-start sm:justify-start gap-2">
                         {group.name}
-                        
                         {!group.isActive && (
                           <Badge variant="outline" className="text-xs">
                             Inactive
@@ -145,13 +153,13 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
                         )}
                       </CardTitle>
                       {group.description && (
-                        <CardDescription className="text-sm">
-                          {group.description}
-                        </CardDescription>
+                        <CardDescription className="text-sm">{group.description}</CardDescription>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  <div className="flex flex-row justify-start sm:justify-start
+                  gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -172,8 +180,10 @@ export function ReadingGroupsManager({ companyId }: ReadingGroupsManagerProps) {
                       </Button>
                     )}
                   </div>
+
                 </div>
               </CardHeader>
+
               {expandedGroups.has(group.id) && (
                 <CardContent>
                   <ReadingDefinitionsManager readingGroup={group} companyId={companyId} />
