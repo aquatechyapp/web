@@ -53,13 +53,13 @@ export const useUpdateCompanyPreferences = (companyId: string) => {
             ...oldData.preferences,
             ...(variables.serviceEmailPreferences && {
               serviceEmailPreferences: {
-                ...oldData.preferences.serviceEmailPreferences,
+                ...oldData.preferences?.serviceEmailPreferences,
                 ...variables.serviceEmailPreferences
               }
             }),
             ...(variables.equipmentMaintenancePreferences && {
               equipmentMaintenancePreferences: {
-                ...oldData.preferences.equipmentMaintenancePreferences,
+                ...oldData.preferences?.equipmentMaintenancePreferences,
                 ...variables.equipmentMaintenancePreferences
               }
             })
@@ -79,13 +79,13 @@ export const useUpdateCompanyPreferences = (companyId: string) => {
                   ...company.preferences,
                   ...(variables.serviceEmailPreferences && {
                     serviceEmailPreferences: {
-                      ...company.preferences.serviceEmailPreferences,
+                      ...company.preferences?.serviceEmailPreferences,
                       ...variables.serviceEmailPreferences
                     }
                   }),
                   ...(variables.equipmentMaintenancePreferences && {
                     equipmentMaintenancePreferences: {
-                      ...company.preferences.equipmentMaintenancePreferences,
+                      ...company.preferences?.equipmentMaintenancePreferences,
                       ...variables.equipmentMaintenancePreferences
                     }
                   })
