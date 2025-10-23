@@ -18,9 +18,10 @@ export default function PageHeader() {
     Cookies.remove('accessToken');
     Cookies.remove('userId');
     queryClient.resetQueries();
+    queryClient.clear();
     queryClient.removeQueries();
-    localStorage.clear();
-    sessionStorage.clear();
+    // localStorage.clear();
+    // sessionStorage.clear();
     resetUser();
     router.push('/login');
   };
