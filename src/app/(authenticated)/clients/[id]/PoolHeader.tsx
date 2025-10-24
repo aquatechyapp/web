@@ -63,6 +63,7 @@ function PoolCard({ pool, services, clientId }: Props) {
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-2">
               <h3 className="text-sm text-gray-900">{pool.name}</h3>
+              
               {!pool.isActive && (
                 <span className="text-sm text-red-500 font-medium">(Deactivated)</span>
               )}
