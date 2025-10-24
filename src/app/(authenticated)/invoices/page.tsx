@@ -5,12 +5,9 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
-import { useUserStore } from '@/store/user';
-import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const defaultValues = {
   fromCompany: 'TechVista Solutions',
@@ -25,21 +22,13 @@ const defaultValues = {
   ],
 };
 
-const COLORS = [
-  { name: 'gray', value: '#E5E7EB' },
-  { name: 'green', value: '#C7E8C1' },
-  { name: 'purple', value: '#E3D1F5' },
-  { name: 'orange', value: '#F7D4B2' },
-  { name: 'blue', value: '#C9DBF8' },
-];
-
 type FormValues = typeof defaultValues;
 
 export default function Page() {
-  const user = useUserStore((state) => state.user);
   const { data: companies } = useGetCompanies();
   const { data: clients } = useGetAllClients();
-  const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
+  const [selectedCompany, setSelectedCompany] = useState<string>('');
+  const [selectedClient, setSelectedClient] = useState<string>('');
 
   const { control, register, handleSubmit, watch, setValue } = useForm<FormValues>({
     defaultValues,
@@ -49,8 +38,6 @@ export default function Page() {
     control,
     name: 'lineItems',
   });
-
-  const [selectedColor, setSelectedColor] = useState(COLORS[0].value);
 
   const watched = watch();
   const total = (watched.lineItems || []).reduce((acc, it) => {
@@ -82,65 +69,98 @@ export default function Page() {
       <h1 className="text-2xl font-semibold text-center mb-6">
         Hassle-free and <span className="italic">actually free</span> invoice generator
       </h1>
-
       <Form control={control}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full max-w-3xl gap-6 items-center">
 
-          {/* Editable Card */}
           <div className="w-full bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h2 className="text-lg font-semibold mb-4">Edit Invoice Details</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
+               <div>
                 <label className="text-xs text-gray-600">From (Company)</label>
-                <Input {...register('fromCompany')} placeholder="Company name" className="mt-1" />
-              </div>
+
+                <Select
+                  value={selectedCompany}
+                  onValueChange={(value) => {
+                    setSelectedCompany(value);
+                    const company = companies.find((c) => c.id === value);
+                    if (company) {
+                      setValue('fromCompany', company.name);
+                      setValue('fromEmail', company.email || '');
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a company" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {companies?.map((company) => (
+                      <SelectItem key={company.id} value={company.id}>
+                        {company.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                          </div>
 
               <div>
                 <label className="text-xs text-gray-600">From Email</label>
-                <Input {...register('fromEmail')} placeholder="Email address" className="mt-1" />
+                <Input {...register('fromEmail')} placeholder="Email address" />
               </div>
 
               <div>
-                <label className="text-xs text-gray-600">To (Name)</label>
-                <Input {...register('toName')} placeholder="Recipient name" className="mt-1" />
+                <label className="text-xs text-gray-600">To (Client)</label>
+
+                <Select
+                  disabled={!selectedCompany}
+                  value={selectedClient}
+                  onValueChange={(value) => {
+                    setSelectedClient(value);
+                    const client = clients?.find((c) => c.id === value);
+                    if (client) {
+                      setValue('toName', `${client.firstName} ${client.lastName}`);
+                      setValue('toEmail', client.email || '');
+                      setValue(
+                        'toAddress',
+                        `${client.address || ''}, ${client.city || ''}, ${client.state || ''} ${client.zip || ''}`
+                      );
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clients
+                      ?.filter((client) => client.companyOwnerId === selectedCompany)
+                      .map((client) => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.fullName || `${client.firstName} ${client.lastName}`}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
               </div>
+
 
               <div>
                 <label className="text-xs text-gray-600">To Email</label>
-                <Input {...register('toEmail')} placeholder="Recipient email" className="mt-1" />
+                <Input {...register('toEmail')} placeholder="Recipient email" />
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4 mb-4">
               <div>
                 <label className="text-xs text-gray-600">From Address</label>
-                <Input {...register('fromAddress')} placeholder="Sender address" className="mt-1" />
+                <Input {...register('fromAddress')} placeholder="Sender address" />
               </div>
               <div>
                 <label className="text-xs text-gray-600">To Address</label>
-                <Input {...register('toAddress')} placeholder="Recipient address" className="mt-1" />
+                <Input {...register('toAddress')} placeholder="Recipient address" />
               </div>
             </div>
-            {/* Color Picker */}
-            <div className="flex flex-col items-start gap-2">
-              <span className="text-sm text-gray-600 font-medium">Invoice color</span>
-              <div className="flex gap-3">
-                {COLORS.map((c) => (
-                  <button
-                    key={c.name}
-                    type="button"
-                    onClick={() => setSelectedColor(c.value)}
-                    className={cn(
-                      'w-6 h-6 rounded-full border-2 transition-all',
-                      selectedColor === c.value ? 'border-gray-900 scale-110' : 'border-gray-300 hover:border-gray-400'
-                    )}
-                    style={{ backgroundColor: c.value }}
-                  />
-                ))}
-              </div>
-            </div>
-            {/* Line items editor */}
+
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-medium text-sm">Line items</h3>
@@ -164,7 +184,6 @@ export default function Page() {
                   <tbody>
                     {fields.map((field, index) => (
                       <tr key={field.id}
-                      // className="border-b border-gray-100"
                       >
                         <td className="py-2 pr-2">
                           <Input
@@ -207,7 +226,6 @@ export default function Page() {
                   </tbody>
                 </table>
 
-                {/* Small summary */}
                 <div className="flex justify-end items-center mt-3 gap-4">
                   <div className="text-sm text-gray-600">Subtotal:</div>
                   <div className="text-sm font-semibold">{formatCurrency(total)}</div>
@@ -216,10 +234,9 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Invoice Preview */}
           <div
             className="w-full bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all"
-            style={{ borderTop: `6px solid ${selectedColor}` }}
+            style={{ borderTop: `6px solid ` }}
           >
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
@@ -273,7 +290,7 @@ export default function Page() {
 
           <div className="flex w-full gap-2">
             <Button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg text-base font-medium hover:bg-blue-700">
-              Save Invoice →
+              Save and send
             </Button>
             <Button
               type="button"
