@@ -39,7 +39,7 @@ export interface InvoicePayload {
   isRecurringTemplate?: boolean;
 }
 
-export default function useInvoices(params?: UseInvoicesParams) {
+export default function useInvoices(params?: UseInvoicesParams, id?:string) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const userId = Cookies.get('userId');
@@ -56,6 +56,17 @@ export default function useInvoices(params?: UseInvoicesParams) {
       const { data } = await clientAxios.get('/invoices', { params });
       return data;
     },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // 🔍 GET INVOICE BY ID
+  const invoiceById = useQuery({
+    queryKey: ['invoice', id],
+    queryFn: async () => {
+      const { data } = await clientAxios.get(`/invoices/${id}`);
+      return data.invoice;
+    },
+    enabled: !!id, // só executa se tiver ID
     staleTime: 1000 * 60 * 5,
   });
 
@@ -126,5 +137,6 @@ export default function useInvoices(params?: UseInvoicesParams) {
     deleteInvoice,
     updatePaymentStatus,
     createRecurringTemplate,
+    invoiceById
   };
 }

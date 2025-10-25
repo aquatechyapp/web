@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -33,7 +33,7 @@ export default function Page() {
   const [selectedClient, setSelectedClient] = useState<string>('');
   const { id } = useParams();
 
-  const { control, register, handleSubmit, watch, setValue } = useForm<FormValues>({
+  const { control, register, handleSubmit, watch, setValue, reset } = useForm<FormValues>({
     defaultValues,
   });
 
@@ -49,16 +49,45 @@ export default function Page() {
     return acc + q * a;
   }, 0);
 
-  const invoicesMutation = useInvoices();
+  const singleId = Array.isArray(id) ? id[0] : id;
+  const invoices = useInvoices(
+    undefined,
+    singleId && /^[0-9a-fA-F]{24}$/.test(singleId) ? singleId : undefined
+  );
+
+  useEffect(() => {
+    const inv = invoices.invoiceById.data;
+    if (id && inv) {
+      console.log('invoice carregada:', inv);
+
+      reset({
+        fromCompany: inv.company?.name || '',
+        fromEmail: inv.company?.email || '',
+        fromAddress: inv.company?.address || '',
+        toName: `${inv.client?.firstName || ''} ${inv.client?.lastName || ''}`.trim(),
+        toEmail: inv.client?.email || '',
+        toAddress: `${inv.client?.address || ''}`,
+        lineItems:
+          inv.items?.map((item: any) => ({
+            description: item.name,
+            quantity: item.units,
+            amount: item.pricePerUnit,
+          })) || [{ description: '', quantity: 0, amount: 0 }],
+      });
+      setSelectedCompany(inv.companyId);
+      setSelectedClient(inv.clientId);
+    }
+  }, [id, invoices.invoiceById.data, reset]);
 
   const onSubmit = (data: FormValues) => {
-    // Transformar para o payload da API
+    const isValidId = singleId && /^[0-9a-fA-F]{24}$/.test(singleId);
+
     const payload: InvoicePayload = {
       clientId: selectedClient,
       companyId: selectedCompany,
       amount: total,
       issueDate: new Date().toISOString(),
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // exemplo: +7 dias
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       items: data.lineItems.map((item) => ({
         name: item.description,
         pricePerUnit: Number(item.amount),
@@ -66,15 +95,21 @@ export default function Page() {
       })),
     };
 
-    // Usar createInvoice do hook
-    invoicesMutation.createInvoice.mutate(payload, {
-      onSuccess: (invoice) => {
-        alert('Invoice criada com sucesso! ID: ' + invoice.id);
-      },
-      onError: (err) => {
-        alert('Erro ao criar invoice: ' + err.message);
-      },
-    });
+    if (isValidId) {
+      const { clientId, companyId, ...updatePayload } = payload;
+      invoices.updateInvoice.mutate(
+        { invoiceId: id as string, payload: updatePayload },
+        {
+          onSuccess: () => alert('Invoice atualizada com sucesso!'),
+          onError: (err) => alert('Erro ao atualizar invoice: ' + err.message),
+        }
+      );
+    } else {
+      invoices.createInvoice.mutate(payload, {
+        onSuccess: (invoice) => alert('Invoice criada com sucesso! ID: ' + invoice.id),
+        onError: (err) => alert('Erro ao criar invoice: ' + err.message),
+      });
+    }
   };
 
   const addItem = () => append({ description: '', quantity: 1, amount: 0 });
@@ -85,6 +120,9 @@ export default function Page() {
   };
 
   const formatCurrency = (n: number) => `$${n.toFixed(2)}`;
+
+  // console.log('selectedCompany', selectedCompany)
+  // console.log('selectedClient', selectedClient)
 
   return (
     <div className="flex flex-col items-center justify-center w-full p-4 md:p-10">
