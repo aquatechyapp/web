@@ -8,17 +8,19 @@ import { Button } from '@/components/ui/button';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import useInvoices, { InvoicePayload } from '@/hooks/react-query/invoices/useInvoices';
+import { useParams } from 'next/navigation';
 
 const defaultValues = {
-  fromCompany: 'TechVista Solutions',
-  fromEmail: 'invoicing@techvista.com',
-  fromAddress: '123 Third Street, San Francisco, CA',
-  toName: 'Benny Younes',
-  toEmail: 'benny@starlight.com',
-  toAddress: '321 Beverly Blvd, Los Angeles, CA',
+  fromCompany: '',
+  fromEmail: '',
+  fromAddress: '',
+  toName: '',
+  toEmail: '',
+  toAddress: '',
   lineItems: [
-    { description: 'AI Chatbot / Enterprise', quantity: 1, amount: 1000 },
-    { description: 'Integration fee', quantity: 1, amount: 300 },
+    { description: '', quantity: 0, amount: 0 },
+    { description: '', quantity: 0, amount: 0 },
   ],
 };
 
@@ -29,6 +31,7 @@ export default function Page() {
   const { data: clients } = useGetAllClients();
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedClient, setSelectedClient] = useState<string>('');
+  const { id } = useParams();
 
   const { control, register, handleSubmit, watch, setValue } = useForm<FormValues>({
     defaultValues,
@@ -46,23 +49,42 @@ export default function Page() {
     return acc + q * a;
   }, 0);
 
+  const invoicesMutation = useInvoices();
+
   const onSubmit = (data: FormValues) => {
-    console.log('Invoice saved:', data);
+    // Transformar para o payload da API
+    const payload: InvoicePayload = {
+      clientId: selectedClient,
+      companyId: selectedCompany,
+      amount: total,
+      issueDate: new Date().toISOString(),
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // exemplo: +7 dias
+      items: data.lineItems.map((item) => ({
+        name: item.description,
+        pricePerUnit: Number(item.amount),
+        units: Number(item.quantity),
+      })),
+    };
+
+    // Usar createInvoice do hook
+    invoicesMutation.createInvoice.mutate(payload, {
+      onSuccess: (invoice) => {
+        alert('Invoice criada com sucesso! ID: ' + invoice.id);
+      },
+      onError: (err) => {
+        alert('Erro ao criar invoice: ' + err.message);
+      },
+    });
   };
 
-  const addItem = () => {
-    append({ description: '', quantity: 1, amount: 0 });
-  };
+  const addItem = () => append({ description: '', quantity: 1, amount: 0 });
 
   const onChangeNumber = (index: number, field: 'quantity' | 'amount', value: string) => {
-    // sanitize and set numeric value
     const numeric = value === '' ? '' : Number(value);
     setValue(`lineItems.${index}.${field}` as const, numeric as any, { shouldValidate: false, shouldDirty: true });
   };
 
-  const formatCurrency = (n: number) => {
-    return `$${n.toFixed(2)}`;
-  };
+  const formatCurrency = (n: number) => `$${n.toFixed(2)}`;
 
   return (
     <div className="flex flex-col items-center justify-center w-full p-4 md:p-10">
@@ -102,7 +124,7 @@ export default function Page() {
                   </SelectContent>
                 </Select>
 
-                          </div>
+                </div>
 
               <div>
                 <label className="text-xs text-gray-600">From Email</label>
