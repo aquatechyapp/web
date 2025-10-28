@@ -9,17 +9,7 @@ import React from 'react';
 export default function GeoBlockedPage() {
   return (
     <div className="flex h-screen flex-col bg-gradient-to-b from-white to-red-50">
-      <div className="border-b bg-white px-4 py-2 shadow-sm">
-        <Image
-          width="0"
-          height="0"
-          sizes="100vw"
-          className="h-auto w-52"
-          src="/images/logoHor.png"
-          alt="Aquatechy Logo"
-          priority
-        />
-      </div>
+      
       <div className="flex h-full flex-col items-center justify-center p-4 pb-40">
         <div className="relative">
           <Globe2 className="mx-auto h-32 w-32 text-red-400 opacity-80" />
