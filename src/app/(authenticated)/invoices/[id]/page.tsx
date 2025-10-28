@@ -130,15 +130,15 @@ export default function Page() {
         units: Number(item.quantity),
       })),
       ...(data.type === 'Recurring' && {
-        recurringInterval: data.recurringInterval || undefined,
+        recurringInterval: data.recurringInterval as 'Weekly' | 'Monthly' | 'Quarterly' | 'Yearly',
         recurringStartDate: data.recurringStartDate
           ? new Date(data.recurringStartDate).toISOString()
           : undefined,
         recurringEndDate: data.recurringEndDate
           ? new Date(data.recurringEndDate).toISOString()
           : undefined,
-        recurringDayOfMonth: data.recurringDayOfMonth || undefined,
-        recurringEmailDayOfMonth: data.recurringEmailDayOfMonth || undefined,
+        recurringDayOfMonth: data.recurringDayOfMonth != null ? Number(data.recurringDayOfMonth) : undefined,
+        recurringEmailDayOfMonth: data.recurringEmailDayOfMonth != null ? Number(data.recurringEmailDayOfMonth) : undefined,
         isRecurringTemplate: data.isRecurringTemplate ?? true,
         autoSendEmail: data.autoSendEmail ?? false,
         emailRecipient: data.emailRecipient || undefined,
@@ -365,13 +365,25 @@ export default function Page() {
 
                   <div className="flex flex-col">
                     <label className="text-xs text-gray-600 mb-1">Day of Month</label>
-                    <Input type="number" min={1} max={31} {...register('recurringDayOfMonth')} placeholder="1-31" />
-                  </div>
+                    <Input
+                      type="number"
+                      placeholder='Day of Month'
+                      min={1}
+                      max={31}
+                      {...register('recurringDayOfMonth', { valueAsNumber: true })}
+                    />
+                    </div>
 
                   <div className="flex flex-col">
                     <label className="text-xs text-gray-600 mb-1">Email Day of Month</label>
-                    <Input type="number" min={1} max={31} {...register('recurringEmailDayOfMonth')} placeholder="1-31" />
-                  </div>
+                    <Input
+                      type="number"
+                      placeholder="Email Day of Month"
+                      min={1}
+                      max={31}
+                      {...register('recurringEmailDayOfMonth', { valueAsNumber: true })}
+                    />
+                     </div>
 
                   <div className="flex items-center gap-2">
                     <input type="checkbox" {...register('isRecurringTemplate')} id="isRecurringTemplate" />
@@ -427,6 +439,7 @@ export default function Page() {
                   rows={4}
                 />
               </div>
+
             </div>
 
             <div>
