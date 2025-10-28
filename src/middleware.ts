@@ -1,12 +1,21 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const whitelist = ['/login', '/signup', '/userconfirmation', '/recover', '/resetpassword', '/server-offline'];
+const whitelist = ['/login', '/signup', '/userconfirmation', '/recover', '/resetpassword', '/server-offline', '/unsubscribe', '/clients/unsubscribe', '/users/unsubscribe', '/geo-blocked'];
 
 export async function middleware(req: NextRequest) {
-  // for public routes, we don't need to check for a token
   const pathname = req.nextUrl.pathname;
 
+  // Geo-blocking: Block all non-US users (including public routes)
+  // Comment out the lines below if you want to allow login/signup from anywhere
+  const country = req.geo?.country || req.headers.get('x-vercel-ip-country') || req.headers.get('cf-ipcountry') || req.headers.get('x-country-code');
+  
+  // Only allow US users
+  if (country && country !== 'US') {
+    return NextResponse.rewrite(new URL('/geo-blocked', req.url));
+  }
+
+  // for public routes, we don't need to check for a token
   if (whitelist.some((path) => path === pathname)) {
     return NextResponse.next();
   }
