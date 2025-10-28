@@ -1,20 +1,23 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useUnsubscribeClient } from '@/hooks/react-query/clients/unsubscribe';
 import { UnsubscribeContent } from '../UnsubscribeContent';
 
-interface Props {
-  searchParams: {
-    token: string ;
-  };
-}
-
-export default function Page({ searchParams }: Props) {
+export default function Page() {
+  const searchParams = useSearchParams();
   const { mutate, isPending, isError, isSuccess } = useUnsubscribeClient();
 
   const handleUnsubscribe = () => {
+    const token = searchParams.get('token');
+    
+    if (!token) {
+      console.error('Token not found in URL');
+      return;
+    }
+
     const params = {
-      token: searchParams.token
+      token
     };
 
     mutate(params);

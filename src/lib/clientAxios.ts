@@ -13,7 +13,7 @@ export const clientAxios = axios.create({
 
 clientAxios.interceptors.request.use(
   async (config) => {
-    if (config.url === '/login' || config.url === '/signup' || config.url === '/server-offline' || config.url === '/clients/unsubscribe' || config.url === '/users/unsubscribe') {
+    if (config.url?.startsWith('/login') || config.url?.startsWith('/signup') || config.url === '/server-offline' || config.url?.startsWith('/clients/unsubscribe') || config.url?.startsWith('/users/unsubscribe') || config.url?.startsWith('/userconfirmation')) {
       return config;
     }
 

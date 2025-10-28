@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,15 +9,10 @@ import { clientAxios } from '@/lib/clientAxios';
 
 import { useToast } from '../../../components/ui/use-toast';
 
-interface PropsToken {
-  searchParams: {
-    token: string;
-  };
-}
-
-export default function Page({ searchParams }: PropsToken) {
+export default function Page() {
   const router = useRouter();
-  const token = searchParams.token;
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
   const { toast } = useToast();
 
   const { mutate, isPending, isError } = useMutation({
