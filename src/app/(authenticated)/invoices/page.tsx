@@ -10,6 +10,10 @@ import Link from 'next/link';
 import { Edit2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { columns } from './DataTableInvoice/columns';
+import { DataTableInvoice } from './DataTableInvoice';
+import DataTableInvoiceSkeleton from './DataTableInvoice/skeleton';
 
 export default function Page() {
   const { data: companies } = useGetCompanies();
@@ -36,7 +40,7 @@ export default function Page() {
   const handlePageChange = (page: number) => setCurrentPage(page);
 
   return (
-    <div className="flex flex-col w-full p-4 md:p-10 space-y-6">
+    <div className="flex flex-col w-full p-4 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         <div>
@@ -96,43 +100,14 @@ export default function Page() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-        {isLoading && <div className="p-4 text-center">Loading invoices...</div>}
+        {isLoading &&
+          <DataTableInvoiceSkeleton />
+          }
+
         {isError && <div className="p-4 text-center text-red-500">Error loading invoices.</div>}
 
         {(invoices ?? []).length > 0 ? (
-          <table className="min-w-full divide-y divide-gray-200">
-
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Quantities</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody className="bg-white divide-y divide-gray-200">
-              {(invoices ?? []).map((inv, idx) => (
-                <tr key={inv.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="px-4 py-2">{inv.company.name}</td>
-                  <td className="px-4 py-2">{inv.client.firstName} {inv.client.lastName}</td>
-                  <td className="px-4 py-2">${inv.amount.toFixed(2)}</td>
-                  <td className="px-4 py-2 text-center">{inv.items?.length ?? 0}</td>
-                  <td className="px-4 py-2">{inv.status}</td>
-                  <td className="flex justify-center items-center px-2 py-3 text-blue-600 hover:text-blue-800">
-                    <Link
-                      href={`/invoices/${inv.id}`}
-                    >
-                      <Edit2
-                       className="w-4 h-4 mr-1" />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <DataTableInvoice columns={columns} data={invoices || []} />
         ) : (
           <div className="p-6 text-center text-gray-500">
             No invoices found.{' '}

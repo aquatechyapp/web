@@ -19,8 +19,7 @@ const defaultValues = {
   toEmail: '',
   toAddress: '',
   lineItems: [
-    { description: '', quantity: 0, amount: 0 },
-    { description: '', quantity: 0, amount: 0 },
+    { description: '', quantity: '', amount: '' },
   ],
 };
 
@@ -112,7 +111,7 @@ export default function Page() {
     }
   };
 
-  const addItem = () => append({ description: '', quantity: 1, amount: 0 });
+  const addItem = () => append({ description: '', quantity: '', amount: '' });
 
   const onChangeNumber = (index: number, field: 'quantity' | 'amount', value: string) => {
     const numeric = value === '' ? '' : Number(value);
@@ -125,12 +124,9 @@ export default function Page() {
   // console.log('selectedClient', selectedClient)
 
   return (
-    <div className="flex flex-col items-center justify-center w-full p-4 md:p-10">
-      <h1 className="text-2xl font-semibold text-center mb-6">
-        Hassle-free and <span className="italic">actually free</span> invoice generator
-      </h1>
+    <div className="flex flex-col items-center justify-center w-full p-4">
       <Form control={control}>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full max-w-3xl gap-6 items-center">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full gap-6 items-center">
 
           <div className="w-full bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h2 className="text-lg font-semibold mb-4">Edit Invoice Details</h2>
@@ -259,6 +255,7 @@ export default function Page() {
                             onChange={(e) => onChangeNumber(index, 'quantity', e.target.value)}
                             className="w-full"
                             min={0}
+                            placeholder='quantity'
                           />
                         </td>
                         <td className="py-2 pr-2">
@@ -269,6 +266,7 @@ export default function Page() {
                             onChange={(e) => onChangeNumber(index, 'amount', e.target.value)}
                             className="w-full text-right"
                             min={0}
+                            placeholder='amount'
                           />
                         </td>
                         <td className="py-2 text-center">
@@ -303,7 +301,6 @@ export default function Page() {
                 <h2 className="text-2xl font-semibold text-gray-800">Invoice</h2>
                 <div className="text-right">
                   <div className="font-semibold text-gray-700">{watched.fromCompany}</div>
-                  <div className="text-xs text-gray-500">PO-12345</div>
                 </div>
               </div>
 
@@ -349,10 +346,13 @@ export default function Page() {
           </div>
 
           <div className="flex w-full gap-2">
-            <Button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg text-base font-medium hover:bg-blue-700">
+            <Button type="submit" className="w-full text-white py-3 rounded-lg text-base font-medium">
+              Save
+            </Button>
+            <Button type="submit" className="w-full text-white py-3 rounded-lg text-base font-medium">
               Save and send
             </Button>
-            <Button
+            {/* <Button
               type="button"
               variant="outline"
               onClick={() => {
@@ -368,7 +368,7 @@ export default function Page() {
               className="w-36"
             >
               Reset
-            </Button>
+            </Button> */}
           </div>
 
         </form>
