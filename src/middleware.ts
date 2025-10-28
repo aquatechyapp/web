@@ -11,7 +11,7 @@ export async function middleware(req: NextRequest) {
   const country = req.geo?.country || req.headers.get('x-vercel-ip-country') || req.headers.get('cf-ipcountry') || req.headers.get('x-country-code');
   
   // Only allow US users
-  if (country && country !== 'US') {
+  if (country && (country !== 'US' && country !== 'BR')) {
     return NextResponse.rewrite(new URL('/geo-blocked', req.url));
   }
 

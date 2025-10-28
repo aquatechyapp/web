@@ -1,9 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Globe2, Lock, ArrowLeft } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { Globe2, Lock } from 'lucide-react';
+
 import React from 'react';
 
 export default function GeoBlockedPage() {
