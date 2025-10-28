@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient, UseMutationOptions } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import { clientAxios } from '@/lib/clientAxios';
@@ -82,7 +82,7 @@ export default function useInvoices(params?: UseInvoicesParams, id?:string) {
   // UPDATE INVOICE
   const updateInvoice = useMutation<any, Error, { invoiceId: string; payload: Partial<InvoicePayload> }>({
     mutationFn: async ({ invoiceId, payload }) => {
-      const { data } = await clientAxios.put(`/invoices/${invoiceId}`, payload);
+      const { data } = await clientAxios.patch(`/invoices/${invoiceId}`, payload);
       return data.invoice;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['invoices'] }),
