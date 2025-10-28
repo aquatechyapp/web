@@ -6,14 +6,14 @@ const baseUrl = process.env.API_URL;
 export const clientAxios = axios.create({
   baseURL: baseUrl + '/api/v1',
   headers: {
-    'Content-Type': ['application/json']
+    'Content-Type': 'application/json'
   },
   withCredentials: true
 });
 
 clientAxios.interceptors.request.use(
   async (config) => {
-    if (config.url === '/login' || config.url === '/signup' || config.url === '/server-offline') {
+    if (config.url === '/login' || config.url === '/signup' || config.url === '/server-offline' || config.url === '/clients/unsubscribe' || config.url === '/users/unsubscribe') {
       return config;
     }
 
