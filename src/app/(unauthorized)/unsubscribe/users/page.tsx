@@ -1,10 +1,11 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { useUnsubscribeUser } from '@/hooks/react-query/user/unsubscribe';
 import { UnsubscribeContent } from '../UnsubscribeContent';
 
-export default function Page() {
+function UnsubscribeUserForm() {
   const searchParams = useSearchParams();
   const { mutate, isPending, isError, isSuccess } = useUnsubscribeUser();
 
@@ -25,6 +26,14 @@ export default function Page() {
 
   return (
     <UnsubscribeContent isPending={isPending} isError={isError} isSuccess={isSuccess} onUnsubscribe={handleUnsubscribe} />
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <UnsubscribeUserForm />
+    </Suspense>
   );
 }
 
