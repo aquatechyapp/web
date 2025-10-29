@@ -12,6 +12,8 @@ import useInvoices, { InvoicePayload } from '@/hooks/react-query/invoices/useInv
 import { useParams, useRouter } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const defaultValues = {
   fromCompany: '',
@@ -37,6 +39,38 @@ const defaultValues = {
   emailRecipient: '',
 };
 
+// Schema para os itens
+const lineItemSchema = z.object({
+  description: z.string().min(1, 'Description is required'),
+  quantity: z.number().positive('Quantity must be positive'),
+  amount: z.number().positive('Amount must be positive'),
+});
+
+// Schema principal
+export const invoiceSchema = z.object({
+  fromCompany: z.string().min(1, 'Company is required'),
+  fromEmail: z.string().email('Invalid email').optional(),
+  fromAddress: z.string().optional(),
+  toName: z.string().min(1, 'Client name is required'),
+  toEmail: z.string().email('Invalid email'),
+  toAddress: z.string().optional(),
+  lineItems: z.array(lineItemSchema).min(1, 'At least one line item is required'),
+  type: z.enum(['OneTime', 'Recurring']).optional(),
+  status: z.enum(['Draft', 'Sent', 'Paid', 'Overdue', 'Cancelled', 'Void']).optional(),
+  currency: z.string().optional(),
+  notes: z.string().optional(),
+  description: z.string().optional(),
+  recurringInterval: z.enum(['Weekly', 'Monthly', 'Quarterly', 'Yearly']).optional(),
+  recurringStartDate: z.string().optional(),
+  recurringEndDate: z.string().optional(),
+  recurringDayOfMonth: z.number().int().min(1).max(31).optional(),
+  recurringEmailDayOfMonth: z.number().int().min(1).max(31).optional(),
+  isRecurringTemplate: z.boolean().optional(),
+  autoSendEmail: z.boolean().optional(),
+  emailRecipient: z.string().email().optional(),
+});
+
+
 type FormValues = typeof defaultValues;
 
 export default function Page() {
@@ -48,8 +82,9 @@ export default function Page() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const { control, register, handleSubmit, watch, setValue, reset } = useForm<FormValues>({
+  const { control, register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
     defaultValues,
+    resolver: zodResolver(invoiceSchema),
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -247,12 +282,16 @@ export default function Page() {
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.fromCompany && <span className="text-red-500 text-xs mt-1">{errors.fromCompany.message}</span>}
+
               </div>
 
               {/* From Email */}
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">From Email</label>
                 <Input {...register('fromEmail')} placeholder="Email address" />
+                {errors.fromEmail && <span className="text-red-500 text-xs mt-1">{errors.fromEmail.message}</span>}
+
               </div>
 
               {/* To Client */}
@@ -284,24 +323,32 @@ export default function Page() {
                       ))}
                   </SelectContent>
                 </Select>
+                {errors.toName && <span className="text-red-500 text-xs mt-1">{errors.toName.message}</span>}
+
               </div>
 
               {/* To Email */}
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">To Email</label>
                 <Input {...register('toEmail')} placeholder="Recipient email" />
+                {errors.toEmail && <span className="text-red-500 text-xs mt-1">{errors.toEmail.message}</span>}
+
               </div>
 
               {/* From Address */}
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">From Address</label>
                 <Input {...register('fromAddress')} placeholder="Sender address" />
+                {errors.fromAddress && <span className="text-red-500 text-xs mt-1">{errors.fromAddress.message}</span>}
+
               </div>
 
               {/* To Address */}
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">To Address</label>
                 <Input {...register('toAddress')} placeholder="Recipient address" />
+                {errors.toAddress && <span className="text-red-500 text-xs mt-1">{errors.toAddress.message}</span>}
+
               </div>
 
                   <div className="flex flex-col">
@@ -317,16 +364,22 @@ export default function Page() {
                         <SelectItem value="Yearly">Yearly</SelectItem>
                       </SelectContent>
                     </Select>
+                {errors.recurringInterval && <span className="text-red-500 text-xs mt-1">{errors.recurringInterval.message}</span>}
+
                   </div>
 
                   <div className="flex flex-col">
                     <label className="text-xs text-gray-600 mb-1">Start Date</label>
                     <Input type="date" onChange={(e) => setValue('recurringStartDate', e.target.value)} />
+                {errors.recurringStartDate && <span className="text-red-500 text-xs mt-1">{errors.recurringStartDate.message}</span>}
+
                   </div>
 
                   <div className="flex flex-col">
                     <label className="text-xs text-gray-600 mb-1">End Date</label>
                     <Input type="date" onChange={(e) => setValue('recurringEndDate', e.target.value)} />
+                {errors.recurringEndDate && <span className="text-red-500 text-xs mt-1">{errors.recurringEndDate.message}</span>}
+
                   </div>
 
                   <div className="flex flex-col">
@@ -338,6 +391,8 @@ export default function Page() {
                       max={31}
                       {...register('recurringDayOfMonth', { valueAsNumber: true })}
                     />
+                {errors.recurringDayOfMonth && <span className="text-red-500 text-xs mt-1">{errors.recurringDayOfMonth.message}</span>}
+
                     </div>
 
                   <div className="flex flex-col">
@@ -349,6 +404,8 @@ export default function Page() {
                       max={31}
                       {...register('recurringEmailDayOfMonth', { valueAsNumber: true })}
                     />
+                {errors.recurringEmailDayOfMonth && <span className="text-red-500 text-xs mt-1">{errors.recurringEmailDayOfMonth.message}</span>}
+
                      </div>
 
               <div className="flex flex-col">
@@ -365,11 +422,15 @@ export default function Page() {
                     <SelectItem value="false">No</SelectItem>
                   </SelectContent>
                 </Select>
+                {errors.autoSendEmail && <span className="text-red-500 text-xs mt-1">{errors.autoSendEmail.message}</span>}
+
               </div>
 
                   <div className="flex flex-col">
                     <label className="text-xs text-gray-600 mb-1">Email Recipient</label>
                     <Input type="email" {...register('emailRecipient')} placeholder="Email recipient" />
+                {errors.emailRecipient && <span className="text-red-500 text-xs mt-1">{errors.emailRecipient.message}</span>}
+
                   </div>
 
               {/* Campos opcionais gerais */}
@@ -388,16 +449,22 @@ export default function Page() {
                     <SelectItem value="Void">Void</SelectItem>
                   </SelectContent>
                 </Select>
+                {errors.status && <span className="text-red-500 text-xs mt-1">{errors.status.message}</span>}
+
               </div>
 
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">Currency</label>
                 <Input {...register('currency')} placeholder="USD" />
+                {errors.currency && <span className="text-red-500 text-xs mt-1">{errors.currency.message}</span>}
+
               </div>
 
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">Notes</label>
                 <Input {...register('notes')} placeholder="Notes" />
+                {errors.notes && <span className="text-red-500 text-xs mt-1">{errors.notes.message}</span>}
+
               </div>
 
               <div className="flex flex-col">
@@ -408,6 +475,8 @@ export default function Page() {
                   className="border border-gray-200 rounded-md p-2 text-sm resize-none"
                   rows={4}
                 />
+                {errors.description && <span className="text-red-500 text-xs mt-1">{errors.description.message}</span>}
+
               </div>
 
             </div>
@@ -438,6 +507,9 @@ export default function Page() {
                             {...register(`lineItems.${index}.description` as const)}
                             placeholder="Item description"
                           />
+                          {errors.lineItems?.[index]?.description && (
+                            <span className="text-red-500 text-xs">{errors.lineItems[index]?.description?.message}</span>
+                          )}
                         </td>
                         <td className="py-2 px-3">
                           <Input
@@ -447,6 +519,9 @@ export default function Page() {
                             min={0}
                             placeholder="Quantity"
                           />
+                          {errors.lineItems?.[index]?.quantity && (
+                            <span className="text-red-500 text-xs">{errors.lineItems[index]?.quantity?.message}</span>
+                          )}
                         </td>
                         <td className="py-2 px-3">
                           <Input
@@ -458,6 +533,9 @@ export default function Page() {
                             placeholder="Amount"
                             className="text-right"
                           />
+                          {errors.lineItems?.[index]?.amount && (
+                            <span className="text-red-500 text-xs">{errors.lineItems[index]?.amount?.message}</span>
+                          )}
                         </td>
                         <td className="py-2 text-center">
                           <Button
