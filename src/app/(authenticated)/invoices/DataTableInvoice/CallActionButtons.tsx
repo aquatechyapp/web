@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDeleteOutline } from 'react-icons/md';
 import { Loader2Icon } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -18,7 +17,7 @@ import { Dialog } from '@/components/ui/dialog';
 import { ModalDeleteInvoice } from './ModalDeleteInvoice';
 import { Invoice } from './columns';
 import useInvoices from '@/hooks/react-query/invoices/useInvoices';
-
+import { ModalUpdateStatus } from './ModalUpdateStatus';
 interface ActionButtonsProps {
   invoice: Invoice;
 }
@@ -28,10 +27,11 @@ export function ActionButtons({ invoice }: ActionButtonsProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
-  const { deleteInvoice } = useInvoices();
+  const { deleteInvoice, updatePaymentStatus } = useInvoices();
 
-  const handleActionSelect = (action: 'view' | 'edit' | 'delete') => {
+  const handleActionSelect = (action: 'status' | 'edit' | 'delete') => {
     setIsDropdownOpen(false);
     setTimeout(() => {
       switch (action) {
@@ -40,6 +40,9 @@ export function ActionButtons({ invoice }: ActionButtonsProps) {
           break;
         case 'delete':
           setIsDeleteModalOpen(true);
+          break;
+        case 'status':
+          setIsStatusModalOpen(true);
           break;
       }
     }, 0);
@@ -83,7 +86,10 @@ export function ActionButtons({ invoice }: ActionButtonsProps) {
               </DropdownMenuShortcut>
             </div>
           </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => handleActionSelect('status')}>Change Status</DropdownMenuItem>
+
         </DropdownMenuContent>
+
       </DropdownMenu>
 
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
@@ -93,6 +99,26 @@ export function ActionButtons({ invoice }: ActionButtonsProps) {
           handleSubmit={() => deleteInvoice.mutate(invoice.id)}
         />
       </Dialog>
+      <ModalUpdateStatus
+        open={isStatusModalOpen}
+        setOpen={setIsStatusModalOpen}
+        currentStatus={invoice.status}
+        onConfirm={(newStatus) => {
+          const paymentStatusMap: Record<string, 'pending' | 'succeeded'> = {
+            Draft: 'pending',
+            Paid: 'succeeded',
+          };
+
+          updatePaymentStatus.mutate({
+            invoiceId: invoice.id,
+            paymentStatus: paymentStatusMap[newStatus] || 'pending',
+            paidAt: new Date().toISOString(),
+            paidAmount: invoice.amount,
+            paymentMethod: 'Credit Card',
+          });
+        }}
+      />
+
     </div>
   );
 }

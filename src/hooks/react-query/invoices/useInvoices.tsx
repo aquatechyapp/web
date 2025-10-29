@@ -110,7 +110,7 @@ export default function useInvoices(params?: UseInvoicesParams, id?:string) {
     }
   >({
     mutationFn: async ({ invoiceId, paymentStatus, paidAt, paidAmount, paymentMethod }) => {
-      const { data } = await clientAxios.put(`/invoices/${invoiceId}/payment-status`, {
+      const { data } = await clientAxios.patch(`/invoices/${invoiceId}/payment-status`, {
         paymentStatus,
         paidAt,
         paidAmount,
