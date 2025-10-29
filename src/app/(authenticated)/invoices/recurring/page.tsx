@@ -93,9 +93,9 @@ export default function Page() {
           type="submit"
           size="sm"
           className="w-full md:w-auto h-auto"
-          onClick={() => router.push('/invoices/create')}
+          onClick={() => router.push('/invoices/recurring/create')}
         >
-          Create invoice
+          Create invoice recurring
         </Button>
       </div>
 
@@ -112,7 +112,7 @@ export default function Page() {
           <div className="p-6 text-center text-gray-500">
             No invoices found.{' '}
             <a
-              href="/invoices/create"
+                href="/invoices/recurring/create"
               className="text-blue-600 hover:underline"
             >
               Create your first invoice

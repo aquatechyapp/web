@@ -23,11 +23,18 @@ const defaultValues = {
   lineItems: [
     { description: '', quantity: '', amount: '' },
   ],
-  type: 'OneTime' as 'OneTime' | 'Recurring',
   status: 'Draft' as 'Draft' | 'Sent' | 'Paid' | 'Overdue' | 'Cancelled' | 'Void',
   currency: 'USD',
   notes: '',
   description: '',
+  recurringInterval: '' as '' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Yearly',
+  recurringStartDate: '',
+  recurringEndDate: '',
+  recurringDayOfMonth: undefined as number | undefined,
+  recurringEmailDayOfMonth: undefined as number | undefined,
+  isRecurringTemplate: false,
+  autoSendEmail: false,
+  emailRecipient: '',
 };
 
 type FormValues = typeof defaultValues;
@@ -66,12 +73,14 @@ export default function Page() {
   useEffect(() => {
     const inv = invoices.invoiceById.data;
     if (id && inv) {
+      // Define todos os valores manualmente com setValue
       setValue('fromCompany', inv.company?.name || '');
       setValue('fromEmail', inv.company?.email || '');
       setValue('fromAddress', inv.company?.address || '');
       setValue('toName', `${inv.client?.firstName || ''} ${inv.client?.lastName || ''}`.trim());
       setValue('toEmail', inv.client?.email || '');
       setValue('toAddress', inv.client?.address || '');
+
       setValue(
         'lineItems',
         inv.items?.map((item: any) => ({
@@ -80,27 +89,45 @@ export default function Page() {
           amount: item.pricePerUnit,
         })) || [{ description: '', quantity: 0, amount: 0 }]
       );
+
       setValue('status', inv.status || 'Draft');
       setValue('currency', inv.currency || 'USD');
       setValue('notes', inv.notes || '');
       setValue('description', inv.description || '');
 
+      // Campos de recorrência
+      setValue('recurringInterval', inv.recurringInterval || '');
+      setValue(
+        'recurringStartDate',
+        inv.recurringStartDate
+          ? new Date(inv.recurringStartDate).toISOString().split('T')[0]
+          : ''
+      );
+      setValue(
+        'recurringEndDate',
+        inv.recurringEndDate
+          ? new Date(inv.recurringEndDate).toISOString().split('T')[0]
+          : ''
+      );
+      setValue('recurringDayOfMonth', inv.recurringDayOfMonth || undefined);
+      setValue('recurringEmailDayOfMonth', inv.recurringEmailDayOfMonth || undefined);
+      setValue('isRecurringTemplate', inv.isRecurringTemplate ?? false);
+      setValue('autoSendEmail', inv.autoSendEmail ?? false);
+      setValue('emailRecipient', inv.emailRecipient || '');
+
+      // Mantém os IDs fora do form
       setSelectedCompany(inv.companyId);
-
-      // Só seta o client quando os clients estiverem carregados
-      if (selectedCompany) {
-        setSelectedClient(inv.clientId);
-      }
-
     }
-  }, [id, invoices.invoiceById.data, clients]);
+  }, [id, invoices.invoiceById.data]);
 
+  // Quando a company estiver pronta, seta o client
   useEffect(() => {
     const inv = invoices.invoiceById.data;
     if (id && inv && selectedCompany && !selectedClient) {
       setSelectedClient(inv.clientId);
     }
   }, [selectedCompany]);
+
 
   const onSubmit = (data: FormValues) => {
     const isValidId = singleId && /^[0-9a-fA-F]{24}$/.test(singleId);
@@ -111,7 +138,6 @@ export default function Page() {
       amount: total,
       issueDate: new Date().toISOString(),
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      type: data.type,
       status: data.status || undefined,
       currency: data.currency || 'USD',
       notes: data.notes || undefined,
@@ -121,39 +147,53 @@ export default function Page() {
         pricePerUnit: Number(item.amount),
         units: Number(item.quantity),
       })),
+      recurringInterval: data.recurringInterval as 'Weekly' | 'Monthly' | 'Quarterly' | 'Yearly',
+      recurringStartDate: data.recurringStartDate
+        ? new Date(data.recurringStartDate).toISOString()
+        : undefined,
+      recurringEndDate: data.recurringEndDate
+        ? new Date(data.recurringEndDate).toISOString()
+        : undefined,
+      recurringDayOfMonth:
+        data.recurringDayOfMonth != null ? Number(data.recurringDayOfMonth) : undefined,
+      recurringEmailDayOfMonth:
+        data.recurringEmailDayOfMonth != null ? Number(data.recurringEmailDayOfMonth) : undefined,
+      isRecurringTemplate: data.isRecurringTemplate ?? true,
+      autoSendEmail: data.autoSendEmail ?? false,
+      emailRecipient: data.emailRecipient || undefined,
     };
 
     if (isValidId) {
-      const { clientId, companyId, ...updatePayload } = payload;
-      invoices.updateInvoice.mutate(
-        { invoiceId: id as string, payload: updatePayload },
+      invoices.createRecurringTemplate.mutate(payload, {
+        onSuccess: () =>
         {
-          onSuccess: () => {
-            toast({ title: 'Invoice updated successfully', variant: 'success' }),
-              router.back();
-          },
-          onError: (err) =>
-            toast({
-              title: 'Error updating invoice',
-              description: err.message,
-              variant: 'destructive',
-            }),
-        }
-      );
-    } else {
-      invoices.createInvoice.mutate(payload, {
-        onSuccess: (invoice) => {
           toast({
-            title: 'Invoice created successfully!',
+            title: 'Recurring invoice updated successfully',
+            variant: 'success',
+          }),
+            router.back();
+        },
+        onError: (err) =>
+          toast({
+            title: 'Error updating recurring invoice',
+            description: err.message,
+            variant: 'destructive',
+          }),
+      });
+    } else {
+      invoices.createRecurringTemplate.mutate(payload, {
+        onSuccess: (template) =>{
+          toast({
+            title: 'Recurring template created successfully',
             description:
               'Your new invoice has been created and is ready to be sent to the client.',
             variant: 'success',
           }),
             router.back();
-      },
+        },
         onError: (err) =>
           toast({
-            title: 'Error creating invoice',
+            title: 'Error creating recurring template',
             description: err.message,
             variant: 'destructive',
           }),
@@ -170,13 +210,16 @@ export default function Page() {
 
   const formatCurrency = (n: number) => `$${n.toFixed(2)}`;
 
+  // console.log('selectedCompany', selectedCompany)
+  // console.log('selectedClient', selectedClient)
+
   return (
     <div className="flex flex-col items-center justify-center w-full p-4">
       <Form control={control}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full gap-6 items-center">
 
           <div className="w-full bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
-            <h2 className="text-lg font-semibold mb-2">Invoice Details</h2>
+            <h2 className="text-lg font-semibold mb-2">Invoice Recurring Details</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
@@ -260,6 +303,74 @@ export default function Page() {
                 <label className="text-xs text-gray-600 mb-1">To Address</label>
                 <Input {...register('toAddress')} placeholder="Recipient address" />
               </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-600 mb-1">Recurring Interval</label>
+                    <Select onValueChange={(value) => setValue('recurringInterval', value as any)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select interval" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Weekly">Weekly</SelectItem>
+                        <SelectItem value="Monthly">Monthly</SelectItem>
+                        <SelectItem value="Quarterly">Quarterly</SelectItem>
+                        <SelectItem value="Yearly">Yearly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-600 mb-1">Start Date</label>
+                    <Input type="date" onChange={(e) => setValue('recurringStartDate', e.target.value)} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-600 mb-1">End Date</label>
+                    <Input type="date" onChange={(e) => setValue('recurringEndDate', e.target.value)} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-600 mb-1">Day of Month</label>
+                    <Input
+                      type="number"
+                      placeholder='Day of Month'
+                      min={1}
+                      max={31}
+                      {...register('recurringDayOfMonth', { valueAsNumber: true })}
+                    />
+                    </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-600 mb-1">Email Day of Month</label>
+                    <Input
+                      type="number"
+                      placeholder="Email Day of Month"
+                      min={1}
+                      max={31}
+                      {...register('recurringEmailDayOfMonth', { valueAsNumber: true })}
+                    />
+                     </div>
+
+              <div className="flex flex-col">
+                <label className="text-xs text-gray-600 mb-1">Auto Send Email</label>
+                <Select
+                  value={watch('autoSendEmail') ? 'true' : 'false'}
+                  onValueChange={(value) => setValue('autoSendEmail', value === 'true')}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-gray-600 mb-1">Email Recipient</label>
+                    <Input type="email" {...register('emailRecipient')} placeholder="Email recipient" />
+                  </div>
 
               {/* Campos opcionais gerais */}
               <div className="flex flex-col">

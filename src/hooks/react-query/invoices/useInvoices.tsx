@@ -13,7 +13,7 @@ export interface InvoiceItemPayload {
 interface UseInvoicesParams {
   page?: number;
   limit?: number;
-  companyId?: string;
+  companyOwnerId?: string;
   clientId?: string;
 }
 // Payload para criar/atualizar fatura

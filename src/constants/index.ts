@@ -287,10 +287,27 @@ export const routes: Menu[] = [
   {
     text: 'Invoices',
     href: '/invoices',
-    icon: DollarSign ,
+    icon: DollarSign,
     title: 'Invoices',
-    description: 'View and manage all your invoices in one place'
-  },
+    description: 'View and manage all your invoices in one place',
+    submenu: {
+      invoices: {
+        text: 'Invoices',
+        href: '/invoices',
+        title: 'Invoices',
+        icon: DollarSign,
+        description: 'View and manage all invoices',
+      },
+      subscription: {
+        text: 'Recurring Invoices',
+        href: '/invoices/recurring',
+        title: 'Recurring Invoices',
+        icon: DollarSign,
+        description: 'Manage recurring invoice templates and schedules',
+      }
+    },
+  }
+
 ];
 
 export const paymentType = [
