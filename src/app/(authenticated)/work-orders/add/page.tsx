@@ -22,6 +22,7 @@ import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/g
 import { useCreateAssignment } from '@/hooks/react-query/assignments/createAssignment';
 import { useCreateAssignmentForSpecificService } from '@/hooks/react-query/assignments/createAssignmentForSpecificService';
 import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
+import useGetPoolsByClientId from '@/hooks/react-query/pools/getPoolsByClientId';
 import { Client } from '@/ts/interfaces/Client';
 import { useUserStore } from '@/store/user';
 import { isEmpty } from '@/utils';
@@ -136,8 +137,11 @@ export default function AddWorkOrderPage() {
   
   // Get service types based on the selected client's company
   const { data: serviceTypesData, isLoading: isServiceTypesLoading } = useGetServiceTypes(
-    selectedClient?.companyOwnerId || ''
+    selectedClient?.companyOwner?.id || ''
   );
+
+  // Get pools for the selected client
+  const { data: pools = [], isLoading: isPoolsLoading } = useGetPoolsByClientId(clientId);
 
   // Filter unique members
   const uniqueMembers = members
@@ -164,6 +168,11 @@ export default function AddWorkOrderPage() {
       generateScheduledToOptions();
     }
   }, [isOnlyOnce]);
+
+  // Reset poolId when client changes
+  useEffect(() => {
+    form.resetField('poolId');
+  }, [clientId, form]);
 
   function getNext10DatesForStartOnBasedOnWeekday(weekday: string) {
     if (!weekday) return;
@@ -365,7 +374,7 @@ export default function AddWorkOrderPage() {
             {/* Client Selection */}
             <SelectField
               options={clients
-                .filter((c: Client) => c.isActive && c.pools.length > 0)
+                .filter((c: Client) => c.isActive)
                 .map((c: Client) => ({
                   key: c.id,
                   name: `${c.firstName} ${c.lastName}`,
@@ -379,15 +388,15 @@ export default function AddWorkOrderPage() {
             {/* Pool Selection */}
             {clientId && (
               <SelectField
-                options={selectedClient?.pools
-                  ?.filter((pool) => pool.isActive)
+                options={pools
+                  .filter((pool) => pool.isActive)
                   .map((pool) => ({
                     key: pool.id,
                     name: pool.name,
                     value: pool.id
-                  })) || []}
+                  }))}
                 label="Pool"
-                placeholder="Select pool"
+                placeholder={isPoolsLoading ? 'Loading pools...' : pools.length > 0 ? 'Select pool' : 'No pools available'}
                 name="poolId"
               />
             )}
