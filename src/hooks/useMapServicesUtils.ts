@@ -88,9 +88,9 @@ export function useMapServicesUtils() {
     [isLoaded, services, setServices]
   );
 
-  useEffect(() => {
-    getDirectionsFromGoogleMaps();
-  }, [getDirectionsFromGoogleMaps]);
+  // Removed useEffect that was calling getDirectionsFromGoogleMaps on first render
+  // This prevents unnecessary API calls and reduces costs
+  // Directions will only be fetched when explicitly called (e.g., on reorder)
 
   return {
     directions,

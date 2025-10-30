@@ -107,22 +107,22 @@ export function useMapAssignmentsUtils() {
     [assignments, current, isLoaded, setAssignments]
   );
 
-  useEffect(() => {
-    if (current.length > 0) {
-      // Only run on initial load, not on every change
-      // const initialRun = sessionStorage.getItem('initialRouteLoad');
-      // if (!initialRun) {
-        getDirectionsFromGoogleMaps(false, 'first', 'last', current[0].pool.coords);
-        // sessionStorage.setItem('initialRouteLoad', 'true');
-      // }
-    }
-  }, [current]); // Only depend on current.length
+  const setBoundsAndZoom = useCallback(() => {
+    setAssignments({
+      ...assignments,
+      current: assignments.current
+    });
+  }, [assignments, setAssignments]);
+
+  // Removed useEffect that was calling getDirectionsFromGoogleMaps on first render
+  // This prevents unnecessary API calls and reduces costs
 
   return {
     directions,
     distance,
     duration,
     getDirectionsFromGoogleMaps,
+    setBoundsAndZoom,
     isLoaded,
     loadError
   };

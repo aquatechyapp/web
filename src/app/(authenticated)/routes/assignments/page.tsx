@@ -38,7 +38,7 @@ import { OptimizeRouteModal } from './OptimizeRouteModal';
 import { DialogTransferCompleteRoute } from './ModalTransferCompleteRoute';
 
 export default function Page() {
-  const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapAssignmentsUtils();
+  const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps, } = useMapAssignmentsUtils();
 
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
   const [isOptimizeModalOpen, setIsOptimizeModalOpen] = useState(false);
@@ -65,6 +65,12 @@ export default function Page() {
       router.push('/account');
     }
   }, [user]);
+
+  // useEffect(() => {
+  //   if (isLoaded && assignments.current.length > 0 && user?.addressCoords && !directions) {
+  //     getDirectionsFromGoogleMaps(false, 'first', 'last', user.addressCoords);
+  //   }
+  // }, [isLoaded, assignments.current.length]);
 
   const { assignmentToId, setAssignmentToId } = useMembersStore(
     useShallow((state) => ({
@@ -135,19 +141,6 @@ export default function Page() {
       });
     }
   };
-
-  //new
-  useEffect(() => {
-    if (
-      isLoaded &&
-      assignments.current.length > 0 &&
-      user?.addressCoords &&
-      !directions
-    ) {
-      getDirectionsFromGoogleMaps(false, 'first', 'last', user.addressCoords);
-    }
-  }, [isLoaded, assignments.current.length, user?.addressCoords]);
-
 
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
