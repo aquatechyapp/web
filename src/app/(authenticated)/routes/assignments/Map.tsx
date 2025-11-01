@@ -1,6 +1,7 @@
 'use client';
 
 import { DirectionsRenderer, GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
+import { useEffect, useRef } from 'react';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Separator } from '@/components/ui/separator';
@@ -25,6 +26,17 @@ const calculateMapCenter = (assignments: Assignment[]) => {
   return { lat: avgLat, lng: avgLng };
 };
 
+const calculateBounds = (assignments: Assignment[]): google.maps.LatLngBounds | null => {
+  if (assignments.length === 0) return null;
+  
+  const bounds = new google.maps.LatLngBounds();
+  assignments.forEach((assignment) => {
+    bounds.extend(assignment.pool.coords);
+  });
+  
+  return bounds;
+};
+
 type Props = {
   assignments: Assignment[];
   directions: DirectionsResult | undefined;
@@ -36,6 +48,35 @@ type Props = {
 
 const Map = ({ assignments, directions, distance, duration, isLoaded, loadError }: Props) => {
   const { width } = useWindowDimensions();
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const hasZoomedRef = useRef(false);
+
+  // Show distance/duration when we have calculated values
+  const showDistanceDuration = distance !== '' && duration !== '';
+
+  // Track assignment IDs to detect changes
+  const assignmentIds = assignments.map(a => a.id).join(',');
+
+  // Reset zoom flag when assignments change (e.g., switching weekdays)
+  useEffect(() => {
+    hasZoomedRef.current = false;
+  }, [assignmentIds]);
+
+  // Zoom to fit all markers on first render
+  useEffect(() => {
+    if (mapRef.current && assignments.length > 0 && !hasZoomedRef.current && isLoaded) {
+      const bounds = calculateBounds(assignments);
+      if (bounds) {
+        // Use setTimeout to ensure markers are rendered
+        setTimeout(() => {
+          if (mapRef.current && !hasZoomedRef.current) {
+            mapRef.current.fitBounds(bounds);
+            hasZoomedRef.current = true;
+          }
+        }, 100);
+      }
+    }
+  }, [assignments.length, isLoaded, assignments]);
 
   if (loadError) {
     return <div>Error loading maps</div>;
@@ -47,15 +88,33 @@ const Map = ({ assignments, directions, distance, duration, isLoaded, loadError 
 
   const mapCenter = calculateMapCenter(assignments);
 
+  const onLoad = (map: google.maps.Map) => {
+    mapRef.current = map;
+    
+    // Zoom to fit all markers when map first loads
+    if (assignments.length > 0) {
+      const bounds = calculateBounds(assignments);
+      if (bounds) {
+        // Use setTimeout to ensure markers are rendered
+        setTimeout(() => {
+          map.fitBounds(bounds);
+        }, 100);
+      }
+    }
+  };
+
   return width ? (
     <div className="h-full">
-      <div className="absolute z-10 ml-2.5 mt-16 rounded-sm bg-gray-50 px-2 shadow-lg sm:right-24 sm:mt-2.5">
-        <h3 className="py-1">Distance: {distance}</h3>
-        <Separator />
-        <h3 className="py-1">Duration: {duration}</h3>
-      </div>
+      {showDistanceDuration && (
+        <div className="absolute z-10 ml-2.5 mt-16 rounded-sm bg-gray-50 px-2 shadow-lg sm:right-24 sm:mt-2.5">
+          <h3 className="py-1">Distance: {distance}</h3>
+          <Separator />
+          <h3 className="py-1">Duration: {duration}</h3>
+        </div>
+      )}
 
       <GoogleMap
+        onLoad={onLoad}
         mapContainerStyle={{
           width: '100%',
           height: width > 576 ? '100vh' : '50vh',
@@ -97,16 +156,22 @@ const Map = ({ assignments, directions, distance, duration, isLoaded, loadError 
             <div>
               {assignments.map((assignment) => (
                 <Marker
-                  label={{
-                    text: assignment.order.toString(),
-                    color: Colors.gray[50]
-                  }}
                   key={assignment.id}
                   position={{
                     lat: assignment.pool.coords.lat,
                     lng: assignment.pool.coords.lng
                   }}
                   clusterer={clusterer}
+                  icon={{
+                    url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+                      <svg width="40" height="50" viewBox="0 0 24 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0C5.373 0 0 5.373 0 12C0 21 12 40 12 40C12 40 24 21 24 12C24 5.373 18.627 0 12 0Z" fill="${Colors.blue[500]}"/>
+                        <text x="12" y="18" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="white">${assignment.order}</text>
+                      </svg>
+                    `)}`,
+                    scaledSize: new google.maps.Size(40, 50),
+                    anchor: new google.maps.Point(12, 40)
+                  }}
                 />
               ))}
             </div>
