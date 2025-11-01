@@ -51,8 +51,8 @@ const Map = ({ assignments, directions, distance, duration, isLoaded, loadError 
   const mapRef = useRef<google.maps.Map | null>(null);
   const hasZoomedRef = useRef(false);
 
-  // Only hide distance/duration on first render when there are no directions yet
-  const showDistanceDuration = directions !== undefined && distance !== '' && duration !== '';
+  // Show distance/duration when we have calculated values
+  const showDistanceDuration = distance !== '' && duration !== '';
 
   // Track assignment IDs to detect changes
   const assignmentIds = assignments.map(a => a.id).join(',');

@@ -2,6 +2,7 @@ import { ReadingGroup } from './ReadingGroups';
 import { ConsumableGroup } from './ConsumableGroups';
 import { ServiceType } from './ServiceTypes';
 import { ChecklistTemplate } from './ChecklistTemplates';
+import { Coords } from './Pool';
 
 type Status = 'Active' | 'Inactive';
 
@@ -17,6 +18,11 @@ export type CompanyMember = {
     id: string;
     name: string;
   };
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  addressCoords?: Coords;
 };
 
 export interface Company {

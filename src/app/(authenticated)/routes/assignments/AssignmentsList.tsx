@@ -16,10 +16,9 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { addDays, differenceInDays, format } from 'date-fns';
+import { addDays, addMinutes, differenceInDays, format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
-import { useState } from 'react';
-import { BsThreeDotsVertical } from 'react-icons/bs';
+import { useMemo, useState } from 'react';
 import { MdDragIndicator } from 'react-icons/md';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -95,13 +94,15 @@ export function AssignmentsList({ handleDragEnd }: Props) {
         strategy={verticalListSortingStrategy}
         disabled={shouldPermitChangeOrder}
       >
-        {assignments.current.map((assignment) => (
+        {assignments.current.map((assignment, index) => (
           <div className="flex" key={assignment.order}>
             <AssignmentItem
               assignment={assignment}
               id={assignment.id}
               key={assignment.id}
               shouldPermitChangeOrder={shouldPermitChangeOrder}
+              allAssignments={assignments.current}
+              currentIndex={index}
             />
             <AssignmentDropdownActions assignment={assignment} />
           </div>
@@ -117,6 +118,8 @@ export function AssignmentsList({ handleDragEnd }: Props) {
               id={assignments.current[active].id}
               key={assignments.current[active].id}
               shouldPermitChangeOrder={shouldPermitChangeOrder}
+              allAssignments={assignments.current}
+              currentIndex={active}
             />
           </div>
         ) : null}
@@ -129,9 +132,11 @@ type AssignmentItemProps = {
   id: string;
   assignment: Assignment;
   shouldPermitChangeOrder: boolean;
+  allAssignments: Assignment[];
+  currentIndex: number;
 };
 
-export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: AssignmentItemProps) {
+export function AssignmentItem({ id, assignment, shouldPermitChangeOrder, allAssignments, currentIndex }: AssignmentItemProps) {
   const name = assignment.pool.name;
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
@@ -157,6 +162,45 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
     E4WEEKS: 'Each 4 weeks',
     ONCE: 'Once'
   };
+
+  // Check if we have valid route data (distance/time has been calculated)
+  // If data is missing (e.g., after manual reordering before save), don't show ETA
+  const hasRouteData = useMemo(() => {
+    // Check if any assignment has distance/time data (not all null)
+    return allAssignments.some(
+      (assignment) =>
+        assignment.timeInMinutesToNextStop !== null ||
+        assignment.distanceInMilesToNextStop !== null
+    );
+  }, [allAssignments]);
+
+  // Calculate estimated arrival time
+  // First stop starts at 8:00 AM, then each subsequent stop adds 15 min service time + travel time
+  const estimatedArrivalTime = useMemo(() => {
+    // If we don't have route data, return null to indicate ETA shouldn't be shown
+    if (!hasRouteData) {
+      return null;
+    }
+
+    const startTime = new Date();
+    startTime.setHours(8, 0, 0, 0); // 8:00 AM
+    
+    let accumulatedMinutes = 0;
+    
+    // Sum up all the time before the current assignment
+    for (let i = 0; i < currentIndex; i++) {
+      const prevAssignment = allAssignments[i];
+      // Add 15 minutes for service time at previous stop
+      accumulatedMinutes += 15;
+      // Add travel time to next stop if available
+      if (prevAssignment.timeInMinutesToNextStop) {
+        accumulatedMinutes += prevAssignment.timeInMinutesToNextStop;
+      }
+    }
+    
+    const arrivalTime = addMinutes(startTime, accumulatedMinutes);
+    return format(arrivalTime, 'h:mm a');
+  }, [allAssignments, currentIndex, hasRouteData]);
 
   // Check width
   const { width = 0 } = useWindowDimensions();
@@ -204,12 +248,23 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder }: Assi
           </div>
         </div>
       </div>
-      <div className={`flex h-8 w-8 items-center justify-center gap-1 rounded-lg border ${
-        isExpired ? 'border-red-200 bg-red-100' : 'border-gray-100'
-      }`}>
-        <div className={`shrink grow basis-0 text-center text-sm font-semibold ${
-          isExpired ? 'text-red-700' : 'text-gray-800'
-        }`}>{assignment.order}</div>
+      <div className="flex items-center gap-2">
+        {estimatedArrivalTime ? (
+          <div className={`text-xs font-medium ${isExpired ? 'text-red-600' : 'text-gray-600'}`}>
+            ETA: {estimatedArrivalTime}
+          </div>
+        ) : (
+          <div className="text-xs font-medium text-gray-400 italic">
+            ETA: Save to see
+          </div>
+        )}
+        <div className={`flex h-8 w-8 items-center justify-center gap-1 rounded-lg border ${
+          isExpired ? 'border-red-200 bg-red-100' : 'border-gray-100'
+        }`}>
+          <div className={`shrink grow basis-0 text-center text-sm font-semibold ${
+            isExpired ? 'text-red-700' : 'text-gray-800'
+          }`}>{assignment.order}</div>
+        </div>
       </div>
     </div>
   );
