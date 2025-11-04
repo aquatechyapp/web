@@ -212,7 +212,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder, allAss
   };
   return (
     <div
-      className={`inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 px-1 ${isMobile ? 'py-2' : ''} ${
+      className={`inline-flex w-full items-center justify-start self-stretch border-b border-gray-100 py-2 px-1 ${isMobile ? 'py-2' : ''} ${
         isExpired ? 'bg-red-50 opacity-75' : 'bg-gray-50'
       }`}
       ref={setNodeRef}
@@ -241,7 +241,7 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder, allAss
             {isOneServiceOnly ? (
               <div className={`text-xs text-blue-500'`}><span className="font-semibold">One service only</span></div>
             ) : (
-              <div className={`text-xs ${isExpired ? 'text-red-600' : 'text-gray-500'}`}>
+              <div className={`text-xs ${isExpired ? 'text-red-600' : 'text-gray-500'} truncate`}>
                 {startsOn} - {endsAfter} - {frequencyMap[assignment.frequency as keyof typeof frequencyMap]}
               </div>
             )}
