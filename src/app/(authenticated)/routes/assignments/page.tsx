@@ -213,7 +213,7 @@ export default function Page() {
                         variant="secondary"
                         onClick={() => setOpenTransferDialog(true)}
                       >
-                        Transfer Route
+                        Transfer Entire Route
                       </Button>
                     )}
                     <DialogTransferCompleteRoute

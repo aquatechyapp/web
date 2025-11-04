@@ -57,6 +57,7 @@ export const useTransferPermanentlyRoute = (
       
       // Necessary because it can return an error but some assignments may have been transferred successfully
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'by-pool'] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       
       // Invalidate specific client query if we have the client ID from the assignment
@@ -72,6 +73,7 @@ export const useTransferPermanentlyRoute = (
     },
     onSuccess: (data: TransferResponse) => {
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'by-pool'] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       

@@ -15,6 +15,7 @@ export const useUpdateAssignments = () => {
     mutationFn: async (data: Assignment[]) => await clientAxios.patch('/assignments', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'by-pool'] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       toast({
         duration: 2000,

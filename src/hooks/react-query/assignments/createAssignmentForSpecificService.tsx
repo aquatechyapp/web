@@ -66,6 +66,7 @@ export const useCreateAssignmentForSpecificService = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'by-pool'] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
       toast({
         variant: 'success',

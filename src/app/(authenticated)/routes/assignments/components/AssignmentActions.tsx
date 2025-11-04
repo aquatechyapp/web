@@ -38,9 +38,9 @@ export function AssignmentDropdownActions({ assignment }: AssignmentActionsProps
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onSelect={() => handleActionSelect('transfer')}>Transfer Route</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => handleActionSelect('transfer')}>Transfer assignment</DropdownMenuItem>
           <DropdownMenuItem onSelect={() => handleActionSelect('delete')} className="text-red-500">
-            Delete Assignment
+            Delete assignment
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

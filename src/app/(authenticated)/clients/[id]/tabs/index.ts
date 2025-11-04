@@ -3,3 +3,4 @@ export { default as ChecklistTab } from './ChecklistTab';
 export { default as PoolInfoTab } from './PoolInfoTab';
 export { default as RequestsTab } from './RequestsTab';
 export { default as ServicesTab } from './ServicesTab';
+export { default as AssignmentsTab } from './AssignmentsTab';

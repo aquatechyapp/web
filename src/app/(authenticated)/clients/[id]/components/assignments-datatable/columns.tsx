@@ -8,14 +8,11 @@ import { zipImages } from '@/lib/js-zip';
 
 import CellDeleteService from './remove-dialog';
 import { Assignment } from '@/ts/interfaces/Assignments';
-import { User } from '@/ts/interfaces/User';
 import AssignmentsDatatableActions from './actions';
 
-export type PoolAssignmentsPopulated = Assignment & {
-  assignmentToUser: User;
-};
+export type PoolAssignmentsPopulated = Assignment;
 
-export const columns: ColumnDef<PoolAssignmentsPopulated>[] = [
+export const columns: ColumnDef<Assignment>[] = [
   {
     accessorKey: 'startOn',
     header: 'Start on',
@@ -32,11 +29,14 @@ export const columns: ColumnDef<PoolAssignmentsPopulated>[] = [
     }
   },
   {
-    accessorKey: 'assignmentToUser.fullname',
+    accessorKey: 'assignmentTo',
     header: 'Assigned to',
     cell: (props) => {
-      const fullname = `${props.row.original.assignmentToUser.firstName} ${props.row.original.assignmentToUser.lastName}`;
-      return <span className="text-nowrap">{fullname}</span>;
+      const assignmentTo = props.row.original.assignmentTo;
+      if (assignmentTo) {
+        return <span className="text-nowrap">{assignmentTo.firstName} {assignmentTo.lastName}</span>;
+      }
+      return <span className="text-nowrap">{props.row.original.assignmentToId}</span>;
     }
   },
   {

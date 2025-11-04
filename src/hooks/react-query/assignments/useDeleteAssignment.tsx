@@ -17,6 +17,7 @@ export const useDeleteAssignment = () => {
     onSuccess: (_data, assignmentId) => {
       // Invalidate and refetch assignments and schedule
       queryClient.invalidateQueries({ queryKey: ['assignments', userId] });
+      queryClient.invalidateQueries({ queryKey: ['assignments', 'by-pool'] });
       queryClient.invalidateQueries({ queryKey: ['schedule', userId] });
 
       toast({

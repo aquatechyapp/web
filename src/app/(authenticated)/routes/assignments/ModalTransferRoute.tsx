@@ -19,6 +19,7 @@ import { isEmpty } from '@/utils';
 
 import WeekdaySelect from './WeekdaySelect';
 import { useMembersStore } from '@/store/members';
+import useGetMembersOfAllCompaniesByUserId from '@/hooks/react-query/companies/getMembersOfAllCompaniesByUserId';
 
 type Props = {
   open: boolean;
@@ -38,6 +39,12 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
   );
   const selectedWeekday = useWeekdayStore((state) => state.selectedWeekday);
   const user = useUserStore((state) => state.user);
+  
+  // Fetch members if they're not already loaded
+  const { data: fetchedMembers } = useGetMembersOfAllCompaniesByUserId(user.id);
+  
+  // Use fetched members if store is empty, otherwise use store members
+  const availableMembers = members.length > 0 ? members : (fetchedMembers || []);
   const [next10WeekdaysStartOn, setNext10WeekdaysStartOn] = useState<
     {
       name: string;
@@ -268,7 +275,7 @@ export function DialogTransferRoute({ open, setOpen, assignment, isEntireRoute =
   }
 
   // Create a new members array don't including repeated members and removing members with firstName empty
-  const uniqueMembers = members.filter(
+  const uniqueMembers = availableMembers.filter(
     (member, index, self) => index === self.findIndex((t) => t.id === member.id) && member.firstName !== ''
   );
 

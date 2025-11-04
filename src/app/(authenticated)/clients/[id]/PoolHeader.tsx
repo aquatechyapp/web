@@ -8,8 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useDeactivatePool } from '@/hooks/react-query/pools/deactivatePool';
 
-import AssignmentsDatatable from './components/assignments-datatable';
-import { EquipmentTab, ChecklistTab, PoolInfoTab, RequestsTab, ServicesTab } from './tabs';
+import { EquipmentTab, ChecklistTab, PoolInfoTab, RequestsTab, ServicesTab, AssignmentsTab } from './tabs';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 
 type Props = {
@@ -191,7 +190,7 @@ function PoolCard({ pool, services, clientId }: Props) {
       <div className="p-6">
         {tab === 'pool_info' && <PoolInfoTab pool={pool} clientId={clientId} />}
         {tab === 'services' && <ServicesTab services={services} pool={pool} />}
-        {tab === 'pool_assignments' && <AssignmentsDatatable data={pool.assignments || []} />}
+        {tab === 'pool_assignments' && <AssignmentsTab pool={pool} clientId={clientId} />}
         {tab === 'equipment' && (
           <EquipmentTab equipment={pool.equipment || null} poolId={pool.id} clientId={clientId} />
         )}
