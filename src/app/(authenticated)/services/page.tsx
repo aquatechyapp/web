@@ -264,7 +264,7 @@ export default function Page() {
                               placeholder={clients?.length || 0 > 0 ? 'Select client' : 'No clients available'}
                               {...field}
                               options={buildSelectOptions(
-                                clients?.filter((client: Client) => client.pools.length > 0),
+                                clients?.filter((client: Client) => client.isActive),
                                 {
                                   key: 'id',
                                   name: 'fullName',

@@ -249,14 +249,16 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder, allAss
         </div>
       </div>
       <div className="flex items-center gap-2">
-        {estimatedArrivalTime ? (
-          <div className={`text-xs font-medium ${isExpired ? 'text-red-600' : 'text-gray-600'}`}>
-            ETA: {estimatedArrivalTime}
-          </div>
-        ) : (
-          <div className="text-xs font-medium text-gray-400 italic">
-            ETA: Save to see
-          </div>
+        {allAssignments.length > 1 && (
+          estimatedArrivalTime ? (
+            <div className={`text-xs font-medium ${isExpired ? 'text-red-600' : 'text-gray-600'}`}>
+              ETA: {estimatedArrivalTime}
+            </div>
+          ) : (
+            <div className="text-xs font-medium text-gray-400 italic">
+              ETA: Save to see
+            </div>
+          )
         )}
         <div className={`flex h-8 w-8 items-center justify-center gap-1 rounded-lg border ${
           isExpired ? 'border-red-200 bg-red-100' : 'border-gray-100'

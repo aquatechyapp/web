@@ -1,6 +1,6 @@
 'use client';
 
-import { DirectionsRenderer, GoogleMap, Marker, MarkerClusterer } from '@react-google-maps/api';
+import { DirectionsRenderer, GoogleMap, Marker } from '@react-google-maps/api';
 import { useEffect, useRef } from 'react';
 
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -151,32 +151,25 @@ const Map = ({ assignments, directions, distance, duration, isLoaded, loadError 
             }}
           />
         )}
-        <MarkerClusterer>
-          {(clusterer) => (
-            <div>
-              {assignments.map((assignment) => (
-                <Marker
-                  key={assignment.id}
-                  position={{
-                    lat: assignment.pool.coords.lat,
-                    lng: assignment.pool.coords.lng
-                  }}
-                  clusterer={clusterer}
-                  icon={{
-                    url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-                      <svg width="40" height="50" viewBox="0 0 24 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 0C5.373 0 0 5.373 0 12C0 21 12 40 12 40C12 40 24 21 24 12C24 5.373 18.627 0 12 0Z" fill="${Colors.blue[500]}"/>
-                        <text x="12" y="18" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="white">${assignment.order}</text>
-                      </svg>
-                    `)}`,
-                    scaledSize: new google.maps.Size(40, 50),
-                    anchor: new google.maps.Point(12, 40)
-                  }}
-                />
-              ))}
-            </div>
-          )}
-        </MarkerClusterer>
+        {assignments.map((assignment) => (
+          <Marker
+            key={assignment.id}
+            position={{
+              lat: assignment.pool.coords.lat,
+              lng: assignment.pool.coords.lng
+            }}
+            icon={{
+              url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+                <svg width="40" height="50" viewBox="0 0 24 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 0C5.373 0 0 5.373 0 12C0 21 12 40 12 40C12 40 24 21 24 12C24 5.373 18.627 0 12 0Z" fill="${Colors.blue[500]}"/>
+                  <text x="12" y="18" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="white">${assignment.order}</text>
+                </svg>
+              `)}`,
+              scaledSize: new google.maps.Size(40, 50),
+              anchor: new google.maps.Point(12, 40)
+            }}
+          />
+        ))}
       </GoogleMap>
     </div>
   ) : null;
