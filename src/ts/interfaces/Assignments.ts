@@ -21,6 +21,8 @@ export type Assignment = {
     id: string;
     name: string;
   };
+  timeInMinutesToNextStop?: number | null;
+  distanceInMilesToNextStop?: number | null;
 };
 
 export type CreateAssignment = {

@@ -8,7 +8,7 @@ import { CompanyMember } from '@/ts/interfaces/Company';
 
 import DropdownMenuCompanyMember from './DropdownMenuCompanyMember';
 
-export function CompanyMemberCard({ status, company, id, firstName, lastName, email, phone, role }: CompanyMember) {
+export function CompanyMemberCard({ status, company, id, firstName, lastName, email, phone, role, address, city, state, zip }: CompanyMember) {
   return (
     <div className="relative flex w-full flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:w-80">
       {id && (
@@ -21,6 +21,10 @@ export function CompanyMemberCard({ status, company, id, firstName, lastName, em
           phone={phone}
           firstName={firstName}
           lastName={lastName}
+          address={address}
+          city={city}
+          state={state}
+          zip={zip}
         />
       )}
 
