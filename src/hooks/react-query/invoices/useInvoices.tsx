@@ -103,7 +103,7 @@ export default function useInvoices(params?: UseInvoicesParams, id?:string) {
     Error,
     {
       invoiceId: string;
-      paymentStatus: 'pending' | 'overdue' | 'succeeded' | 'processing' | 'failed';
+      paymentStatus: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled' | 'void'
       paidAt?: string;
       paidAmount?: number;
       paymentMethod?: string;

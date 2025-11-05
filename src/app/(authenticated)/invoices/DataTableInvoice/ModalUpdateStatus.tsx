@@ -9,27 +9,31 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue
+} from '@/components/ui/select';
 
-type Props = {
+// ✅ Tipos válidos de status
+export type InvoiceStatus = 'Draft' | 'Sent' | 'Paid' | 'Overdue' | 'Cancelled' | 'Void';
+
+interface ModalUpdateStatusProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  currentStatus: string;
-  handleSubmit: () => void;
-};
+  currentStatus: InvoiceStatus;
+  onConfirm: (newStatus: InvoiceStatus) => void;
+}
 
 export function ModalUpdateStatus({
   open,
   setOpen,
   currentStatus,
   onConfirm,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  currentStatus: string;
-  onConfirm: (status: string) => void;
-}) {
-  const [selectedStatus, setSelectedStatus] = useState(currentStatus);
+}: ModalUpdateStatusProps) {
+  const [selectedStatus, setSelectedStatus] = useState<InvoiceStatus>(currentStatus);
 
   const handleSubmit = () => {
     onConfirm(selectedStatus);
@@ -41,16 +45,18 @@ export function ModalUpdateStatus({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Invoice Status</DialogTitle>
-          <DialogDescription>Select a new status for this invoice</DialogDescription>
+          <DialogDescription>
+            Select a new status for this invoice.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="mt-4">
-          <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+          <Select value={selectedStatus} onValueChange={(v) => setSelectedStatus(v as InvoiceStatus)}>
             <SelectTrigger>
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
-              {['Draft','Paid'].map((status) => (
+              {(['Draft', 'Sent', 'Paid', 'Overdue', 'Cancelled', 'Void'] as const).map((status) => (
                 <SelectItem key={status} value={status}>
                   {status}
                 </SelectItem>
@@ -69,4 +75,3 @@ export function ModalUpdateStatus({
     </Dialog>
   );
 }
-

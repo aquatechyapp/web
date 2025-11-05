@@ -17,7 +17,7 @@ import { Dialog } from '@/components/ui/dialog';
 import { ModalDeleteInvoice } from './ModalDeleteInvoice';
 import { Invoice } from './columns';
 import useInvoices from '@/hooks/react-query/invoices/useInvoices';
-import { ModalUpdateStatus } from './ModalUpdateStatus';
+import { InvoiceStatus, ModalUpdateStatus } from './ModalUpdateStatus';
 interface ActionButtonsProps {
   invoice: Invoice;
 }
@@ -102,16 +102,23 @@ export function ActionButtons({ invoice }: ActionButtonsProps) {
       <ModalUpdateStatus
         open={isStatusModalOpen}
         setOpen={setIsStatusModalOpen}
-        currentStatus={invoice.status}
+        currentStatus={invoice.status as InvoiceStatus}
         onConfirm={(newStatus) => {
-          const paymentStatusMap: Record<string, 'pending' | 'succeeded'> = {
-            Draft: 'pending',
-            Paid: 'succeeded',
+          const paymentStatusMap: Record<
+            InvoiceStatus,
+            'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled' | 'void'
+          > = {
+            Draft: 'draft',
+            Sent: 'sent',
+            Paid: 'paid',
+            Overdue: 'overdue',
+            Cancelled: 'cancelled',
+            Void: 'void',
           };
 
           updatePaymentStatus.mutate({
             invoiceId: invoice.id,
-            paymentStatus: paymentStatusMap[newStatus] || 'pending',
+            paymentStatus: paymentStatusMap[newStatus],
             paidAt: new Date().toISOString(),
             paidAmount: invoice.amount,
             paymentMethod: 'Credit Card',

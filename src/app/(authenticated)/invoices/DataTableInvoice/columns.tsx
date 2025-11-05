@@ -2,9 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import Link from 'next/link';
-import { Edit2 } from 'lucide-react';
-import { ActionButtons } from './CallActionButtons';
+import { ActionButtons } from './callActionButtons';
 
 // Caso ainda não tenha o tipo, adicione provisoriamente:
 export interface Invoice {

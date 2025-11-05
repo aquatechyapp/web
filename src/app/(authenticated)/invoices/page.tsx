@@ -92,7 +92,7 @@ export default function Page() {
         <Button
           type="submit"
           size="sm"
-          className="w-full md:w-auto h-auto"
+          className="w-full md:w-auto h-auto px-4 py-2 md:px-6 md:py-3"
           onClick={() => router.push('/invoices/create')}
         >
           Create invoice

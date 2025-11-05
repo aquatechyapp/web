@@ -11,6 +11,7 @@ import {
 import React, { useState } from 'react';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useRouter } from 'next/navigation';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -20,6 +21,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTableInvoice<TData, TValue>({ columns, data, onRowClick }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const router = useRouter();
 
   const table = useReactTable({
     data,
@@ -57,12 +59,13 @@ export function DataTableInvoice<TData, TValue>({ columns, data, onRowClick }: D
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                onClick={() => onRowClick?.(row.original)}
-                className={onRowClick ? 'cursor-pointer' : ''}
+                onClick={() => router.push(`/invoices/${(row.original as any).id}`)}
+                className="cursor-pointer hover:bg-gray-50 transition-colors"
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell
+                  key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

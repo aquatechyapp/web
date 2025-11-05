@@ -299,12 +299,19 @@ export const routes: Menu[] = [
         description: 'View and manage all invoices',
       },
       subscription: {
-        text: 'Recurring Invoices',
-        href: '/invoices/recurring',
-        title: 'Recurring Invoices',
+        text: 'Create Invoices',
+        href: '/invoices/create',
+        title: 'Invoices',
         icon: DollarSign,
-        description: 'Manage recurring invoice templates and schedules',
+        description: 'View and manage all your invoices in one place',
       }
+      // subscription: {
+      //   text: 'Recurring Invoices',
+      //   href: '/invoices/recurring',
+      //   title: 'Recurring Invoices',
+      //   icon: DollarSign,
+      //   description: 'Manage recurring invoice templates and schedules',
+      // }
     },
   }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -32,24 +32,57 @@ const defaultValues = {
   description: '',
 };
 
-// Schema para os itens
+// Schema for invoice line items
 const lineItemSchema = z.object({
-  description: z.string().min(1, 'Description is required'),
-  quantity: z.number().positive('Quantity must be positive'),
-  amount: z.number().positive('Amount must be positive'),
+  description: z
+    .string({
+      required_error: 'Item description is required',
+    })
+    .min(1, 'Item description is required'),
+  quantity: z
+    .number({
+      required_error: 'Quantity is required',
+      invalid_type_error: 'Quantity must be a number',
+    })
+    .positive('Quantity must be greater than zero'),
+  amount: z
+    .number({
+      required_error: 'Amount is required',
+      invalid_type_error: 'Amount must be a number',
+    })
+    .positive('Amount must be greater than zero'),
 });
 
-// Schema principal
+// Main invoice schema
 export const invoiceSchema = z.object({
-  fromCompany: z.string().min(1, 'Company is required'),
-  fromEmail: z.string().email('Invalid email').optional(),
+  fromCompany: z
+    .string({
+      required_error: 'Company name is required',
+    })
+    .min(1, 'Company name is required'),
+  fromEmail: z
+    .string()
+    .email('Please enter a valid company email')
+    .optional(),
   fromAddress: z.string().optional(),
-  toName: z.string().min(1, 'Client name is required'),
-  toEmail: z.string().email('Invalid email'),
+
+  toName: z
+    .string({
+      required_error: 'Client name is required',
+    })
+    .min(1, 'Client name is required'),
+  toEmail: z.string().email('Please enter a valid client email'),
   toAddress: z.string().optional(),
-  lineItems: z.array(lineItemSchema).min(1, 'At least one line item is required'),
+
+  lineItems: z
+    .array(lineItemSchema)
+    .min(1, 'Please add at least one line item'),
+
   type: z.enum(['OneTime', 'Recurring']).optional(),
-  status: z.enum(['Draft', 'Sent', 'Paid', 'Overdue', 'Cancelled', 'Void']).optional(),
+  status: z
+    .enum(['Draft', 'Sent', 'Paid', 'Overdue', 'Cancelled', 'Void'])
+    .optional(),
+
   currency: z.string().optional(),
   notes: z.string().optional(),
   description: z.string().optional(),
@@ -65,6 +98,7 @@ export default function Page() {
   const { id } = useParams();
   const { toast } = useToast();
   const router = useRouter();
+  const [autoSend, setAutoSend] = useState(false);
 
   const { control, register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
     defaultValues,
@@ -88,6 +122,9 @@ export default function Page() {
     undefined,
     singleId && /^[0-9a-fA-F]{24}$/.test(singleId) ? singleId : undefined
   );
+
+  const isSubmitting =
+    invoices.createInvoice.isPending || invoices.updateInvoice.isPending;
 
   useEffect(() => {
     const inv = invoices.invoiceById.data;
@@ -142,6 +179,7 @@ export default function Page() {
       currency: data.currency || 'USD',
       notes: data.notes || undefined,
       description: data.description || undefined,
+      ...(autoSend ? { autoSendEmail: true } : {}),
       items: data.lineItems.map((item) => ({
         name: item.description,
         pricePerUnit: Number(item.amount),
@@ -189,16 +227,11 @@ export default function Page() {
 
   const addItem = () => append({ description: '', quantity: '', amount: '' });
 
-  const onChangeNumber = (index: number, field: 'quantity' | 'amount', value: string) => {
-    const numeric = value === '' ? '' : Number(value);
-    setValue(`lineItems.${index}.${field}` as const, numeric as any, { shouldValidate: false, shouldDirty: true });
-  };
-
   const formatCurrency = (n: number) => `$${n.toFixed(2)}`;
-
   return (
     <div className="flex flex-col items-center justify-center w-full p-4">
-      <Form control={control}>
+      {/* @ts-ignore */}
+      <Form control={control as any}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full gap-6 items-center">
 
           <div className="w-full bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
@@ -210,14 +243,15 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">From (Company)</label>
                 <Select
+                  disabled={watch('status') === 'Sent'}
                   value={selectedCompany}
                   onValueChange={(value) => {
                     setSelectedCompany(value);
                     const company = companies.find((c) => c.id === value);
                     if (company) {
-                      setValue('fromCompany', company.name);
-                      setValue('fromEmail', company.email || '');
-                      setValue('fromAddress', company.address || '');
+                      setValue('fromCompany', company.name, { shouldValidate: true });
+                      setValue('fromEmail', company.email || '', { shouldValidate: true });
+                      setValue('fromAddress', company.address || '', { shouldValidate: true });
                     }
                   }}
                 >
@@ -236,7 +270,9 @@ export default function Page() {
               {/* From Email */}
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">From Email</label>
-                <Input {...register('fromEmail')} placeholder="Email address" />
+                <Input
+                  disabled={watch('status') === 'Sent'}
+                 {...register('fromEmail')} placeholder="Email address" />
                 {errors.fromEmail && <span className="text-red-500 text-xs mt-1">{errors.fromEmail.message}</span>}
               </div>
 
@@ -244,15 +280,19 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">To (Client)</label>
                 <Select
-                  disabled={!selectedCompany}
+                  disabled={!selectedCompany || watch('status') === 'Sent'}
                   value={selectedClient}
                   onValueChange={(value) => {
                     setSelectedClient(value);
                     const client = clients?.find((c) => c.id === value);
                     if (client) {
-                      setValue('toName', `${client.firstName} ${client.lastName}`);
-                      setValue('toEmail', client.email || '');
-                      setValue('toAddress', `${client.address || ''}, ${client.city || ''}, ${client.state || ''} ${client.zip || ''}`);
+                      setValue('toName', `${client.firstName} ${client.lastName}`, { shouldValidate: true }); // 👈
+                      setValue('toEmail', client.email || '', { shouldValidate: true });
+                      setValue(
+                        'toAddress',
+                        `${client.address || ''}, ${client.city || ''}, ${client.state || ''} ${client.zip || ''}`,
+                        { shouldValidate: true }
+                      );
                     }
                   }}
                 >
@@ -275,58 +315,85 @@ export default function Page() {
               {/* To Email */}
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">To Email</label>
-                <Input {...register('toEmail')} placeholder="Recipient email" />
+                <Input
+                  disabled={watch('status') === 'Sent'}
+                {...register('toEmail')}
+                placeholder="Recipient email" />
                 {errors.toEmail && <span className="text-red-500 text-xs mt-1">{errors.toEmail.message}</span>}
               </div>
 
               {/* From Address */}
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">From Address</label>
-                <Input {...register('fromAddress')} placeholder="Sender address" />
+                <Input
+                  disabled={watch('status') === 'Sent'}
+                {...register('fromAddress')}
+                 placeholder="Sender address" />
                 {errors.fromAddress && <span className="text-red-500 text-xs mt-1">{errors.fromAddress.message}</span>}
               </div>
 
               {/* To Address */}
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">To Address</label>
-                <Input {...register('toAddress')} placeholder="Recipient address" />
+                <Input
+                  disabled={watch('status') === 'Sent'}
+                 {...register('toAddress')} placeholder="Recipient address" />
                 {errors.toAddress && <span className="text-red-500 text-xs mt-1">{errors.toAddress.message}</span>}
               </div>
 
               {/* Campos opcionais gerais */}
               <div className="flex flex-col">
-                <label className="text-xs text-gray-600 mb-1">Status</label>
-                <Select onValueChange={(value) => setValue('status', value as any)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Draft">Draft</SelectItem>
-                    <SelectItem value="Sent">Sent</SelectItem>
-                    <SelectItem value="Paid">Paid</SelectItem>
-                    <SelectItem value="Overdue">Overdue</SelectItem>
-                    <SelectItem value="Cancelled">Cancelled</SelectItem>
-                    <SelectItem value="Void">Void</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.status && <span className="text-red-500 text-xs mt-1">{errors.status.message}</span>}
+                <Controller
+                  name="status"
+                  control={control}
+                  defaultValue="Draft"
+                  render={({ field }) => (
+                    <div className="flex flex-col">
+                      <label className="text-xs text-gray-600 mb-1">Status</label>
+                      <Select
+                        value={field.value}
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Draft">Draft</SelectItem>
+                          <SelectItem value="Sent">Sent</SelectItem>
+                          <SelectItem value="Paid">Paid</SelectItem>
+                          <SelectItem value="Overdue">Overdue</SelectItem>
+                          <SelectItem value="Cancelled">Cancelled</SelectItem>
+                          <SelectItem value="Void">Void</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {errors.status && (
+                        <span className="text-red-500 text-xs mt-1">{errors.status.message}</span>
+                      )}
+                    </div>
+                  )}
+                />
               </div>
 
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">Currency</label>
-                <Input {...register('currency')} placeholder="USD" />
+                <Input
+                  disabled={watch('status') === 'Sent'}
+                {...register('currency')} placeholder="USD" />
                 {errors.currency && <span className="text-red-500 text-xs mt-1">{errors.currency.message}</span>}
               </div>
 
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">Notes</label>
-                <Input {...register('notes')} placeholder="Notes" />
+                <Input
+                  disabled={watch('status') === 'Sent'}
+                {...register('notes')} placeholder="Notes" />
                 {errors.notes && <span className="text-red-500 text-xs mt-1">{errors.notes.message}</span>}
               </div>
 
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">Description</label>
                 <Textarea
+                  disabled={watch('status') === 'Sent'}
                   {...register('description')}
                   placeholder="Description"
                   className="border border-gray-200 rounded-md p-2 text-sm resize-none"
@@ -340,7 +407,9 @@ export default function Page() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-medium text-sm">Line items</h3>
-                <Button type="button" onClick={addItem} className="px-3 py-1 text-sm">
+                <Button
+                  disabled={watch('status') === 'Sent'}
+                 type="button" onClick={addItem} className="px-3 py-1 text-sm">
                   + Add item
                 </Button>
               </div>
@@ -360,6 +429,7 @@ export default function Page() {
                       <tr key={field.id} className="border-b border-gray-100">
                         <td className="py-2 px-3">
                           <Input
+                            disabled={watch('status') === 'Sent'}
                             {...register(`lineItems.${index}.description` as const)}
                             placeholder="Item description"
                           />
@@ -369,9 +439,9 @@ export default function Page() {
                         </td>
                         <td className="py-2 px-3">
                           <Input
+                            disabled={watch('status') === 'Sent'}
                             type="number"
                             {...register(`lineItems.${index}.quantity` as const, { valueAsNumber: true })}
-                            onChange={(e) => onChangeNumber(index, 'quantity', e.target.value)}
                             min={0}
                             placeholder="Quantity"
                           />
@@ -381,10 +451,10 @@ export default function Page() {
                         </td>
                         <td className="py-2 px-3">
                           <Input
+                            disabled={watch('status') === 'Sent'}
                             type="number"
                             step="0.01"
                             {...register(`lineItems.${index}.amount` as const, { valueAsNumber: true })}
-                            onChange={(e) => onChangeNumber(index, 'amount', e.target.value)}
                             min={0}
                             placeholder="Amount"
                             className="text-right"
@@ -395,10 +465,11 @@ export default function Page() {
                         </td>
                         <td className="py-2 text-center">
                           <Button
+                            disabled={watch('status') === 'Sent'}
                             type="button"
-                            variant="ghost"
+                            variant="secondary"
                             onClick={() => remove(index)}
-                            className="text-sm"
+                            className="text-sm text-red-500 bg-red-500/10 hover:bg-red-500/20 px-2 py-1"
                           >
                             Remove
                           </Button>
@@ -474,8 +545,46 @@ export default function Page() {
           </div>
 
           <div className="flex w-full gap-2">
-            <Button type="submit" className="w-full max-w-md text-white py-3 rounded-lg text-base font-medium">
-              Save
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting}
+              className="w-full max-w-md py-3 rounded-lg text-base font-medium"
+              onClick={() => router.back()}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full max-w-md text-white py-3 rounded-lg text-base font-medium flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+                  Saving...
+                </>
+              ) : (
+                'Create'
+              )}
+            </Button>
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              variant="secondary"
+              className="w-full max-w-md py-3 rounded-lg text-base font-medium flex items-center justify-center gap-2"
+              onClick={() => setAutoSend(true)}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+                  Sending...
+                </>
+              ) : (
+                'Create & Send'
+              )}
             </Button>
           </div>
 
