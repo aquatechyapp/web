@@ -14,6 +14,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ModalDeleteInvoice } from '../DataTableInvoice/ModalDeleteInvoice';
+import { Trash2 } from 'lucide-react';
 
 const defaultValues = {
   fromCompany: '',
@@ -99,6 +101,7 @@ export default function Page() {
   const { toast } = useToast();
   const router = useRouter();
   const [autoSend, setAutoSend] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { control, register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
     defaultValues,
@@ -235,8 +238,17 @@ export default function Page() {
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full gap-6 items-center">
 
           <div className="w-full bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
-            <h2 className="text-lg font-semibold mb-2">Invoice Details</h2>
-
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold mb-2">Invoice Details</h2>
+              <button
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                title="Delete invoice"
+                type='button'
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
               {/* From Company */}
@@ -590,6 +602,15 @@ export default function Page() {
 
         </form>
       </Form>
+
+       <ModalDeleteInvoice
+                open={isDeleteModalOpen}
+                setOpen={setIsDeleteModalOpen}
+                 handleSubmit={() => {
+                   invoices.deleteInvoice.mutate(id as string)
+                   router.back();
+                 }}
+              />
     </div>
   );
 }
