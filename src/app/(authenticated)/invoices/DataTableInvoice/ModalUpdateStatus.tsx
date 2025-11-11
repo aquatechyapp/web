@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 
 // ✅ Tipos válidos de status
-export type InvoiceStatus = 'Draft' | 'Sent' | 'Paid' | 'Overdue' | 'Cancelled' | 'Void';
+export type InvoiceStatus = 'pending' | 'overdue' | 'succeeded' | 'processing' | 'failed'
 
 interface ModalUpdateStatusProps {
   open: boolean;
@@ -56,7 +56,7 @@ export function ModalUpdateStatus({
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
-              {(['Draft', 'Sent', 'Paid', 'Overdue', 'Cancelled', 'Void'] as const).map((status) => (
+              {(['pending','overdue','succeeded','processing','failed'] as const).map((status) => (
                 <SelectItem key={status} value={status}>
                   {status}
                 </SelectItem>

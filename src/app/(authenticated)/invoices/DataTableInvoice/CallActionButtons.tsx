@@ -102,18 +102,17 @@ export function ActionButtons({ invoice }: ActionButtonsProps) {
       <ModalUpdateStatus
         open={isStatusModalOpen}
         setOpen={setIsStatusModalOpen}
-        currentStatus={invoice.status as InvoiceStatus}
+        currentStatus={invoice.paymentStatus as InvoiceStatus}
         onConfirm={(newStatus) => {
           const paymentStatusMap: Record<
             InvoiceStatus,
-            'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled' | 'void'
+            'pending' | 'overdue' | 'succeeded' | 'processing' | 'failed'
           > = {
-            Draft: 'draft',
-            Sent: 'sent',
-            Paid: 'paid',
-            Overdue: 'overdue',
-            Cancelled: 'cancelled',
-            Void: 'void',
+            pending: 'pending',
+            overdue: 'overdue',
+            succeeded: 'succeeded',
+            processing: 'processing',
+            failed: 'failed',
           };
 
           updatePaymentStatus.mutate({
