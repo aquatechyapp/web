@@ -40,6 +40,7 @@ export const defaultSchemas = {
     invalid_type_error: "Language must be 'English', 'Portuguese' or 'Spanish'."
   }),
   monthlyPayment: z.number().nullable().optional(),
+  paymentUnit: z.coerce.number().int().min(1, { message: 'Payment unit must be 1 or higher.' }).optional(),
   clientType: z.enum(['Residential', 'Commercial'], {
     required_error: 'Client type is required.',
     invalid_type_error: "Client type must be 'Residential' or 'Company'."

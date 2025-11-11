@@ -11,7 +11,12 @@ import {
   UserPlus,
   Users,
   PlayCircle,
+<<<<<<< HEAD
   DollarSign
+=======
+  ClipboardList,
+  Calendar
+>>>>>>> 663e15c8a4661aaa3affd4d154bac6ba0a6419e2
 } from 'lucide-react';
 
 import RouteIcon from '@/components/ui/route-icon';
@@ -204,6 +209,29 @@ export const routes: Menu[] = [
     icon: ListChecks,
     title: 'Services',
     description: 'Look services made by your company'
+  },
+  {
+    text: 'Work Orders',
+    href: '/work-orders',
+    icon: CheckSquare,
+    title: 'Work Orders',
+    description: 'Manage work orders and track their progress',
+    submenu: {
+      add: {
+        text: 'Add',
+        href: '/work-orders/add',
+        title: 'Add Work Order',
+        description: 'Create a new work order',
+        icon: ClipboardList
+      },
+      schedule: {
+        text: 'Schedule',
+        href: '/work-orders/schedule',
+        title: 'Schedule Work Orders',
+        description: 'View and manage work order schedules',
+        icon: Calendar
+      }
+    }
   },
   {
     text: 'Reports',

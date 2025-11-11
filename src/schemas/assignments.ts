@@ -41,7 +41,8 @@ export const newAssignmentSchema = z
     weekday: defaultSchemas.weekday,
     scheduledTo: z.string().optional(),
     startOn: z.coerce.date().optional(),
-    endAfter: z.string().optional()
+    endAfter: z.string().optional(),
+    instructions: z.string().optional()
   })
   .refine(
     (data) => {

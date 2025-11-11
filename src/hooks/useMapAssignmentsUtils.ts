@@ -33,7 +33,8 @@ export function useMapAssignmentsUtils() {
       optimizeWaypoints: boolean = false,
       originType: 'home' | 'first' = 'first',
       destinationType: 'home' | 'last' = 'last',
-      userHomeCoords: Coords
+      userHomeCoords: Coords,
+      onComplete?: (updatedAssignments: typeof current) => void
     ) => {
 
 
@@ -66,6 +67,7 @@ export function useMapAssignmentsUtils() {
         (result, status) => {
           if (status === 'OK' && result) {
 
+
             const totalDuration = result.routes[0].legs.reduce((acc, leg) => acc + (leg.duration?.value ?? 0), 0);
             const totalDistance = result.routes[0].legs.reduce((acc, leg) => acc + (leg.distance?.value ?? 0), 0);
 
@@ -78,27 +80,66 @@ export function useMapAssignmentsUtils() {
             );
             setDistance((totalDistance * 0.000621371).toFixed(1) + ' mi');
 
+            // Map legs to assignments
+            // Legs structure: 
+            // - If origin is 'home': leg[0] = home -> assignment[0], leg[1] = assignment[0] -> assignment[1], etc.
+            // - If origin is 'first': leg[0] = assignment[0] -> assignment[1], leg[1] = assignment[1] -> assignment[2], etc.
+            const legs = result.routes[0].legs;
+            const legOffset = originType === 'home' ? 1 : 0; // Skip first leg if it's from home
+            
+            // Determine which assignments to use (original or optimized order)
+            let assignmentsToUpdate: typeof current;
+            
             if (optimizeWaypoints) {
-              let optimizedAssignments = [...current];
+              // When waypoints are optimized, first reorder assignments based on waypoint_order
+              // waypoint_order tells us the original indices of waypoints in their new optimized order
+              // The legs array is already in the optimized route order
               if (originType === 'home') {
-                optimizedAssignments = [...result.routes[0].waypoint_order.map((index) => current[index])];
+                assignmentsToUpdate = result.routes[0].waypoint_order.map((originalIndex) => current[originalIndex]);
               } else {
-                optimizedAssignments = [
+                assignmentsToUpdate = [
                   current[0],
-                  ...result.routes[0].waypoint_order.map((index) => current[index + 1]),
+                  ...result.routes[0].waypoint_order.map((originalIndex) => current[originalIndex + 1]),
                   ...(destinationType === 'last' ? [current[current.length - 1]] : [])
                 ];
               }
+            } else {
+              // Use assignments in original order
+              assignmentsToUpdate = current;
+            }
+            
+            // Map legs to assignments (which may be in optimized order)
+            const assignmentsWithLegs = assignmentsToUpdate.map((assignment, index) => {
+              // The last assignment has no next stop (unless destination is home)
+              const isLastAssignment = index === assignmentsToUpdate.length - 1;
+              const shouldHaveNextStop = isLastAssignment ? destinationType === 'home' : true;
+              
+              if (shouldHaveNextStop && legs[index + legOffset]) {
+                const leg = legs[index + legOffset];
+                return {
+                  ...assignment,
+                  timeInMinutesToNextStop: leg.duration?.value ? leg.duration.value / 60 : null,
+                  distanceInMilesToNextStop: leg.distance?.value ? leg.distance.value * 0.000621371 : null,
+                  order: optimizeWaypoints ? index + 1 : assignment.order
+                };
+              } else {
+                return {
+                  ...assignment,
+                  timeInMinutesToNextStop: null,
+                  distanceInMilesToNextStop: null,
+                  order: optimizeWaypoints ? index + 1 : assignment.order
+                };
+              }
+            });
 
-              const changedOrderProperty = optimizedAssignments.map((assignment, index) => ({
-                ...assignment,
-                order: index + 1
-              }));
-
-              setAssignments({
-                ...assignments,
-                current: changedOrderProperty
-              });
+            setAssignments({
+              ...assignments,
+              current: assignmentsWithLegs
+            });
+            
+            // Call the callback if provided, passing the updated assignments
+            if (onComplete) {
+              onComplete(assignmentsWithLegs);
             }
           }
         }
@@ -107,22 +148,29 @@ export function useMapAssignmentsUtils() {
     [assignments, current, isLoaded, setAssignments]
   );
 
-  useEffect(() => {
-    if (current.length > 0) {
-      // Only run on initial load, not on every change
-      // const initialRun = sessionStorage.getItem('initialRouteLoad');
-      // if (!initialRun) {
-        getDirectionsFromGoogleMaps(false, 'first', 'last', current[0].pool.coords);
-        // sessionStorage.setItem('initialRouteLoad', 'true');
-      // }
-    }
-  }, [current]); // Only depend on current.length
+  const setBoundsAndZoom = useCallback(() => {
+    setAssignments({
+      ...assignments,
+      current: assignments.current
+    });
+  }, [assignments, setAssignments]);
+
+  const clearDirections = useCallback(() => {
+    setDirections(null);
+    setDistance('');
+    setDuration('');
+  }, []);
+
+  // Removed useEffect that was calling getDirectionsFromGoogleMaps on first render
+  // This prevents unnecessary API calls and reduces costs
 
   return {
     directions,
     distance,
     duration,
     getDirectionsFromGoogleMaps,
+    setBoundsAndZoom,
+    clearDirections,
     isLoaded,
     loadError
   };

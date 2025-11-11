@@ -182,7 +182,7 @@ export function EditPhotoDefinitionDialog({
                       Send On Email
                     </FormLabel>
                     <p className="text-sm text-muted-foreground">
-                      Enable this option to send notifications or updates directly to the recipient’s email address when an action occurs.
+                      Enable this option to send this photo when photo groups are enabled to be sent.
                     </p>
                   </div>
                   <FormControl>

@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Info } from 'lucide-react';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -9,6 +10,7 @@ import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { AddressInput } from '@/components/AddressInput';
 import { PoolTypes } from '@/constants';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
@@ -35,6 +37,7 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
       city: pool.city || '',
       state: pool.state || '',
       monthlyPayment: pool.monthlyPayment || undefined,
+      paymentUnit: pool.paymentUnit || undefined,
       lockerCode: pool.lockerCode || '',
       enterSide: pool.enterSide || '',
       poolType: pool.poolType,
@@ -90,6 +93,37 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
             placeholder="Monthly payment"
             type={FieldType.CurrencyValue}
           />
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <InputField
+                label="Payment Unit"
+                name="paymentUnit"
+                placeholder="Payment unit"
+                type={FieldType.Number}
+              />
+            </div>
+            <div className="pt-6">
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <Info className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-help" />
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80">
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-sm">Payment Unit</h4>
+                    <p className="text-sm text-gray-600">
+                      This variable multiplies the fixed amount when generating payment reports.
+                    </p>
+                    <div className="text-sm">
+                      <p className="font-medium">Example:</p>
+                      <p className="text-gray-600">
+                        If service payment is $50 and payment unit is 2, the technician will receive $100 (2 × $50).
+                      </p>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            </div>
+          </div>
           <InputField label="Gate Code" name="lockerCode" placeholder="Gate Code" />
           <InputField label="Enter Side" name="enterSide" placeholder="Enter side" />
           <SelectField

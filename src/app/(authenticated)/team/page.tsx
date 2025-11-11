@@ -71,6 +71,10 @@ export default function Page() {
                   email={member.email}
                   phone={member.phone}
                   role={member.role}
+                  address={member.address}
+                  city={member.city}
+                  state={member.state}
+                  zip={member.zip}
                 />
               ))}
             </div>

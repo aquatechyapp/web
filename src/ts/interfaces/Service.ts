@@ -29,6 +29,7 @@ export interface Service {
     | undefined;
   scheduledTo: string;
   notes: string | null;
+  instructions?: string | null;
   poolId: string;
   pool?: Pool;
   status: ServiceStatus;

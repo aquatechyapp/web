@@ -4,7 +4,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
@@ -38,13 +38,30 @@ import { OptimizeRouteModal } from './OptimizeRouteModal';
 import { DialogTransferCompleteRoute } from './ModalTransferCompleteRoute';
 
 export default function Page() {
-  const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps } = useMapAssignmentsUtils();
+  const { directions, distance, duration, isLoaded, loadError, getDirectionsFromGoogleMaps, clearDirections } = useMapAssignmentsUtils();
 
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
   const [isOptimizeModalOpen, setIsOptimizeModalOpen] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const { assignments, setAssignments } = useAssignmentsContext();
   const { selectedWeekday, setSelectedWeekday } = useWeekdayStore((state) => state);
+
+  // Calculate total distance and duration from assignments
+  const { totalDistance, totalDuration } = useMemo(() => {
+    const totalDist = assignments.current.reduce((sum, assignment) => {
+      return sum + (assignment.distanceInMilesToNextStop || 0);
+    }, 0);
+    
+    const totalDur = assignments.current.reduce((sum, assignment) => {
+      return sum + (assignment.timeInMinutesToNextStop || 0);
+    }, 0);
+    
+    return {
+      totalDistance: totalDist > 0 ? `${totalDist.toFixed(1)} mi` : '',
+      totalDuration: totalDur > 0 ? `${totalDur.toFixed(0)} min` : ''
+    };
+  }, [assignments.current]);
 
   const { width = 0 } = useWindowDimensions();
   const { mutate: updateAssignments, isPending: isUpdateAssignmentsPending } = useUpdateAssignments();
@@ -66,6 +83,12 @@ export default function Page() {
     }
   }, [user]);
 
+  // useEffect(() => {
+  //   if (isLoaded && assignments.current.length > 0 && user?.addressCoords && !directions) {
+  //     getDirectionsFromGoogleMaps(false, 'first', 'last', user.addressCoords);
+  //   }
+  // }, [isLoaded, assignments.current.length]);
+
   const { assignmentToId, setAssignmentToId } = useMembersStore(
     useShallow((state) => ({
       assignmentToId: state.assignmentToId,
@@ -83,15 +106,17 @@ export default function Page() {
       weekday: format(new Date(), 'EEEE').toUpperCase() as WeekdaysUppercase,
       frequency: 'WEEKLY',
       startOn: undefined,
-      endAfter: undefined
+      endAfter: undefined,
+      instructions: ''
     }
   });
 
   const mdScreen = width < 900;
 
-  function getDifference(array1: Assignment[], array2: Assignment[]): boolean {
-    return JSON.stringify(array1) !== JSON.stringify(array2);
-  }
+  // Reset hasChanges when assignments change (e.g., switching weekdays or members)
+  useEffect(() => {
+    setHasChanges(false);
+  }, [selectedWeekday, assignmentToId, assignments.initial]);
 
   function handleDragEnd(event: DragEndEvent, setActive: React.Dispatch<number | null>) {
     const { active, over } = event;
@@ -101,15 +126,26 @@ export default function Page() {
       const oldIndex = assignments.current.findIndex((item) => item.id === active.id);
       const newIndex = assignments.current.findIndex((item) => item.id === over.id);
 
+      // Reorder assignments and clear distance/time data when manually reordering
+      // These will be recalculated when Save is clicked
       const changedOrderProperty = arrayMove(assignments.current, oldIndex, newIndex).map((assignment, index) => {
-        return { ...assignment, order: index + 1 };
+        return {
+          ...assignment,
+          order: index + 1,
+          timeInMinutesToNextStop: null,
+          distanceInMilesToNextStop: null
+        };
       });
 
       setAssignments({
         ...assignments,
         current: changedOrderProperty
       });
-      getDirectionsFromGoogleMaps(false, 'first', 'last', user.addressCoords!);
+      // Clear directions state so map doesn't show old route
+      clearDirections();
+      // Mark that user has made changes - don't call getDirectionsFromGoogleMaps here
+      // It will be called when Save is clicked
+      setHasChanges(true);
     }
   }
 
@@ -123,30 +159,18 @@ export default function Page() {
     form.setValue('assignmentToId', memberId);
   }
 
-  const handleOptimize = (origin: 'home' | 'first', destination: 'home' | 'last') => {
+  const handleOptimize = (origin: string, destination: string) => {
     if (assignments.current.length > 0) {
+      // Convert the new address-based origin/destination IDs back to the old format
+      // 'technician' means home, and any assignment ID means first/last
+      const originType = origin === 'technician' ? 'home' : 'first';
+      const destinationType = destination === 'technician' ? 'home' : 'last';
 
-      getDirectionsFromGoogleMaps(true, origin, destination, user.addressCoords!);
-      // Add this to ensure the UI updates
-      setAssignments({
-        ...assignments,
-        initial: assignments.current
-      });
+      getDirectionsFromGoogleMaps(true, originType, destinationType, user.addressCoords!);
+      // Mark that user has made changes via optimize
+      setHasChanges(true);
     }
   };
-
-  //new
-  useEffect(() => {
-    if (
-      isLoaded &&
-      assignments.current.length > 0 &&
-      user?.addressCoords &&
-      !directions
-    ) {
-      getDirectionsFromGoogleMaps(false, 'first', 'last', user.addressCoords);
-    }
-  }, [isLoaded, assignments.current.length, user?.addressCoords]);
-
 
   if (isUpdateAssignmentsPending) return <LoadingSpinner />;
 
@@ -215,19 +239,41 @@ export default function Page() {
                         Optimize Route
                       </Button>
                     )}
-                    {getDifference(assignments.initial, assignments.current) && (
+                    {hasChanges && (
                       <Button
                         type="button"
-                        onClick={() =>
-                          updateAssignments(
-                            assignments.current.map((assignment) => {
-                              return {
-                                assignmentId: assignment.id,
-                                ...assignment
-                              };
-                            })
-                          )
-                        }
+                        onClick={() => {
+                          // Before saving, get directions with the current order to get distance/time data
+                          // Use optimizeWaypoints: false to preserve the manual order
+                          getDirectionsFromGoogleMaps(
+                            false,
+                            'first',
+                            'last',
+                            user.addressCoords!,
+                            (updatedAssignments) => {
+                              // After directions are calculated and assignments are updated, save them
+                              updateAssignments(
+                                updatedAssignments.map((assignment) => {
+                                  return {
+                                    assignmentId: assignment.id,
+                                    ...assignment
+                                  };
+                                }),
+                                {
+                                  onSuccess: () => {
+                                    // Reset hasChanges after successful save
+                                    setHasChanges(false);
+                                    // Update initial to match current after save
+                                    setAssignments({
+                                      ...assignments,
+                                      initial: updatedAssignments
+                                    });
+                                  }
+                                }
+                              );
+                            }
+                          );
+                        }}
                         className="mt-2 w-full bg-green-500 hover:bg-green-700"
                         disabled={assignmentToId !== user?.id}
                       >
@@ -248,8 +294,8 @@ export default function Page() {
           <Map
             assignments={assignments.current}
             directions={directions}
-            distance={distance}
-            duration={duration}
+            distance={totalDistance}
+            duration={totalDuration}
             isLoaded={isLoaded}
             loadError={loadError}
           />

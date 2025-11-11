@@ -79,6 +79,15 @@ export const columns: ColumnDef<Service>[] = [
     }
   },
   {
+    accessorKey: 'serviceType',
+    header: 'Service Type',
+    cell: ({ row: { original } }) => (
+      <div>
+        {original.serviceType?.name || 'N/A'}
+      </div>
+    )
+  },
+  {
     accessorKey: 'notes',
     header: 'Notes',
     cell: ({ row: { original } }) => (

@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusIcon } from '@radix-ui/react-icons';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -22,6 +22,7 @@ import { Client } from '@/ts/interfaces/Client';
 import { isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
+import useGetPoolsByClientId from '@/hooks/react-query/pools/getPoolsByClientId';
 
 const schema = z.object({
   category: z.string().min(1, { message: 'Category is required' }),
@@ -55,6 +56,7 @@ export function ModalAddRequest() {
 
   useEffect(() => {
     form.reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   function handleSubmit(data: z.infer<typeof schema>) {
@@ -65,11 +67,23 @@ export function ModalAddRequest() {
   }
 
   const { data: clients, isLoading: isLoadingClients } = useGetAllClients();
+  const clientId = form.watch('clientId');
+  const { data: pools = [], isLoading: isPoolsLoading } = useGetPoolsByClientId(
+    open ? clientId : null
+  );
   const isLoading = isLoadingClients || isPendingCreate;
 
-  if (isLoading) return <LoadingSpinner />;
+  // Reset poolId when client changes (but not on initial mount)
+  const prevClientIdRef = React.useRef<string | undefined>();
+  useEffect(() => {
+    if (clientId && prevClientIdRef.current !== undefined && clientId !== prevClientIdRef.current) {
+      form.resetField('poolId');
+    }
+    prevClientIdRef.current = clientId;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clientId]);
 
-  const clientId = form.watch('clientId');
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -86,7 +100,7 @@ export function ModalAddRequest() {
             <div className="flex gap-4">
               <SelectField
                 options={buildSelectOptions(
-                  clients?.filter((client: Client) => client.pools.length > 0),
+                  clients?.filter((client: Client) => client.isActive),
                   {
                     key: 'id',
                     name: 'fullName',
@@ -99,15 +113,14 @@ export function ModalAddRequest() {
               {clientId && (
                 <SelectField
                   options={buildSelectOptions(
-                    // Procura a piscina somente quando seleciona o cliente
-                    clients?.find((client: Client) => client.id === clientId)?.pools,
+                    pools.filter((pool) => pool.isActive),
                     {
                       key: 'id',
                       name: 'name',
                       value: 'id'
                     }
                   )}
-                  placeholder="Pools"
+                  placeholder={isPoolsLoading ? 'Loading pools...' : pools.length === 0 ? 'No pools available' : 'Pools'}
                   name="poolId"
                 />
               )}

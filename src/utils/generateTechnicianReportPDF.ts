@@ -33,6 +33,7 @@ interface ServicesByWeekday {
     lastName: string;
   };
   pool: Pool;
+  paymentPerUnit?: number; // This will be calculated by the backend based on the payment configuration
 }
 
 interface ServicesByDate {
@@ -56,6 +57,7 @@ interface ServiceReport {
     servicesCompleted: number;
     servicesOpen: number;
     totalServices: number;
+    totalPayment: number;
   };
 }
 
@@ -79,7 +81,8 @@ export const generateTechnicianReportPDF = async (
         servicesSkipped: 0,
         servicesCompleted: 0,
         servicesOpen: 0,
-        totalServices: 0
+        totalServices: 0,
+        totalPayment: 0
       }
     };
     
@@ -237,7 +240,10 @@ export const generateTechnicianReportPDF = async (
   
   // Additional Summary Cards
   const additionalSummaryY = summaryCardY + 50;
-  const cardWidth = (pageWidth - 60) / 3; // 3 cards with margins
+  const paymentSquareSize = 30;
+  const totalAvailableWidth = pageWidth - 40; // Total width minus left/right margins (20px each)
+  const spacing = 10; // Equal spacing between all 4 squares
+  const cardWidth = (totalAvailableWidth - 3 * spacing) / 4; // 4 squares with equal spacing
   
   // Services Completed Card
   drawRoundedRect(20, additionalSummaryY, cardWidth, 30, 8, COLORS.gray50, COLORS.gray200);
@@ -251,26 +257,52 @@ export const generateTechnicianReportPDF = async (
   doc.text('Completed', 30, additionalSummaryY + 22);
   
   // Services Scheduled Card
-  drawRoundedRect(20 + cardWidth + 10, additionalSummaryY, cardWidth, 30, 8, COLORS.gray50, COLORS.gray200);
+  drawRoundedRect(20 + cardWidth + spacing, additionalSummaryY, cardWidth, 30, 8, COLORS.gray50, COLORS.gray200);
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(hexToRgb(COLORS.primary).r, hexToRgb(COLORS.primary).g, hexToRgb(COLORS.primary).b);
-  doc.text(`${normalizedData.summary.servicesSkipped}`, 30 + cardWidth + 10, additionalSummaryY + 15);
+  doc.text(`${normalizedData.summary.servicesSkipped}`, 30 + cardWidth + spacing, additionalSummaryY + 15);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(hexToRgb(COLORS.gray600).r, hexToRgb(COLORS.gray600).g, hexToRgb(COLORS.gray600).b);
-  doc.text('Skipped', 30 + cardWidth + 10, additionalSummaryY + 22);
+  doc.text('Skipped', 30 + cardWidth + spacing, additionalSummaryY + 22);
   
-  // Services Skipped Card
-  drawRoundedRect(20 + (cardWidth + 10) * 2, additionalSummaryY, cardWidth, 30, 8, COLORS.gray50, COLORS.gray200);
+  // Services Open Card
+  drawRoundedRect(20 + (cardWidth + spacing) * 2, additionalSummaryY, cardWidth, 30, 8, COLORS.gray50, COLORS.gray200);
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(hexToRgb(COLORS.primary).r, hexToRgb(COLORS.primary).g, hexToRgb(COLORS.primary).b);
-  doc.text(`${normalizedData.summary.servicesOpen}`, 30 + (cardWidth + 10) * 2, additionalSummaryY + 15);
+  doc.text(`${normalizedData.summary.servicesOpen}`, 30 + (cardWidth + spacing) * 2, additionalSummaryY + 15);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(hexToRgb(COLORS.gray600).r, hexToRgb(COLORS.gray600).g, hexToRgb(COLORS.gray600).b);
-  doc.text('Open', 30 + (cardWidth + 10) * 2, additionalSummaryY + 22);
+  doc.text('Open', 30 + (cardWidth + spacing) * 2, additionalSummaryY + 22);
+  
+  // Total Payment Square (equally distributed)
+  const paymentSquareX = 20 + (cardWidth + spacing) * 3; // Positioned as the 4th square
+  const paymentSquareY = additionalSummaryY;
+  
+  // Draw payment square with primary color background
+  drawRoundedRect(paymentSquareX, paymentSquareY, cardWidth, 30, 8, COLORS.primary, COLORS.primary);
+  
+  // Add payment amount text
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(hexToRgb(COLORS.white).r, hexToRgb(COLORS.white).g, hexToRgb(COLORS.white).b);
+  const paymentText = `$${normalizedData.summary.totalPayment.toFixed(2)}`;
+  const paymentTextWidth = doc.getTextWidth(paymentText);
+  const paymentTextX = paymentSquareX + (paymentSquareSize - paymentTextWidth) / 2;
+  const paymentTextY = paymentSquareY + paymentSquareSize / 2 + 2;
+  doc.text(paymentText, paymentTextX, paymentTextY);
+  
+  // Add "Total Payment" label below the square
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(hexToRgb(COLORS.gray600).r, hexToRgb(COLORS.gray600).g, hexToRgb(COLORS.gray600).b);
+  const labelText = 'Total Payment';
+  const labelTextWidth = doc.getTextWidth(labelText);
+  const labelTextX = paymentSquareX + (paymentSquareSize - labelTextWidth) / 2;
+  doc.text(labelText, labelTextX, paymentSquareY + paymentSquareSize + 8);
   
   // Weekday Summary Section
   const weekdaySummaryY = additionalSummaryY + 50;
@@ -488,7 +520,7 @@ export const generateTechnicianReportPDF = async (
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8);
         doc.setTextColor(hexToRgb(COLORS.gray600).r, hexToRgb(COLORS.gray600).g, hexToRgb(COLORS.gray600).b);
-        const address = `${service.pool.address} - ${service.serviceType.name}`
+        const address = `${service.pool.address} - ${service.serviceType.name} - $${service.paymentPerUnit?.toFixed(2) ?? '$0.00'}`
         // .length > 90 ? service.pool.address.substring(0, 90) + '...' : service.pool.address;
         doc.text(address, 40, currentY + 6);
         

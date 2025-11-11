@@ -62,6 +62,7 @@ export const editPoolSchema = z.object({
   state: defaultSchemas.state.optional(),
   notes: notes.optional(),
   monthlyPayment: defaultSchemas.monthlyPayment.optional(),
+  paymentUnit: defaultSchemas.paymentUnit.optional(),
   poolType: poolType.optional(),
   zip: defaultSchemas.zipCode.optional(),
   animalDanger: z.boolean().optional(),

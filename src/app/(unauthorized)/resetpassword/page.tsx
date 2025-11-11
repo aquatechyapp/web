@@ -2,6 +2,8 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -12,12 +14,6 @@ import { Form } from '@/components/ui/form';
 import { useResetPassword } from '@/hooks/react-query/user/resetPassword';
 import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { FieldType } from '@/ts/enums/enums';
-
-interface Props {
-  searchParams: {
-    token: string;
-  };
-}
 
 const formSchema = z
   .object({
@@ -37,16 +33,17 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function Page({ searchParams }: Props) {
+function ResetPasswordForm() {
+  const searchParams = useSearchParams();
   const { mutate, isPending, isError } = useResetPassword();
-  const token = searchParams.token;
+  const token = searchParams.get('token');
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       newPassword: '',
       confirmPassword: '',
-      token: token
+      token: token || undefined
     }
   });
 
@@ -98,5 +95,13 @@ export default function Page({ searchParams }: Props) {
         </Button>
       </form>
     </Form>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

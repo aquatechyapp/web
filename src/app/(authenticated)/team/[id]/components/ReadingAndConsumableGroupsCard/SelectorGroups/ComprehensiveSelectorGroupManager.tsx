@@ -126,12 +126,12 @@ function DraggableSelectorDefinitionRow({
           )}
         </div>
       </TableCell>
-      <TableCell>
+      <TableCell className="hidden md:table-cell">
         <Badge variant={definition.isRequired ? "default" : "secondary"} className="text-xs">
           {definition.isRequired ? "Required" : "Optional"}
         </Badge>
       </TableCell>
-      <TableCell>
+      <TableCell className="hidden md:table-cell">
         <div className="text-sm text-muted-foreground">
           {definition.localOptions?.length || definition.options?.length || 0} options
         </div>
@@ -803,8 +803,8 @@ export function ComprehensiveSelectorGroupManager({
                       <TableRow>
                         <TableHead className="w-8"></TableHead>
                         <TableHead>Question</TableHead>
-                        <TableHead>Required</TableHead>
-                        <TableHead>Options</TableHead>
+                        <TableHead className="hidden md:table-cell">Required</TableHead>
+                        <TableHead className="hidden md:table-cell">Options</TableHead>
                         <TableHead className="w-32">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -871,12 +871,7 @@ export function ComprehensiveSelectorGroupManager({
                       }`}>
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{option.text}</span>
-                          <span className="text-sm text-muted-foreground">({option.value})</span>
-                          {option.id.startsWith('temp-option-') && (
-                            <Badge variant="default" className="bg-green-600 text-white text-xs">
-                              New
-                            </Badge>
-                          )}
+                          
                           {pendingChanges.optionUpdates.has(option.id) && !option.id.startsWith('temp-option-') && (
                             <Badge variant="default" className="bg-blue-600 text-white text-xs">
                               Modified

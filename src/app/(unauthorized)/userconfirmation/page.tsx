@@ -1,23 +1,18 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { clientAxios } from '@/lib/clientAxios';
 
 import { useToast } from '../../../components/ui/use-toast';
 
-interface PropsToken {
-  searchParams: {
-    token: string;
-  };
-}
-
-export default function Page({ searchParams }: PropsToken) {
+function UserConfirmationForm() {
   const router = useRouter();
-  const token = searchParams.token;
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
   const { toast } = useToast();
 
   const { mutate, isPending, isError } = useMutation({
@@ -66,5 +61,13 @@ export default function Page({ searchParams }: PropsToken) {
         </CardContent>
       </CardHeader>
     </Card>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <UserConfirmationForm />
+    </Suspense>
   );
 }

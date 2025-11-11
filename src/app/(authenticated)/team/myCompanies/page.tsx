@@ -49,7 +49,7 @@ export default function Page() {
       <div className="mt-3">
         <div className="flex flex-wrap justify-center gap-2 self-stretch md:justify-normal">
           {filteredCompanies && (
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-col w-full gap-2 md:flex-row md:flex-wrap md:justify-start">
               {filteredCompanies.map((company: CompanyWithMyRole) => (
                 <CompanyCard
                   key={company.id}

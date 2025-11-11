@@ -120,14 +120,13 @@ export function PhotoGroupsManager({ companyId }: PhotoGroupsManagerProps) {
             <Card key={photoGroup.id}>
               <CardHeader className="pb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-
-                  <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 w-full sm:w-auto items-start">
-
+                  {/* Mobile: Single row with arrow, text, and action buttons - centered */}
+                  <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleGroupExpansion(photoGroup.id)}
-                      className="h-8 w-8 p-0"
+                      className="h-8 w-8 p-0 flex-shrink-0"
                     >
                       {expandedGroups.has(photoGroup.id) ? (
                         <ChevronDown className="h-4 w-4" />
@@ -136,8 +135,8 @@ export function PhotoGroupsManager({ companyId }: PhotoGroupsManagerProps) {
                       )}
                     </Button>
 
-                    <div className="text-start sm:text-start">
-                      <CardTitle className="text-base flex items-center justify-start sm:justify-start gap-2">
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base flex items-center justify-start gap-2">
                         {photoGroup.name}
                         {photoGroup.isDefault && (
                           <Badge variant="outline" className="text-xs">
@@ -149,39 +148,39 @@ export function PhotoGroupsManager({ companyId }: PhotoGroupsManagerProps) {
                         <CardDescription className="text-sm">{photoGroup.description}</CardDescription>
                       )}
                     </div>
-                  </div>
 
-                  <div className="flex flex-row gap-2 mt-2 sm:mt-0 w-full sm:w-auto justify-start">
-                    <Badge
-                      variant={photoGroup.isActive ? "default" : "outline"}
-                      className="text-xs"
-                    >
-                      {photoGroup.isActive ? "Active" : "Inactive"}
-                    </Badge>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setEditingPhotoGroup(photoGroup)}
-                      disabled={isUpdating}
-                      className="h-8 w-8 p-0"
-                      title="Edit Photo Group"
-                    >
-                      <Edit className="h-3 w-3" />
-                    </Button>
-                    {canDeletePhotoGroup(photoGroup) && (
+                    {/* Action buttons - positioned on the right */}
+                    <div className="flex gap-2 flex-shrink-0">
+                      <Badge
+                        variant={photoGroup.isActive ? "default" : "outline"}
+                        className="text-xs"
+                      >
+                        {photoGroup.isActive ? "Active" : "Inactive"}
+                      </Badge>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setDeletingPhotoGroup(photoGroup)}
-                        disabled={isDeleting}
-                        className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                        title="Delete Photo Group"
+                        onClick={() => setEditingPhotoGroup(photoGroup)}
+                        disabled={isUpdating}
+                        className="h-8 w-8 p-0"
+                        title="Edit Photo Group"
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <Edit className="h-3 w-3" />
                       </Button>
-                    )}
+                      {canDeletePhotoGroup(photoGroup) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDeletingPhotoGroup(photoGroup)}
+                          disabled={isDeleting}
+                          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                          title="Delete Photo Group"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-
                 </div>
               </CardHeader>
 

@@ -51,7 +51,7 @@ export default function Page() {
     if (user.firstName === '') {
       router.push('/account');
     }
-  }, [user]);
+  }, [user, router]);
 
   const { assignedToId, setAssignedToid } = useMembersStore(
     useShallow((state) => ({
@@ -69,7 +69,8 @@ export default function Page() {
       poolId: '',
       scheduledTo: '',
       clientId: '',
-      serviceTypeId: ''
+      serviceTypeId: '',
+      instructions: ''
     }
   });
 

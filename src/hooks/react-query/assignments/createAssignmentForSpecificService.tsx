@@ -37,7 +37,8 @@ const createBodySchema = z.object({
     })
     .trim()
     .min(1, { message: 'serviceTypeId must be at least 1 character.' })
-    .optional()
+    .optional(),
+  instructions: z.string().optional()
 });
 
 type CreateAssignmentForSpecificService = z.infer<typeof createBodySchema>;

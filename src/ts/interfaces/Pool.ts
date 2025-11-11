@@ -35,6 +35,7 @@ export type Pool = {
   requests?: Request[];
   equipment?: Equipment | null;
   checklistTemplates?: ChecklistTemplate[];
+  paymentUnit?: number;
 };
 
 // Used only to add a pool to a client

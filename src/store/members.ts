@@ -12,6 +12,7 @@ type Actions = {
   setAssignmentToId: (assignmentToId: string) => void;
   setAssignedToid: (assignedToId: string) => void;
   setMembers: (data: CompanyMember[]) => void;
+  resetMembers: () => void;
 };
 
 export const useMembersStore = create<Store & Actions>()(
@@ -21,6 +22,11 @@ export const useMembersStore = create<Store & Actions>()(
     assignedToId: '',
     setAssignedToid: (assignedToId: string) => set({ assignedToId }),
     members: [],
-    setMembers: (data: CompanyMember[]) => set({ members: data })
+    setMembers: (data: CompanyMember[]) => set({ members: data }),
+    resetMembers: () => set({
+      assignmentToId: '',
+      assignedToId: '',
+      members: []
+    })
   }))
 );

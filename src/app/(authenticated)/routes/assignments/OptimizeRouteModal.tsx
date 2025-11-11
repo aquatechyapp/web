@@ -1,24 +1,85 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Assignment } from '@/ts/interfaces/Assignments';
 import { useState } from 'react';
+import { useMembersStore } from '@/store/members';
+import { useUserStore } from '@/store/user';
+import { useShallow } from 'zustand/react/shallow';
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onOptimize: (origin: 'home' | 'first', destination: 'home' | 'last') => void;
+  onOptimize: (origin: string, destination: string) => void;
   assignments: Assignment[];
   userAddress: string;
 }
 
-export function OptimizeRouteModal({ open, onOpenChange, onOptimize, assignments, userAddress }: Props) {
-  const firstAssignment = assignments[0];
-  const lastAssignment = assignments[assignments.length - 1];
+type RouteOption = {
+  id: string;
+  label: string;
+  address: string;
+};
 
-  const [origin, setOrigin] = useState<'home' | 'first'>('home');
-  const [destination, setDestination] = useState<'home' | 'last'>('last');
+export function OptimizeRouteModal({ open, onOpenChange, onOptimize, assignments, userAddress }: Props) {
+  const { assignmentToId, members } = useMembersStore(
+    useShallow((state) => ({
+      assignmentToId: state.assignmentToId,
+      members: state.members
+    }))
+  );
+
+  const user = useUserStore((state) => state.user);
+
+  // Find the selected technician's address
+  const selectedTechnician = members.find((member) => member.id === assignmentToId) || user;
+  const technicianAddress = selectedTechnician.address + ', ' + selectedTechnician.city + ', ' + selectedTechnician.state + ' ' + selectedTechnician.zip;
+
+  // Build options for starting point
+  const startingPointOptions: RouteOption[] = [];
+  
+  // Add technician address as first option
+  if (technicianAddress) {
+    startingPointOptions.push({
+      id: 'technician',
+      label: `Technician Address - ${technicianAddress}`,
+      address: technicianAddress
+    });
+  }
+  
+  // Add all assignment addresses
+  assignments.forEach((assignment) => {
+    startingPointOptions.push({
+      id: assignment.id,
+      label: `${assignment.pool.name}`,
+      address: assignment.pool.address
+    });
+  });
+
+  // Build options for ending point
+  const endingPointOptions: RouteOption[] = [];
+  
+  // Add technician address as first option
+  if (technicianAddress) {
+    endingPointOptions.push({
+      id: 'technician',
+      label: `Technician Address - ${technicianAddress}`,
+      address: technicianAddress
+    });
+  }
+  
+  // Add all assignment addresses
+  assignments.forEach((assignment) => {
+    endingPointOptions.push({
+      id: assignment.id,
+      label: `${assignment.pool.name}`,
+      address: assignment.pool.address
+    });
+  });
+
+  const [origin, setOrigin] = useState<string>('technician');
+  const [destination, setDestination] = useState<string>('technician');
 
   if (assignments.length === 0) {
     return null;
@@ -37,39 +98,35 @@ export function OptimizeRouteModal({ open, onOpenChange, onOptimize, assignments
             </p>
           </div>
           <div>
-            <h4 className="mb-4 font-medium">Starting Point</h4>
-            <RadioGroup value={origin} onValueChange={(value: 'home' | 'first') => setOrigin(value)}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="home" id="origin-home" />
-                <Label htmlFor="origin-home">Your Home ({userAddress})</Label>
-              </div>
-              {firstAssignment && (
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="first" id="origin-first" />
-                  <Label htmlFor="origin-first">
-                    First Assignment ({firstAssignment.pool.name} - {firstAssignment.pool.address})
-                  </Label>
-                </div>
-              )}
-            </RadioGroup>
+            <Label className="mb-4 font-medium">Starting Point</Label>
+            <Select value={origin} onValueChange={setOrigin}>
+              <SelectTrigger className="mt-2">
+                <SelectValue placeholder="Select starting point" />
+              </SelectTrigger>
+              <SelectContent>
+                {startingPointOptions.map((option) => (
+                  <SelectItem key={option.id} value={option.id}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
-            <h4 className="mb-4 font-medium">End Point</h4>
-            <RadioGroup value={destination} onValueChange={(value: 'home' | 'last') => setDestination(value)}>
-              {lastAssignment && (
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="last" id="dest-last" />
-                  <Label htmlFor="dest-last">
-                    Last Assignment ({lastAssignment.pool.name} - {lastAssignment.pool.address})
-                  </Label>
-                </div>
-              )}
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="home" id="dest-home" />
-                <Label htmlFor="dest-home">Your Home ({userAddress})</Label>
-              </div>
-            </RadioGroup>
+            <Label className="mb-4 font-medium">End Point</Label>
+            <Select value={destination} onValueChange={setDestination}>
+              <SelectTrigger className="mt-2">
+                <SelectValue placeholder="Select ending point" />
+              </SelectTrigger>
+              <SelectContent>
+                {endingPointOptions.map((option) => (
+                  <SelectItem key={option.id} value={option.id}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex justify-end gap-2">

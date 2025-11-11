@@ -1,14 +1,17 @@
 import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import SelectField from '@/components/SelectField';
+import InputField from '@/components/InputField';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
+import { FieldType } from '@/ts/enums/enums';
 import { useCreateService } from '@/hooks/react-query/services/createService';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
+import useGetPoolsByClientId from '@/hooks/react-query/pools/getPoolsByClientId';
 import { isEmpty } from '@/utils';
 import { buildSelectOptions } from '@/utils/formUtils';
 
@@ -34,8 +37,11 @@ export function DialogNewService() {
   const { data: clients = [], isLoading } = useGetAllClients();
   const clientId = form.watch('clientId');
   const selectedClient = clients.find((c: Client) => c.id === clientId);
+  const { data: pools = [], isLoading: isPoolsLoading } = useGetPoolsByClientId(
+    isModalOpen ? clientId : null
+  );
   const { data: serviceTypesData, isLoading: isServiceTypesLoading } = useGetServiceTypes(
-    selectedClient?.companyOwnerId || ''
+    selectedClient?.companyOwner?.id || ''
   );
 
   const { mutate, isPending } = useCreateAssignmentForSpecificService();
@@ -44,9 +50,26 @@ export function DialogNewService() {
     getNext10Dates();
   }, []);
 
+  // Reset poolId when client changes (but not on initial mount)
+  const prevClientIdRef = React.useRef<string | undefined>();
+  useEffect(() => {
+    if (clientId && prevClientIdRef.current !== undefined && clientId !== prevClientIdRef.current) {
+      form.resetField('poolId');
+      form.resetField('serviceTypeId');
+      form.resetField('instructions');
+    }
+    prevClientIdRef.current = clientId;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clientId]);
+
   const serviceTypes = serviceTypesData?.serviceTypes || [];
   const hasClients = clients.length > 0;
   const hasServiceTypes = serviceTypes.length > 0;
+  
+  // Watch serviceTypeId to check if it's "Pool Cleaning"
+  const serviceTypeId = form.watch('serviceTypeId');
+  const selectedServiceType = serviceTypes.find(st => st.id === serviceTypeId);
+  const showInstructions = selectedServiceType?.name !== 'Pool Cleaning';
 
   function getNext10Dates() {
     const startDate = new Date();
@@ -97,7 +120,8 @@ export function DialogNewService() {
           assignmentToId: assignedToId,
           poolId: form.watch('poolId'),
           specificDate: form.watch('scheduledTo'),
-          serviceTypeId: form.watch('serviceTypeId')
+          serviceTypeId: form.watch('serviceTypeId'),
+          instructions: form.watch('instructions') || undefined
         },
         {
           onSuccess: () => {
@@ -129,7 +153,7 @@ export function DialogNewService() {
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
             <p className="text-sm text-gray-600">Creating service...</p>
           </div>
-        ) : isLoading || isServiceTypesLoading ? (
+        ) : isLoading || isServiceTypesLoading || (clientId && isPoolsLoading) ? (
           <div className="flex items-center justify-center py-8">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
           </div>
@@ -140,7 +164,7 @@ export function DialogNewService() {
                 <div className="flex flex-col gap-4">
                   <SelectField
                     options={clients
-                      .filter((c: Client) => c.isActive && c.pools.length > 0)
+                      .filter((c: Client) => c.isActive)
                       .map((c: Client) => ({
                         key: c.id,
                         name: `${c.firstName} ${c.lastName}`,
@@ -153,7 +177,7 @@ export function DialogNewService() {
                   {clientId && (
                     <SelectField
                       options={buildSelectOptions(
-                        clients.find((c: Client) => c.id === clientId)?.pools?.filter((pool) => pool.isActive),
+                        pools.filter((pool) => pool.isActive),
                         {
                           key: 'id',
                           name: 'name',
@@ -161,7 +185,7 @@ export function DialogNewService() {
                         }
                       )}
                       label="Location"
-                      placeholder="Location"
+                      placeholder={isPoolsLoading ? 'Loading pools...' : pools.length === 0 ? 'No pools available' : 'Location'}
                       name="poolId"
                     />
                   )}
@@ -177,6 +201,14 @@ export function DialogNewService() {
                       label="Service Type"
                       placeholder={hasServiceTypes ? 'Select service type' : 'No service types available'}
                       name="serviceTypeId"
+                    />
+                  )}
+                  {clientId && serviceTypeId && showInstructions && (
+                    <InputField
+                      name="instructions"
+                      label="Instructions"
+                      placeholder="Enter detailed instructions for this service"
+                      type={FieldType.TextArea}
                     />
                   )}
                 </div>
@@ -197,7 +229,7 @@ export function DialogNewService() {
             </form>
           </Form>
         )}
-        {!isPending && !isLoading && !isServiceTypesLoading && (
+        {!isPending && !isLoading && !isServiceTypesLoading && !(clientId && isPoolsLoading) && (
           <div className="flex justify-around gap-4 pt-4">
             <Button className="w-full" onClick={createNewService}>
               Create
