@@ -65,11 +65,7 @@ export function CompanyCard({ companyId, name, email, phone, role, status, image
   };
 
   return (
-<<<<<<< HEAD
     <div className="relative flex flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 flex-1 min-w-[16rem] max-w-[20rem]">
-=======
-    <div className="relative inline-flex w-full flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:max-w-80">
->>>>>>> 663e15c8a4661aaa3affd4d154bac6ba0a6419e2
       {/* Pending Acceptance Strip */}
       {isPendingAcceptance && (
         <div className="absolute -top-0 left-0 rounded-tl-lg bg-yellow-500 px-3 py-1 text-center text-xs font-medium text-white">
