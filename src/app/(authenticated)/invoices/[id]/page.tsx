@@ -16,6 +16,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ModalDeleteInvoice } from '../DataTableInvoice/ModalDeleteInvoice';
 import { Trash2 } from 'lucide-react';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 const defaultValues = {
   fromCompany: '',
@@ -129,6 +130,10 @@ export default function Page() {
   const isSubmitting =
     invoices.createInvoice.isPending || invoices.updateInvoice.isPending;
 
+  // console.log('id', id)
+  // console.log('invoiceById', invoices.invoiceById.data)
+  // console.log('selectedCompany', selectedCompany)
+
   useEffect(() => {
     const inv = invoices.invoiceById.data;
     if (id && inv) {
@@ -150,23 +155,16 @@ export default function Page() {
       setValue('currency', inv.currency || 'USD');
       setValue('notes', inv.notes || '');
       setValue('description', inv.description || '');
-
-      setSelectedCompany(inv.companyId);
-
-      // Só seta o client quando os clients estiverem carregados
-      if (selectedCompany) {
-        setSelectedClient(inv.clientId);
-      }
-
     }
-  }, [id, invoices.invoiceById.data, clients]);
+  }, [id, invoices.invoiceById.data, setValue]);
 
   useEffect(() => {
     const inv = invoices.invoiceById.data;
-    if (id && inv && selectedCompany && !selectedClient) {
-      setSelectedClient(inv.clientId);
+    if (id && inv) {
+      setSelectedClient(inv.clientId || '');
+      setSelectedCompany(inv.companyId || '');
     }
-  }, [selectedCompany]);
+  }, [selectedCompany, invoices.invoiceById.data]);
 
   const onSubmit = (data: FormValues) => {
     const isValidId = singleId && /^[0-9a-fA-F]{24}$/.test(singleId);
@@ -231,6 +229,11 @@ export default function Page() {
   const addItem = () => append({ description: '', quantity: '', amount: '' });
 
   const formatCurrency = (n: number) => `$${n.toFixed(2)}`;
+
+  if (id && !invoices.invoiceById.data) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <div className="flex flex-col items-center justify-center w-full p-4">
       {/* @ts-ignore */}
@@ -578,7 +581,7 @@ export default function Page() {
                   Saving...
                 </>
               ) : (
-                'Create'
+                  id === 'create' ? 'Create' : 'Update'
               )}
             </Button>
 
@@ -595,7 +598,7 @@ export default function Page() {
                   Sending...
                 </>
               ) : (
-                'Create & Send'
+                  id === 'create' ? 'Create & Send' : 'Update & Send'
               )}
             </Button>
           </div>

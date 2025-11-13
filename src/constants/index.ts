@@ -11,12 +11,9 @@ import {
   UserPlus,
   Users,
   PlayCircle,
-<<<<<<< HEAD
-  DollarSign
-=======
+  DollarSign,
   ClipboardList,
   Calendar
->>>>>>> 663e15c8a4661aaa3affd4d154bac6ba0a6419e2
 } from 'lucide-react';
 
 import RouteIcon from '@/components/ui/route-icon';
