@@ -130,10 +130,6 @@ export default function Page() {
   const isSubmitting =
     invoices.createInvoice.isPending || invoices.updateInvoice.isPending;
 
-  // console.log('id', id)
-  // console.log('invoiceById', invoices.invoiceById.data)
-  // console.log('selectedCompany', selectedCompany)
-
   useEffect(() => {
     const inv = invoices.invoiceById.data;
     if (id && inv) {
@@ -230,7 +226,7 @@ export default function Page() {
 
   const formatCurrency = (n: number) => `$${n.toFixed(2)}`;
 
-  if (id && !invoices.invoiceById.data) {
+  if (id !== 'create' && !invoices.isReady) {
     return <LoadingSpinner />;
   }
 

@@ -130,7 +130,16 @@ export default function useInvoices(params?: UseInvoicesParams, id?:string) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['invoices'] }),
   });
 
+  const isLoadingOverall =
+    listInvoices.isLoading ||
+    (id && invoiceById.isLoading) ||
+    createInvoice.isPending ||
+    updateInvoice.isPending;
+
+  const isReady = !isLoadingOverall && (!id || !!invoiceById.data);
+
   return {
+    isReady,
     listInvoices,
     createInvoice,
     updateInvoice,
