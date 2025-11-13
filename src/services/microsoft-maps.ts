@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Coords } from '@/ts/interfaces/Pool';
 
 export interface RouteLeg {
@@ -67,6 +66,7 @@ interface MicrosoftWaypointFeature {
       inputIndex: number;
       optimizedIndex: number;
     };
+    pointIndex?: number;
   };
 }
 
@@ -131,111 +131,486 @@ function transformMicrosoftResponseToGoogle(
   }
 
   const features = microsoftResponse.features;
-  
-  // Sort features by their order (inputIndex or optimizedIndex)
-  // If optimization was enabled, use optimizedIndex; otherwise use inputIndex
-  const sortedFeatures = [...features].sort((a, b) => {
-    const orderA = options.optimizeWaypoints 
-      ? (a.properties.order?.optimizedIndex ?? a.properties.order?.inputIndex ?? 0)
-      : (a.properties.order?.inputIndex ?? 0);
-    const orderB = options.optimizeWaypoints
-      ? (b.properties.order?.optimizedIndex ?? b.properties.order?.inputIndex ?? 0)
-      : (b.properties.order?.inputIndex ?? 0);
-    return orderA - orderB;
+
+  if (!features.length) {
+    throw new Error('No waypoint or itinerary data found in Microsoft Maps response');
+  }
+
+  const legCount = Math.max(1, options.waypoints.length + 1);
+
+  const routePathFeatures = [...features]
+    .filter((feature) => typeof feature.properties?.routePathPoint?.legIndex === 'number')
+    .sort((a, b) => {
+      const legA = a.properties?.routePathPoint?.legIndex ?? 0;
+      const legB = b.properties?.routePathPoint?.legIndex ?? 0;
+      if (legA !== legB) {
+        return legA - legB;
+      }
+      const pointA = a.properties?.routePathPoint?.pointIndex ?? 0;
+      const pointB = b.properties?.routePathPoint?.pointIndex ?? 0;
+      return pointA - pointB;
+    });
+
+  type LegSegmentAccumulator = {
+    sumDistance: number;
+    sumDuration: number;
+    firstDistance?: number;
+    lastDistance?: number;
+    firstDuration?: number;
+    lastDuration?: number;
+    previousDistance?: number;
+    previousDuration?: number;
+  };
+
+  const legSegmentStats: LegSegmentAccumulator[] = Array.from({ length: legCount }, () => ({
+    sumDistance: 0,
+    sumDuration: 0
+  }));
+
+  routePathFeatures.forEach((feature) => {
+    const properties = feature.properties;
+    if (!properties) {
+      return;
+    }
+    const legIndex = properties.routePathPoint?.legIndex;
+    if (typeof legIndex !== 'number' || legIndex < 0 || legIndex >= legCount) {
+      return;
+    }
+
+    const accumulator = legSegmentStats[legIndex];
+
+    const distanceInMeters = properties.distanceInMeters;
+    if (typeof distanceInMeters === 'number') {
+      if (accumulator.firstDistance === undefined) {
+        accumulator.firstDistance = distanceInMeters;
+      }
+      if (typeof accumulator.previousDistance === 'number') {
+        const delta = distanceInMeters - accumulator.previousDistance;
+        if (Number.isFinite(delta) && delta > 0) {
+          accumulator.sumDistance += delta;
+        }
+      }
+      accumulator.lastDistance = distanceInMeters;
+      accumulator.previousDistance = distanceInMeters;
+    }
+
+    const durationInSeconds = properties.durationInSeconds;
+    if (typeof durationInSeconds === 'number') {
+      if (accumulator.firstDuration === undefined) {
+        accumulator.firstDuration = durationInSeconds;
+      }
+      if (typeof accumulator.previousDuration === 'number') {
+        const delta = durationInSeconds - accumulator.previousDuration;
+        if (Number.isFinite(delta) && delta > 0) {
+          accumulator.sumDuration += delta;
+        }
+      }
+      accumulator.lastDuration = durationInSeconds;
+      accumulator.previousDuration = durationInSeconds;
+    }
   });
 
-  // Calculate legs: each leg is from one waypoint to the next
-  // The first feature is the origin, last is the destination
-  // We need to calculate the difference between consecutive waypoints
-  const legs: RouteLeg[] = [];
-  
-  for (let i = 0; i < sortedFeatures.length - 1; i++) {
-    const currentFeature = sortedFeatures[i];
-    const nextFeature = sortedFeatures[i + 1];
-    
-    // Get cumulative values from each waypoint
-    // These should be cumulative from the origin (first waypoint should have 0 or undefined)
-    const currentDistance = currentFeature.properties.distanceInMeters ?? 0;
-    const currentDuration = currentFeature.properties.durationInSeconds ?? 0;
-    const nextDistance = nextFeature.properties.distanceInMeters ?? 0;
-    const nextDuration = nextFeature.properties.durationInSeconds ?? 0;
-    
-    // Calculate leg distance and duration as the difference
-    // Ensure non-negative values (safeguard against malformed data)
-    const legDistanceInMeters = Math.max(0, nextDistance - currentDistance);
-    const legDurationInSeconds = Math.max(0, nextDuration - currentDuration);
-    
-    // Create Google Maps compatible distance object (value is in meters)
-    const distance: google.maps.Distance = {
-      text: `${(legDistanceInMeters * 0.000621371).toFixed(2)} mi`,
-      value: legDistanceInMeters
-    };
+  const expectedStopCount = options.waypoints.length + 2;
+  const stopFeatureByInputIndex = new Map<number, MicrosoftWaypointFeature>();
 
-    // Create Google Maps compatible duration object (value is in seconds)
-    const duration: google.maps.Duration = {
-      text: `${Math.round(legDurationInSeconds / 60)} min`,
-      value: legDurationInSeconds
+  features.forEach((feature) => {
+    const properties = feature.properties;
+    if (!properties) {
+      return;
+    }
+
+    const pointIndex =
+      typeof properties.pointIndex === 'number' ? properties.pointIndex : undefined;
+    const inputIndex =
+      typeof properties.order?.inputIndex === 'number' ? properties.order.inputIndex : undefined;
+
+    const typeString = properties.type?.toLowerCase();
+    const isStopType = typeString === 'waypoint' || typeString === 'stop';
+    const candidateIndex = pointIndex ?? inputIndex;
+
+    if (
+      candidateIndex === undefined ||
+      candidateIndex < 0 ||
+      candidateIndex >= expectedStopCount
+    ) {
+      return;
+    }
+
+    if (!stopFeatureByInputIndex.has(candidateIndex) || pointIndex !== undefined || isStopType) {
+      stopFeatureByInputIndex.set(candidateIndex, feature);
+    }
+  });
+
+  const getRouteOrder = (entry: [number, MicrosoftWaypointFeature]): number => {
+    const [inputIndex, feature] = entry;
+    const properties = feature.properties ?? {};
+    if (inputIndex === 0) {
+      return 0;
+    }
+    if (inputIndex === expectedStopCount - 1) {
+      return expectedStopCount - 1;
+    }
+    if (options.optimizeWaypoints) {
+      const optimizedIndex = properties.order?.optimizedIndex;
+      if (typeof optimizedIndex === 'number') {
+        return optimizedIndex + 1;
+      }
+    }
+    const orderInputIndex = properties.order?.inputIndex;
+    if (typeof orderInputIndex === 'number') {
+      return orderInputIndex;
+    }
+    return inputIndex;
+  };
+
+  const parseCoordinate = (coord: Coords | string | undefined) => {
+    if (!coord) {
+      return undefined;
+    }
+    if (typeof coord === 'string') {
+      const [latString, lngString] = coord.split(',').map((value) => value.trim());
+      const lat = Number(latString);
+      const lng = Number(lngString);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        return { lat, lng };
+      }
+      return undefined;
+    }
+    const { lat, lng } = coord;
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      return { lat, lng };
+    }
+    return undefined;
+  };
+
+  const getFallbackCoordinatesForInputIndex = (inputIndex: number) => {
+    if (inputIndex === 0) {
+      return parseCoordinate(options.origin);
+    }
+    if (inputIndex === expectedStopCount - 1) {
+      return parseCoordinate(options.destination);
+    }
+    const waypoint = options.waypoints[inputIndex - 1];
+    return parseCoordinate(waypoint);
+  };
+
+  function toGoogleLatLng(literal: google.maps.LatLngLiteral): google.maps.LatLng {
+    if (
+      typeof window !== 'undefined' &&
+      typeof google !== 'undefined' &&
+      google.maps &&
+      typeof google.maps.LatLng === 'function'
+    ) {
+      return new google.maps.LatLng(literal.lat, literal.lng);
+    }
+    return literal as unknown as google.maps.LatLng;
+  }
+
+  let orderedStopEntries = Array.from(stopFeatureByInputIndex.entries()).sort(
+    (a, b) => getRouteOrder(a) - getRouteOrder(b)
+  );
+
+  if (orderedStopEntries.length !== expectedStopCount) {
+    const missingIndices: number[] = [];
+    for (let idx = 0; idx < expectedStopCount; idx += 1) {
+      if (!stopFeatureByInputIndex.has(idx)) {
+        missingIndices.push(idx);
+      }
+    }
+
+    missingIndices.forEach((inputIndex) => {
+      const fallbackCoords = getFallbackCoordinatesForInputIndex(inputIndex);
+      if (!fallbackCoords) {
+        return;
+      }
+
+      const syntheticFeature: MicrosoftWaypointFeature = {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [fallbackCoords.lng, fallbackCoords.lat]
+        },
+        properties: {
+          pointIndex: inputIndex,
+          type: 'stop',
+          order: {
+            inputIndex,
+            optimizedIndex:
+              inputIndex === 0 || inputIndex === expectedStopCount - 1
+                ? inputIndex
+                : inputIndex - 1
+          }
+        }
+      };
+
+      stopFeatureByInputIndex.set(inputIndex, syntheticFeature);
+      orderedStopEntries.push([inputIndex, syntheticFeature]);
+    });
+
+    orderedStopEntries = orderedStopEntries.sort((a, b) => getRouteOrder(a) - getRouteOrder(b));
+  }
+
+  const stopEntriesInRouteOrder = orderedStopEntries.map(
+    ([inputIndex, feature]): { inputIndex: number; feature: MicrosoftWaypointFeature | undefined } => ({
+      inputIndex,
+      feature
+    })
+  );
+
+  const stopCumulativeByRouteOrder = stopEntriesInRouteOrder.map(({ feature }) => {
+    const properties = feature?.properties ?? {};
+    return {
+      distance:
+        typeof properties.distanceInMeters === 'number' ? properties.distanceInMeters : undefined,
+      duration:
+        typeof properties.durationInSeconds === 'number'
+          ? properties.durationInSeconds
+          : undefined
     };
+  });
+
+  const MILES_PER_METER = 0.000621371;
+  const SECONDS_PER_MINUTE = 60;
+
+  const legs: RouteLeg[] = [];
+  let totalDistance = 0;
+  let totalDuration = 0;
+
+  for (let legIndex = 0; legIndex < legCount; legIndex += 1) {
+    const segmentStats = legSegmentStats[legIndex];
+
+    let distanceInMeters = segmentStats?.sumDistance ?? 0;
+    if (distanceInMeters <= 0 && segmentStats) {
+      const { firstDistance, lastDistance } = segmentStats;
+      if (typeof firstDistance === 'number' && typeof lastDistance === 'number') {
+        const delta = lastDistance - firstDistance;
+        if (Number.isFinite(delta) && delta > 0) {
+          distanceInMeters = delta;
+        }
+      }
+    }
+
+    let durationInSeconds = segmentStats?.sumDuration ?? 0;
+    if (durationInSeconds <= 0 && segmentStats) {
+      const { firstDuration, lastDuration } = segmentStats;
+      if (typeof firstDuration === 'number' && typeof lastDuration === 'number') {
+        const delta = lastDuration - firstDuration;
+        if (Number.isFinite(delta) && delta > 0) {
+          durationInSeconds = delta;
+        }
+      }
+    }
+
+    const startStop = stopCumulativeByRouteOrder[legIndex];
+    const endStop = stopCumulativeByRouteOrder[legIndex + 1];
+
+    if (
+      (!distanceInMeters || distanceInMeters === 0) &&
+      startStop &&
+      endStop &&
+      typeof startStop.distance === 'number' &&
+      typeof endStop.distance === 'number'
+    ) {
+      distanceInMeters = Math.max(0, endStop.distance - startStop.distance);
+    }
+
+    if (
+      (!durationInSeconds || durationInSeconds === 0) &&
+      startStop &&
+      endStop &&
+      typeof startStop.duration === 'number' &&
+      typeof endStop.duration === 'number'
+    ) {
+      durationInSeconds = Math.max(0, endStop.duration - startStop.duration);
+    }
+
+    const distanceInMiles = distanceInMeters * MILES_PER_METER;
+    const timeInMinutes = durationInSeconds / SECONDS_PER_MINUTE;
+
+    const distance: google.maps.Distance | null =
+      distanceInMeters > 0
+        ? {
+            text: `${distanceInMiles.toFixed(2)} mi`,
+            value: distanceInMeters
+          }
+        : null;
+
+    const duration: google.maps.Duration | null =
+      durationInSeconds > 0
+        ? {
+            text: `${Math.round(timeInMinutes)} min`,
+            value: durationInSeconds
+          }
+        : null;
 
     legs.push({
-      distanceInMiles: distance.value ? distance.value * 0.000621371 : 0,
-      timeInMinutes: duration.value ? duration.value / 60 : 0,
-      distance: distance.value ? distance : null,
-      duration: duration.value ? duration : null
+      distanceInMiles,
+      timeInMinutes,
+      distance,
+      duration
     });
+
+    totalDistance += distanceInMiles;
+    totalDuration += timeInMinutes;
   }
 
-  const totalDistance = legs.reduce((sum, leg) => sum + leg.distanceInMiles, 0);
-  const totalDuration = legs.reduce((sum, leg) => sum + leg.timeInMinutes, 0);
-
-  // Extract optimized waypoint order if available
-  // waypointOrder should only include waypoints (exclude origin at index 0 and destination at last index)
-  // Google Maps waypointOrder is 0-based indices relative to the waypoints array (not including origin/destination)
   let waypointOrder: number[] | undefined;
   if (options.optimizeWaypoints) {
-    // Get waypoints only (exclude origin and destination)
-    // Origin is at index 0, waypoints are at indices 1..n, destination is at index n+1
-    const waypointFeatures = sortedFeatures.slice(1, -1); // Exclude first (origin) and last (destination)
-    if (waypointFeatures.length > 0 && waypointFeatures[0].properties.order) {
-      // Sort by optimizedIndex to get the optimized visit order
-      const sortedByOptimized = [...waypointFeatures].sort((a, b) => {
-        const orderA = a.properties.order?.optimizedIndex ?? a.properties.order?.inputIndex ?? 0;
-        const orderB = b.properties.order?.optimizedIndex ?? b.properties.order?.inputIndex ?? 0;
-        return orderA - orderB;
-      });
-      
-      // Map optimized order back to original waypoint indices
-      // inputIndex: 0=origin, 1=first waypoint, 2=second waypoint, ..., n+1=destination
-      // waypointOrder: [0, 1, 2, ...] where each number is the index in the original waypoints array
-      waypointOrder = sortedByOptimized.map((feature) => {
-        const inputIndex = feature.properties.order?.inputIndex ?? 0;
-        // inputIndex - 1 because origin is at inputIndex 0, first waypoint is at 1, etc.
-        return inputIndex - 1;
-      });
+    const waypointEntries = Array.from(stopFeatureByInputIndex.entries())
+      .filter(([inputIndex]) => inputIndex > 0 && inputIndex < expectedStopCount - 1)
+      .map(([inputIndex, feature]) => {
+        const optimizedIndex = feature.properties?.order?.optimizedIndex;
+        return {
+          inputIndex,
+          optimizedIndex: typeof optimizedIndex === 'number' ? optimizedIndex : inputIndex - 1
+        };
+      })
+      .sort((a, b) => a.optimizedIndex - b.optimizedIndex);
+
+    if (waypointEntries.length === options.waypoints.length) {
+      waypointOrder = waypointEntries.map((entry) => entry.inputIndex - 1);
     }
   }
+
+  const stopInputIndicesInRouteOrder =
+    options.optimizeWaypoints && waypointOrder && waypointOrder.length === options.waypoints.length
+      ? [0, ...waypointOrder.map((index) => index + 1), expectedStopCount - 1]
+      : stopEntriesInRouteOrder.map((entry) => entry.inputIndex);
+
+  const stopLocations = stopInputIndicesInRouteOrder.map((inputIndex, orderIndex) => {
+    const feature = stopFeatureByInputIndex.get(inputIndex);
+    const coordinates = feature?.geometry?.coordinates;
+    const featureLat =
+      Array.isArray(coordinates) && coordinates.length >= 2 ? coordinates[1] : undefined;
+    const featureLng =
+      Array.isArray(coordinates) && coordinates.length >= 2 ? coordinates[0] : undefined;
+
+    let lat = typeof featureLat === 'number' && Number.isFinite(featureLat) ? featureLat : undefined;
+    let lng = typeof featureLng === 'number' && Number.isFinite(featureLng) ? featureLng : undefined;
+
+    if (lat === undefined || lng === undefined) {
+      const fallback = getFallbackCoordinatesForInputIndex(inputIndex);
+      if (fallback) {
+        lat = fallback.lat;
+        lng = fallback.lng;
+      }
+    }
+
+    if (lat === undefined || lng === undefined) {
+      throw new Error(`Could not resolve coordinates for stop at route order ${orderIndex}`);
+    }
+
+    return { lat, lng };
+  });
+
+  const computeBoundsLiteral = (locations: google.maps.LatLngLiteral[]) => {
+    if (locations.length === 0) {
+      throw new Error('No stop locations available to compute bounds');
+    }
+    return locations.reduce(
+      (bounds, location) => {
+        const south = Math.min(bounds.south, location.lat);
+        const west = Math.min(bounds.west, location.lng);
+        const north = Math.max(bounds.north, location.lat);
+        const east = Math.max(bounds.east, location.lng);
+        return { south, west, north, east };
+      },
+      {
+        south: locations[0].lat,
+        west: locations[0].lng,
+        north: locations[0].lat,
+        east: locations[0].lng
+      }
+    );
+  };
+
+  const boundsLiteral = computeBoundsLiteral(stopLocations);
+
+  const hasGoogleLatLngBounds =
+    typeof window !== 'undefined' &&
+    typeof google !== 'undefined' &&
+    google.maps &&
+    typeof google.maps.LatLngBounds === 'function';
+
+  const boundsForDirections: google.maps.LatLngBounds =
+    hasGoogleLatLngBounds
+      ? (() => {
+          const googleBounds = new google.maps.LatLngBounds();
+          stopLocations.forEach((location) => {
+            googleBounds.extend(toGoogleLatLng(location));
+          });
+          return googleBounds;
+        })()
+      : ({
+          south: boundsLiteral.south,
+          west: boundsLiteral.west,
+          north: boundsLiteral.north,
+          east: boundsLiteral.east
+        } as unknown as google.maps.LatLngBounds);
+
+  const getAddressLabelForInputIndex = (inputIndex: number) => {
+    const feature = stopFeatureByInputIndex.get(inputIndex);
+    if (!feature) {
+      return '';
+    }
+    const properties = feature.properties ?? {};
+    const addressParts: string[] = [];
+
+    if (typeof properties.towardsRoadName === 'string' && properties.towardsRoadName.trim()) {
+      addressParts.push(properties.towardsRoadName.trim());
+    }
+
+    const district =
+      properties.address?.adminDistricts?.map((districtEntry) => districtEntry.shortName).find(
+        (value) => typeof value === 'string' && value.trim()
+      );
+    if (district) {
+      addressParts.push(district.trim());
+    }
+
+    const countryIso = properties.address?.countryRegion?.ISO;
+    if (typeof countryIso === 'string' && countryIso.trim()) {
+      addressParts.push(countryIso.trim());
+    }
+
+    return addressParts.join(', ');
+  };
+
+  const directionsLegs = legs.map((leg, index) => {
+    const startLocationLiteral = stopLocations[index];
+    const endLocationLiteral = stopLocations[index + 1];
+
+    if (!startLocationLiteral || !endLocationLiteral) {
+      throw new Error(`Missing location data for leg ${index}`);
+    }
+
+    const startInputIndex = stopInputIndicesInRouteOrder[index];
+    const endInputIndex = stopInputIndicesInRouteOrder[index + 1];
+
+    return {
+      distance: leg.distance,
+      duration: leg.duration,
+      start_address: getAddressLabelForInputIndex(startInputIndex),
+      end_address: getAddressLabelForInputIndex(endInputIndex),
+      start_location: toGoogleLatLng(startLocationLiteral),
+      end_location: toGoogleLatLng(endLocationLiteral),
+      steps: [] as google.maps.DirectionsStep[],
+      traffic_speed_entry: [] as google.maps.DirectionsLeg['traffic_speed_entry'],
+      via_waypoints: [] as google.maps.LatLng[]
+    };
+  });
 
   // Create a Google Maps compatible directions result structure
   const directions = {
     routes: [
       {
         summary: '',
-        legs: legs.map((leg) => ({
-          distance: leg.distance,
-          duration: leg.duration,
-          start_address: '',
-          end_address: '',
-          start_location: {} as google.maps.LatLng,
-          end_location: {} as google.maps.LatLng,
-          steps: [],
-          traffic_speed_entry: [],
-          via_waypoints: []
-        })),
+        legs: directionsLegs,
         waypoint_order: waypointOrder,
         overview_polyline: {
           points: ''
         },
-        bounds: {} as google.maps.LatLngBounds,
+        bounds: boundsForDirections,
         copyrights: 'Microsoft Maps',
         warnings: [],
         overview_path: []
@@ -277,16 +652,6 @@ export function getDirections(
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const apiKey = process.env.NEXT_PUBLIC_MICROSOFT_MAPS_API_KEY;
-        
-        if (!apiKey) {
-          reject(new Error('Microsoft Maps API key is not configured'));
-          return;
-        }
-
-        const baseUrl = 'https://atlas.microsoft.com/route/directions';
-        const apiVersion = '2025-01-01';
-
         // Build features array: origin (index 0) + waypoints (indices 1..n) + destination (index n+1)
         const features = [
           createWaypointFeature(options.origin, 0),
@@ -305,35 +670,31 @@ export function getDirections(
           routeOutputOptions: ['routePath', 'itinerary']
         };
 
-        // Make API call
-        const response = await axios.post<MicrosoftRouteResponse>(
-          baseUrl,
-          requestBody,
-          {
-            params: {
-              'api-version': apiVersion,
-              'subscription-key': apiKey
-            },
-            headers: {
-              'Content-Type': 'application/geo+json',
-              'Accept-Language': 'en-US'
-            }
-          }
-        );
+        // Call our API route which securely handles the subscription key server-side
+        const response = await fetch('/api/microsoft-maps', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
 
-        if (response.data && response.data.features && response.data.features.length > 0) {
-          const routeResult = transformMicrosoftResponseToGoogle(response.data, options);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          reject(new Error(errorData.error || `HTTP error! status: ${response.status}`));
+          return;
+        }
+
+        const data: MicrosoftRouteResponse = await response.json();
+
+        if (data && data.features && data.features.length > 0) {
+          const routeResult = transformMicrosoftResponseToGoogle(data, options);
           resolve(routeResult);
         } else {
           reject(new Error('No features found in Microsoft Maps response'));
         }
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage = error.response?.data?.error?.message || error.message;
-          reject(new Error(`Microsoft Maps API request failed: ${errorMessage}`));
-        } else {
-          reject(new Error(`Microsoft Maps API request failed: ${error instanceof Error ? error.message : 'Unknown error'}`));
-        }
+        reject(new Error(`Microsoft Maps API request failed: ${error instanceof Error ? error.message : 'Unknown error'}`));
       }
     })();
   });

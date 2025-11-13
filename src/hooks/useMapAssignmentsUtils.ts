@@ -58,10 +58,11 @@ export function useMapAssignmentsUtils() {
       // Google Maps supports up to 25 waypoints (27 total stops including origin and destination)
       // Microsoft Maps supports more waypoints, so use it when we have 27+ stops
       const totalStops = waypoints.length + 2; // +2 for origin and destination
-      const useGoogleMaps = totalStops < 27;
+      const shouldUseMicrosoftMaps = totalStops >= 27;
+      const serviceLabel = shouldUseMicrosoftMaps ? 'Microsoft Maps' : 'Google Maps';
 
       // Google Maps requires the API to be loaded, but Microsoft Maps doesn't
-      if (useGoogleMaps && !isLoaded) {
+      if (!shouldUseMicrosoftMaps && !isLoaded) {
         setDirections(null);
         setDistance('');
         setDuration('');
@@ -71,12 +72,24 @@ export function useMapAssignmentsUtils() {
       try {
         // Call the appropriate service function based on waypoint count
         const routeResult: RouteResult = optimizeWaypoints
-          ? useGoogleMaps
-            ? await optimizeGoogleRoute(origin, destination, waypoints)
-            : await optimizeMicrosoftRoute(origin, destination, waypoints)
-          : useGoogleMaps
-            ? await getGoogleDirections(origin, destination, waypoints)
-            : await getMicrosoftDirections(origin, destination, waypoints);
+          ? shouldUseMicrosoftMaps
+            ? await optimizeMicrosoftRoute(origin, destination, waypoints)
+            : await optimizeGoogleRoute(origin, destination, waypoints)
+          : shouldUseMicrosoftMaps
+            ? await getMicrosoftDirections(origin, destination, waypoints)
+            : await getGoogleDirections(origin, destination, waypoints);
+
+        console.log('[Assignments] Route service selected:', {
+          service: serviceLabel,
+          optimizeWaypoints,
+          totalStops,
+          waypointCount: waypoints.length
+        });
+
+        console.log('[Assignments] Route service result:', {
+          service: serviceLabel,
+          result: routeResult
+        });
 
         // Update directions state
         setDirections(routeResult.directions);
