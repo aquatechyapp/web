@@ -34,7 +34,7 @@ const TinyMCEEditor = () => {
         }}
         onEditorChange={handleEditorChange}
       />
-      <button onClick={() => console.log('Conteúdo HTML:', editorContent)}>Obter conteúdo HTML</button>
+      <button>Obter conteúdo HTML</button>
     </div>
   );
 };

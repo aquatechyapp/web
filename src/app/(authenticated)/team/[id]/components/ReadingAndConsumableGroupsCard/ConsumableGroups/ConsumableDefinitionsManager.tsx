@@ -265,11 +265,9 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
   };
 
   const handleDeleteDefinition = (definition: ConsumableDefinition) => {
-    console.log('Deleting definition:', definition);
 
     // Don't delete temporary (new) definitions - just remove them from creates and local state
     if (definition.id.startsWith('temp-')) {
-      console.log('Removing temporary definition from creates');
       // Remove from pending creates
       setPendingChanges(prev => ({
         ...prev,
@@ -278,11 +276,9 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
         )
       }));
     } else {
-      console.log('Adding real definition to pending deletes:', definition.id);
       // Add real definitions to pending deletes
       setPendingChanges(prev => {
         const newDeletes = new Set(prev.deletes).add(definition.id);
-        console.log('Updated deletes set:', Array.from(newDeletes));
         return {
           ...prev,
           deletes: newDeletes
@@ -431,16 +427,6 @@ export function ConsumableDefinitionsManager({ consumableGroup, companyId }: Con
       if (batchData.consumableDefinitionsDeletes && batchData.consumableDefinitionsDeletes.length === 0) {
         delete batchData.consumableDefinitionsDeletes;
       }
-
-      // Debug logging
-      console.log('Batch data being sent:', batchData);
-      console.log('Pending changes:', {
-        updates: Array.from(pendingChanges.updates.entries()),
-        deletes: Array.from(pendingChanges.deletes),
-        creates: pendingChanges.creates
-      });
-      console.log('Optimized deletes:', optimizedDeletes);
-      console.log('Optimized creates:', optimizedCreates);
 
       batchUpdateConsumableGroup({
         consumableGroupId: consumableGroup.id,

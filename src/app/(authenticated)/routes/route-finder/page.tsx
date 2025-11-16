@@ -166,11 +166,6 @@ function RouteFinderContent() {
     }
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log('Form submitted:', data);
-    // We'll implement this later
-  };
-
   const handleAddressSelect = async (address: {
     fullAddress: string;
     state: string;
@@ -291,7 +286,7 @@ function RouteFinderContent() {
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mb-4">
+            <form className="space-y-4 mb-4">
               <AddressInput
                 name="address"
                 label="Pool Address"

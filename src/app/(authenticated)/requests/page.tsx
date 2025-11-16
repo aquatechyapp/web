@@ -91,13 +91,11 @@ export default function Page() {
   }, [currentFilters, filtersForm]);
 
   const onSubmit = async (formData: UseGetRequestsParams) => {
-    console.log('Form data submitted:', formData); // Debug log
     const newFilters = {
       ...formData,
       page: 1, // Reset to first page when applying filters
       limit: itemsPerPage
     };
-    console.log('New filters being applied:', newFilters); // Debug log
     setCurrentPage(1);
     setCurrentFilters(newFilters);
     await requestsQuery.refetch(newFilters);
@@ -273,7 +271,6 @@ export default function Page() {
                               {...field}
                               options={Categories}
                               onValueChange={(value) => {
-                                console.log('Category selected:', value); // Debug log
                                 field.onChange(value);
                               }}
                             />

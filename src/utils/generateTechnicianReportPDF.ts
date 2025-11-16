@@ -120,7 +120,6 @@ export const generateTechnicianReportPDF = async (
   // Helper function to add logo
   const addLogo = async (y: number, targetHeight: number) => {
     const originalLogoUrl = normalizedData.company.imageUrl || '/images/logotransparente.png';
-    console.log('Attempting to load logo from:', originalLogoUrl);
     
     // Use proxy endpoint for external URLs to avoid CORS issues
     const logoUrl = originalLogoUrl.startsWith('http') 
@@ -138,7 +137,6 @@ export const generateTechnicianReportPDF = async (
       
       const loadPromise = new Promise((resolve, reject) => {
         img.onload = () => {
-          console.log('Logo loaded successfully');
           resolve(img);
         };
         img.onerror = (error) => {
@@ -181,7 +179,6 @@ export const generateTechnicianReportPDF = async (
           const centeredX = (pageWidth - calculatedWidth) / 2;
           
           doc.addImage(localImg, 'PNG', centeredX, y, calculatedWidth, targetHeight);
-          console.log('Local logo loaded successfully as fallback');
           return;
         } catch (localError) {
           console.warn('Local logo also failed:', localError);
