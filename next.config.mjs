@@ -33,7 +33,6 @@ const nextConfig = {
   // },
   env: {
     API_URL: process.env.API_URL,
-    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
   },
   pageExtensions: ['ts', 'tsx']
 };
