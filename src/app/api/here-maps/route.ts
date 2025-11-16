@@ -153,6 +153,8 @@ async function fetchSequenceRoute(apiKey: string, options: HereDirectionsOptions
 
   const url = `${HERE_SEQUENCE_API_URL}?${params.toString()}`;
 
+  console.log('url ', url);
+
   const response = await fetch(url, {
     method: 'GET',
     headers: {
