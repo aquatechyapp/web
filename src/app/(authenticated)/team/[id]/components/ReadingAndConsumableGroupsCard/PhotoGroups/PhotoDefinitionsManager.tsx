@@ -185,7 +185,6 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
   }, [photoDefinitionsData?.photoDefinitions]);
 
   const handleCreateDefinition = (data: CreatePhotoDefinitionRequest) => {
-    console.log('Creating new definition:', data);
 
     // Add to pending creates instead of immediately creating
     const newDefinition: BatchPhotoDefinitionCreate = {
@@ -198,7 +197,6 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
     };
 
     setPendingChanges(prev => {
-      console.log('Current creates before adding:', prev.creates);
 
       // Check if a definition with the same name already exists in creates
       const existingCreate = prev.creates.find(create =>
@@ -206,12 +204,10 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
       );
 
       if (existingCreate) {
-        console.log('Definition with same name already exists in creates, skipping duplicate');
         return prev;
       }
 
       const newCreates = [...prev.creates, newDefinition];
-      console.log('New creates after adding:', newCreates);
       return {
         ...prev,
         creates: newCreates
@@ -239,7 +235,6 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
 
   const handleUpdateDefinition = (data: UpdatePhotoDefinitionRequest) => {
     if (editingDefinition) {
-      console.log('Updating definition:', editingDefinition.id, data);
 
       // If it's a temporary definition, update the create entry
       if (editingDefinition.id.startsWith('temp-')) {
@@ -345,7 +340,6 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
   };
 
   const handleSaveAllChanges = () => {
-    console.log('Saving all changes:', pendingChanges);
 
     // Build the batch data
     const batchData: CrudPhotoGroupRequest = {};
@@ -389,9 +383,7 @@ export function PhotoDefinitionsManager({ photoGroup, companyId }: PhotoDefiniti
     if (optimizedDeletes.length > 0) {
       batchData.photoDefinitionsDeletes = optimizedDeletes;
     }
-
-    console.log('Optimized batch data:', batchData);
-
+    
     batchUpdatePhotoGroup({ photoGroupId: photoGroup.id, data: batchData }, {
       onSuccess: () => {
         // Reset pending changes

@@ -33,7 +33,6 @@ export function ModalSend({ onSubmit, disabled }: ModalSendProps) {
             onClick={() => {
               onSubmit();
               setOpen(false);
-              console.log('enviando');
             }}
           >
             Send

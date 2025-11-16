@@ -37,7 +37,6 @@ clientAxios.interceptors.response.use(
   },
   async (error: AxiosError<{ message: string }>) => {
     if (error.code === 'ECONNABORTED' || error.message.includes('Network Error')) {
-      console.log('Network Error');
       // window.location.href = window.location.protocol + '//' + window.location.host + '/server-offline';
     }
 

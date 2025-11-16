@@ -76,8 +76,6 @@ export default function Page() {
         withCredentials: true
       });
 
-      console.log('r => ', response);
-
       // Create blob from response
       const blob = new Blob([response.data], { type: 'application/pdf' });
 

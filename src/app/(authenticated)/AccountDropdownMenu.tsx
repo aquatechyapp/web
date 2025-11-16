@@ -30,8 +30,6 @@ export function AccountDropdownMenu({ handleLogout }: Props) {
     }
   }, [user.firstName, user.lastName]);
 
-  // console.log('user', user)
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
