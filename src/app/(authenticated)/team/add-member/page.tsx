@@ -23,7 +23,7 @@ import { IanaTimeZones, FieldType } from '@/ts/enums/enums';
 const existingUserSchema = z.object({
   companyId: z.string().min(1, { message: 'Company must be selected.' }),
   email: z.string().email({ message: 'Invalid email format.' }),
-  role: z.enum(['Owner', 'Admin', 'Office', 'Technician', 'Cleaner'])
+  role: z.enum(['Admin', 'Office', 'Technician', 'Cleaner'])
 });
 
 const newUserSchema = existingUserSchema.extend({
@@ -209,7 +209,6 @@ export default function AddMemberPage() {
                 label="Role"
                 placeholder="Select role"
                 options={[
-                  { key: 'Owner', name: 'Owner', value: 'Owner' },
                   { key: 'Admin', name: 'Admin', value: 'Admin' },
                   { key: 'Office', name: 'Office', value: 'Office' },
                   { key: 'Technician', name: 'Technician', value: 'Technician' },
@@ -298,7 +297,6 @@ export default function AddMemberPage() {
               label="Role"
               placeholder="Select role"
               options={[
-                { key: 'Owner', name: 'Owner', value: 'Owner' },
                 { key: 'Admin', name: 'Admin', value: 'Admin' },
                 { key: 'Office', name: 'Office', value: 'Office' },
                 { key: 'Technician', name: 'Technician', value: 'Technician' },
