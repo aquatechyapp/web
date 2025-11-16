@@ -4,8 +4,11 @@ import { useCallback, useState } from 'react';
 import { libraries } from '@/constants';
 import { useAssignmentsContext } from '@/context/assignments';
 import { Coords } from '@/ts/interfaces/Pool';
-import { getDirectionsForRoute as getGoogleDirections, optimizeRoute as optimizeGoogleRoute, RouteResult } from '@/services/google-maps';
-import { getDirectionsForRoute as getMicrosoftDirections, optimizeRoute as optimizeMicrosoftRoute } from '@/services/microsoft-maps';
+import {
+  getDirectionsAndTime as getHereDirections,
+  getOptimizedRoute as getHereOptimizedRoute
+} from '@/services/here-maps';
+import type { HereRouteResult } from '@/ts/interfaces/HereMaps';
 
 type DirectionsResult = google.maps.DirectionsResult | null;
 
@@ -28,15 +31,22 @@ export function useMapAssignmentsUtils() {
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
 
-  const getDirectionsFromGoogleMaps = useCallback(
+  type RouteOverrides = {
+    assignments?: typeof current;
+  };
+
+  const getDirectionsFromHereMaps = useCallback(
     async (
       optimizeWaypoints: boolean = false,
       originType: 'home' | 'first' = 'first',
       destinationType: 'home' | 'last' = 'last',
       userHomeCoords: Coords,
-      onComplete?: (updatedAssignments: typeof current) => void
+      onComplete?: (updatedAssignments: typeof current) => void,
+      overrides?: RouteOverrides
     ) => {
-      if (current.length <= 0) {
+      const sourceAssignments = overrides?.assignments ?? current;
+
+      if (sourceAssignments.length <= 0) {
         setDirections(null);
         setDistance('');
         setDuration('');
@@ -44,25 +54,19 @@ export function useMapAssignmentsUtils() {
       }
 
       // Handle 'home' logic - convert to actual addresses
-      const origin = originType === 'home' ? userHomeCoords : current[0].pool.coords;
-      const destination = destinationType === 'home' ? userHomeCoords : current[current.length - 1].pool.coords;
+      const origin = originType === 'home' ? userHomeCoords : sourceAssignments[0].pool.coords;
+      const destination =
+        destinationType === 'home' ? userHomeCoords : sourceAssignments[sourceAssignments.length - 1].pool.coords;
 
       // Adjust waypoints based on origin and destination
       // If origin is 'first', exclude first assignment from waypoints
       // If destination is 'last', exclude last assignment from waypoints
-      const waypoints = current
+      const waypoints = sourceAssignments
         .slice(originType === 'home' ? 0 : 1, destinationType === 'home' ? undefined : -1)
         .map((assignment) => assignment.pool.coords);
 
-      // Calculate total number of stops (origin + waypoints + destination)
-      // Google Maps supports up to 25 waypoints (27 total stops including origin and destination)
-      // Microsoft Maps supports more waypoints, so use it when we have 27+ stops
-      const totalStops = waypoints.length + 2; // +2 for origin and destination
-      const shouldUseMicrosoftMaps = totalStops >= 27;
-      const serviceLabel = shouldUseMicrosoftMaps ? 'Microsoft Maps' : 'Google Maps';
-
-      // Google Maps requires the API to be loaded, but Microsoft Maps doesn't
-      if (!shouldUseMicrosoftMaps && !isLoaded) {
+      // Google Maps needs to be loaded to render the map, even though routing comes from HERE
+      if (!isLoaded) {
         setDirections(null);
         setDistance('');
         setDuration('');
@@ -70,29 +74,24 @@ export function useMapAssignmentsUtils() {
       }
 
       try {
-        // Call the appropriate service function based on waypoint count
-        const routeResult: RouteResult = optimizeWaypoints
-          ? shouldUseMicrosoftMaps
-            ? await optimizeMicrosoftRoute(origin, destination, waypoints)
-            : await optimizeGoogleRoute(origin, destination, waypoints)
-          : shouldUseMicrosoftMaps
-            ? await getMicrosoftDirections(origin, destination, waypoints)
-            : await getGoogleDirections(origin, destination, waypoints);
+        // Call HERE Waypoints Sequence API for routing data
+        const routeResult: HereRouteResult = optimizeWaypoints
+          ? await getHereOptimizedRoute(origin, destination, waypoints)
+          : await getHereDirections(origin, destination, waypoints);
 
         console.log('[Assignments] Route service selected:', {
-          service: serviceLabel,
+          service: 'HERE Waypoints Sequence API',
           optimizeWaypoints,
-          totalStops,
           waypointCount: waypoints.length
         });
 
         console.log('[Assignments] Route service result:', {
-          service: serviceLabel,
+          service: 'HERE Waypoints Sequence API',
           result: routeResult
         });
 
-        // Update directions state
-        setDirections(routeResult.directions);
+        // HERE doesn't return Google DirectionsResult, so clear DirectionsRenderer data
+        setDirections(undefined);
         setDuration(
           routeResult.totalDuration.toLocaleString('en-US', {
             style: 'decimal',
@@ -115,18 +114,18 @@ export function useMapAssignmentsUtils() {
           // waypoint_order tells us the original indices of waypoints in their new optimized order
           if (originType === 'home') {
             // All assignments are waypoints, so reorder all
-            assignmentsToUpdate = routeResult.waypointOrder.map((originalIndex) => current[originalIndex]);
+            assignmentsToUpdate = routeResult.waypointOrder.map((originalIndex: number) => sourceAssignments[originalIndex]);
           } else {
             // First assignment is fixed, then waypoints, then possibly last assignment
             assignmentsToUpdate = [
-              current[0],
-              ...routeResult.waypointOrder.map((originalIndex) => current[originalIndex + 1]),
-              ...(destinationType === 'last' ? [current[current.length - 1]] : [])
+              sourceAssignments[0],
+              ...routeResult.waypointOrder.map((originalIndex) => sourceAssignments[originalIndex + 1]),
+              ...(destinationType === 'last' ? [sourceAssignments[sourceAssignments.length - 1]] : [])
             ];
           }
         } else {
           // Use assignments in original order
-          assignmentsToUpdate = current;
+          assignmentsToUpdate = sourceAssignments;
         }
 
         // Map legs to assignments (which may be in optimized order)
@@ -139,8 +138,8 @@ export function useMapAssignmentsUtils() {
             const leg = routeResult.legs[index + legOffset];
             return {
               ...assignment,
-              timeInMinutesToNextStop: leg.duration ? leg.timeInMinutes : null,
-              distanceInMilesToNextStop: leg.distance ? leg.distanceInMiles : null,
+              timeInMinutesToNextStop: leg.timeInMinutes ?? null,
+              distanceInMilesToNextStop: leg.distanceInMiles ?? null,
               order: optimizeWaypoints ? index + 1 : assignment.order
             };
           } else {
@@ -185,14 +184,14 @@ export function useMapAssignmentsUtils() {
     setDuration('');
   }, []);
 
-  // Removed useEffect that was calling getDirectionsFromGoogleMaps on first render
+  // Removed useEffect that was calling getDirectionsFromHereMaps on first render
   // This prevents unnecessary API calls and reduces costs
 
   return {
     directions,
     distance,
     duration,
-    getDirectionsFromGoogleMaps,
+    getDirectionsFromHereMaps,
     setBoundsAndZoom,
     clearDirections,
     isLoaded,
