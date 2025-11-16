@@ -19,9 +19,7 @@ export default function Page() {
 
   // Set initial filtered clients - FIXED: Only set once when allClients changes from undefined to actual data
   useEffect(() => {
-    console.log('🔄 useEffect triggered:', { allClientsLength: allClients?.length, filteredClientsLength: filteredClients.length });
     if (allClients && allClients.length > 0 && filteredClients.length === 0) {
-      console.log('✅ Setting initial filtered clients');
       setFilteredClients(allClients);
     }
   }, [allClients, filteredClients.length]);

@@ -182,7 +182,6 @@ export default function TechnicianReportPage() {
         // fromDate: new Date('2025-09-29'),
         // toDate: new Date('2025-10-04')
       } as any);
-      console.log('Report generation completed successfully');
       setSelectedServiceTypes([]);
       setServiceTypePayments({});
     } catch (error) {

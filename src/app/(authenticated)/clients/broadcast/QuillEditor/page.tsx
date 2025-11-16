@@ -23,7 +23,6 @@ const QuillEditor = () => {
             ]
           }
         });
-        console.log('QuillEditor: Quill Inicializou', quill);
 
         quillInstanceRef.current = quill; // Armazenando a instância no useRef
         isInitialized.current = true; // Marca que a inicialização foi feita
@@ -36,14 +35,12 @@ const QuillEditor = () => {
   useEffect(() => {
     // Evitar inicialização múltipla do Quill
     if (!quillInstanceRef.current) {
-      console.log('QuillEditor: Efeito useEffect sendo executado...');
       initializeQuill();
     }
 
     // Função de limpeza
     return () => {
       if (quillInstanceRef.current) {
-        console.log('QuillEditor: Limpando quillInstance...');
         quillInstanceRef.current.destroy(); // Usando a instância de Quill do useRef
         quillInstanceRef.current = null; // Limpando a referência
       }
@@ -60,7 +57,6 @@ const QuillEditor = () => {
       <button
         onClick={() => {
           const htmlContent = quillInstanceRef.current?.root.innerHTML;
-          console.log('Conteúdo HTML:', htmlContent);
         }}
       >
         Obter conteúdo HTML

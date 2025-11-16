@@ -100,7 +100,6 @@ export default function Page() {
   };
 
   const handlePageChange = async (page: number) => {
-    console.log('handlePageChange called with page:', page);
     filtersForm.setValue('page', page);
     const currentFilters = filtersForm.getValues();
     await workOrdersServicesQuery.refetch({ ...currentFilters, page, limit: 20 });

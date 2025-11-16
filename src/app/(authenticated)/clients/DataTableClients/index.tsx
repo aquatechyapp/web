@@ -146,7 +146,6 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
     }))
   ];
 
-  // console.log('sortedData', sortedData);
 
   return (
     <>

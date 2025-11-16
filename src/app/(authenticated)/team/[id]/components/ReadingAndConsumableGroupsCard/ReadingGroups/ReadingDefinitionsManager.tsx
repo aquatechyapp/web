@@ -202,7 +202,6 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
   }, [readingDefinitionsData?.readingDefinitions]);
 
   const handleCreateDefinition = (data: CreateReadingDefinitionRequest) => {
-    console.log('Creating new definition:', data);
 
     // Add to pending creates instead of immediately creating
     const newDefinition: BatchReadingDefinitionCreate = {
@@ -218,7 +217,6 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
     };
 
     setPendingChanges(prev => {
-      console.log('Current creates before adding:', prev.creates);
 
       // Check if a definition with the same name and unit already exists in creates
       const existingCreate = prev.creates.find(create =>
@@ -226,12 +224,10 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
       );
 
       if (existingCreate) {
-        console.log('Definition with same name/unit already exists in creates, skipping duplicate');
         return prev;
       }
 
       const newCreates = [...prev.creates, newDefinition];
-      console.log('New creates after adding:', newCreates);
       return {
         ...prev,
         creates: newCreates
@@ -282,11 +278,9 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
   };
 
   const handleDeleteDefinition = (definition: ReadingDefinition) => {
-    console.log('Deleting definition:', definition);
 
     // Don't delete temporary (new) definitions - just remove them from creates and local state
     if (definition.id.startsWith('temp-')) {
-      console.log('Removing temporary definition from creates');
       // Remove from pending creates
       setPendingChanges(prev => ({
         ...prev,
@@ -295,11 +289,9 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
         )
       }));
     } else {
-      console.log('Adding real definition to pending deletes:', definition.id);
       // Add real definitions to pending deletes
       setPendingChanges(prev => {
         const newDeletes = new Set(prev.deletes).add(definition.id);
-        console.log('Updated deletes set:', Array.from(newDeletes));
         return {
           ...prev,
           deletes: newDeletes
@@ -449,16 +441,6 @@ export function ReadingDefinitionsManager({ readingGroup, companyId }: ReadingDe
       if (batchData.readingDefinitionsDeletes && batchData.readingDefinitionsDeletes.length === 0) {
         delete batchData.readingDefinitionsDeletes;
       }
-
-      // Debug logging
-      console.log('Batch data being sent:', batchData);
-      console.log('Pending changes:', {
-        updates: Array.from(pendingChanges.updates.entries()),
-        deletes: Array.from(pendingChanges.deletes),
-        creates: pendingChanges.creates
-      });
-      console.log('Optimized deletes:', optimizedDeletes);
-      console.log('Optimized creates:', optimizedCreates);
 
       batchUpdateReadingGroup({
         readingGroupId: readingGroup.id,

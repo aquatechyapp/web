@@ -80,7 +80,6 @@ export function EditPhotoDefinitionDialog({
     return null;
   }
 
-  console.log('photoDefinition', photoDefinition)
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">

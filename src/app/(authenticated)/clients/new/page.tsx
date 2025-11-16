@@ -394,7 +394,6 @@ export default function Page() {
   };
 
   async function handleCreateClientPoolAndAssignments(data: PoolAndClientSchema) {
-    console.log(data);
     // Skip form validation since we're handling assignments separately
     // const isValid = await validateForm();
     // if (!isValid) {
@@ -522,7 +521,6 @@ export default function Page() {
       </div>
 
       <form onSubmit={(e) => {
-        console.log('Form submitted!');
         form.handleSubmit((data) => handleCreateClientPoolAndAssignments(data))(e);
       }}>
         <div className="inline-flex w-full flex-col items-start justify-start gap-4 p-2 lg:px-8">
@@ -830,9 +828,7 @@ export default function Page() {
                 <Button 
                   disabled={isPending} 
                   type="submit"
-                  onClick={() => {
-                    console.log('Button clicked!');
-                  }}
+                 
                 >
                   {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
                   Add client

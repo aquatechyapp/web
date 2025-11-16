@@ -79,17 +79,6 @@ export function useMapAssignmentsUtils() {
           ? await getHereOptimizedRoute(origin, destination, waypoints)
           : await getHereDirections(origin, destination, waypoints);
 
-        console.log('[Assignments] Route service selected:', {
-          service: 'HERE Waypoints Sequence API',
-          optimizeWaypoints,
-          waypointCount: waypoints.length
-        });
-
-        console.log('[Assignments] Route service result:', {
-          service: 'HERE Waypoints Sequence API',
-          result: routeResult
-        });
-
         // HERE doesn't return Google DirectionsResult, so clear DirectionsRenderer data
         setDirections(undefined);
         setDuration(

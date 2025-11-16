@@ -137,8 +137,6 @@ export function OptimizeRouteModal({ open, onOpenChange, onOptimize, assignments
               onClick={() => {
                 onOptimize(origin, destination);
                 onOpenChange(false);
-                console.log('origin', origin);
-                console.log('destination', destination);
               }}
             >
               Optimize
