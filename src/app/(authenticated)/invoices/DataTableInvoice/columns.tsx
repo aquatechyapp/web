@@ -9,6 +9,7 @@ export interface Invoice {
   id: string;
   amount: number;
   paymentStatus: string;
+  status:string;
   createdAt?: string;
   items?: { name: string; units: number; pricePerUnit: number }[];
   company?: { name: string };
@@ -16,11 +17,12 @@ export interface Invoice {
 }
 
 const statusOptions: Record<string, { label: string; className: string }> = {
-  pending: { label: 'pending', className: 'bg-gray-100 text-gray-600' },
-  overdue: { label: 'overdue', className: 'bg-yellow-100 text-yellow-600' },
-  succeeded: { label: 'succeeded', className: 'bg-green-100 text-green-600' },
-  processing: { label: 'Processing', className: 'bg-blue-100 text-blue-600' },
-  failed: { label: 'failed', className: 'bg-red-100 text-red-600' }
+  overdue: { label: 'overdue', className: 'bg-gray-100 text-gray-600' },
+  draft: { label: 'draft', className: 'bg-yellow-100 text-yellow-600' },
+  paid: { label: 'paid', className: 'bg-green-100 text-green-600' },
+  sent: { label: 'sent', className: 'bg-blue-100 text-blue-600' },
+  cancelled: { label: 'cancelled', className: 'bg-red-100 text-red-600' },
+  void: { label: 'void', className: 'bg-purple-100 text-purple-600' }
 };
 
 export const columns: ColumnDef<Invoice>[] = [
@@ -55,8 +57,10 @@ export const columns: ColumnDef<Invoice>[] = [
     accessorKey: 'status',
     header: () => <div className="text-center w-full">Status</div>,
     cell: ({ row }) => {
-      const status = statusOptions[row.original.paymentStatus] || {
-        label: row.original.paymentStatus || '—',
+      const key = String(row.original.status || '').toLowerCase();
+
+      const status = statusOptions[key] || {
+        label: row.original.status || '—',
         className: 'bg-gray-100 text-gray-600',
       };
 

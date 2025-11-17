@@ -44,7 +44,7 @@ export function ModalUpdateStatus({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Invoice Status</DialogTitle>
+          <DialogTitle>Update Payment Status</DialogTitle>
           <DialogDescription>
             Select a new status for this invoice.
           </DialogDescription>

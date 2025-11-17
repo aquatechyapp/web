@@ -33,6 +33,7 @@ const defaultValues = {
   currency: 'USD',
   notes: '',
   description: '',
+  dueDate: new Date().toISOString().split("T")[0],
 };
 
 // Schema for invoice line items
@@ -89,6 +90,7 @@ export const invoiceSchema = z.object({
   currency: z.string().optional(),
   notes: z.string().optional(),
   description: z.string().optional(),
+  dueDate: z.string().optional(),
 });
 
 type FormValues = typeof defaultValues;
@@ -104,7 +106,7 @@ export default function Page() {
   const [autoSend, setAutoSend] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { control, register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
+  const { control, register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormValues>({
     defaultValues,
     resolver: zodResolver(invoiceSchema),
   });
@@ -133,32 +135,34 @@ export default function Page() {
   useEffect(() => {
     const inv = invoices.invoiceById.data;
     if (id && inv) {
-      setValue('fromCompany', inv.company?.name || '');
-      setValue('fromEmail', inv.company?.email || '');
-      setValue('fromAddress', inv.company?.address || '');
-      setValue('toName', `${inv.client?.firstName || ''} ${inv.client?.lastName || ''}`.trim());
-      setValue('toEmail', inv.client?.email || '');
-      setValue('toAddress', inv.client?.address || '');
-      setValue(
-        'lineItems',
-        inv.items?.map((item: any) => ({
-          description: item.name,
-          quantity: item.units,
-          amount: item.pricePerUnit,
-        })) || [{ description: '', quantity: 0, amount: 0 }]
-      );
-      setValue('status', inv.status || 'Draft');
-      setValue('currency', inv.currency || 'USD');
-      setValue('notes', inv.notes || '');
-      setValue('description', inv.description || '');
+      reset({
+        fromCompany: inv.company?.name || "",
+        fromEmail: inv.company?.email || "",
+        fromAddress: inv.company?.address || "",
+        toName: `${inv.client?.firstName || ""} ${inv.client?.lastName || ""}`.trim(),
+        dueDate: inv.dueDate?.split("T")[0] || '',
+        toEmail: inv.client?.email || "",
+        toAddress: inv.client?.address || "",
+        lineItems:
+          inv.items?.map((item: any) => ({
+            description: item.name,
+            quantity: item.units,
+            amount: item.pricePerUnit,
+          })) || [{ description: "", quantity: 0, amount: 0 }],
+        // status: inv.status || "Draft",
+        currency: inv.currency || "USD",
+        notes: inv.notes || "",
+        description: inv.description || "",
+      });
     }
-  }, [id, invoices.invoiceById.data, setValue]);
+  }, [id, invoices.invoiceById.data]);
 
   useEffect(() => {
     const inv = invoices.invoiceById.data;
     if (id && inv) {
       setSelectedClient(inv.clientId || '');
       setSelectedCompany(inv.companyId || '');
+      setValue("status", inv.status || '');
     }
   }, [selectedCompany, invoices.invoiceById.data]);
 
@@ -170,7 +174,9 @@ export default function Page() {
       companyId: selectedCompany,
       amount: total,
       issueDate: new Date().toISOString(),
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      dueDate: data.dueDate
+        ? new Date(data.dueDate).toISOString()
+        : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       type: data.type,
       status: data.status || undefined,
       currency: data.currency || 'USD',
@@ -357,7 +363,6 @@ export default function Page() {
                 <Controller
                   name="status"
                   control={control}
-                  defaultValue="Draft"
                   render={({ field }) => (
                     <div className="flex flex-col">
                       <label className="text-xs text-gray-600 mb-1">Status</label>
@@ -391,6 +396,18 @@ export default function Page() {
                   disabled={watch('status') === 'Sent'}
                 {...register('currency')} placeholder="USD" />
                 {errors.currency && <span className="text-red-500 text-xs mt-1">{errors.currency.message}</span>}
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-xs text-gray-600 mb-1">Due Date</label>
+                <Input
+                  type="date"
+                  {...register("dueDate")}
+                  disabled={watch("status") === "Sent"}
+                />
+                {errors.dueDate && (
+                  <span className="text-red-500 text-xs mt-1">{errors.dueDate.message}</span>
+                )}
               </div>
 
               <div className="flex flex-col">
@@ -581,7 +598,7 @@ export default function Page() {
               )}
             </Button>
 
-            <Button
+            {id === 'create' && <Button
               type="submit"
               disabled={isSubmitting}
               variant="secondary"
@@ -596,7 +613,7 @@ export default function Page() {
               ) : (
                   id === 'create' ? 'Create & Send' : 'Update & Send'
               )}
-            </Button>
+            </Button>}
           </div>
 
         </form>
@@ -607,7 +624,7 @@ export default function Page() {
                 setOpen={setIsDeleteModalOpen}
                  handleSubmit={() => {
                    invoices.deleteInvoice.mutate(id as string)
-                   router.back();
+                   router.push("/invoices")
                  }}
               />
     </div>
