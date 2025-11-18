@@ -62,9 +62,9 @@ const schema = z.object({
     })
     .trim()
     .min(1, { message: 'phone must be at least 1 character.' }),
-  role: z.enum(['Admin', 'Office', 'Technician', 'Cleaner'], {
+  role: z.enum(['Owner', 'Admin', 'Office', 'Technician', 'Cleaner'], {
     required_error: 'role is required.',
-    invalid_type_error: "role must be 'Admin', 'Office', 'Technician', 'Cleaner'."
+    invalid_type_error: "role must be 'Owner', 'Admin', 'Office', 'Technician', 'Cleaner'."
   })
 });
 
@@ -81,7 +81,7 @@ type PropsEdit = {
   lastName: string;
   email: string;
   phone: string;
-  role: 'Admin' | 'Office' | 'Technician' | 'Cleaner';
+  role: 'Owner' | 'Admin' | 'Office' | 'Technician' | 'Cleaner';
 };
 
 export function ModalEditCompanyMember({ children, id, company, email, firstName, lastName, phone, role }: PropsEdit) {
