@@ -158,6 +158,7 @@ export default function Page() {
       // It will be called when Save is clicked
       setHasChanges(true);
       setRequiresRecalculation(true);
+      console.log('has changes ', hasChanges);  console.log('requires recalculation ', requiresRecalculation);
     }
   }
 

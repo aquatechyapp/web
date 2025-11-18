@@ -1,5 +1,6 @@
 export { EmailPreferencesCard } from './EmailPreferencesCard';
 export { FilterMaintenanceCard } from './FilterMaintenanceCard';
+export { GeneralPreferencesCard } from './GeneralPreferencesCard';
 export { CustomChecklistCard } from './CustomChecklistCard';
 export { ChecklistTemplatesCard } from './ChecklistTemplatesCard';
 export { ReadingAndConsumableGroupsCard } from './ReadingAndConsumableGroupsCard';

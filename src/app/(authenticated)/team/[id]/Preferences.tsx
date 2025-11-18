@@ -15,11 +15,13 @@ import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
 import { useUpdateCompanyPreferences } from '@/hooks/react-query/companies/updatePreferences';
+import { useUpdateServicePreferences } from '@/hooks/react-query/companies/updateServicePreferences';
 // ChecklistTemplate hook no longer needed as it's managed separately
 import { Company, } from '@/ts/interfaces/Company';
 import {
   EmailPreferencesCard,
   FilterMaintenanceCard,
+  GeneralPreferencesCard,
   ChecklistTemplatesCard,
   ReadingAndConsumableGroupsCard,
   ServiceTypesCard,
@@ -48,14 +50,17 @@ const schema = z.object({
   attachCustomChecklist: z.boolean(),
 
   ccEmail: z.string(),
+  sendSkippedServiceEmails: z.boolean(),
   filterCleaningIntervalDays: z.coerce.number().min(1),
   filterReplacementIntervalDays: z.coerce.number().min(1),
   filterCleaningMustHavePhotos: z.boolean(),
-  sendFilterCleaningEmails: z.boolean()
+  sendFilterCleaningEmails: z.boolean(),
+  allowAnticipatedServices: z.boolean()
 });
 
 export default function Page({ company }: { company: Company }) {
   const { isPending: isEmailPending, mutate: updateEmailPrefs } = useUpdateCompanyPreferences(company.id);
+  const { isPending: isServicePrefsPending, mutate: updateServicePrefs } = useUpdateServicePreferences(company.id);
   // Checklist templates are now managed separately
   const { isFreePlan } = useUserStore(
     useShallow((state) => ({
@@ -81,6 +86,7 @@ export default function Page({ company }: { company: Company }) {
       //   ? false
       //   : company.preferences?.serviceEmailPreferences?.attachServicePhotos || false,
       ccEmail: company.preferences?.serviceEmailPreferences?.ccEmail || undefined,
+      sendSkippedServiceEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails || false,
       filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28,
       filterReplacementIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterReplacementIntervalDays || 365,
       filterCleaningMustHavePhotos: company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false,
@@ -91,7 +97,8 @@ export default function Page({ company }: { company: Company }) {
       attachConsumablesGroups: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachConsumablesGroups || false,
       attachPhotoGroups: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachPhotoGroups || false,
       attachSelectorsGroups: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachSelectorsGroups || false,
-      attachCustomChecklist: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachCustomChecklist || false
+      attachCustomChecklist: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachCustomChecklist || false,
+      allowAnticipatedServices: company.preferences?.servicePreferences?.allowAnticipatedServices || false
     }
   });
 
@@ -146,7 +153,7 @@ export default function Page({ company }: { company: Company }) {
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [formData, setFormData] = useState<any>(null);
-  const [modalType, setModalType] = useState<'email' | 'filter'>('email');
+  const [modalType, setModalType] = useState<'email' | 'filter' | 'general'>('email');
 
   const filterDays = form.watch('filterCleaningIntervalDays');
 
@@ -156,7 +163,7 @@ export default function Page({ company }: { company: Company }) {
   // Check if email fields have changed
   const emailFieldsChanged = () => {
     // const emailFields = ['sendEmails', 'attachChemicalsReadings', 'attachChecklist', 'attachServicePhotos', 'ccEmail'];
-    const emailFields = ['sendEmails', 'attachReadingsGroups', 'attachConsumablesGroups', 'attachPhotoGroups', 'attachSelectorsGroups', 'attachCustomChecklist', 'ccEmail'];
+    const emailFields = ['sendEmails', 'attachReadingsGroups', 'attachConsumablesGroups', 'attachPhotoGroups', 'attachSelectorsGroups', 'attachCustomChecklist', 'ccEmail', 'sendSkippedServiceEmails'];
     return emailFields.some(field => {
       const currentValue = watchedValues[field as keyof typeof watchedValues];
       const originalValue = getOriginalValue(field);
@@ -168,6 +175,16 @@ export default function Page({ company }: { company: Company }) {
   const filterFieldsChanged = () => {
     const filterFields = ['filterCleaningIntervalDays', 'filterReplacementIntervalDays', 'filterCleaningMustHavePhotos', 'sendFilterCleaningEmails'];
     return filterFields.some(field => {
+      const currentValue = watchedValues[field as keyof typeof watchedValues];
+      const originalValue = getOriginalValue(field);
+      return currentValue !== originalValue;
+    });
+  };
+
+  // Check if general fields have changed
+  const generalFieldsChanged = () => {
+    const generalFields = ['allowAnticipatedServices'];
+    return generalFields.some(field => {
       const currentValue = watchedValues[field as keyof typeof watchedValues];
       const originalValue = getOriginalValue(field);
       return currentValue !== originalValue;
@@ -199,6 +216,8 @@ export default function Page({ company }: { company: Company }) {
         return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachCustomChecklist || false;
       case 'ccEmail':
         return isFreePlan ? undefined : company.preferences?.serviceEmailPreferences?.ccEmail || undefined;
+      case 'sendSkippedServiceEmails':
+        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails || false;
       case 'filterCleaningIntervalDays':
         return company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28;
       case 'filterReplacementIntervalDays':
@@ -207,13 +226,15 @@ export default function Page({ company }: { company: Company }) {
         return company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false;
       case 'sendFilterCleaningEmails':
         return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false;
+      case 'allowAnticipatedServices':
+        return company.preferences?.servicePreferences?.allowAnticipatedServices || false;
       default:
         return null;
     }
   };
 
   // Handle CC email submission
-  const handleCcEmailSubmit = (ccEmail: string) => {
+  const handleCcEmailSubmit = (ccEmail: string, sendSkippedServiceEmails: boolean) => {
     const updateData = {
       serviceEmailPreferences: {
         sendEmails: form.getValues('sendEmails'),
@@ -223,7 +244,8 @@ export default function Page({ company }: { company: Company }) {
         attachSelectorsGroups: form.getValues('attachSelectorsGroups'),
         attachCustomChecklist: form.getValues('attachCustomChecklist'),
         ccEmail,
-        sendFilterCleaningEmails: form.getValues('sendFilterCleaningEmails')
+        sendFilterCleaningEmails: form.getValues('sendFilterCleaningEmails'),
+        sendSkippedServiceEmails: form.getValues('sendSkippedServiceEmails')
       },
       companyId: company.id
     };
@@ -241,7 +263,8 @@ export default function Page({ company }: { company: Company }) {
       attachSelectorsGroups,
       attachCustomChecklist,
       ccEmail,
-      sendFilterCleaningEmails
+      sendFilterCleaningEmails,
+      sendSkippedServiceEmails
     } = data;
 
     const updateData = {
@@ -253,7 +276,8 @@ export default function Page({ company }: { company: Company }) {
         attachSelectorsGroups,
         attachCustomChecklist,
         ccEmail,
-        sendFilterCleaningEmails
+        sendFilterCleaningEmails,
+        sendSkippedServiceEmails
       },
       companyId: company.id
     };
@@ -274,7 +298,8 @@ export default function Page({ company }: { company: Company }) {
       attachSelectorsGroups,
       attachCustomChecklist,
       ccEmail,
-      sendFilterCleaningEmails
+      sendFilterCleaningEmails,
+      sendSkippedServiceEmails
     } = data;
 
     const updateData = {
@@ -291,12 +316,22 @@ export default function Page({ company }: { company: Company }) {
         attachSelectorsGroups,
         attachCustomChecklist,
         ccEmail,
-        sendFilterCleaningEmails
+        sendFilterCleaningEmails,
+        sendSkippedServiceEmails
       },
       companyId: company.id
     };
 
     updateEmailPrefs(updateData);
+  };
+
+  // Handle general preferences submission
+  const handleGeneralSubmit = (data: z.infer<typeof schema>) => {
+    const { allowAnticipatedServices } = data;
+
+    updateServicePrefs({
+      allowAnticipatedServices
+    });
   };
 
   // Checklist templates are now managed separately in ChecklistTemplatesCard
@@ -317,7 +352,7 @@ export default function Page({ company }: { company: Company }) {
 
 
 
-  if (isEmailPending) {
+  if (isEmailPending || isServicePrefsPending) {
     return <LoadingSpinner />;
   }
 
@@ -359,6 +394,18 @@ export default function Page({ company }: { company: Company }) {
             filterFieldsChanged={filterFieldsChanged}
           />
 
+          {/* General Preferences Card */}
+          <GeneralPreferencesCard
+            company={company}
+            form={form}
+            onGeneralSubmit={(data) => {
+              setFormData(data);
+              setModalType('general');
+              setShowConfirmModal(true);
+            }}
+            generalFieldsChanged={generalFieldsChanged}
+          />
+
           {/* Checklist Templates Card */}
           <ChecklistTemplatesCard company={company} />
 
@@ -377,7 +424,9 @@ export default function Page({ company }: { company: Company }) {
             <DialogTitle className="text-xl mb-4">
               {modalType === 'email'
                 ? 'Update Email Preferences'
-                : 'Update Filter Maintenance'
+                : modalType === 'filter'
+                ? 'Update Filter Maintenance'
+                : 'Update General Preferences'
               }
             </DialogTitle>
 
@@ -392,13 +441,21 @@ export default function Page({ company }: { company: Company }) {
                     <strong>Note:</strong> In order to send service emails, both the client preferences AND company preferences must be enabled.
                   </>
                 )
-                : (
+                : modalType === 'filter'
+                ? (
                   <>
                     This action will change the filter maintenance preferences for all NEW CLIENTS created from now on under this company. This includes cleaning intervals, replacement schedules, and photo requirements.
                     <br /><br />
                     Clients created before this change will need to be updated manually in their individual settings on the clients page or using the bulk actions page. The photo requirement to filter cleaning is the only preference that will be updated for all clients including the previous ones.
                     <br /><br />
                     <strong>Note:</strong> In order to send filter cleaning emails, both the client preferences AND company preferences must be enabled.
+                  </>
+                )
+                : (
+                  <>
+                    This action will update the general preferences for this company.
+                    <br /><br />
+                    Changes to general preferences will apply to all services and clients under this company.
                   </>
                 )
               }
@@ -414,8 +471,10 @@ export default function Page({ company }: { company: Company }) {
                 if (formData) {
                   if (modalType === 'email') {
                     handleEmailSubmit(formData);
-                  } else {
+                  } else if (modalType === 'filter') {
                     handleFilterSubmit(formData);
+                  } else {
+                    handleGeneralSubmit(formData);
                   }
                 }
                 setShowConfirmModal(false);

@@ -34,6 +34,7 @@ const serviceTypeEmailSchema = z.object({
 
 const schema = z.object({
   ccEmail: z.string().optional(),
+  sendSkippedServiceEmails: z.boolean().optional(),
   serviceTypes: z.record(z.string(), serviceTypeEmailSchema)
 });
 
@@ -41,7 +42,7 @@ interface EmailPreferencesCardProps {
   company: Company;
   form: any;
   onEmailSubmit: (data: z.infer<typeof schema>) => void;
-  onCcEmailSubmit: (ccEmail: string) => void;
+  onCcEmailSubmit: (ccEmail: string, sendSkippedServiceEmails: boolean) => void;
   emailFieldsChanged: () => boolean;
 }
 
@@ -127,7 +128,7 @@ function EmailPreferencesContent({
   company: Company;
   form: any;
   onEmailSubmit: (data: any) => void;
-  onCcEmailSubmit: (ccEmail: string) => void;
+  onCcEmailSubmit: (ccEmail: string, sendSkippedServiceEmails: boolean) => void;
   emailFieldsChanged: () => boolean;
   isEmailPending: boolean;
   isFreePlan: boolean;
@@ -172,6 +173,8 @@ function EmailPreferencesContent({
   useEffect(() => {
     // Set CC email value
     form.setValue('ccEmail', company.preferences?.serviceEmailPreferences?.ccEmail || '');
+    // Set sendSkippedServiceEmails value
+    form.setValue('sendSkippedServiceEmails', company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails || false);
     
     if (serviceTypes.length > 0) {
       serviceTypes.forEach((serviceType) => {
@@ -188,7 +191,7 @@ function EmailPreferencesContent({
         form.setValue(`${serviceType.id}.sendChecklist`, emailPrefs.sendChecklist);
       });
     }
-  }, [serviceTypes, form, company.preferences?.serviceEmailPreferences?.ccEmail]);
+  }, [serviceTypes, form, company.preferences?.serviceEmailPreferences?.ccEmail, company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails]);
 
   if (isLoading) {
     return (
@@ -246,6 +249,79 @@ function EmailPreferencesContent({
                 />
               </div>
             </div>
+
+            <div className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12 mt-6">
+              <div className="col-span-8 row-auto flex flex-col">
+                <label className="flex flex-col space-y-1">
+                  <span className="text-sm font-semibold text-gray-800">Send Skipped Service Emails</span>
+                </label>
+                <span className="text-muted-foreground text-sm font-normal">
+                  Send email notifications when services are skipped
+                </span>
+              </div>
+              <div className="col-span-4 flex items-center gap-4">
+                <InputField
+                  disabled={isFreePlan}
+                  name="sendSkippedServiceEmails"
+                  type={FieldType.Switch}
+                />
+              </div>
+            </div>
+
+            {/* Skipped Service Email Reasons Information Box */}
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 className="text-sm font-semibold text-blue-900 mb-3">Skipped Service Email Reasons</h4>
+              <p className="text-xs text-blue-800 mb-4">
+                When enabled, clients will receive email notifications when services are skipped for the following reasons:
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-600 mt-1.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">Inclement Weather</p>
+                    <p className="text-xs text-blue-700">
+                      Severe rain, lightning, high winds, or other hazardous weather made service impossible or unsafe
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-600 mt-1.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">Gate/Entry Locked</p>
+                    <p className="text-xs text-blue-700">
+                      Main gate, side gate, or pool enclosure was locked, preventing access to the service area
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-600 mt-1.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">Unsecured Animal</p>
+                    <p className="text-xs text-blue-700">
+                      A dog or other large pet was loose in the yard, preventing safe entry to the pool area
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-600 mt-1.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">Client Unresponsive</p>
+                    <p className="text-xs text-blue-700">
+                      Contact was attempted via phone/doorbell to resolve an access issue, but no response was received
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-600 mt-1.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">Excess Debris / Post-Storm</p>
+                    <p className="text-xs text-blue-700">
+                      The volume of leaves, branches, or storm-related debris exceeds standard service capacity and requires a separate, specialized cleanup visit
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
             
             <div className="mt-6 flex justify-center">
               <Button 
@@ -256,13 +332,14 @@ function EmailPreferencesContent({
                   e.preventDefault();
                   e.stopPropagation();
                   const ccEmail = form.getValues('ccEmail');
-                  onCcEmailSubmit(ccEmail);
+                  const sendSkippedServiceEmails = form.getValues('sendSkippedServiceEmails');
+                  onCcEmailSubmit(ccEmail, sendSkippedServiceEmails);
                 }}
               >
                 {isEmailPending ? (
                   <div className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em]" />
                 ) : (
-                  'Save CC Email'
+                  'Save Email Configuration'
                 )}
               </Button>
             </div>

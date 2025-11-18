@@ -45,6 +45,7 @@ export interface Company {
       attachServicePhotos: boolean;
       ccEmail: string;
       sendFilterCleaningEmails: boolean;
+      sendSkippedServiceEmails: boolean;
 
       // New fields
       attachReadingsGroups: boolean;
@@ -57,6 +58,9 @@ export interface Company {
       filterCleaningIntervalDays: number;
       filterReplacementIntervalDays: number;
       filterCleaningMustHavePhotos: boolean;
+    };
+    servicePreferences?: {
+      allowAnticipatedServices?: boolean;
     };
   };
   imageUrl?: string | null;

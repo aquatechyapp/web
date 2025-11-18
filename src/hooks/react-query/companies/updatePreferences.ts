@@ -22,6 +22,7 @@ type PreferencesData = {
 
     ccEmail?: string;
     sendFilterCleaningEmails?: boolean;
+    sendSkippedServiceEmails?: boolean;
   };
   equipmentMaintenancePreferences?: {
     filterCleaningIntervalDays?: number;
@@ -62,7 +63,7 @@ export const useUpdateCompanyPreferences = (companyId: string) => {
                 ...oldData.preferences?.equipmentMaintenancePreferences,
                 ...variables.equipmentMaintenancePreferences
               }
-            })
+            }),
           }
         };
       });
@@ -88,7 +89,7 @@ export const useUpdateCompanyPreferences = (companyId: string) => {
                       ...company.preferences?.equipmentMaintenancePreferences,
                       ...variables.equipmentMaintenancePreferences
                     }
-                  })
+                  }),
                 }
               }
             : company
