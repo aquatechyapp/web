@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -232,6 +232,21 @@ export default function Page() {
 
   const formatCurrency = (n: number) => `$${n.toFixed(2)}`;
 
+  const STATUS_ORDER = ["Draft", "Sent", "Paid", "Overdue", "Cancelled", "Void"] as const;
+  const isEditMode = id !== "create";
+
+  const currentStatus = watch("status");
+
+  const allowedStatuses = useMemo(() => {
+    if (!isEditMode || !currentStatus) return STATUS_ORDER;
+
+    const currentIndex = STATUS_ORDER.indexOf(currentStatus);
+
+    // retorna apenas status que NÃO voltam atrás
+    return STATUS_ORDER.slice(currentIndex);
+  }, [isEditMode, currentStatus]);
+
+
   if (id !== 'create' && !invoices.isReady) {
     return <LoadingSpinner />;
   }
@@ -260,7 +275,7 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">From (Company)</label>
                 <Select
-                  disabled={watch('status') === 'Sent'}
+                  disabled={watch('status') !== 'Draft'}
                   value={selectedCompany}
                   onValueChange={(value) => {
                     setSelectedCompany(value);
@@ -288,7 +303,7 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">From Email</label>
                 <Input
-                  disabled={watch('status') === 'Sent'}
+                  disabled={watch('status') !== 'Draft'}
                  {...register('fromEmail')} placeholder="Email address" />
                 {errors.fromEmail && <span className="text-red-500 text-xs mt-1">{errors.fromEmail.message}</span>}
               </div>
@@ -297,7 +312,7 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">To (Client)</label>
                 <Select
-                  disabled={!selectedCompany || watch('status') === 'Sent'}
+                  disabled={!selectedCompany || watch('status') !== 'Draft'}
                   value={selectedClient}
                   onValueChange={(value) => {
                     setSelectedClient(value);
@@ -333,7 +348,7 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">To Email</label>
                 <Input
-                  disabled={watch('status') === 'Sent'}
+                  disabled={watch('status') !== 'Draft'}
                 {...register('toEmail')}
                 placeholder="Recipient email" />
                 {errors.toEmail && <span className="text-red-500 text-xs mt-1">{errors.toEmail.message}</span>}
@@ -343,7 +358,7 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">From Address</label>
                 <Input
-                  disabled={watch('status') === 'Sent'}
+                  disabled={watch('status') !== 'Draft'}
                 {...register('fromAddress')}
                  placeholder="Sender address" />
                 {errors.fromAddress && <span className="text-red-500 text-xs mt-1">{errors.fromAddress.message}</span>}
@@ -353,7 +368,7 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">To Address</label>
                 <Input
-                  disabled={watch('status') === 'Sent'}
+                  disabled={watch('status') !== 'Draft'}
                  {...register('toAddress')} placeholder="Recipient address" />
                 {errors.toAddress && <span className="text-red-500 text-xs mt-1">{errors.toAddress.message}</span>}
               </div>
@@ -374,12 +389,11 @@ export default function Page() {
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Draft">Draft</SelectItem>
-                          <SelectItem value="Sent">Sent</SelectItem>
-                          <SelectItem value="Paid">Paid</SelectItem>
-                          <SelectItem value="Overdue">Overdue</SelectItem>
-                          <SelectItem value="Cancelled">Cancelled</SelectItem>
-                          <SelectItem value="Void">Void</SelectItem>
+                          {allowedStatuses.map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {status}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       {errors.status && (
@@ -393,7 +407,7 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">Currency</label>
                 <Input
-                  disabled={watch('status') === 'Sent'}
+                  disabled={watch('status') !== 'Draft'}
                 {...register('currency')} placeholder="USD" />
                 {errors.currency && <span className="text-red-500 text-xs mt-1">{errors.currency.message}</span>}
               </div>
@@ -401,9 +415,9 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">Due Date</label>
                 <Input
+                  disabled={watch('status') !== 'Draft'}
                   type="date"
                   {...register("dueDate")}
-                  disabled={watch("status") === "Sent"}
                 />
                 {errors.dueDate && (
                   <span className="text-red-500 text-xs mt-1">{errors.dueDate.message}</span>
@@ -413,7 +427,7 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">Notes</label>
                 <Input
-                  disabled={watch('status') === 'Sent'}
+                  disabled={watch('status') !== 'Draft'}
                 {...register('notes')} placeholder="Notes" />
                 {errors.notes && <span className="text-red-500 text-xs mt-1">{errors.notes.message}</span>}
               </div>
@@ -421,7 +435,7 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="text-xs text-gray-600 mb-1">Description</label>
                 <Textarea
-                  disabled={watch('status') === 'Sent'}
+                  disabled={watch('status') !== 'Draft'}
                   {...register('description')}
                   placeholder="Description"
                   className="border border-gray-200 rounded-md p-2 text-sm resize-none"
@@ -436,7 +450,7 @@ export default function Page() {
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-medium text-sm">Line items</h3>
                 <Button
-                  disabled={watch('status') === 'Sent'}
+                  disabled={watch('status') !== 'Draft'}
                  type="button" onClick={addItem} className="px-3 py-1 text-sm">
                   + Add item
                 </Button>
@@ -457,7 +471,7 @@ export default function Page() {
                       <tr key={field.id} className="border-b border-gray-100">
                         <td className="py-2 px-3">
                           <Input
-                            disabled={watch('status') === 'Sent'}
+                            disabled={watch('status') !== 'Draft'}
                             {...register(`lineItems.${index}.description` as const)}
                             placeholder="Item description"
                           />
@@ -467,7 +481,7 @@ export default function Page() {
                         </td>
                         <td className="py-2 px-3">
                           <Input
-                            disabled={watch('status') === 'Sent'}
+                            disabled={watch('status') !== 'Draft'}
                             type="number"
                             {...register(`lineItems.${index}.quantity` as const, { valueAsNumber: true })}
                             min={0}
@@ -479,7 +493,7 @@ export default function Page() {
                         </td>
                         <td className="py-2 px-3">
                           <Input
-                            disabled={watch('status') === 'Sent'}
+                            disabled={watch('status') !== 'Draft'}
                             type="number"
                             step="0.01"
                             {...register(`lineItems.${index}.amount` as const, { valueAsNumber: true })}
@@ -493,7 +507,7 @@ export default function Page() {
                         </td>
                         <td className="py-2 text-center">
                           <Button
-                            disabled={watch('status') === 'Sent'}
+                            disabled={watch('status') !== 'Draft'}
                             type="button"
                             variant="secondary"
                             onClick={() => remove(index)}
