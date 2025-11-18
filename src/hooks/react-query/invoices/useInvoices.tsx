@@ -120,7 +120,22 @@ export default function useInvoices(params?: UseInvoicesParams, id?:string) {
       });
       return data.invoice;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['invoices'] }),
+    onSuccess: (updatedInvoice) => {
+      // 🔥 1. Atualizar lista de invoices
+      queryClient.setQueryData(['invoices'], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          invoices: oldData.invoices.map((inv: any) =>
+            inv._id === updatedInvoice._id ? updatedInvoice : inv
+          ),
+        };
+      });
+
+      // 🔥 2. Atualizar invoice individual
+      queryClient.setQueryData(['invoice', updatedInvoice._id], updatedInvoice);
+    },
   });
 
   // CREATE RECURRING TEMPLATE
