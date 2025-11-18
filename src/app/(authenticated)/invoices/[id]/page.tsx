@@ -577,7 +577,7 @@ export default function Page() {
               type="button"
               variant="outline"
               disabled={isSubmitting}
-              className="w-full max-w-md py-3 rounded-lg text-base font-medium"
+              className="w-full py-3 rounded-lg text-base font-medium"
               onClick={() => router.back()}
             >
               Cancel
@@ -586,7 +586,7 @@ export default function Page() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full max-w-md text-white py-3 rounded-lg text-base font-medium flex items-center justify-center gap-2"
+              className="w-full text-white py-3 rounded-lg text-base font-medium flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -602,7 +602,7 @@ export default function Page() {
               type="submit"
               disabled={isSubmitting}
               variant="secondary"
-              className="w-full max-w-md py-3 rounded-lg text-base font-medium flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg text-base font-medium flex items-center justify-center gap-2"
               onClick={() => setAutoSend(true)}
             >
               {isSubmitting ? (

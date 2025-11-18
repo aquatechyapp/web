@@ -86,7 +86,7 @@ export function ActionButtons({ invoice }: ActionButtonsProps) {
               </DropdownMenuShortcut>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => handleActionSelect('status')}>Change Status</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => handleActionSelect('status')}>Change Payment Status</DropdownMenuItem>
 
         </DropdownMenuContent>
 

@@ -45,6 +45,7 @@ export default function useInvoices(params?: UseInvoicesParams, id?:string) {
   const userId = Cookies.get('userId');
 
   if (!userId) router.push('/login');
+  const safeParams: UseInvoicesParams = params ?? {};
 
   // LIST INVOICES
   const listInvoices = useQuery<
@@ -53,12 +54,13 @@ export default function useInvoices(params?: UseInvoicesParams, id?:string) {
   >({
     queryKey: ['invoices', params],
     queryFn: async () => {
+      console.log("GET chamado");
       const { data } = await clientAxios.get('/invoices', { params });
       return data;
     },
+    enabled: !!safeParams.page,   // ⬅️ só chama se page existir
     staleTime: 1000 * 60 * 5,
   });
-
   // 🔍 GET INVOICE BY ID
   const invoiceById = useQuery({
     queryKey: ['invoice', id],

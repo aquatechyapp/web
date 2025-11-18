@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -24,12 +24,14 @@ export default function Page() {
   const defaultItemsPerPage = 20;
   const router = useRouter();
 
-  const invoicesQuery = useInvoices({
+  const invoiceParams = useMemo(() => ({
     page: currentPage,
     limit: defaultItemsPerPage,
     companyOwnerId: selectedCompany || undefined,
     clientId: selectedClient || undefined,
-  });
+  }), [currentPage, defaultItemsPerPage, selectedCompany, selectedClient]);
+
+  const invoicesQuery = useInvoices(invoiceParams);
 
   const invoices = invoicesQuery.listInvoices.data?.invoices;
   const totalItems = invoicesQuery.listInvoices.data?.totalCount || 0;
