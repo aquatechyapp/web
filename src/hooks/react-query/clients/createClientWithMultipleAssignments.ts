@@ -54,7 +54,7 @@ export interface CreateClientWithAssignmentsData {
   assignments: Assignment[];
 }
 
-export const useCreateClientWithMultipleAssignments = () => {
+export const useCreateClientWithMultipleAssignments = (options?: { redirectTo?: string }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { toast } = useToast();
@@ -78,7 +78,7 @@ export const useCreateClientWithMultipleAssignments = () => {
       queryClient.invalidateQueries({ queryKey: ['allClients'] });
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       queryClient.invalidateQueries({ queryKey: ['schedule'] });
-      router.push('/clients');
+      router.push(options?.redirectTo || '/clients');
       toast({
         duration: 5000,
         title: 'Client added successfully',

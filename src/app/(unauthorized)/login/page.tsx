@@ -60,7 +60,7 @@ export default function Page() {
 
         if (!hasVisitedBefore) {
           localStorage.setItem(`first-visit-${userId}`, 'true');
-          router.push('/quickstart');
+          router.push('/onboarding');
         } else {
           router.push('/dashboard');
         }

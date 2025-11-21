@@ -147,7 +147,7 @@ export default function Page({ company }: { company: Company }) {
 
   useEffect(() => {
     if (user.firstName === '') {
-      router.push('/account');
+      router.push('/onboarding');
     }
   }, [user, router]);
 

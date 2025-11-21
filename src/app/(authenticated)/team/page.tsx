@@ -29,7 +29,7 @@ export default function Page() {
 
   useEffect(() => {
     if (user.firstName === '') {
-      return router.push('/account');
+      return router.push('/onboarding');
     }
   }, [user]);
 

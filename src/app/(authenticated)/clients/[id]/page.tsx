@@ -34,7 +34,7 @@ export default function Page({ params: { id } }: Props) {
 
   useEffect(() => {
     if (user.firstName === '') {
-      router.push('/account');
+      router.push('/onboarding');
     }
   }, [user]);
 

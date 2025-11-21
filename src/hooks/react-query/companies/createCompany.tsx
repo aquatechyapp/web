@@ -7,12 +7,12 @@ import { CreateCompany } from '@/ts/interfaces/Company';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'next/navigation';
 
-export const useCreateCompany = () => {
+export const useCreateCompany = (options?: { skipRedirect?: boolean }) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const router = useRouter();
   const user = useUserStore((state) => state.user);
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: async (data: CreateCompany) => await clientAxios.post('/companies', data),
 
     onError: (
@@ -35,8 +35,10 @@ export const useCreateCompany = () => {
         duration: 5000,
         title: 'Company created successfully'
       });
-      router.push('/team/myCompanies');
+      if (!options?.skipRedirect) {
+        router.push('/team/myCompanies');
+      }
     }
   });
-  return { mutate, isPending };
+  return { mutate, isPending, isSuccess };
 };

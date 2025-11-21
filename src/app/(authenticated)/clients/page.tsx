@@ -27,7 +27,7 @@ export default function Page() {
   // Auth check
   useEffect(() => {
     if (user.firstName === '') {
-      router.push('/account');
+      router.push('/onboarding');
     }
   }, [user, router]);
 

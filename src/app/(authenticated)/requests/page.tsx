@@ -81,7 +81,7 @@ export default function Page() {
 
   useEffect(() => {
     if (user.firstName === '') {
-      router.push('/account');
+      router.push('/onboarding');
     }
   }, [user]);
 

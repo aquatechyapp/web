@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { MetricCard } from './_components/MetricCard';
 import { Button } from '@/components/ui/button';
@@ -20,10 +20,19 @@ export default function Page() {
   const [ showConfidential, setShowConfidential ] = useState(false);
   const { dashboard } = useUserStore((state) => state);
   const { width = 0 } = useWindowDimensions();
+  const user = useUserStore((state) => state.user);
+
   const router = useRouter();
   const { filterCleaningPunctuality, poolsWithoutAssignment, recentIssues } = dashboard;
 
   const toggleConfidential = () => setShowConfidential(!showConfidential);
+
+   // Auth check
+   useEffect(() => {
+    if (user.firstName === '') {
+      router.push('/onboarding');
+    }
+  }, [user, router]);
 
   if (width < 1024) {
     return (
