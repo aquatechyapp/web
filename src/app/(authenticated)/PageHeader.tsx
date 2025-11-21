@@ -7,15 +7,47 @@ import { useRouter } from 'next/navigation';
 import { AccountDropdownMenu } from './AccountDropdownMenu';
 import { PageTitle } from './PageTitle';
 import { MobileSideMenu } from './SideMenuNav';
-import { useLogout } from '@/utils/logout';
+import { useUserStore } from '@/store/user';
 
 export default function PageHeader() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const logout = useLogout();
+  const resetUser = useUserStore((state) => state.resetUser);
 
   const handleLogout = () => {
-    logout(queryClient, router);
+    Cookies.remove('accessToken');
+    Cookies.remove('userId');
+    queryClient.resetQueries();
+    queryClient.clear();
+    queryClient.removeQueries();
+
+    // localStorage.clear();
+    // sessionStorage.clear();
+    // queryClient.invalidateQueries({ queryKey: ['companies'] });
+    // queryClient.invalidateQueries({ queryKey: ['clients'] });
+    // queryClient.invalidateQueries({ queryKey: ['services'] });
+    // queryClient.invalidateQueries({ queryKey: ['assignments'] });
+    // queryClient.invalidateQueries({ queryKey: ['schedule'] });
+    // queryClient.invalidateQueries({ queryKey: ['checklist-templates'] });
+    // queryClient.invalidateQueries({ queryKey: ['service-types'] });
+    // queryClient.invalidateQueries({ queryKey: ['allClients'] });
+    // queryClient.invalidateQueries({ queryKey: ['allAssignments'] });
+    // queryClient.invalidateQueries({ queryKey: ['companyMembers'] });
+    // queryClient.invalidateQueries({ queryKey: ['consumable-definitions'] });
+    // queryClient.invalidateQueries({ queryKey: ['consumable-groups'] });
+    // queryClient.invalidateQueries({ queryKey: ['photo-definitions'] });
+    // queryClient.invalidateQueries({ queryKey: ['photo-groups'] });
+    // queryClient.invalidateQueries({ queryKey: ['pools'] });
+    // queryClient.invalidateQueries({ queryKey: ['reading-definitions'] });
+    // queryClient.invalidateQueries({ queryKey: ['reading-groups'] });
+    // queryClient.invalidateQueries({ queryKey: ['requests'] });
+    // queryClient.invalidateQueries({ queryKey: ['selectorDefinitions'] });
+    // queryClient.invalidateQueries({ queryKey: ['selectorGroups'] });
+    // queryClient.invalidateQueries({ queryKey: ['selectorOptions'] });
+    // queryClient.invalidateQueries({ queryKey: ['user'] });
+
+    resetUser();
+    router.push('/login');
   };
 
   return (
