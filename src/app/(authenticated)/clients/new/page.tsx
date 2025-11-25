@@ -14,6 +14,7 @@ import StateAndCitySelect from '@/components/ClientStateAndCitySelect';
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/ui/button';
 import { Form, FormDescription, FormItem } from '@/components/ui/form';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Frequencies, PoolTypes, Weekdays } from '@/constants';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 import { clientSchema } from '@/schemas/client';
@@ -88,7 +89,7 @@ export default function Page() {
     {
       assignmentToId: '',
       serviceTypeId: '',
-      weekday: 'SUNDAY' as const, // or any default weekday
+      weekday: 'SUNDAY' as const,
       frequency: Frequency.WEEKLY,
       startOn: '',
       endAfter: ''
@@ -102,6 +103,9 @@ export default function Page() {
       endAfter: { name: string; key: string; value: string }[];
     };
   }>({});
+
+  // Memoize scheduledTo dates to ensure consistent values across renders
+  const scheduledToDates = useMemo(() => getScheduledToDates(), []);
 
   useEffect(() => {
     if (user && user.id && user.id !== undefined && isCompaniesSuccess) {
@@ -326,12 +330,36 @@ export default function Page() {
     return dates;
   }
 
+  // Function to generate scheduledTo dates from today to 14 days ahead
+  function getScheduledToDates() {
+    const today = new Date();
+    const dates: { name: string; key: string; value: string }[] = [];
+
+    for (let i = 0; i <= 14; i++) {
+      const nextDate = new Date(today);
+      nextDate.setDate(today.getDate() + i);
+
+      const formattedDate = format(nextDate, 'EEEE, MMMM d, yyyy');
+      const weekdayName = format(nextDate, 'yyyy-MM-dd');
+      // Use String format to match startOn format (e.g., "Mon Nov 24 2025 19:03:02 GMT-0500 (Eastern Standard Time)")
+      const dateString = String(nextDate);
+
+      dates.push({
+        name: formattedDate,
+        key: weekdayName,
+        value: dateString
+      });
+    }
+
+    return dates;
+  }
+
   // Function to add a new assignment
   const addAssignment = () => {
     const newAssignment: Assignment = {
       assignmentToId: '',
       serviceTypeId: '',
-      weekday: 'SUNDAY' as const, // or any default weekday
+      weekday: 'SUNDAY' as const,
       frequency: Frequency.WEEKLY,
       startOn: '',
       endAfter: ''
@@ -355,14 +383,42 @@ export default function Page() {
   // Function to update assignment
   const updateAssignment = (index: number, field: keyof Assignment, value: string) => {
     const newAssignments = [...assignments];
-    newAssignments[index] = { ...newAssignments[index], [field]: value };
+    const assignment = newAssignments[index];
+    
+    // When frequency changes, reset fields appropriately
+    if (field === 'frequency') {
+      if (value === Frequency.ONCE) {
+        // For ONCE frequency, clear weekday, startOn, endAfter and set scheduledTo
+        newAssignments[index] = {
+          ...assignment,
+          frequency: value as Frequency,
+          weekday: undefined,
+          startOn: undefined,
+          endAfter: undefined,
+          scheduledTo: assignment.scheduledTo ?? ''
+        };
+      } else {
+        // For other frequencies, clear scheduledTo and reset weekday, startOn, endAfter
+        newAssignments[index] = {
+          ...assignment,
+          frequency: value as Frequency,
+          scheduledTo: undefined,
+          weekday: assignment.weekday || 'SUNDAY' as const,
+          startOn: assignment.startOn || '',
+          endAfter: assignment.endAfter || ''
+        };
+      }
+    } else {
+      newAssignments[index] = { ...assignment, [field]: value };
+    }
+    
     setAssignments(newAssignments);
+    const updatedAssignment = newAssignments[index];
 
     // Update date options when weekday or frequency changes
-    if (field === 'weekday' || field === 'frequency') {
-      const assignment = newAssignments[index];
-      if (assignment.weekday) {
-        const startOnDates = getNext10DatesForStartOnBasedOnWeekday(assignment.weekday);
+    if (field === 'weekday' || (field === 'frequency' && updatedAssignment.frequency !== Frequency.ONCE)) {
+      if (updatedAssignment.weekday && updatedAssignment.frequency !== Frequency.ONCE) {
+        const startOnDates = getNext10DatesForStartOnBasedOnWeekday(updatedAssignment.weekday);
         setAssignmentDateOptions(prev => ({
           ...prev,
           [index]: {
@@ -375,10 +431,9 @@ export default function Page() {
 
     // Update end after options when start on changes
     if (field === 'startOn') {
-      const assignment = newAssignments[index];
-      if (assignment.startOn && assignment.frequency && assignment.startOn !== '') {
+      if (updatedAssignment.startOn && updatedAssignment.frequency && updatedAssignment.frequency !== Frequency.ONCE && updatedAssignment.startOn !== '') {
         try {
-          const endAfterDates = getNext10DatesForEndAfterBasedOnWeekday(new Date(assignment.startOn), assignment.frequency);
+          const endAfterDates = getNext10DatesForEndAfterBasedOnWeekday(new Date(updatedAssignment.startOn), updatedAssignment.frequency);
           setAssignmentDateOptions(prev => ({
             ...prev,
             [index]: {
@@ -387,7 +442,7 @@ export default function Page() {
             }
           }));
         } catch (error) {
-          console.error('Invalid date:', assignment.startOn);
+          console.error('Invalid date:', updatedAssignment.startOn);
         }
       }
     }
@@ -412,9 +467,19 @@ export default function Page() {
     }
 
     // Check if all assignments have required fields
-    const invalidAssignments = assignments.filter(
-      assignment => !assignment.assignmentToId || !assignment.serviceTypeId || !assignment.weekday || !assignment.frequency || !assignment.startOn || !assignment.endAfter
-    );
+    const invalidAssignments = assignments.filter(assignment => {
+      if (!assignment.assignmentToId || !assignment.serviceTypeId || !assignment.frequency) {
+        return true;
+      }
+      
+      if (assignment.frequency === Frequency.ONCE) {
+        // For ONCE frequency, only scheduledTo is required
+        return !assignment.scheduledTo;
+      } else {
+        // For other frequencies, weekday, startOn, and endAfter are required
+        return !assignment.weekday || !assignment.startOn || !assignment.endAfter;
+      }
+    });
 
     if (invalidAssignments.length > 0) {
       toast({
@@ -468,7 +533,7 @@ export default function Page() {
       setAssignments([{
         assignmentToId: '',
         serviceTypeId: '',
-        weekday: 'SUNDAY' as const, // or any default weekday
+        weekday: 'SUNDAY' as const,
         frequency: Frequency.WEEKLY,
         startOn: '',
         endAfter: ''
@@ -769,14 +834,6 @@ export default function Page() {
                   </div>
 
                   <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                    <SelectField 
-                      name={`weekday-${index}`} // Make name unique
-                      label="Weekday" 
-                      placeholder="Weekday" 
-                      options={Weekdays}
-                      value={assignment.weekday}
-                      onValueChange={(value) => updateAssignment(index, 'weekday', value)}
-                    />
                     <SelectField
                       name={`frequency-${index}`} // Make name unique
                       label="Frequency"
@@ -785,27 +842,66 @@ export default function Page() {
                       value={assignment.frequency}
                       onValueChange={(value) => updateAssignment(index, 'frequency', value)}
                     />
+                    {assignment.frequency !== Frequency.ONCE && (
+                      <SelectField 
+                        name={`weekday-${index}`} // Make name unique
+                        label="Weekday" 
+                        placeholder="Weekday" 
+                        options={Weekdays}
+                        value={assignment.weekday || ''}
+                        onValueChange={(value) => updateAssignment(index, 'weekday', value)}
+                      />
+                    )}
                   </div>
 
-                  {assignment.weekday && assignment.frequency && (
+                  {assignment.frequency === Frequency.ONCE ? (
+                    // Show scheduledTo selector for ONCE frequency
                     <div className="inline-flex w-full items-start justify-start gap-4">
-                      <SelectField
-                        name={`startOn-${index}`} // Make name unique
-                        label="Start on"
-                        placeholder="Start on"
-                        options={assignmentDateOptions[index]?.startOn || getNext10DatesForStartOnBasedOnWeekday(assignment.weekday) || []}
-                        value={assignment.startOn}
-                        onValueChange={(value) => updateAssignment(index, 'startOn', value)}
-                      />
-                      <SelectField
-                        name={`endAfter-${index}`} // Make name unique
-                        label="End after"
-                        placeholder="End after"
-                        options={assignmentDateOptions[index]?.endAfter || (assignment.startOn && assignment.startOn !== '' ? getNext10DatesForEndAfterBasedOnWeekday(new Date(assignment.startOn), assignment.frequency) : []) || []}
-                        value={assignment.endAfter}
-                        onValueChange={(value) => updateAssignment(index, 'endAfter', value)}
-                      />
+                      <FormItem className="w-full">
+                        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2 block">
+                          Scheduled Date
+                        </label>
+                        <Select
+                          value={assignment.scheduledTo || ''}
+                          onValueChange={(value) => updateAssignment(index, 'scheduledTo', value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select date" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {scheduledToDates.map((option) => (
+                                <SelectItem key={option.key} value={option.value}>
+                                  {option.name}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
                     </div>
+                  ) : (
+                    // Show startOn and endAfter for recurring frequencies
+                    assignment.weekday && assignment.frequency && (
+                      <div className="inline-flex w-full items-start justify-start gap-4">
+                        <SelectField
+                          name={`startOn-${index}`} // Make name unique
+                          label="Start on"
+                          placeholder="Start on"
+                          options={assignmentDateOptions[index]?.startOn || getNext10DatesForStartOnBasedOnWeekday(assignment.weekday) || []}
+                          value={assignment.startOn || ''}
+                          onValueChange={(value) => updateAssignment(index, 'startOn', value)}
+                        />
+                        <SelectField
+                          name={`endAfter-${index}`} // Make name unique
+                          label="End after"
+                          placeholder="End after"
+                          options={assignmentDateOptions[index]?.endAfter || (assignment.startOn && assignment.startOn !== '' ? getNext10DatesForEndAfterBasedOnWeekday(new Date(assignment.startOn), assignment.frequency) : []) || []}
+                          value={assignment.endAfter || ''}
+                          onValueChange={(value) => updateAssignment(index, 'endAfter', value)}
+                        />
+                      </div>
+                    )
                   )}
                 </div>
               ))}
