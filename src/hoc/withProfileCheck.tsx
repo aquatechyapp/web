@@ -18,7 +18,7 @@ export function withProfileCheck(WrappedComponent: React.ComponentType) {
 
       // Check if profile is incomplete
       if (user.firstName === '') {
-        router.push('/account');
+        router.push('/onboarding');
       }
     }, [user.firstName, router]);
 

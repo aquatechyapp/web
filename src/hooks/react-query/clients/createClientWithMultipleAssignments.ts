@@ -11,10 +11,13 @@ import { Frequency } from '@/ts/enums/enums';
 export interface Assignment {
   assignmentToId: string;
   serviceTypeId: string;
-  weekday: "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
   frequency: Frequency;
-  startOn: string;
-  endAfter: string;
+  // Fields for recurring assignments (not ONCE)
+  weekday?: "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
+  startOn?: string;
+  endAfter?: string;
+  // Field for one-time assignment (ONCE)
+  scheduledTo?: string;
 }
 
 // Define the client creation data type with assignments array
@@ -54,17 +57,30 @@ export interface CreateClientWithAssignmentsData {
   assignments: Assignment[];
 }
 
-export const useCreateClientWithMultipleAssignments = () => {
+export const useCreateClientWithMultipleAssignments = (options?: { redirectTo?: string }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { toast } = useToast();
 
   return useMutation({
     mutationFn: async (data: CreateClientWithAssignmentsData) => {
+      // Process assignments - remove weekday when frequency is ONCE
+      const processedAssignments = data.assignments.map(assignment => {
+        if (assignment.frequency === Frequency.ONCE) {
+          // For ONCE frequency, only include scheduledTo and exclude weekday, startOn, endAfter
+          const { weekday, startOn, endAfter, ...rest } = assignment;
+          return rest;
+        } else {
+          // For other frequencies, only include weekday, startOn, endAfter and exclude scheduledTo
+          const { scheduledTo, ...rest } = assignment;
+          return rest;
+        }
+      });
+
       // Stringify the assignments array
       const formData = {
         ...data,
-        assignments: JSON.stringify(data.assignments)
+        assignments: JSON.stringify(processedAssignments)
       };
       
       return await clientAxios.post('/client-pool-assignment', createFormData(formData), {
@@ -78,7 +94,7 @@ export const useCreateClientWithMultipleAssignments = () => {
       queryClient.invalidateQueries({ queryKey: ['allClients'] });
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
       queryClient.invalidateQueries({ queryKey: ['schedule'] });
-      router.push('/clients');
+      router.push(options?.redirectTo || '/clients');
       toast({
         duration: 5000,
         title: 'Client added successfully',
