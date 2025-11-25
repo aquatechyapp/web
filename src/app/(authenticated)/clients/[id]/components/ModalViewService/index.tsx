@@ -46,6 +46,7 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
   const [photoToDelete, setPhotoToDelete] = useState<any>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddPhotoDialog, setShowAddPhotoDialog] = useState(false);
+  const [showResendEmailDialog, setShowResendEmailDialog] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -68,16 +69,20 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
     }
   };
 
+  const handleResendEmailClick = () => {
+    setShowResendEmailDialog(true);
+  };
+
   const handleResendEmail = () => {
     if (currentService?.id) {
       resendEmailMutation.mutate(
         { serviceId: currentService.id },
         {
           onSuccess: () => {
-            alert('Email resent successfully!');
+            setShowResendEmailDialog(false);
           },
           onError: () => {
-            alert('Failed to resend email. Please try again.');
+            setShowResendEmailDialog(false);
           }
         }
       );
@@ -602,7 +607,7 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
             {/* Actions */}
             <div className="mt-6 flex justify-center gap-3">
               <Button
-                onClick={handleResendEmail}
+                onClick={handleResendEmailClick}
                 variant="outline"
                 className="flex items-center gap-2"
                 disabled={resendEmailMutation.isPending}
@@ -723,6 +728,27 @@ export function ModalViewService({ service, pool, open, setOpen }: Props) {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Resend Email Confirmation Dialog */}
+        <AlertDialog open={showResendEmailDialog} onOpenChange={setShowResendEmailDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Resend Service Email</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to resend the service report email to the client? This will send a new copy of the service report.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleResendEmail}
+                disabled={resendEmailMutation.isPending}
+              >
+                {resendEmailMutation.isPending ? 'Sending...' : 'Resend Email'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DialogContent>
     </Dialog>
   );
