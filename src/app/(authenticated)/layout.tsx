@@ -13,6 +13,7 @@ import { SideMenu } from './SideMenuNav';
 import { ServicesProvider } from '@/context/services';
 import { VideoModal } from '@/components/VideoModal';
 import { useUserStore } from '@/store/user';
+import { HelpButton } from './HelpButton';
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const userId = Cookies.get('userId') as string;
@@ -68,6 +69,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
             </Suspense>
             <ProgressBar height="6px" color={Colors.blue[500]} options={{ showSpinner: false }} shallowRouting />
           </main>
+          <HelpButton />
         </div>
       </div>
     </>
