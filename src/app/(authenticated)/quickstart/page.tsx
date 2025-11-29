@@ -38,29 +38,12 @@ export default function QuickStartPage() {
       actionText: 'Download Aquatechy App'
     },
     {
-      id: 3,
-      title: 'Create a Company',
-      description:
-        'Set up your company profile with business details. If you are a team member, you can skip this step.',
-      completed: false,
-      redirectUrl: '/team/myCompanies',
-      actionText: 'Create Company'
-    },
-    {
       id: 4,
       title: 'Add your team',
       description: 'Invite team members, assign roles, and set up permissions for your pool service staff.',
       completed: false,
       redirectUrl: '/team',
       actionText: 'Manage team'
-    },
-    {
-      id: 5,
-      title: 'Create a client, pool and assignment',
-      description: 'Add your first client with their contact information and service preferences.',
-      completed: false,
-      redirectUrl: '/clients/new',
-      actionText: 'Add new client'
     },
     {
       id: 6,
@@ -77,7 +60,7 @@ export default function QuickStartPage() {
   }, [user.firstName]);
 
   return (
-    <div className="ml-4 max-w-3xl py-4">
+    <div className="ml-4 mr-4 w-90% py-4">
       <h1 className="mb-6 text-2xl font-bold">Quick Start Guide</h1>
       <div className="space-y-4">
         {steps.map((step) => (

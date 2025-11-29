@@ -1,0 +1,74 @@
+'use client';
+
+import { HelpCircle, Calendar, MessageCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+
+export function HelpButton() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleScheduleOnboarding = () => {
+    window.open('https://calendly.com/aquatechy/onboarding', '_blank');
+    setIsOpen(false);
+  };
+
+  const handleTextCompany = () => {
+    window.open('sms:+15615714474', '_blank');
+    setIsOpen(false);
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        aria-label="Get help"
+      >
+        <HelpCircle className="h-7 w-7" />
+      </button>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>How can we help you?</DialogTitle>
+            <DialogDescription>
+              Choose an option below to get assistance
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 py-4">
+            <Button
+              onClick={handleScheduleOnboarding}
+              className="w-full justify-start gap-3 h-auto py-4"
+              variant="outline"
+            >
+              <Calendar className="h-5 w-5" />
+              <div className="flex flex-col items-start">
+                <span className="font-semibold">Schedule a 30-minute onboarding session</span>
+                <span className="text-xs text-gray-500">Book a time that works for you</span>
+              </div>
+            </Button>
+            <Button
+              onClick={handleTextCompany}
+              className="w-full justify-start gap-3 h-auto py-4"
+              variant="outline"
+            >
+              <MessageCircle className="h-5 w-5" />
+              <div className="flex flex-col items-start">
+                <span className="font-semibold">Text us at (561) 571-4474</span>
+                <span className="text-xs text-gray-500">Available Monday to Saturday, 9 AM - 5 PM</span>
+              </div>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
