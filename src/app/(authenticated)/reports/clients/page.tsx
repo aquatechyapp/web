@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, FileBarChartIcon } from 'lucide-react';
+import { Users, FileBarChartIcon, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -18,24 +18,24 @@ export default function ClientReportsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => window.location.href = '/reports/clients/chemical-costs'}>
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <FileBarChartIcon className="h-5 w-5 text-blue-600" />
-                Client Activity Report
+                <DollarSign className="h-5 w-5 text-blue-600" />
+                Cost of Services by Client
               </CardTitle>
-              <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                Coming Soon
+              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                Available
               </Badge>
             </div>
             <CardDescription>
-              Track client engagement and service frequency
+              Generate a detailed PDF report showing all chemical costs by client and pool
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-gray-600">
-              This report will show client activity patterns, service frequency, and engagement metrics.
+              View chemical costs breakdown by client and pool for a specified date interval. Includes detailed consumable breakdowns and summary totals.
             </p>
           </CardContent>
         </Card>
