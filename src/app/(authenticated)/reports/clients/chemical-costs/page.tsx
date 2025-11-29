@@ -143,7 +143,7 @@ export default function ChemicalCostsReportPage() {
   const isFormValid = selectedCompany && selectedClientIds.length > 0 && fromDate && toDate;
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto p-6 max-w-full">
       <div className="mb-6">
         <Button
           variant="ghost"
