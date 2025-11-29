@@ -203,7 +203,7 @@ export default function OnboardingPage() {
   // Step 3: Client/Pool/Assignment Form
   const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
   const { data: companies, isLoading: isCompaniesLoading, isSuccess: isCompaniesSuccess } = useGetCompanies();
-  const { mutateAsync: createClientWithAssignments, isPending: isCreatingClient } = useCreateClientWithMultipleAssignments({ redirectTo: '/routes/assignments' });
+  const { mutateAsync: createClientWithAssignments, isPending: isCreatingClient } = useCreateClientWithMultipleAssignments({ redirectTo: '/quickstart' });
 
   const clientForm = useForm<PoolAndClientSchema>({
     resolver: zodResolver(poolAndClientSchema),
