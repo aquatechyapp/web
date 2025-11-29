@@ -32,7 +32,7 @@ export default function Page() {
 
   return (
     <div className="p-2">
-      <div className="flex flex-col items-stretch gap-4 md:flex-row md:items-center">
+      <div className="flex flex-col items-start justify-start gap-4 md:flex-row">
         <Button onClick={() => router.push('/team/add-company')}>
           <PlusIcon className="mr-2" />
           Add company
