@@ -265,7 +265,8 @@ export function AssignmentItem({ id, assignment, shouldPermitChangeOrder, allAss
         }`}>
           <div className={`shrink grow basis-0 text-center text-sm font-semibold ${
             isExpired ? 'text-red-700' : 'text-gray-800'
-          }`}>{assignment.order}</div>
+          // }`}>{assignment.order}</div>
+          }`}>{currentIndex + 1}</div>
         </div>
       </div>
     </div>

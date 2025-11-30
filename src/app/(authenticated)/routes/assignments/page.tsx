@@ -332,9 +332,11 @@ export default function Page() {
                         type="button"
                         onClick={handleSave}
                         className="mt-2 w-full bg-green-500 hover:bg-green-700"
-                        disabled={assignmentToId !== user?.id}
+                        // disabled={assignmentToId !== user?.id}
+                        // title='Save'
                       >
-                        {assignmentToId !== user?.id ?  'Save (only your technicians)' : 'Save'}
+                        {/* {assignmentToId !== user?.id ?  'Save (only your technicians)' : 'Save'} */}
+                        Save
                       </Button>
                     )}
                   </div>
