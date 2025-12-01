@@ -11,6 +11,7 @@ import {
   UserPlus,
   Users,
   PlayCircle,
+  DollarSign,
   ClipboardList,
   Calendar
 } from 'lucide-react';
@@ -287,7 +288,6 @@ export const routes: Menu[] = [
     title: 'My team',
     description: 'Manage your team and add new technicians'
   },
-
   {
     text: 'My Account',
     description: 'Edit your profile information',
@@ -308,7 +308,38 @@ export const routes: Menu[] = [
     href: '/account',
     icon: CircleUser,
     title: 'My Account'
+  },
+  {
+    text: 'Invoices',
+    href: '/invoices',
+    icon: DollarSign,
+    title: 'Invoices',
+    description: 'View and manage all your invoices in one place',
+    submenu: {
+      invoices: {
+        text: 'Invoices',
+        href: '/invoices',
+        title: 'Invoices',
+        icon: DollarSign,
+        description: 'View and manage all invoices',
+      },
+      subscription: {
+        text: 'Create Invoices',
+        href: '/invoices/create',
+        title: 'Invoices',
+        icon: DollarSign,
+        description: 'View and manage all your invoices in one place',
+      }
+      // subscription: {
+      //   text: 'Recurring Invoices',
+      //   href: '/invoices/recurring',
+      //   title: 'Recurring Invoices',
+      //   icon: DollarSign,
+      //   description: 'Manage recurring invoice templates and schedules',
+      // }
+    },
   }
+
 ];
 
 export const paymentType = [
@@ -344,7 +375,7 @@ export const RequestStatus = [
 ];
 
 export const Categories = [
-  
+
   {
     value: 'other',
     name: 'Other',
