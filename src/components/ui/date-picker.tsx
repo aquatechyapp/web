@@ -32,7 +32,7 @@ export function DatePicker({ className, placeholder, onChange, disabled, value =
         <Button
           variant={'outline'}
           className={cn(
-            'w-fit shrink-0 justify-start text-left font-normal',
+            'w-full shrink-0 justify-start text-left font-normal',
             !value && 'text-muted-foreground',
             className
           )}
