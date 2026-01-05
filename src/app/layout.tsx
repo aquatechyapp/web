@@ -33,9 +33,9 @@ export const metadata: Metadata = {
     'Professional pool service management platform. Streamline your pool maintenance operations, track chemical readings, manage routes, and organize service schedules efficiently.',
   icons: [
     {
-      href: '/images/favicon.ico',
+      href: '/images/favicon.png',
       sizes: 'any',
-      url: '/images/favicon.ico'
+      url: '/images/favicon.png'
     }
   ]
 };
