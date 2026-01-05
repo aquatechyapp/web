@@ -3,33 +3,42 @@ import { AxiosError } from 'axios';
 
 import { clientAxios } from '@/lib/clientAxios';
 import {
-  CreateRecurringInvoiceTemplateRequest,
-  CreateRecurringInvoiceTemplateResponse
+  DeleteRecurringInvoiceTemplateRequest,
+  DeleteRecurringInvoiceTemplateResponse
 } from '@/ts/interfaces/RecurringInvoiceTemplate';
 
 import { useToast } from '@/components/ui/use-toast';
 
-export const useCreateRecurringInvoiceTemplate = () => {
+export const useDeleteRecurringInvoiceTemplate = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const { mutate, mutateAsync, isPending, isSuccess } = useMutation({
     mutationFn: async (
-      data: CreateRecurringInvoiceTemplateRequest
-    ): Promise<CreateRecurringInvoiceTemplateResponse> => {
-      const response = await clientAxios.post<CreateRecurringInvoiceTemplateResponse>(
+      data: DeleteRecurringInvoiceTemplateRequest
+    ): Promise<DeleteRecurringInvoiceTemplateResponse> => {
+      const response = await clientAxios.delete<DeleteRecurringInvoiceTemplateResponse>(
         '/recurring-invoice-templates',
-        data
+        {
+          data: {
+            templateId: data.templateId
+          }
+        }
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (response, variables) => {
       // Invalidate recurring invoice templates list queries
       queryClient.invalidateQueries({ queryKey: ['recurring-invoice-templates'] });
 
+      // Invalidate the specific template query
+      queryClient.invalidateQueries({
+        queryKey: ['recurring-invoice-template', variables.templateId]
+      });
+
       toast({
         duration: 2000,
-        title: 'Recurring invoice template created successfully',
+        title: 'Recurring invoice template deleted successfully',
         variant: 'success'
       });
     },
@@ -41,12 +50,12 @@ export const useCreateRecurringInvoiceTemplate = () => {
       const errorMessage = error.response?.data?.message;
       const message = Array.isArray(errorMessage)
         ? errorMessage.join(', ')
-        : errorMessage || 'Failed to create recurring invoice template';
+        : errorMessage || 'Failed to delete recurring invoice template';
 
       toast({
         duration: 2000,
         variant: 'error',
-        title: 'Error creating recurring invoice template',
+        title: 'Error deleting recurring invoice template',
         description: message
       });
     }
@@ -54,3 +63,7 @@ export const useCreateRecurringInvoiceTemplate = () => {
 
   return { mutate, mutateAsync, isPending, isSuccess };
 };
+
+
+
+
