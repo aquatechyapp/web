@@ -24,7 +24,7 @@ export function InvoiceSummaryCards({ invoices }: InvoiceSummaryCardsProps) {
     .reduce((sum, inv) => sum + inv.amount, 0);
   
   const unpaidAmount = invoices
-    .filter(inv => (inv.status === 'unpaid' || inv.status === 'overdue') && inv.status !== 'cancelled')
+    .filter(inv => inv.status === 'unpaid' || inv.status === 'overdue')
     .reduce((sum, inv) => sum + inv.amount, 0);
 
   const cards = [
