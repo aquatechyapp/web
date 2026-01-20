@@ -1,14 +1,18 @@
 'use client';
 
-import { useFormContext } from 'react-hook-form';
+import { useEffect, useRef } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { Info } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import InputField from '@/components/InputField';
 import { FieldType } from '@/ts/enums/enums';
-import { useUpdateInvoiceSettings, InvoiceCommunicationSettings } from '@/hooks/react-query/invoices/useUpdateInvoiceSettings';
+import { InvoiceCommunication, Company } from '@/ts/interfaces/Company';
+import { useUpdateInvoiceCommunicationSettings } from '@/hooks/react-query/invoices/useUpdateInvoiceSettings';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import useGetCompany from '@/hooks/react-query/companies/getCompany';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 // Sample data for preview
 const sampleData = {
@@ -55,22 +59,94 @@ const replaceTemplateVariables = (text: string | null | undefined): string => {
   return result;
 };
 
-export function CommunicationTab() {
-  const form = useFormContext<{ communication: InvoiceCommunicationSettings }>();
-  const { mutate: updateSettings, isPending } = useUpdateInvoiceSettings();
+interface CommunicationTabProps {
+  companyId?: string;
+}
+
+export function CommunicationTab({ companyId }: CommunicationTabProps) {
+  const form = useFormContext<{ communication: InvoiceCommunication }>();
+  const { mutate: updateSettings, isPending } = useUpdateInvoiceCommunicationSettings(companyId || '');
+  
+  // Fetch company data to get communication preferences
+  const { data: company, isLoading: isLoadingCompany } = useGetCompany(companyId || '');
+  
+  // Use ref to track the last companyId we loaded to prevent overwriting user input
+  const lastLoadedCompanyIdRef = useRef<string | undefined>(undefined);
+
+  // Reset ref when companyId changes so we reload data for new company
+  useEffect(() => {
+    if (lastLoadedCompanyIdRef.current !== companyId) {
+      lastLoadedCompanyIdRef.current = undefined;
+    }
+  }, [companyId]);
+
+  // Watch form values for preview using useWatch for reactive updates (must be before early return)
+  const invoiceSubject = useWatch({ control: form.control, name: 'communication.invoiceMessage.emailSubject' });
+  const invoiceBody = useWatch({ control: form.control, name: 'communication.invoiceMessage.emailBody' });
+  const thankYouSubject = useWatch({ control: form.control, name: 'communication.thankYouMessage.emailSubject' });
+  const thankYouBody = useWatch({ control: form.control, name: 'communication.thankYouMessage.emailBody' });
+  const reminderSubject = useWatch({ control: form.control, name: 'communication.reminderMessage.emailSubject' });
+  const reminderBody = useWatch({ control: form.control, name: 'communication.reminderMessage.emailBody' });
+
+  // Load communication preferences from company data when it's available (only once per company)
+  useEffect(() => {
+    // Don't run if we don't have companyId, are still loading, don't have company data, or already loaded this company
+    if (!companyId || isLoadingCompany || !company || lastLoadedCompanyIdRef.current === companyId) return;
+    
+    const communication = company.preferences?.invoiceSettingsPreferences?.communication;
+    
+    // Always ensure the nested structure exists, even if data is null
+    const invoiceMsg = communication?.invoiceMessage || { emailSubject: null, emailBody: null };
+    const thankYouMsg = communication?.thankYouMessage || { emailSubject: null, emailBody: null };
+    const reminderMsg = communication?.reminderMessage || { emailSubject: null, emailBody: null };
+    
+    // Set all values at once to ensure form state updates properly
+    form.setValue('communication.invoiceMessage', invoiceMsg, { 
+      shouldDirty: false, 
+      shouldValidate: true,
+      shouldTouch: false 
+    });
+    
+    form.setValue('communication.thankYouMessage', thankYouMsg, { 
+      shouldDirty: false, 
+      shouldValidate: true,
+      shouldTouch: false 
+    });
+    
+    form.setValue('communication.reminderMessage', reminderMsg, { 
+      shouldDirty: false, 
+      shouldValidate: true,
+      shouldTouch: false 
+    });
+    
+    // Mark this company as loaded to prevent re-running
+    lastLoadedCompanyIdRef.current = companyId;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [company, isLoadingCompany, companyId]); // form is stable from useFormContext, no need to include
+
+  // Show loading spinner while loading company data or if no companyId
+  if (!companyId || isLoadingCompany) {
+    return <LoadingSpinner />;
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const data = form.getValues('communication');
-    updateSettings({ type: 'communication', data });
+    if (!companyId) return;
+    
+    // Get all three message objects - they must be provided together
+    const communication = form.getValues('communication');
+    
+    // Ensure all three messages are present (they can be null, but the objects must exist)
+    const invoiceMessage = communication.invoiceMessage || { emailSubject: null, emailBody: null };
+    const thankYouMessage = communication.thankYouMessage || { emailSubject: null, emailBody: null };
+    const reminderMessage = communication.reminderMessage || { emailSubject: null, emailBody: null };
+    
+    updateSettings({
+      invoiceMessage,
+      thankYouMessage,
+      reminderMessage
+    });
   };
-
-  const invoiceSubject = form.watch('communication.invoiceMessage.subject');
-  const invoiceBody = form.watch('communication.invoiceMessage.body');
-  const thankYouSubject = form.watch('communication.thankYouMessage.subject');
-  const thankYouBody = form.watch('communication.thankYouMessage.body');
-  const reminderSubject = form.watch('communication.reminderMessage.subject');
-  const reminderBody = form.watch('communication.reminderMessage.body');
 
   return (
     <Form {...form}>
@@ -99,13 +175,13 @@ export function CommunicationTab() {
           <h2 className="mb-4 text-lg font-semibold">Invoice Message</h2>
           <div className="space-y-4">
             <InputField
-              name="communication.invoiceMessage.subject"
+              name="communication.invoiceMessage.emailSubject"
               label="Email Subject"
               placeholder="Enter email subject"
             />
 
             <InputField
-              name="communication.invoiceMessage.body"
+              name="communication.invoiceMessage.emailBody"
               label="Email Body"
               placeholder="Enter email body"
               type={FieldType.TextArea}
@@ -131,13 +207,13 @@ export function CommunicationTab() {
           <h2 className="mb-4 text-lg font-semibold">Thank You Message</h2>
           <div className="space-y-4">
             <InputField
-              name="communication.thankYouMessage.subject"
+              name="communication.thankYouMessage.emailSubject"
               label="Email Subject"
               placeholder="Enter email subject"
             />
 
             <InputField
-              name="communication.thankYouMessage.body"
+              name="communication.thankYouMessage.emailBody"
               label="Email Body"
               placeholder="Enter email body"
               type={FieldType.TextArea}
@@ -163,13 +239,13 @@ export function CommunicationTab() {
           <h2 className="mb-4 text-lg font-semibold">Reminder Message</h2>
           <div className="space-y-4">
             <InputField
-              name="communication.reminderMessage.subject"
+              name="communication.reminderMessage.emailSubject"
               label="Email Subject"
               placeholder="Enter email subject"
             />
 
             <InputField
-              name="communication.reminderMessage.body"
+              name="communication.reminderMessage.emailBody"
               label="Email Body"
               placeholder="Enter email body"
               type={FieldType.TextArea}

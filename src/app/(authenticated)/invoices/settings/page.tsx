@@ -17,17 +17,14 @@ import { OnlinePaymentsTab } from './components/OnlinePaymentsTab';
 import {
   InvoiceCompanyInformation,
   InvoiceDefaultValues,
-  InvoiceCommunicationSettings
-} from '@/hooks/react-query/invoices/useUpdateInvoiceSettings';
+  InvoiceCommunication
+} from '@/ts/interfaces/Company';
 
 interface InvoiceSettingsFormData {
   company: InvoiceCompanyInformation;
   defaults: InvoiceDefaultValues;
-  communication: InvoiceCommunicationSettings;
+  communication: InvoiceCommunication;
 }
-
-const defaultPaymentInstructions = 'Please make payment via check or bank transfer. Contact us for bank details.';
-const defaultNotes = 'Thank you for your business!';
 
 export default function InvoiceSettingsPage() {
   const router = useRouter();
@@ -45,47 +42,24 @@ export default function InvoiceSettingsPage() {
   const form = useForm<InvoiceSettingsFormData>({
     defaultValues: {
       company: {
-        name: '',
-        address: '',
-        city: '',
-        state: '',
-        zip: '',
-        replyToEmail: ''
+        replyToEmail: null
       },
       defaults: {
-        paymentInstructions: defaultPaymentInstructions,
-        notes: defaultNotes,
-        frequency: 'monthly',
-        paymentTerm: '30'
+        paymentInstructions: null,
+        notes: null,
+        defaultFrequency: null,
+        defaultPaymentTerm: null
       },
       communication: {
-        invoiceMessage: {
-          subject: 'Invoice %invoice_number%',
-          body: 'Please find attached invoice %invoice_number% for your review.'
-        },
-        thankYouMessage: {
-          subject: 'Thank you for your payment',
-          body: 'We have received your payment. Thank you for your business!'
-        },
-        reminderMessage: {
-          subject: 'Payment reminder for invoice %invoice_number%',
-          body: 'This is a friendly reminder that invoice %invoice_number% is due. Please make payment at your earliest convenience.'
-        }
+        invoiceMessage: null,
+        thankYouMessage: null,
+        reminderMessage: null
       }
     }
   });
 
-  // Update form when company data is available
-  useEffect(() => {
-    if (selectedCompany) {
-      form.setValue('company.name', selectedCompany.name || '');
-      form.setValue('company.address', selectedCompany.address || '');
-      form.setValue('company.city', selectedCompany.city || '');
-      form.setValue('company.state', selectedCompany.state || '');
-      form.setValue('company.zip', selectedCompany.zip || '');
-      form.setValue('company.replyToEmail', selectedCompany.email || '');
-    }
-  }, [selectedCompany, form]);
+  // Note: Form values are loaded by individual tab components to ensure fresh data
+  // when switching tabs or companies. This prevents stale data issues.
 
   // Auth check
   useEffect(() => {
@@ -132,15 +106,15 @@ export default function InvoiceSettingsPage() {
           </TabsList>
 
           <TabsContent value="company" className="mt-6">
-            <CompanyInformationTab company={selectedCompany} />
+            <CompanyInformationTab companyId={selectedCompany?.id} />
           </TabsContent>
 
           <TabsContent value="defaults" className="mt-6">
-            <DefaultValuesTab />
+            <DefaultValuesTab companyId={selectedCompany?.id} />
           </TabsContent>
 
           <TabsContent value="communication" className="mt-6">
-            <CommunicationTab />
+            <CommunicationTab companyId={selectedCompany?.id} />
           </TabsContent>
 
           <TabsContent value="payments" className="mt-6">

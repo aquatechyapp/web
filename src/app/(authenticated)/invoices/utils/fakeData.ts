@@ -1,6 +1,6 @@
 export interface Invoice {
   id: string;
-  invoiceNumber: string;
+  invoiceNumber?: string | null | undefined;
   clientId: string;
   clientName: string;
   issuedDate: Date;

@@ -15,7 +15,12 @@ import DatePickerField from '@/components/DatePickerField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { FieldType } from '@/ts/enums/enums';
 import { useCreateRecurringInvoiceTemplate } from '@/hooks/react-query/invoices/useCreateRecurringInvoiceTemplate';
-import { useToast } from '@/components/ui/use-toast';
+import {
+  RecurringInvoiceFrequency,
+  RecurringInvoiceDelivery,
+  PaymentTermsDays,
+  CreateRecurringInvoiceTemplateRequest
+} from '@/ts/interfaces/RecurringInvoiceTemplate';
 
 interface InvoiceLineItem {
   description: string;
@@ -27,12 +32,11 @@ interface InvoiceLineItem {
 interface RecurringInvoiceFormData {
   clientId: string;
   poolId?: string;
-  startDate: Date;
-  frequency: 'weekly' | 'monthly' | 'yearly';
-  delivery: 'draft' | 'auto-send';
-  referenceNumber?: string;
-  paymentTerms: string; // Will be a number of days: 1, 3, 7, 15, 30, or 60
-  discount: number; // Percentage
+  startOn: Date;
+  frequency: RecurringInvoiceFrequency;
+  delivery: RecurringInvoiceDelivery;
+  paymentTerms: PaymentTermsDays;
+  discountRate: number; // Percentage
   lineItems: InvoiceLineItem[];
   taxRate: number;
   notes: string;
@@ -40,23 +44,23 @@ interface RecurringInvoiceFormData {
 }
 
 const paymentTermsOptions = [
-  { key: '1', value: '1', name: 'Due on 1 day' },
-  { key: '3', value: '3', name: 'Due on 3 days' },
-  { key: '7', value: '7', name: 'Due on 7 days' },
-  { key: '15', value: '15', name: 'Due on 15 days' },
-  { key: '30', value: '30', name: 'Due on 30 days' },
-  { key: '60', value: '60', name: 'Due on 60 days' }
+  { key: PaymentTermsDays.OneDay, value: PaymentTermsDays.OneDay, name: 'Due on 1 day' },
+  { key: PaymentTermsDays.ThreeDays, value: PaymentTermsDays.ThreeDays, name: 'Due on 3 days' },
+  { key: PaymentTermsDays.SevenDays, value: PaymentTermsDays.SevenDays, name: 'Due on 7 days' },
+  { key: PaymentTermsDays.FifteenDays, value: PaymentTermsDays.FifteenDays, name: 'Due on 15 days' },
+  { key: PaymentTermsDays.ThirtyDays, value: PaymentTermsDays.ThirtyDays, name: 'Due on 30 days' },
+  { key: PaymentTermsDays.SixtyDays, value: PaymentTermsDays.SixtyDays, name: 'Due on 60 days' }
 ];
 
 const frequencyOptions = [
-  { key: 'weekly', value: 'weekly', name: 'Weekly' },
-  { key: 'monthly', value: 'monthly', name: 'Monthly' },
-  { key: 'yearly', value: 'yearly', name: 'Yearly' }
+  { key: RecurringInvoiceFrequency.Weekly, value: RecurringInvoiceFrequency.Weekly, name: 'Weekly' },
+  { key: RecurringInvoiceFrequency.Monthly, value: RecurringInvoiceFrequency.Monthly, name: 'Monthly' },
+  { key: RecurringInvoiceFrequency.Yearly, value: RecurringInvoiceFrequency.Yearly, name: 'Yearly' }
 ];
 
 const deliveryOptions = [
-  { key: 'draft', value: 'draft', name: 'Save invoices as draft' },
-  { key: 'auto-send', value: 'auto-send', name: 'Automatically send on creation' }
+  { key: RecurringInvoiceDelivery.SaveAsDraft, value: RecurringInvoiceDelivery.SaveAsDraft, name: 'Save invoices as draft' },
+  { key: RecurringInvoiceDelivery.SendOnCreation, value: RecurringInvoiceDelivery.SendOnCreation, name: 'Automatically send on creation' }
 ];
 
 const defaultPaymentInstructions = 'Please make payment via check or bank transfer. Contact us for bank details.';
@@ -66,18 +70,16 @@ export default function CreateRecurringInvoicePage() {
   const user = useUserStore((state) => state.user);
   const { data: clients = [], isLoading: isLoadingClients } = useGetAllClients();
   const { mutate: createTemplate, isPending: isCreating } = useCreateRecurringInvoiceTemplate();
-  const { toast } = useToast();
 
   const form = useForm<RecurringInvoiceFormData>({
     defaultValues: {
       clientId: '',
       poolId: undefined,
-      startDate: new Date(),
-      frequency: 'monthly',
-      delivery: 'draft',
-      referenceNumber: '',
-      paymentTerms: '30',
-      discount: 0,
+      startOn: new Date(),
+      frequency: RecurringInvoiceFrequency.Monthly,
+      delivery: RecurringInvoiceDelivery.SaveAsDraft,
+      paymentTerms: PaymentTermsDays.ThirtyDays,
+      discountRate: 0,
       lineItems: [
         {
           description: '',
@@ -95,7 +97,7 @@ export default function CreateRecurringInvoicePage() {
   const watchedClientId = form.watch('clientId');
   const watchedLineItems = form.watch('lineItems');
   const watchedTaxRate = form.watch('taxRate');
-  const watchedDiscount = form.watch('discount');
+  const watchedDiscount = form.watch('discountRate');
 
   const { data: pools = [], isLoading: isLoadingPools } = useGetPoolsByClientId(
     watchedClientId || null
@@ -220,30 +222,101 @@ export default function CreateRecurringInvoicePage() {
     form.setValue('lineItems', updatedItems, { shouldDirty: false });
   };
 
-  const handleSubmit = (data: RecurringInvoiceFormData) => {
-    // Filter out empty line items
-    const validLineItems = data.lineItems.filter((item) => {
-      const hasDescription = item.description.trim() !== '';
-      const hasQuantity = Number(item.quantity) > 0;
-      const hasUnitPrice = Number(item.unitPrice) > 0;
-      return hasDescription && hasQuantity && hasUnitPrice;
-    });
-
-    if (validLineItems.length === 0) {
-      toast({
-        duration: 3000,
-        variant: 'error',
-        title: 'Validation Error',
-        description: 'Please add at least one line item with description, quantity, and unit price.'
-      });
-      return;
+  // Helper function to validate and prepare template data
+  const prepareTemplateData = (): CreateRecurringInvoiceTemplateRequest | null => {
+    const formData = form.getValues();
+    
+    // Clear previous errors before validation
+    form.clearErrors();
+    
+    // Validate required fields
+    if (!formData.clientId) {
+      form.setError('clientId', { message: 'Client is required' }, { shouldFocus: true });
+      return null;
     }
 
-    const templateData = {
-      ...data,
+    if (!formData.startOn) {
+      form.setError('startOn', { message: 'Start date is required' }, { shouldFocus: true });
+      return null;
+    }
+
+    if (!formData.frequency) {
+      form.setError('frequency', { message: 'Frequency is required' }, { shouldFocus: true });
+      return null;
+    }
+
+    if (!formData.delivery) {
+      form.setError('delivery', { message: 'Delivery option is required' }, { shouldFocus: true });
+      return null;
+    }
+
+    if (!formData.paymentTerms) {
+      form.setError('paymentTerms', { message: 'Payment terms is required' }, { shouldFocus: true });
+      return null;
+    }
+
+    // Filter and validate line items - must have at least one valid item
+    const validLineItems = formData.lineItems
+      .filter((item) => {
+        const hasDescription = item.description.trim() !== '';
+        const hasQuantity = Number(item.quantity) > 0;
+        const hasUnitPrice = Number(item.unitPrice) > 0;
+        return hasDescription && hasQuantity && hasUnitPrice;
+      })
+      .map((item) => ({
+        description: item.description.trim(),
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unitPrice)
+      }));
+
+    if (validLineItems.length === 0) {
+      // Set error on the first line item for better UX
+      form.setError('lineItems.0.description', { message: 'At least one valid line item is required. Please fill description, quantity, and unit price.' }, { shouldFocus: true });
+      return null;
+    }
+
+    // Calculate subtotal from valid line items
+    const subtotal = validLineItems.reduce((sum, item) => {
+      return sum + item.quantity * item.unitPrice;
+    }, 0);
+
+    // Transform form data to match API expectations
+    const templateData: CreateRecurringInvoiceTemplateRequest = {
+      clientId: formData.clientId,
+      startOn: formData.startOn.toISOString(), // Convert Date to ISO string
+      frequency: formData.frequency,
+      delivery: formData.delivery,
       lineItems: validLineItems,
-      paymentTerms: parseInt(data.paymentTerms, 10) // Convert to number
+      subtotal: Math.round(subtotal * 100) / 100,
+      taxRate: Number(formData.taxRate) || 0,
+      discountRate: Number(formData.discountRate) || 0,
+      paymentTerms: formData.paymentTerms,
+      notes: formData.notes || undefined,
+      paymentInstructions: formData.paymentInstructions || undefined
     };
+
+    return templateData;
+  };
+
+  const handleSubmit = async (data: RecurringInvoiceFormData) => {
+    // Trigger validation on all fields first to mark form as submitted
+    await form.trigger();
+    
+    // Then run our custom validation
+    const templateData = prepareTemplateData();
+    if (!templateData) {
+      // Find first error and scroll to it for better UX
+      const firstErrorKey = Object.keys(form.formState.errors)[0];
+      if (firstErrorKey) {
+        // Try to find the input element
+        const element = document.querySelector(`[name="${firstErrorKey}"]`) as HTMLElement;
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+        }
+      }
+      return;
+    }
 
     createTemplate(templateData, {
       onSuccess: () => {
@@ -293,7 +366,7 @@ export default function CreateRecurringInvoicePage() {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <DatePickerField
-                    name="startDate"
+                    name="startOn"
                     label="Start On"
                     placeholder="Select start date"
                     
@@ -314,12 +387,6 @@ export default function CreateRecurringInvoicePage() {
                   options={deliveryOptions}
                 />
 
-                <InputField
-                  name="referenceNumber"
-                  label="Reference Number (Optional)"
-                  placeholder="Enter reference number"
-                />
-
                 <SelectField
                   name="paymentTerms"
                   label="Payment Terms"
@@ -328,7 +395,7 @@ export default function CreateRecurringInvoicePage() {
                 />
 
                 <InputField
-                  name="discount"
+                  name="discountRate"
                   label="Discount (%)"
                   placeholder="0.00"
                   type={FieldType.Number}

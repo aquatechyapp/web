@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { RecurringInvoiceTemplate } from '@/hooks/react-query/invoices/useGetRecurringInvoiceTemplates';
+import { RecurringInvoiceFrequency, RecurringInvoiceDelivery } from '@/ts/interfaces/RecurringInvoiceTemplate';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -62,11 +63,13 @@ export function DataTableRecurringInvoices<TValue>({
       const template = row.original;
       
       // Create a combined search string from all relevant fields
+      const clientName = template.client 
+        ? `${template.client.firstName} ${template.client.lastName}`.trim()
+        : '';
       const combinedSearchString = [
         template.referenceNumber || '',
-        template.clientName || '',
-        template.clientId || '',
-        template.poolId || ''
+        clientName,
+        template.clientId || ''
       ].join(' ').toLowerCase();
       
       return combinedSearchString.includes(searchTerm);
@@ -75,15 +78,15 @@ export function DataTableRecurringInvoices<TValue>({
 
   const frequencyOptions = [
     { key: 'all', value: 'all', name: 'All Frequencies' },
-    { key: 'weekly', value: 'weekly', name: 'Weekly' },
-    { key: 'monthly', value: 'monthly', name: 'Monthly' },
-    { key: 'yearly', value: 'yearly', name: 'Yearly' }
+    { key: RecurringInvoiceFrequency.Weekly, value: RecurringInvoiceFrequency.Weekly, name: 'Weekly' },
+    { key: RecurringInvoiceFrequency.Monthly, value: RecurringInvoiceFrequency.Monthly, name: 'Monthly' },
+    { key: RecurringInvoiceFrequency.Yearly, value: RecurringInvoiceFrequency.Yearly, name: 'Yearly' }
   ];
 
   const deliveryOptions = [
     { key: 'all', value: 'all', name: 'All Delivery Types' },
-    { key: 'draft', value: 'draft', name: 'Draft' },
-    { key: 'auto-send', value: 'auto-send', name: 'Auto-send' }
+    { key: RecurringInvoiceDelivery.SaveAsDraft, value: RecurringInvoiceDelivery.SaveAsDraft, name: 'Save as Draft' },
+    { key: RecurringInvoiceDelivery.SendOnCreation, value: RecurringInvoiceDelivery.SendOnCreation, name: 'Auto-send' }
   ];
 
   const clientOptions = [
@@ -100,7 +103,7 @@ export function DataTableRecurringInvoices<TValue>({
       <div className="mb-4 flex w-full flex-col gap-4 md:flex-row md:items-center">
         {/* Create Button - First */}
         {onCreateTemplate && (
-          <Button type="button" onClick={onCreateTemplate} className="w-full md:w-96 py-4">
+          <Button type="button" onClick={onCreateTemplate} className="w-full md:max-w-96 py-4">
             <PlusIcon className="mr-2" />
             Create Recurring Template
           </Button>

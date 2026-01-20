@@ -121,7 +121,6 @@ export interface RecurringInvoiceTemplate {
  */
 export interface CreateRecurringInvoiceTemplateRequest {
   clientId: string;
-  referenceNumber: string;
   startOn: string; // ISO 8601 date string
   frequency: RecurringInvoiceFrequency;
   delivery: RecurringInvoiceDelivery;
@@ -168,7 +167,6 @@ export interface GetRecurringInvoiceTemplateByIdResponse {
  */
 export interface UpdateRecurringInvoiceTemplateRequest {
   templateId: string;
-  referenceNumber?: string;
   startOn?: string; // ISO 8601 date string
   frequency?: RecurringInvoiceFrequency;
   delivery?: RecurringInvoiceDelivery;

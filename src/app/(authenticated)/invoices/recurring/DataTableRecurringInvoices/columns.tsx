@@ -5,25 +5,30 @@ import { format } from 'date-fns';
 import { RecurringInvoiceTemplate } from '@/hooks/react-query/invoices/useGetRecurringInvoiceTemplates';
 import { RecurringInvoiceActions } from './components/RecurringInvoiceActions';
 
+import { RecurringInvoiceFrequency, RecurringInvoiceDelivery } from '@/ts/interfaces/RecurringInvoiceTemplate';
+
 const frequencyLabels: Record<RecurringInvoiceTemplate['frequency'], string> = {
-  weekly: 'Weekly',
-  monthly: 'Monthly',
-  yearly: 'Yearly'
+  [RecurringInvoiceFrequency.Weekly]: 'Weekly',
+  [RecurringInvoiceFrequency.Monthly]: 'Monthly',
+  [RecurringInvoiceFrequency.Each2Months]: 'Every 2 Months',
+  [RecurringInvoiceFrequency.Each3Months]: 'Every 3 Months',
+  [RecurringInvoiceFrequency.Each4Months]: 'Every 4 Months',
+  [RecurringInvoiceFrequency.Each6Months]: 'Every 6 Months',
+  [RecurringInvoiceFrequency.Yearly]: 'Yearly'
 };
 
 const deliveryLabels: Record<RecurringInvoiceTemplate['delivery'], { label: string; className: string }> = {
-  draft: {
-    label: 'Draft',
+  [RecurringInvoiceDelivery.SaveAsDraft]: {
+    label: 'Save as Draft',
     className: 'bg-gray-100 text-gray-600'
   },
-  'auto-send': {
+  [RecurringInvoiceDelivery.SendOnCreation]: {
     label: 'Auto-send',
     className: 'bg-blue-100 text-blue-600'
   }
 };
 
 export const createColumns = (
-  onView?: (template: RecurringInvoiceTemplate) => void,
   onEdit?: (template: RecurringInvoiceTemplate) => void,
   onDelete?: (template: RecurringInvoiceTemplate) => void
 ): ColumnDef<RecurringInvoiceTemplate>[] => [
@@ -40,14 +45,16 @@ export const createColumns = (
   {
     accessorKey: 'clientName',
     header: 'Client',
-    cell: ({ row }) => (
-      <div>
-        <div className="font-medium text-gray-900">{row.original.clientName || 'N/A'}</div>
-        {row.original.poolId && (
-          <div className="mt-0.5 text-xs text-gray-500">Pool: {row.original.poolId}</div>
-        )}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const clientName = row.original.client 
+        ? `${row.original.client.firstName} ${row.original.client.lastName}`.trim()
+        : 'N/A';
+      return (
+        <div>
+          <div className="font-medium text-gray-900">{clientName}</div>
+        </div>
+      );
+    },
     enableGlobalFilter: true,
     filterFn: (row, _, filter) => {
       if (filter === 'all' || filter === '' || !filter) {
@@ -57,11 +64,11 @@ export const createColumns = (
     }
   },
   {
-    accessorKey: 'startDate',
+    accessorKey: 'startOn',
     header: 'Start Date',
     cell: ({ row }) => (
       <div className="text-gray-700">
-        {format(new Date(row.original.startDate), 'MMM dd, yyyy')}
+        {format(new Date(row.original.startOn), 'MMM dd, yyyy')}
       </div>
     )
   },
@@ -103,15 +110,7 @@ export const createColumns = (
       return row.original.delivery === filter;
     }
   },
-  {
-    accessorKey: 'paymentTerms',
-    header: 'Payment Terms',
-    cell: ({ row }) => (
-      <div className="text-gray-700">
-        Net {row.original.paymentTerms} days
-      </div>
-    )
-  },
+
   {
     accessorKey: 'total',
     header: 'Total Amount',
@@ -122,12 +121,42 @@ export const createColumns = (
     )
   },
   {
+    accessorKey: 'isActive',
+    header: 'Status',
+    cell: ({ row }) => {
+      const isActive = row.original.isActive;
+      return (
+        <div
+          className={`inline-flex max-w-20 items-center justify-center rounded-lg px-3 py-1.5 text-xs font-semibold ${
+            isActive
+              ? 'bg-green-100 text-green-600'
+              : 'bg-gray-100 text-gray-600'
+          }`}
+        >
+          {isActive ? 'Active' : 'Paused'}
+        </div>
+      );
+    },
+    filterFn: (row, _, filter) => {
+      if (filter === 'all' || filter === '' || !filter) {
+        return true;
+      }
+      const isActive = row.original.isActive;
+      if (filter === 'active') {
+        return isActive === true;
+      }
+      if (filter === 'paused') {
+        return isActive === false;
+      }
+      return isActive === (filter === 'true');
+    }
+  },
+  {
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => (
       <RecurringInvoiceActions
         template={row.original}
-        onView={onView}
         onEdit={onEdit}
         onDelete={onDelete}
       />

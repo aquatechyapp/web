@@ -3,8 +3,48 @@ import { ConsumableGroup } from './ConsumableGroups';
 import { ServiceType } from './ServiceTypes';
 import { ChecklistTemplate } from './ChecklistTemplates';
 import { Coords } from './Pool';
+import { RecurringInvoiceFrequency, PaymentTermsDays } from './RecurringInvoiceTemplate';
 
 type Status = 'Active' | 'Inactive';
+
+// Invoice Settings Interfaces
+export interface InvoiceCompanyInformation {
+  replyToEmail?: string | null;
+}
+
+export interface InvoiceDefaultValues {
+  paymentInstructions?: string | null;
+  notes?: string | null;
+  defaultFrequency?: RecurringInvoiceFrequency | null | string;
+  defaultPaymentTerm?: PaymentTermsDays | null | string;
+}
+
+export interface InvoiceMessage {
+  emailSubject?: string | null;
+  emailBody?: string | null;
+}
+
+export interface ThankYouMessage {
+  emailSubject?: string | null;
+  emailBody?: string | null;
+}
+
+export interface ReminderMessage {
+  emailSubject?: string | null;
+  emailBody?: string | null;
+}
+
+export interface InvoiceCommunication {
+  invoiceMessage?: InvoiceMessage | null;
+  thankYouMessage?: ThankYouMessage | null;
+  reminderMessage?: ReminderMessage | null;
+}
+
+export interface InvoiceSettingsPreferences {
+  companyInformation?: InvoiceCompanyInformation | null;
+  defaultValues?: InvoiceDefaultValues | null;
+  communication?: InvoiceCommunication | null;
+}
 
 export type CompanyMember = {
   status: Status;
@@ -62,6 +102,7 @@ export interface Company {
     servicePreferences?: {
       allowAnticipatedServices?: boolean;
     };
+    invoiceSettingsPreferences?: InvoiceSettingsPreferences | null;
   };
   imageUrl?: string | null;
   checklistTemplates: ChecklistTemplate[];

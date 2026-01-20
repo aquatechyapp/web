@@ -9,6 +9,7 @@ import { differenceInDays, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store/user';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
+import useGetCompany from '@/hooks/react-query/companies/getCompany';
 import SelectField from '@/components/SelectField';
 import InputField from '@/components/InputField';
 import DatePickerField from '@/components/DatePickerField';
@@ -19,6 +20,7 @@ import { FieldType } from '@/ts/enums/enums';
 import { useCreateInvoiceAsDraft } from '@/hooks/react-query/invoices/useCreateInvoiceAsDraft';
 import { useCreateInvoiceAndSendEmail } from '@/hooks/react-query/invoices/useCreateInvoiceAndSendEmail';
 import { CreateInvoiceAsDraftRequest, InvoiceLineItemInput } from '@/ts/interfaces/Invoice';
+import { PaymentTermsDays } from '@/ts/interfaces/RecurringInvoiceTemplate';
 
 interface InvoiceLineItem {
   description: string;
@@ -29,7 +31,6 @@ interface InvoiceLineItem {
 
 interface InvoiceFormData {
   clientId: string;
-  invoiceNumber: string;
   issuedDate: Date;
   dueDate: Date;
   lineItems: InvoiceLineItem[];
@@ -42,6 +43,35 @@ interface InvoiceFormData {
 const defaultPaymentTerms = 'Net 30 - Payment due within 30 days';
 const defaultPaymentInstructions = 'Please make payment via check or bank transfer. Contact us for bank details.';
 
+// Helper function to convert PaymentTermsDays enum to days
+const paymentTermsDaysToNumber = (paymentTerm: PaymentTermsDays | string | null | undefined): number => {
+  switch (paymentTerm) {
+    case PaymentTermsDays.OneDay:
+      return 1;
+    case PaymentTermsDays.ThreeDays:
+      return 3;
+    case PaymentTermsDays.SevenDays:
+      return 7;
+    case PaymentTermsDays.FifteenDays:
+      return 15;
+    case PaymentTermsDays.ThirtyDays:
+      return 30;
+    case PaymentTermsDays.SixtyDays:
+      return 60;
+    default:
+      return 30; // Default to 30 days
+  }
+};
+
+// Helper function to generate payment terms text from PaymentTermsDays
+const generatePaymentTermsText = (paymentTerm: PaymentTermsDays | string | null | undefined): string => {
+  const days = paymentTermsDaysToNumber(paymentTerm);
+  if (days === 1) {
+    return 'Due on Receipt - Payment due immediately';
+  }
+  return `Net ${days} - Payment due within ${days} days`;
+};
+
 export default function CreateInvoicePage() {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
@@ -52,7 +82,6 @@ export default function CreateInvoicePage() {
   const form = useForm<InvoiceFormData>({
     defaultValues: {
       clientId: '',
-      invoiceNumber: `INV-${String(Date.now()).slice(-6)}`,
       issuedDate: new Date(),
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
       lineItems: [
@@ -78,7 +107,30 @@ export default function CreateInvoicePage() {
   const watchedPaymentTerms = form.watch('paymentTerms');
   const watchedNotes = form.watch('notes');
   const watchedPaymentInstructions = form.watch('paymentInstructions');
-  const watchedInvoiceNumber = form.watch('invoiceNumber');
+
+  // Get selected client
+  const selectedClient = useMemo(() => {
+    return clients.find((c) => c.id === watchedClientId);
+  }, [clients, watchedClientId]);
+
+  // Get company ID from selected client
+  const companyId = useMemo(() => {
+    return selectedClient?.companyOwner.id || '';
+  }, [selectedClient]);
+
+  // Get company using selected client's companyOwnerId
+  const { data: company, isLoading: isLoadingCompany } = useGetCompany(companyId);
+
+  // Get default values from company settings
+  const companyDefaults = useMemo(() => {
+    if (!company) return null;
+    // assume dueDate is 30 days from issuedDate
+    const dueDate = new Date(form.getValues('issuedDate') || new Date());
+    dueDate.setDate(dueDate.getDate() + paymentTermsDaysToNumber(company.preferences?.invoiceSettingsPreferences?.defaultValues?.defaultPaymentTerm));
+    form.setValue('dueDate', dueDate, { shouldDirty: false });
+
+    return company.preferences?.invoiceSettingsPreferences?.defaultValues;
+  }, [company]);
 
   // Auth check
   useEffect(() => {
@@ -87,7 +139,33 @@ export default function CreateInvoicePage() {
     }
   }, [user, router]);
 
-  // Auto-update payment terms based on date difference
+  // Update form values when company defaults are loaded
+  useEffect(() => {
+    if (!companyDefaults || !selectedClient) return;
+
+    // Update payment instructions if available
+    if (companyDefaults.paymentInstructions !== null && companyDefaults.paymentInstructions !== undefined) {
+      form.setValue('paymentInstructions', companyDefaults.paymentInstructions, { shouldDirty: false });
+    }
+
+    // Update notes if available
+    if (companyDefaults.notes !== null && companyDefaults.notes !== undefined) {
+      form.setValue('notes', companyDefaults.notes, { shouldDirty: false });
+    }
+
+    // Update payment terms and due date if defaultPaymentTerm is available
+    if (companyDefaults.defaultPaymentTerm) {
+      const days = paymentTermsDaysToNumber(companyDefaults.defaultPaymentTerm);
+      const paymentTermsText = generatePaymentTermsText(companyDefaults.defaultPaymentTerm);
+      const issuedDate = form.getValues('issuedDate') || new Date();
+      const newDueDate = new Date(issuedDate.getTime() + days * 24 * 60 * 60 * 1000);
+      
+      form.setValue('paymentTerms', paymentTermsText, { shouldDirty: false });
+      form.setValue('dueDate', newDueDate, { shouldDirty: false });
+    }
+  }, [companyDefaults, selectedClient, form]);
+
+  // Auto-update payment terms based on date difference (only if user manually changes dates)
   useEffect(() => {
     if (!watchedIssuedDate || !watchedDueDate) return;
 
@@ -155,11 +233,6 @@ export default function CreateInvoicePage() {
       }));
   }, [clients]);
 
-  // Get selected client
-  const selectedClient = useMemo(() => {
-    return clients.find((c) => c.id === watchedClientId);
-  }, [clients, watchedClientId]);
-
   // Calculate invoice totals
   const invoiceTotals = useMemo(() => {
     const subtotal = watchedLineItems.reduce((sum, item) => {
@@ -185,7 +258,6 @@ export default function CreateInvoicePage() {
 
     return {
       id: 'preview',
-      invoiceNumber: watchedInvoiceNumber || '',
       clientId: watchedClientId || '',
       clientName: selectedClient.fullName || `${selectedClient.firstName} ${selectedClient.lastName}`,
       issuedDate: watchedIssuedDate || new Date(),
@@ -218,7 +290,6 @@ export default function CreateInvoicePage() {
   }, [
     selectedClient,
     invoiceTotals,
-    watchedInvoiceNumber,
     watchedClientId,
     watchedIssuedDate,
     watchedDueDate,
@@ -280,19 +351,22 @@ export default function CreateInvoicePage() {
   const prepareInvoiceData = (): CreateInvoiceAsDraftRequest | null => {
     const formData = form.getValues();
     
+    // Clear previous errors before validation
+    form.clearErrors();
+    
     // Validate required fields
     if (!formData.clientId) {
-      form.setError('clientId', { message: 'Client is required' });
+      form.setError('clientId', { message: 'Client is required' }, { shouldFocus: true });
       return null;
     }
 
     if (!formData.issuedDate) {
-      form.setError('issuedDate', { message: 'Issued date is required' });
+      form.setError('issuedDate', { message: 'Issued date is required' }, { shouldFocus: true });
       return null;
     }
 
     if (!formData.dueDate) {
-      form.setError('dueDate', { message: 'Due date is required' });
+      form.setError('dueDate', { message: 'Due date is required' }, { shouldFocus: true });
       return null;
     }
 
@@ -311,7 +385,8 @@ export default function CreateInvoicePage() {
       }));
 
     if (validLineItems.length === 0) {
-      form.setError('lineItems', { message: 'At least one valid line item is required' });
+      // Set error on the first line item for better UX
+      form.setError('lineItems.0.description', { message: 'At least one valid line item is required. Please fill description, quantity, and unit price.' }, { shouldFocus: true });
       return null;
     }
 
@@ -347,9 +422,25 @@ export default function CreateInvoicePage() {
     return requestData;
   };
 
-  const handleSaveDraft = () => {
+  const handleSaveDraft = async () => {
+    // Trigger validation on all fields first to mark form as submitted
+    await form.trigger();
+    
+    // Then run our custom validation
     const invoiceData = prepareInvoiceData();
-    if (!invoiceData) return;
+    if (!invoiceData) {
+      // Find first error and scroll to it for better UX
+      const firstErrorKey = Object.keys(form.formState.errors)[0];
+      if (firstErrorKey) {
+        // Try to find the input element
+        const element = document.querySelector(`[name="${firstErrorKey}"]`) as HTMLElement;
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+        }
+      }
+      return;
+    }
 
     createDraft(invoiceData, {
       onSuccess: () => {
@@ -358,9 +449,25 @@ export default function CreateInvoicePage() {
     });
   };
 
-  const handleCreateInvoice = () => {
+  const handleCreateInvoice = async () => {
+    // Trigger validation on all fields first to mark form as submitted
+    await form.trigger();
+    
+    // Then run our custom validation
     const invoiceData = prepareInvoiceData();
-    if (!invoiceData) return;
+    if (!invoiceData) {
+      // Find first error and scroll to it for better UX
+      const firstErrorKey = Object.keys(form.formState.errors)[0];
+      if (firstErrorKey) {
+        // Try to find the input element
+        const element = document.querySelector(`[name="${firstErrorKey}"]`) as HTMLElement;
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+        }
+      }
+      return;
+    }
 
     createAndSend(invoiceData, {
       onSuccess: () => {
@@ -409,23 +516,19 @@ export default function CreateInvoicePage() {
                   options={clientOptions}
                 />
 
-                <InputField
-                  name="invoiceNumber"
-                  label="Invoice Number"
-                  placeholder="Invoice number"
-                />
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className={`grid grid-cols-1 gap-4 ${companyDefaults ? 'sm:grid-cols-2' : 'sm:grid-cols-1'}`}>
                   <DatePickerField
                     name="issuedDate"
                     label="Issued Date"
                     placeholder="Select issued date"
                   />
-                  <DatePickerField
-                    name="dueDate"
-                    label="Due Date"
-                    placeholder="Select due date"
-                  />
+                  {companyDefaults && (
+                    <DatePickerField
+                      name="dueDate"
+                      label="Due Date"
+                      placeholder="Select due date"
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -531,29 +634,33 @@ export default function CreateInvoicePage() {
             </div>
 
             {/* Payment Terms and Notes */}
-            <div className="rounded-lg border bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-lg font-semibold">Additional Information</h2>
-              <div className="space-y-4">
-                <InputField
-                  name="paymentTerms"
-                  label="Payment Terms"
-                  placeholder="Payment terms"
-                  type={FieldType.TextArea}
-                />
-                <InputField
-                  name="notes"
-                  label="Notes"
-                  placeholder="Additional notes (optional)"
-                  type={FieldType.TextArea}
-                />
-                <InputField
-                  name="paymentInstructions"
-                  label="Payment Instructions"
-                  placeholder="Payment instructions"
-                  type={FieldType.TextArea}
-                />
-              </div>
-            </div>
+            {selectedClient && (
+                <div className="rounded-lg border bg-white p-6 shadow-sm">
+                  <h2 className="mb-4 text-lg font-semibold">Additional Information</h2>
+                  <div className="space-y-4">
+                    <InputField
+                      name="paymentTerms"
+                      label="Payment Terms"
+                      placeholder="Payment terms"
+                      type={FieldType.TextArea}
+                    />
+                    <InputField
+                      name="notes"
+                      label="Notes"
+                      placeholder="Additional notes (optional)"
+                      type={FieldType.TextArea}
+                    />
+                    <InputField
+                      name="paymentInstructions"
+                      label="Payment Instructions"
+                      placeholder="Payment instructions"
+                      type={FieldType.TextArea}
+                    />
+                  </div>
+                </div>
+              )
+            }
+            
 
             {/* Action Buttons */}
             <div className="flex gap-3">
