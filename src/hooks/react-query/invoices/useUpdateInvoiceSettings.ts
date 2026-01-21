@@ -170,8 +170,8 @@ export const useUpdateInvoiceDefaultValues = (
       } = {
         paymentInstructions: settings.paymentInstructions ?? '',
         notes: settings.notes ?? '',
-        defaultFrequency: settings.defaultFrequency ?? RecurringInvoiceFrequency.Monthly,
-        defaultPaymentTerm: settings.defaultPaymentTerm ?? PaymentTermsDays.ThirtyDays
+        defaultFrequency: (settings.defaultFrequency as RecurringInvoiceFrequency) ?? RecurringInvoiceFrequency.Monthly,
+        defaultPaymentTerm: (settings.defaultPaymentTerm as PaymentTermsDays) ?? PaymentTermsDays.ThirtyDays
       };
 
       const response = await clientAxios.patch(
