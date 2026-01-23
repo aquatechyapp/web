@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store/user';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
 import useGetPoolsByClientId from '@/hooks/react-query/pools/getPoolsByClientId';
+import useGetCompany from '@/hooks/react-query/companies/getCompany';
 import SelectField from '@/components/SelectField';
 import InputField from '@/components/InputField';
 import DatePickerField from '@/components/DatePickerField';
@@ -32,7 +33,7 @@ interface InvoiceLineItem {
 interface RecurringInvoiceFormData {
   clientId: string;
   poolId?: string;
-  startOn: Date;
+  startOn: Date | string;
   frequency: RecurringInvoiceFrequency;
   delivery: RecurringInvoiceDelivery;
   paymentTerms: PaymentTermsDays;
@@ -75,7 +76,7 @@ export default function CreateRecurringInvoicePage() {
     defaultValues: {
       clientId: '',
       poolId: undefined,
-      startOn: new Date(),
+      startOn: new Date().toString(),
       frequency: RecurringInvoiceFrequency.Monthly,
       delivery: RecurringInvoiceDelivery.SaveAsDraft,
       paymentTerms: PaymentTermsDays.ThirtyDays,
@@ -98,10 +99,30 @@ export default function CreateRecurringInvoicePage() {
   const watchedLineItems = form.watch('lineItems');
   const watchedTaxRate = form.watch('taxRate');
   const watchedDiscount = form.watch('discountRate');
+  const watchedStartOn = form.watch('startOn');
 
   const { data: pools = [], isLoading: isLoadingPools } = useGetPoolsByClientId(
     watchedClientId || null
   );
+
+  // Get selected client
+  const selectedClient = useMemo(() => {
+    return clients.find((c) => c.id === watchedClientId);
+  }, [clients, watchedClientId]);
+
+  // Get company ID from selected client
+  const companyId = useMemo(() => {
+    return selectedClient?.companyOwner.id || '';
+  }, [selectedClient]);
+
+  // Get company using selected client's companyOwnerId
+  const { data: company, isLoading: isLoadingCompany } = useGetCompany(companyId);
+
+  // Get default values from company settings
+  const companyDefaults = useMemo(() => {
+    if (!company) return null;
+    return company.preferences?.invoiceSettingsPreferences?.defaultValues;
+  }, [company]);
 
   // Auth check
   useEffect(() => {
@@ -109,6 +130,26 @@ export default function CreateRecurringInvoicePage() {
       router.push('/onboarding');
     }
   }, [user, router]);
+
+  // Update form values when company defaults are loaded
+  useEffect(() => {
+    if (!companyDefaults || !selectedClient) return;
+
+    // Update payment instructions if available
+    if (companyDefaults.paymentInstructions !== null && companyDefaults.paymentInstructions !== undefined) {
+      form.setValue('paymentInstructions', companyDefaults.paymentInstructions, { shouldDirty: false });
+    }
+
+    // Update notes if available
+    if (companyDefaults.notes !== null && companyDefaults.notes !== undefined) {
+      form.setValue('notes', companyDefaults.notes, { shouldDirty: false });
+    }
+
+    // Update payment terms if defaultPaymentTerm is available
+    if (companyDefaults.defaultPaymentTerm) {
+      form.setValue('paymentTerms', companyDefaults.defaultPaymentTerm, { shouldDirty: false });
+    }
+  }, [companyDefaults, selectedClient, form]);
 
   // Calculate amounts for line items in real-time
   useEffect(() => {
@@ -283,7 +324,7 @@ export default function CreateRecurringInvoicePage() {
     // Transform form data to match API expectations
     const templateData: CreateRecurringInvoiceTemplateRequest = {
       clientId: formData.clientId,
-      startOn: formData.startOn.toISOString(), // Convert Date to ISO string
+      startOn: new Date(formData.startOn as string).toString(),
       frequency: formData.frequency,
       delivery: formData.delivery,
       lineItems: validLineItems,
@@ -369,7 +410,6 @@ export default function CreateRecurringInvoicePage() {
                     name="startOn"
                     label="Start On"
                     placeholder="Select start date"
-                    
                   />
 
                   <SelectField
