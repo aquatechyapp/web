@@ -66,7 +66,7 @@ export default function EditRecurringInvoicePage() {
   const form = useForm<RecurringInvoiceFormData>({
     defaultValues: {
       delivery: template?.delivery || RecurringInvoiceDelivery.SaveAsDraft,
-      paymentTerms: template?.paymentTerms as PaymentTermsDays || PaymentTermsDays.ThirtyDays,
+      paymentTerms: template !== undefined? template.paymentTerms : PaymentTermsDays.ThirtyDays,
       discountRate: template?.discountRate || 0,
       taxRate: template?.taxRate || 0,
       notes: template?.notes || '',
@@ -79,7 +79,7 @@ export default function EditRecurringInvoicePage() {
     if (!isLoadingTemplate && template) {
       const formData = {
         delivery: template.delivery,
-        paymentTerms: template.paymentTerms as PaymentTermsDays,
+        paymentTerms: template.paymentTerms ? template.paymentTerms : PaymentTermsDays.ThirtyDays,
         discountRate: template.discountRate || 0,
         taxRate: template.taxRate || 0,
         notes: template.notes || '',
@@ -286,7 +286,6 @@ export default function EditRecurringInvoicePage() {
                   label="Payment Terms"
                   placeholder="Select payment terms"
                   options={paymentTermsOptions}
-                  value={form.watch('paymentTerms') as PaymentTermsDays}
                 />
 
                 <InputField
