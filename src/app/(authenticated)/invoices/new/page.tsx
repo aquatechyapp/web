@@ -75,6 +75,7 @@ const generatePaymentTermsText = (paymentTerm: PaymentTermsDays | string | null 
 export default function CreateInvoicePage() {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
+  
   const { data: clients = [], isLoading: isLoadingClients } = useGetAllClients();
   const { mutate: createDraft, isPending: isCreatingDraft } = useCreateInvoiceAsDraft();
   const { mutate: createAndSend, isPending: isCreatingAndSending } = useCreateInvoiceAndSendEmail();
@@ -347,6 +348,30 @@ export default function CreateInvoicePage() {
     form.setValue('lineItems', updatedItems, { shouldDirty: false });
   };
 
+  // Helper function to extract days from payment terms string
+  const extractDaysFromPaymentTerms = (paymentTerms: string): number => {
+    if (!paymentTerms) return 0;
+    
+    // Handle "Due on Receipt" case
+    if (paymentTerms.toLowerCase().includes('due on receipt') || paymentTerms.toLowerCase().includes('immediately')) {
+      return 0;
+    }
+    
+    // Extract number from "Net X - Payment due within X days" format
+    const match = paymentTerms.match(/Net\s+(\d+)/i);
+    if (match && match[1]) {
+      return parseInt(match[1], 10);
+    }
+    
+    // Fallback: try to extract any number from the string
+    const numberMatch = paymentTerms.match(/(\d+)/);
+    if (numberMatch && numberMatch[1]) {
+      return parseInt(numberMatch[1], 10);
+    }
+    
+    return 0;
+  };
+
   // Helper function to validate and prepare invoice data
   const prepareInvoiceData = (): CreateInvoiceAsDraftRequest | null => {
     const formData = form.getValues();
@@ -378,11 +403,14 @@ export default function CreateInvoicePage() {
         const hasUnitPrice = Number(item.unitPrice) > 0;
         return hasDescription && hasQuantity && hasUnitPrice;
       })
-      .map((item) => ({
-        description: item.description.trim(),
-        quantity: Number(item.quantity),
-        unitPrice: Number(item.unitPrice)
-      }));
+      .map((item) => {
+        const unitPriceDollars = Number(item.unitPrice);
+        return {
+          description: item.description.trim(),
+          quantity: Number(item.quantity),
+          unitPrice: Math.round(unitPriceDollars * 100) // Backend stores in cents
+        };
+      });
 
     if (validLineItems.length === 0) {
       // Set error on the first line item for better UX
@@ -390,17 +418,25 @@ export default function CreateInvoicePage() {
       return null;
     }
 
-    // Calculate subtotal from valid line items
-    const subtotal = validLineItems.reduce((sum, item) => {
-      return sum + item.quantity * item.unitPrice;
+    // Calculate subtotal from valid line items (in dollars), then send as cents
+    const subtotalDollars = validLineItems.reduce((sum, item) => {
+      return sum + (item.quantity * item.unitPrice) / 100;
     }, 0);
 
-    // Prepare dates - set to start/end of day for proper ISO conversion
+    // Prepare dates - use issuedDate and calculate dueDate from payment terms
     const issuedDate = new Date(formData.issuedDate);
-    issuedDate.setHours(0, 0, 0, 0);
+    // Preserve the time of day from issuedDate
+    const issuedHours = issuedDate.getHours();
+    const issuedMinutes = issuedDate.getMinutes();
+    const issuedSeconds = issuedDate.getSeconds();
+    const issuedMilliseconds = issuedDate.getMilliseconds();
     
-    const dueDate = new Date(formData.dueDate);
-    dueDate.setHours(23, 59, 59, 999);
+    // Calculate dueDate by adding payment terms days to issuedDate
+    const paymentTermsDays = extractDaysFromPaymentTerms(formData.paymentTerms || '');
+    const dueDate = new Date(issuedDate);
+    dueDate.setDate(dueDate.getDate() + paymentTermsDays);
+    // Preserve the same time of day
+    dueDate.setHours(issuedHours, issuedMinutes, issuedSeconds, issuedMilliseconds);
 
     // Build request payload - ensure all numeric fields are numbers
     const taxRate = Number(formData.taxRate) || 0;
@@ -408,10 +444,10 @@ export default function CreateInvoicePage() {
 
     const requestData: CreateInvoiceAsDraftRequest = {
       clientId: formData.clientId,
-      issuedDate: issuedDate.toISOString(),
-      dueDate: dueDate.toISOString(),
+      issuedDate: issuedDate.toString(),
+      dueDate: dueDate.toString(),
       lineItems: validLineItems,
-      subtotal: Math.round(subtotal * 100) / 100, // Round to 2 decimal places
+      subtotal: Math.round(subtotalDollars * 100), // Backend stores in cents
       taxRate: taxRate,
       discountRate: discountRate,
       paymentTerms: formData.paymentTerms || undefined,

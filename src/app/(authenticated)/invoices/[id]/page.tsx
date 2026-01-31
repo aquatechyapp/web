@@ -36,6 +36,9 @@ function transformInvoiceToDetailed(apiInvoice: Invoice): DetailedInvoice {
     ? clientAddressParts.join(', ')
     : undefined;
 
+  // Backend stores prices in cents; convert to dollars for display
+  const toDollars = (cents: number) => (cents ?? 0) / 100;
+
   return {
     id: apiInvoice.id,
     invoiceNumber: apiInvoice.invoiceNumber,
@@ -43,20 +46,20 @@ function transformInvoiceToDetailed(apiInvoice: Invoice): DetailedInvoice {
     clientName: `${apiInvoice.client.firstName} ${apiInvoice.client.lastName}`,
     issuedDate: new Date(apiInvoice.issuedDate),
     dueDate: new Date(apiInvoice.dueDate),
-    amount: apiInvoice.total, // Use total instead of deprecated amount
+    amount: toDollars(apiInvoice.total), // Use total instead of deprecated amount
     status: apiInvoice.status,
     lineItems: apiInvoice.lineItems.map(item => ({
       description: item.description,
       quantity: item.quantity,
-      unitPrice: item.unitPrice,
-      amount: item.amount
+      unitPrice: toDollars(item.unitPrice),
+      amount: toDollars(item.amount)
     })),
-    subtotal: apiInvoice.subtotal,
+    subtotal: toDollars(apiInvoice.subtotal),
     taxRate: apiInvoice.taxRate,
-    taxAmount: apiInvoice.taxAmount,
+    taxAmount: toDollars(apiInvoice.taxAmount),
     discountRate: apiInvoice.discountRate,
-    discountAmount: apiInvoice.discountAmount,
-    total: apiInvoice.total,
+    discountAmount: toDollars(apiInvoice.discountAmount),
+    total: toDollars(apiInvoice.total),
     paymentTerms: apiInvoice.paymentTerms || '',
     notes: apiInvoice.notes || '',
     paymentInstructions: apiInvoice.paymentInstructions || '',

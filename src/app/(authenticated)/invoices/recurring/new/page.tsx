@@ -304,11 +304,14 @@ export default function CreateRecurringInvoicePage() {
         const hasUnitPrice = Number(item.unitPrice) > 0;
         return hasDescription && hasQuantity && hasUnitPrice;
       })
-      .map((item) => ({
-        description: item.description.trim(),
-        quantity: Number(item.quantity),
-        unitPrice: Number(item.unitPrice)
-      }));
+      .map((item) => {
+        const unitPriceDollars = Number(item.unitPrice);
+        return {
+          description: item.description.trim(),
+          quantity: Number(item.quantity),
+          unitPrice: Math.round(unitPriceDollars * 100) // Backend stores in cents
+        };
+      });
 
     if (validLineItems.length === 0) {
       // Set error on the first line item for better UX
@@ -316,9 +319,9 @@ export default function CreateRecurringInvoicePage() {
       return null;
     }
 
-    // Calculate subtotal from valid line items
-    const subtotal = validLineItems.reduce((sum, item) => {
-      return sum + item.quantity * item.unitPrice;
+    // Calculate subtotal from valid line items (unitPrice is in cents), then send as cents
+    const subtotalDollars = validLineItems.reduce((sum, item) => {
+      return sum + (item.quantity * item.unitPrice) / 100;
     }, 0);
 
     // Transform form data to match API expectations
@@ -328,7 +331,7 @@ export default function CreateRecurringInvoicePage() {
       frequency: formData.frequency,
       delivery: formData.delivery,
       lineItems: validLineItems,
-      subtotal: Math.round(subtotal * 100) / 100,
+      subtotal: Math.round(subtotalDollars * 100), // Backend stores in cents
       taxRate: Number(formData.taxRate) || 0,
       discountRate: Number(formData.discountRate) || 0,
       paymentTerms: formData.paymentTerms,

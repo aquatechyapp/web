@@ -120,6 +120,9 @@ export default function EditInvoicePage({ params: { id } }: Props) {
       const issuedDate = new Date(invoice.issuedDate);
       const dueDate = new Date(invoice.dueDate);
       
+      // Backend stores prices in cents; convert to dollars for form display
+      const toDollars = (cents: number) => (cents ?? 0) / 100;
+
       form.reset({
         clientId: invoice.clientId,
         invoiceNumber: invoice.invoiceNumber,
@@ -129,8 +132,8 @@ export default function EditInvoicePage({ params: { id } }: Props) {
           ? invoice.lineItems.map(item => ({
               description: item.description,
               quantity: item.quantity,
-              unitPrice: item.unitPrice,
-              amount: item.amount
+              unitPrice: toDollars(item.unitPrice),
+              amount: toDollars(item.amount)
             }))
           : [
               {
@@ -424,20 +427,23 @@ export default function EditInvoicePage({ params: { id } }: Props) {
           const hasUnitPrice = Number(item.unitPrice) > 0;
           return hasDescription && hasQuantity && hasUnitPrice;
         })
-        .map((item) => ({
-          description: item.description.trim(),
-          quantity: Number(item.quantity),
-          unitPrice: Number(item.unitPrice)
-        }));
+        .map((item) => {
+          const unitPriceDollars = Number(item.unitPrice);
+          return {
+            description: item.description.trim(),
+            quantity: Number(item.quantity),
+            unitPrice: Math.round(unitPriceDollars * 100) // Backend stores in cents
+          };
+        });
 
       if (validLineItems.length === 0) {
         form.setError('lineItems', { message: 'At least one valid line item is required' });
         return null;
       }
 
-      // Calculate subtotal from valid line items
-      const subtotal = validLineItems.reduce((sum, item) => {
-        return sum + item.quantity * item.unitPrice;
+      // Calculate subtotal from valid line items (unitPrice is in cents), then send as cents
+      const subtotalDollars = validLineItems.reduce((sum, item) => {
+        return sum + (item.quantity * item.unitPrice) / 100;
       }, 0);
 
       // Prepare dates - set to start/end of day for proper ISO conversion
@@ -452,7 +458,7 @@ export default function EditInvoicePage({ params: { id } }: Props) {
       requestData.issuedDate = issuedDate.toISOString();
       requestData.dueDate = dueDate.toISOString();
       requestData.lineItems = validLineItems;
-      requestData.subtotal = Math.round(subtotal * 100) / 100;
+      requestData.subtotal = Math.round(subtotalDollars * 100); // Backend stores in cents
       requestData.taxRate = Number(formData.taxRate) || 0;
       requestData.discountRate = Number(formData.discountRate) || 0;
       requestData.paymentTerms = formData.paymentTerms || undefined;

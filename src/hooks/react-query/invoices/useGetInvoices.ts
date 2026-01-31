@@ -30,12 +30,13 @@ export interface TableInvoice extends Omit<ApiInvoice, 'amount'> {
 export default function useGetInvoices(params: UseGetInvoicesParams) {
   const queryClient = useQueryClient();
 
-  // Transform API invoice to table-compatible format
+  // Transform API invoice to table-compatible format (backend stores prices in cents)
   const transformInvoice = (invoice: ApiInvoice): TableInvoice => {
+    const toDollars = (cents: number) => (cents ?? 0) / 100;
     return {
       ...invoice,
       clientName: `${invoice.client.firstName} ${invoice.client.lastName}`,
-      amount: invoice.total, // Use total instead of deprecated amount field
+      amount: toDollars(invoice.total), // Use total; backend stores in cents
       issuedDate: invoice.issuedDate, // Keep as string, columns will convert when needed
       dueDate: invoice.dueDate // Keep as string, columns will convert when needed
     };
