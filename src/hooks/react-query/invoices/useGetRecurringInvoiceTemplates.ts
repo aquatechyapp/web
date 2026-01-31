@@ -35,7 +35,30 @@ export default function useGetRecurringInvoiceTemplates(
         }
       );
 
-      return response.data;
+      // Backend stores prices in cents; convert to dollars for display
+      const toDollars = (cents: number) => (cents ?? 0) / 100;
+      const templates = response.data.templates.map((template) => ({
+        ...template,
+        subtotal: toDollars(template.subtotal),
+        taxAmount: toDollars(template.taxAmount),
+        discountAmount: toDollars(template.discountAmount),
+        total: toDollars(template.total),
+        lineItems: template.lineItems.map((item) => ({
+          ...item,
+          unitPrice: toDollars(item.unitPrice),
+          amount: toDollars(item.amount)
+        })),
+        ...(template.invoices?.length
+          ? {
+              invoices: template.invoices.map((inv) => ({
+                ...inv,
+                total: toDollars(inv.total)
+              }))
+            }
+          : {})
+      }));
+
+      return { ...response.data, templates };
     },
     staleTime: Infinity
   });
@@ -61,7 +84,30 @@ export default function useGetRecurringInvoiceTemplates(
           }
         );
 
-        return response.data;
+        // Backend stores prices in cents; convert to dollars for display
+        const toDollars = (cents: number) => (cents ?? 0) / 100;
+        const templates = response.data.templates.map((template) => ({
+          ...template,
+          subtotal: toDollars(template.subtotal),
+          taxAmount: toDollars(template.taxAmount),
+          discountAmount: toDollars(template.discountAmount),
+          total: toDollars(template.total),
+          lineItems: template.lineItems.map((item) => ({
+            ...item,
+            unitPrice: toDollars(item.unitPrice),
+            amount: toDollars(item.amount)
+          })),
+          ...(template.invoices?.length
+            ? {
+                invoices: template.invoices.map((inv) => ({
+                  ...inv,
+                  total: toDollars(inv.total)
+                }))
+              }
+            : {})
+        }));
+
+        return { ...response.data, templates };
       }
     });
   };
