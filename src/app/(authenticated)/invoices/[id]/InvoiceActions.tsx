@@ -86,14 +86,14 @@ export function InvoiceActions({
           <>
             <Button onClick={() => setShowSendInvoiceDialog(true)} disabled={isSendingInvoice}>
               <Send className="mr-2 h-4 w-4" />
-              {isSendingInvoice ? 'Sending...' : 'Send Invoice'}
+              {isSendingInvoice ? 'Sending...' : 'Send Invoice Email'}
             </Button>
             <ConfirmActionDialog
               open={showSendInvoiceDialog}
               onOpenChange={setShowSendInvoiceDialog}
               title="Send Invoice Email"
               description={`Are you sure you want to send invoice #${invoice.invoiceNumber} to ${invoice.clientName}? The invoice will be sent via email.`}
-              confirmText="Send Invoice"
+              confirmText="Send Invoice Email"
               cancelText="Cancel"
               onConfirm={handleSendInvoice}
               variant="default"
@@ -105,14 +105,14 @@ export function InvoiceActions({
           <>
             <Button variant="outline" onClick={() => setShowSendReminderDialog(true)} disabled={isSendingReminder}>
               <Mail className="mr-2 h-4 w-4" />
-              {isSendingReminder ? 'Sending...' : 'Send Reminder'}
+              {isSendingReminder ? 'Sending...' : 'Send Reminder Email'}
             </Button>
             <ConfirmActionDialog
               open={showSendReminderDialog}
               onOpenChange={setShowSendReminderDialog}
               title="Send Invoice Reminder"
               description={`Are you sure you want to send a reminder email for invoice #${invoice.invoiceNumber} to ${invoice.clientName}? This will remind them about the outstanding payment.`}
-              confirmText="Send Reminder"
+              confirmText="Send Reminder Email"
               cancelText="Cancel"
               onConfirm={handleSendReminder}
               variant="default"
