@@ -16,7 +16,8 @@ export enum RecurringInvoiceFrequency {
  */
 export enum RecurringInvoiceDelivery {
   SaveAsDraft = 'SaveAsDraft',
-  SendOnCreation = 'SendOnCreation'
+  SendOnCreation = 'SendOnCreation',
+  CreateOnly = 'CreateOnly'
 }
 
 /**

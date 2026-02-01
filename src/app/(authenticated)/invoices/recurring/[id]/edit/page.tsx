@@ -40,7 +40,8 @@ const paymentTermsOptions = [
 
 const deliveryOptions = [
   { key: RecurringInvoiceDelivery.SaveAsDraft, value: RecurringInvoiceDelivery.SaveAsDraft, name: 'Save invoices as draft' },
-  { key: RecurringInvoiceDelivery.SendOnCreation, value: RecurringInvoiceDelivery.SendOnCreation, name: 'Automatically send on creation' }
+  { key: RecurringInvoiceDelivery.SendOnCreation, value: RecurringInvoiceDelivery.SendOnCreation, name: 'Automatically send on creation' },
+  { key: RecurringInvoiceDelivery.CreateOnly, value: RecurringInvoiceDelivery.CreateOnly, name: 'Create only' }
 ];
 
 const frequencyLabels: Record<RecurringInvoiceFrequency, string> = {

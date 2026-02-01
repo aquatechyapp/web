@@ -18,6 +18,7 @@ import { InvoicePreview } from './InvoicePreview';
 import { DetailedInvoice } from '../utils/fakeData';
 import { FieldType } from '@/ts/enums/enums';
 import { useCreateInvoiceAsDraft } from '@/hooks/react-query/invoices/useCreateInvoiceAsDraft';
+import { useCreateInvoice } from '@/hooks/react-query/invoices/useCreateInvoice';
 import { useCreateInvoiceAndSendEmail } from '@/hooks/react-query/invoices/useCreateInvoiceAndSendEmail';
 import { CreateInvoiceAsDraftRequest, InvoiceLineItemInput } from '@/ts/interfaces/Invoice';
 import { PaymentTermsDays } from '@/ts/interfaces/RecurringInvoiceTemplate';
@@ -78,6 +79,7 @@ export default function CreateInvoicePage() {
   
   const { data: clients = [], isLoading: isLoadingClients } = useGetAllClients();
   const { mutate: createDraft, isPending: isCreatingDraft } = useCreateInvoiceAsDraft();
+  const { mutate: createOnly, isPending: isCreatingOnly } = useCreateInvoice();
   const { mutate: createAndSend, isPending: isCreatingAndSending } = useCreateInvoiceAndSendEmail();
 
   const form = useForm<InvoiceFormData>({
@@ -512,6 +514,29 @@ export default function CreateInvoicePage() {
     });
   };
 
+  const handleCreateOnly = async () => {
+    await form.trigger();
+
+    const invoiceData = prepareInvoiceData();
+    if (!invoiceData) {
+      const firstErrorKey = Object.keys(form.formState.errors)[0];
+      if (firstErrorKey) {
+        const element = document.querySelector(`[name="${firstErrorKey}"]`) as HTMLElement;
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+        }
+      }
+      return;
+    }
+
+    createOnly(invoiceData, {
+      onSuccess: () => {
+        router.push('/invoices');
+      }
+    });
+  };
+
   const handleSwitchToRecurring = () => {
     router.push('/invoices/recurring');
   };
@@ -699,21 +724,29 @@ export default function CreateInvoicePage() {
             
 
             {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <Button 
                 variant="outline" 
                 onClick={handleSaveDraft} 
-                className="flex-1"
-                disabled={isCreatingDraft || isCreatingAndSending}
+                className="flex-1 min-w-[120px]"
+                disabled={isCreatingDraft || isCreatingOnly || isCreatingAndSending}
               >
                 {isCreatingDraft ? 'Saving...' : 'Save as Draft'}
               </Button>
               <Button 
-                onClick={handleCreateInvoice} 
-                className="flex-1"
-                disabled={isCreatingDraft || isCreatingAndSending}
+                variant="outline"
+                onClick={handleCreateOnly} 
+                className="flex-1 min-w-[120px]"
+                disabled={isCreatingDraft || isCreatingOnly || isCreatingAndSending}
               >
-                {isCreatingAndSending ? 'Creating & Sending...' : 'Create Invoice'}
+                {isCreatingOnly ? 'Creating...' : 'Create Only'}
+              </Button>
+              <Button 
+                onClick={handleCreateInvoice} 
+                className="flex-1 min-w-[120px]"
+                disabled={isCreatingDraft || isCreatingOnly || isCreatingAndSending}
+              >
+                {isCreatingAndSending ? 'Creating & Sending...' : 'Create & Send'}
               </Button>
             </div>
           </div>

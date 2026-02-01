@@ -86,7 +86,8 @@ export function DataTableRecurringInvoices<TValue>({
   const deliveryOptions = [
     { key: 'all', value: 'all', name: 'All Delivery Types' },
     { key: RecurringInvoiceDelivery.SaveAsDraft, value: RecurringInvoiceDelivery.SaveAsDraft, name: 'Save as Draft' },
-    { key: RecurringInvoiceDelivery.SendOnCreation, value: RecurringInvoiceDelivery.SendOnCreation, name: 'Auto-send' }
+    { key: RecurringInvoiceDelivery.SendOnCreation, value: RecurringInvoiceDelivery.SendOnCreation, name: 'Auto-send' },
+    { key: RecurringInvoiceDelivery.CreateOnly, value: RecurringInvoiceDelivery.CreateOnly, name: 'Create Only' }
   ];
 
   const clientOptions = [

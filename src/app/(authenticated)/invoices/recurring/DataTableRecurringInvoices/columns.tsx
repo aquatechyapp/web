@@ -25,6 +25,10 @@ const deliveryLabels: Record<RecurringInvoiceTemplate['delivery'], { label: stri
   [RecurringInvoiceDelivery.SendOnCreation]: {
     label: 'Auto-send',
     className: 'bg-blue-100 text-blue-600'
+  },
+  [RecurringInvoiceDelivery.CreateOnly]: {
+    label: 'Create Only',
+    className: 'bg-amber-100 text-amber-600'
   }
 };
 
