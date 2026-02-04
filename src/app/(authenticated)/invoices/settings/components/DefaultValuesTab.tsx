@@ -48,10 +48,10 @@ export function DefaultValuesTab({ companyId }: DefaultValuesTabProps) {
   const form = useForm<z.infer<typeof editInvoiceDefaultValuesSchema>>({
     resolver: zodResolver(editInvoiceDefaultValuesSchema),
     defaultValues: {
-      paymentInstructions: company.preferences?.invoiceSettingsPreferences?.defaultValues?.paymentInstructions || '',
-      notes: company.preferences?.invoiceSettingsPreferences?.defaultValues?.notes || '',
-      defaultFrequency: company.preferences?.invoiceSettingsPreferences?.defaultValues?.defaultFrequency || '',
-      defaultPaymentTerm: company.preferences?.invoiceSettingsPreferences?.defaultValues?.defaultPaymentTerm || '',
+      paymentInstructions: company?.preferences?.invoiceSettingsPreferences?.defaultValues?.paymentInstructions || '',
+      notes: company?.preferences?.invoiceSettingsPreferences?.defaultValues?.notes || '',
+      defaultFrequency: company?.preferences?.invoiceSettingsPreferences?.defaultValues?.defaultFrequency || '',
+      defaultPaymentTerm: company?.preferences?.invoiceSettingsPreferences?.defaultValues?.defaultPaymentTerm || '',
     }
   });
 
@@ -116,7 +116,7 @@ export function DefaultValuesTab({ companyId }: DefaultValuesTabProps) {
             />
 
             {
-              company.preferences?.invoiceSettingsPreferences?.defaultValues?.defaultFrequency && (
+              company?.preferences?.invoiceSettingsPreferences?.defaultValues?.defaultFrequency && (
                 <SelectField
                   name="defaultFrequency"
                   label="Default Frequency"
@@ -128,7 +128,7 @@ export function DefaultValuesTab({ companyId }: DefaultValuesTabProps) {
             }
 
             {
-              company.preferences?.invoiceSettingsPreferences?.defaultValues?.defaultPaymentTerm && (
+              company?.preferences?.invoiceSettingsPreferences?.defaultValues?.defaultPaymentTerm && (
                 <SelectField
                   name="defaultPaymentTerm"
                   label="Default Payment Term"

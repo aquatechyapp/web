@@ -17,33 +17,21 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 // Sample data for preview
 const sampleData = {
   'invoice_number': 'INV-2024-001',
-  'invoiceNumber': 'INV-2024-001',
-  'client.firstName': 'John',
-  'client.lastName': 'Doe',
-  'client.name': 'John Doe',
-  'company.name': 'Aquatechy Pool Services',
-  'invoice.amount': '$150.00',
-  'invoice.total': '$162.00',
-  'invoice.dueDate': 'March 15, 2024',
-  'invoice.date': 'March 1, 2024',
-  'invoice.issuedDate': 'March 1, 2024',
-  'poolAddress': '123 Main St, Los Angeles, CA 90001',
+  'client_firstName': 'John',
+  'client_lastName': 'Doe',
+  'company_name': 'Aquatechy Pool Services',
+  'invoice_total': '$162.00',
+  'invoice_dueDate': 'March 15, 2024',
 };
 
 // Available variables list
 const availableVariables = [
   '%invoice_number%',
-  '%invoiceNumber%',
-  '%client.firstName%',
-  '%client.lastName%',
-  '%client.name%',
-  '%company.name%',
-  '%invoice.amount%',
-  '%invoice.total%',
-  '%invoice.dueDate%',
-  '%invoice.date%',
-  '%invoice.issuedDate%',
-  '%poolAddress%',
+  '%client_firstName%',
+  '%client_lastName%',
+  '%company_name%',
+  '%invoice_total%',
+  '%invoice_dueDate%',
 ];
 
 // Function to replace template variables with sample data
