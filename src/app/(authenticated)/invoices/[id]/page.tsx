@@ -39,6 +39,10 @@ function transformInvoiceToDetailed(apiInvoice: Invoice): DetailedInvoice {
   // Backend stores prices in cents; convert to dollars for display
   const toDollars = (cents: number) => (cents ?? 0) / 100;
 
+  const companyOwner = apiInvoice.companyOwner
+    ? ({ ...apiInvoice.companyOwner } as DetailedInvoice['companyOwner'])
+    : undefined;
+
   return {
     id: apiInvoice.id,
     invoiceNumber: apiInvoice.invoiceNumber,
@@ -63,7 +67,8 @@ function transformInvoiceToDetailed(apiInvoice: Invoice): DetailedInvoice {
     paymentTerms: apiInvoice.paymentTerms || '',
     notes: apiInvoice.notes || '',
     paymentInstructions: apiInvoice.paymentInstructions || '',
-    clientAddress
+    clientAddress,
+    companyOwner
   };
 }
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { format } from 'date-fns';
-import { useUserStore } from '@/store/user';
 import { DetailedInvoice } from '../utils/fakeData';
 import {
   Table,
@@ -40,19 +39,22 @@ const statusOptions: Record<DetailedInvoice['status'], { label: string; classNam
 };
 
 export function InvoiceView({ invoice }: InvoiceViewProps) {
-  const user = useUserStore((state) => state.user);
   const statusConfig = statusOptions[invoice.status] || {
     className: 'bg-gray-100 text-gray-600',
     label: invoice.status
   };
 
-  // Format company address
-  const companyAddress = [
-    user.address,
-    `${user.city}, ${user.state} ${user.zip}`.trim()
-  ]
-    .filter(Boolean)
-    .join('\n');
+  const companyOwner = invoice.companyOwner;
+
+  // Format company address from invoice companyOwner only
+  const companyAddress = companyOwner
+    ? [
+        companyOwner.address,
+        [companyOwner.city, companyOwner.state, companyOwner.zip].filter(Boolean).join(', ')
+      ]
+        .filter(Boolean)
+        .join('\n')
+    : '';
 
   // Format client address
   const clientAddress = invoice.clientAddress || '';
@@ -65,7 +67,9 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
           {/* Header: Company Logo/Name and Invoice Title */}
           <div className="mb-8 flex items-start justify-between border-b border-gray-200 pb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{user.company || 'Company Name'}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {companyOwner?.name ?? 'Company Name'}
+              </h1>
             </div>
             <div className="text-right">
               <h2 className="text-3xl font-bold text-gray-900">INVOICE</h2>
@@ -74,16 +78,16 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
 
           {/* Company & Invoice Info: Two-column layout */}
           <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2">
-            {/* Left: Company Information */}
+            {/* Left: Company Information (from invoice companyOwner) */}
             <div>
               <h3 className="mb-2 text-sm font-semibold uppercase text-gray-500">From</h3>
               <div className="space-y-1 text-sm text-gray-700">
-                <div className="font-semibold">{user.company || 'Company Name'}</div>
+                <div className="font-semibold">{companyOwner?.name ?? 'Company Name'}</div>
                 {companyAddress && (
                   <div className="whitespace-pre-line text-gray-600">{companyAddress}</div>
                 )}
-                {user.phone && <div>Phone: {user.phone}</div>}
-                {user.email && <div>Email: {user.email}</div>}
+                {companyOwner?.phone && <div>Phone: {companyOwner.phone}</div>}
+                {companyOwner?.email && <div>Email: {companyOwner.email}</div>}
               </div>
             </div>
 

@@ -16,6 +16,18 @@ export interface InvoiceLineItem {
   amount: number;
 }
 
+/** Company owner info as returned on the invoice (for "From" section) */
+export interface DetailedInvoiceCompanyOwner {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+}
+
 export interface DetailedInvoice extends Invoice {
   lineItems: InvoiceLineItem[];
   subtotal: number;
@@ -28,6 +40,7 @@ export interface DetailedInvoice extends Invoice {
   notes: string;
   paymentInstructions: string;
   clientAddress?: string;
+  companyOwner?: DetailedInvoiceCompanyOwner;
 }
 
 const clientNames = [
