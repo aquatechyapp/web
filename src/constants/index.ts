@@ -4,6 +4,7 @@ import {
   CircleDollarSign,
   CircleUser,
   FileBarChartIcon,
+  FileText,
   Import,
   ListChecks,
   Mails,
@@ -205,6 +206,33 @@ export const routes: Menu[] = [
     icon: ListChecks,
     title: 'Services',
     description: 'Look services made by your company'
+  },
+  {
+    text: 'Invoices',
+    href: '/invoices',
+    icon: FileText,
+    title: 'Invoices',
+    description: 'Manage your invoices and track payments',
+    submenu: {
+      overview: {
+        text: 'Overview',
+        href: '/invoices',
+        title: 'Invoices Overview',
+        description: 'View and manage all your invoices'
+      },
+      recurring: {
+        text: 'Recurring',
+        href: '/invoices/recurring',
+        title: 'Recurring Invoices',
+        description: 'Manage recurring invoice templates'
+      },
+      settings: {
+        text: 'Settings',
+        href: '/invoices/settings',
+        title: 'Invoice Settings',
+        description: 'Configure invoice settings and preferences'
+      }
+    }
   },
   {
     text: 'Work Orders',

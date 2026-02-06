@@ -33,8 +33,12 @@ const SelectField = forwardRef<HTMLDivElement, Props & SelectFieldProps>(
       }
     }
 
+    const currentValue = form.watch(name);
+    // Convert empty string to undefined to avoid Radix UI Select error
+    const selectValue = currentValue === '' ? undefined : currentValue;
+
     return (
-      <Select {...props} value={form.watch(name)} onValueChange={onValueChange}>
+      <Select {...props} value={selectValue} onValueChange={onValueChange}>
         <SelectTrigger className={`${!form.getValues(name) && 'text-slate-500'} pl-2 text-left`}>
           <SelectValue placeholder={placeholder} className="px-3" />
         </SelectTrigger>

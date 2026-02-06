@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, buttonVariants } from './ui/button';
 import {
   AlertDialog,
@@ -42,27 +42,48 @@ export default function ConfirmActionDialog({
   const [_open, _setOpen] = useState(open);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Sync internal state with open prop when controlled
+  useEffect(() => {
+    if (onOpenChange !== undefined) {
+      // Controlled mode - sync with prop
+      _setOpen(open);
+    }
+  }, [open, onOpenChange]);
+
   const handleConfirm = async () => {
     setIsLoading(true);
-    if (onConfirm) {
-      await onConfirm();
+    try {
+      if (onConfirm) {
+        await onConfirm();
+      }
+      // Close dialog after successful confirmation
+      _setOpen(false);
+      if (onOpenChange) {
+        onOpenChange(false);
+      }
+    } catch (error) {
+      // Keep dialog open on error so user can retry
+      console.error('Error in confirmation:', error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-    _setOpen(false);
   };
 
-  const handleOpenChange = (open: boolean) => {
-    _setOpen(open);
+  const handleOpenChange = (newOpen: boolean) => {
+    _setOpen(newOpen);
     if (isLoading) {
       setIsLoading(false);
     }
     if (onOpenChange) {
-      onOpenChange(open);
+      onOpenChange(newOpen);
     }
   };
 
+  // Use controlled open prop if provided, otherwise use internal state
+  const isOpen = onOpenChange !== undefined ? open : _open;
+
   return (
-    <AlertDialog open={_open || open} defaultOpen={_open || open} onOpenChange={handleOpenChange}>
+    <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
       {TriggerElement ? <AlertDialogTrigger asChild>{TriggerElement}</AlertDialogTrigger> : null}
       <AlertDialogContent>
         <AlertDialogHeader>

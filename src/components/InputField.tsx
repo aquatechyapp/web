@@ -126,7 +126,22 @@ export default function InputField({ name, placeholder, type = FieldType.Default
       )
     },
     number: {
-      component: (field: any) => <Input type="number" {...field} className="h-9" />
+      component: (field: ControllerRenderProps) => (
+        <Input
+          type="number"
+          {...field}
+          className="h-9"
+          {...(props.props || {})}
+          onChange={(e) => {
+            // Update react-hook-form field first
+            field.onChange(e);
+            // Then call custom onChange if provided (for additional logic like amount calculation)
+            if (props.props?.onChange) {
+              props.props.onChange(e);
+            }
+          }}
+        />
+      )
     },
     date: {
       component: (field: ControllerRenderProps) => (
