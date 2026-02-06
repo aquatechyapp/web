@@ -25,6 +25,7 @@ const formSchema = z.object({
   zip: defaultSchemas.zipCode,
   email: defaultSchemas.email,
   secondaryEmail: z.string().email().optional().or(z.literal('')),
+  invoiceEmail: z.string().email().optional().or(z.literal('')),
   phone: defaultSchemas.phone,
   notes: defaultSchemas.stringOptional,
   clientCompany: defaultSchemas.stringOptional,
@@ -51,6 +52,7 @@ export default function ClientInfo({ client }: { client: Client }) {
       zip: client.zip || '',
       email: client.email || '',
       secondaryEmail: client.secondaryEmail || undefined,
+      invoiceEmail: client.invoiceEmail || '',
       phone: client.phone || '',
       notes: client.notes || undefined,
       address: initialAddress,
@@ -79,6 +81,7 @@ export default function ClientInfo({ client }: { client: Client }) {
     mutate({
       ...values,
       secondaryEmail: values.secondaryEmail === '' ? '' : values.secondaryEmail,
+      invoiceEmail: values.invoiceEmail === '' ? '' : values.invoiceEmail,
       updatePoolAddress: showAddressChangeDialog // Add flag to indicate pool address should be updated
     });
   };
@@ -146,6 +149,7 @@ export default function ClientInfo({ client }: { client: Client }) {
             <InputField type={FieldType.Phone} name="phone" placeholder="Phone" label="Phone" />
             <InputField name="email" placeholder="E-mail" label="E-mail" />
             <InputField name="secondaryEmail" placeholder="Secondary E-mail" label="Secondary E-mail" />
+            <InputField name="invoiceEmail" placeholder="Invoice e-mail" label="Invoice e-mail" />
           </div>
           <div className="mt-2 w-full">
             <InputField
