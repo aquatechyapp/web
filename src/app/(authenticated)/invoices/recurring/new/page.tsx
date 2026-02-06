@@ -330,7 +330,7 @@ export default function CreateRecurringInvoicePage() {
       return sum + (item.quantity * item.unitPrice) / 100;
     }, 0);
 
-    // Transform form data to match API expectations
+    // Transform form data to match API expectations (userToday is always set in useCreateRecurringInvoiceTemplate)
     const templateData: CreateRecurringInvoiceTemplateRequest = {
       clientId: formData.clientId,
       startOn: new Date(formData.startOn as string).toString(),

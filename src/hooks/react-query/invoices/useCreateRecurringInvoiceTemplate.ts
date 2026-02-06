@@ -17,9 +17,13 @@ export const useCreateRecurringInvoiceTemplate = () => {
     mutationFn: async (
       data: CreateRecurringInvoiceTemplateRequest
     ): Promise<CreateRecurringInvoiceTemplateResponse> => {
+      const payload = {
+        ...data,
+        userToday: new Date().toString()
+      };
       const response = await clientAxios.post<CreateRecurringInvoiceTemplateResponse>(
         '/recurring-invoice-templates',
-        data
+        payload
       );
       return response.data;
     },

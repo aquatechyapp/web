@@ -134,6 +134,8 @@ export interface CreateRecurringInvoiceTemplateRequest {
   paymentTerms: PaymentTermsDays;
   notes?: string;
   paymentInstructions?: string;
+  /** Optional in API; we always send as new Date().toString() for server timezone context */
+  userToday?: string;
 }
 
 /**
