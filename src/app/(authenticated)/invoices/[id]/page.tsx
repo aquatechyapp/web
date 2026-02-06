@@ -56,10 +56,11 @@ function transformInvoiceToDetailed(apiInvoice: Invoice): DetailedInvoice {
       description: item.description,
       quantity: item.quantity,
       unitPrice: toDollars(item.unitPrice),
-      amount: toDollars(item.amount)
+      amount: toDollars(item.amount),
+      taxRate: item.taxRate ?? 0,
+      taxAmount: item.taxAmount !== undefined ? toDollars(item.taxAmount) : 0
     })),
     subtotal: toDollars(apiInvoice.subtotal),
-    taxRate: apiInvoice.taxRate,
     taxAmount: toDollars(apiInvoice.taxAmount),
     discountRate: apiInvoice.discountRate,
     discountAmount: toDollars(apiInvoice.discountAmount),

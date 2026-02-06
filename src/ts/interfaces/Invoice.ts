@@ -10,10 +10,12 @@ export interface InvoiceLineItemInput {
   description: string;
   quantity: number;
   unitPrice: number;
+  taxRate?: number;
 }
 
 /**
  * Invoice Line Item (from API response)
+ * Each item has its own taxAmount; invoice taxAmount = sum of item taxAmounts
  */
 export interface InvoiceLineItem {
   id: string;
@@ -22,6 +24,8 @@ export interface InvoiceLineItem {
   quantity: number;
   unitPrice: number;
   amount: number;
+  taxRate?: number;
+  taxAmount?: number;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -64,7 +68,6 @@ export interface Invoice {
   amount: number;
   status: InvoiceStatus;
   subtotal: number;
-  taxRate: number;
   taxAmount: number;
   discountRate: number;
   discountAmount: number;
@@ -88,7 +91,6 @@ export interface CreateInvoiceAsDraftRequest {
   dueDate: string;
   lineItems: InvoiceLineItemInput[];
   subtotal: number;
-  taxRate?: number;
   discountRate?: number;
   paymentTerms?: string;
   notes?: string;
@@ -155,7 +157,6 @@ export interface UpdateInvoiceRequest {
   dueDate?: string;
   lineItems?: InvoiceLineItemInput[];
   subtotal?: number;
-  taxRate?: number;
   discountRate?: number;
   paymentTerms?: string;
   notes?: string;

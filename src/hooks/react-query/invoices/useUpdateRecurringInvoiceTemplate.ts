@@ -21,12 +21,12 @@ export const useUpdateRecurringInvoiceTemplate = () => {
       const payload: UpdateRecurringInvoiceTemplateRequest = {
         ...data,
         subtotal: data.subtotal !== undefined ? Number(data.subtotal) : undefined,
-        taxRate: data.taxRate !== undefined ? Number(data.taxRate) : undefined,
         discountRate: data.discountRate !== undefined ? Number(data.discountRate) : undefined,
         lineItems: data.lineItems?.map((item) => ({
           ...item,
           quantity: Number(item.quantity),
-          unitPrice: Number(item.unitPrice)
+          unitPrice: Number(item.unitPrice),
+          taxRate: item.taxRate !== undefined ? Number(item.taxRate) ?? 0 : undefined
         }))
       };
 

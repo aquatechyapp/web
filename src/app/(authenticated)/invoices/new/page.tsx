@@ -28,6 +28,7 @@ interface InvoiceLineItem {
   quantity: number;
   unitPrice: number;
   amount: number;
+  taxRate: number;
 }
 
 interface InvoiceFormData {
@@ -35,7 +36,6 @@ interface InvoiceFormData {
   issuedDate: Date;
   dueDate: Date;
   lineItems: InvoiceLineItem[];
-  taxRate: number;
   paymentTerms: string;
   notes: string;
   paymentInstructions: string;
@@ -92,10 +92,10 @@ export default function CreateInvoicePage() {
           description: '',
           quantity: 1,
           unitPrice: 0,
-          amount: 0
+          amount: 0,
+          taxRate: 0
         }
       ],
-      taxRate: 0,
       paymentTerms: defaultPaymentTerms,
       notes: '',
       paymentInstructions: defaultPaymentInstructions
@@ -104,7 +104,6 @@ export default function CreateInvoicePage() {
 
   const watchedClientId = form.watch('clientId');
   const watchedLineItems = form.watch('lineItems');
-  const watchedTaxRate = form.watch('taxRate');
   const watchedIssuedDate = form.watch('issuedDate');
   const watchedDueDate = form.watch('dueDate');
   const watchedPaymentTerms = form.watch('paymentTerms');
@@ -197,13 +196,14 @@ export default function CreateInvoicePage() {
   useEffect(() => {
     const currentItems = form.getValues('lineItems');
     const updatedItems = currentItems.map((item) => {
-      // Ensure quantity and unitPrice are numbers
+      // Ensure quantity, unitPrice, taxRate are numbers
       const quantity = Number(item.quantity) || 0;
       const unitPrice = Number(item.unitPrice) || 0;
+      const taxRate = Number(item.taxRate) ?? 0;
       const calculatedAmount = Math.round(quantity * unitPrice * 100) / 100;
       
       // Always update to ensure amounts are recalculated
-      return { ...item, amount: calculatedAmount, quantity, unitPrice };
+      return { ...item, amount: calculatedAmount, quantity, unitPrice, taxRate };
     });
     
     // Check if any values actually changed
@@ -236,17 +236,21 @@ export default function CreateInvoicePage() {
       }));
   }, [clients]);
 
-  // Calculate invoice totals
+  // Calculate invoice totals (tax per item; invoice taxAmount = sum of item taxAmounts)
   const invoiceTotals = useMemo(() => {
     const subtotal = watchedLineItems.reduce((sum, item) => {
       const amount = Number(item.amount) || 0;
       return sum + amount;
     }, 0);
-    const taxRate = Number(watchedTaxRate) || 0;
-    const taxAmount = Math.round((subtotal * taxRate) / 100 * 100) / 100;
+    const taxAmount = watchedLineItems.reduce((sum, item) => {
+      const amount = Number(item.amount) || 0;
+      const taxRate = Number(item.taxRate) ?? 0;
+      const itemTax = Math.round((amount * taxRate / 100) * 100) / 100;
+      return sum + itemTax;
+    }, 0);
     const total = Math.round((subtotal + taxAmount) * 100) / 100;
     return { subtotal, taxAmount, total };
-  }, [watchedLineItems, watchedTaxRate]);
+  }, [watchedLineItems]);
 
   // Build preview invoice data
   const previewInvoice: DetailedInvoice | null = useMemo(() => {
@@ -279,10 +283,11 @@ export default function CreateInvoicePage() {
           description: item.description || '',
           quantity: Number(item.quantity) || 0,
           unitPrice: Number(item.unitPrice) || 0,
-          amount: Number(item.amount) || 0
+          amount: Number(item.amount) || 0,
+          taxRate: Number(item.taxRate) ?? 0,
+          taxAmount: Math.round((Number(item.amount) || 0) * (Number(item.taxRate) ?? 0) / 100 * 100) / 100
         })),
       subtotal: invoiceTotals.subtotal,
-      taxRate: Number(watchedTaxRate) || 0,
       taxAmount: invoiceTotals.taxAmount,
       total: invoiceTotals.total,
       paymentTerms: watchedPaymentTerms || '',
@@ -297,7 +302,6 @@ export default function CreateInvoicePage() {
     watchedIssuedDate,
     watchedDueDate,
     watchedLineItems,
-    watchedTaxRate,
     watchedPaymentTerms,
     watchedNotes,
     watchedPaymentInstructions
@@ -311,7 +315,8 @@ export default function CreateInvoicePage() {
         description: '',
         quantity: 1,
         unitPrice: 0,
-        amount: 0
+        amount: 0,
+        taxRate: 0
       }
     ]);
   };
@@ -327,26 +332,20 @@ export default function CreateInvoicePage() {
   };
 
   const handleLineItemChange = (index: number, field: keyof InvoiceLineItem, value: string | number) => {
-    // This function is called by the custom onChange handlers
-    // The useEffect will handle recalculating amounts, so we just need to update the value
-    // Get the latest values from the form
     const currentItems = form.getValues('lineItems');
     const updatedItems = [...currentItems];
-    // Ensure numeric fields are stored as numbers
-    const numValue = (field === 'quantity' || field === 'unitPrice' || field === 'amount') 
-      ? Number(value) || 0 
+    const numValue = (field === 'quantity' || field === 'unitPrice' || field === 'amount' || field === 'taxRate')
+      ? Number(value) ?? 0
       : value;
-    
-    // Update the field value
+
     updatedItems[index] = { ...updatedItems[index], [field]: numValue };
-    
-    // Recalculate amount immediately for quantity and unitPrice changes
+
     if (field === 'quantity' || field === 'unitPrice') {
       const quantity = field === 'quantity' ? (Number(value) || 0) : Number(updatedItems[index].quantity) || 0;
       const unitPrice = field === 'unitPrice' ? (Number(value) || 0) : Number(updatedItems[index].unitPrice) || 0;
       updatedItems[index].amount = Math.round(quantity * unitPrice * 100) / 100;
     }
-    
+
     form.setValue('lineItems', updatedItems, { shouldDirty: false });
   };
 
@@ -407,10 +406,12 @@ export default function CreateInvoicePage() {
       })
       .map((item) => {
         const unitPriceDollars = Number(item.unitPrice);
+        const taxRate = Number(item.taxRate) ?? 0;
         return {
           description: item.description.trim(),
           quantity: Number(item.quantity),
-          unitPrice: Math.round(unitPriceDollars * 100) // Backend stores in cents
+          unitPrice: Math.round(unitPriceDollars * 100), // Backend stores in cents
+          taxRate
         };
       });
 
@@ -440,8 +441,6 @@ export default function CreateInvoicePage() {
     // Preserve the same time of day
     dueDate.setHours(issuedHours, issuedMinutes, issuedSeconds, issuedMilliseconds);
 
-    // Build request payload - ensure all numeric fields are numbers
-    const taxRate = Number(formData.taxRate) || 0;
     const discountRate = 0; // Not in form, defaulting to 0
 
     const requestData: CreateInvoiceAsDraftRequest = {
@@ -450,7 +449,6 @@ export default function CreateInvoicePage() {
       dueDate: dueDate.toString(),
       lineItems: validLineItems,
       subtotal: Math.round(subtotalDollars * 100), // Backend stores in cents
-      taxRate: taxRate,
       discountRate: discountRate,
       paymentTerms: formData.paymentTerms || undefined,
       notes: formData.notes || undefined,
@@ -626,7 +624,7 @@ export default function CreateInvoicePage() {
                         placeholder="Item description"
                         type={FieldType.TextArea}
                       />
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                         <InputField
                           name={`lineItems.${index}.quantity`}
                           label="Quantity"
@@ -651,6 +649,19 @@ export default function CreateInvoicePage() {
                               handleLineItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)
                           }}
                         />
+                        <InputField
+                          name={`lineItems.${index}.taxRate`}
+                          label="Tax Rate (%)"
+                          placeholder="0"
+                          type={FieldType.Number}
+                          props={{
+                            min: 0,
+                            max: 100,
+                            step: 0.01,
+                            onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                              handleLineItemChange(index, 'taxRate', parseFloat(e.target.value) ?? 0)
+                          }}
+                        />
                       </div>
                       <div className="text-right">
                         <span className="text-sm text-gray-600">Amount: </span>
@@ -665,31 +676,20 @@ export default function CreateInvoicePage() {
             {/* Tax and Totals */}
             <div className="rounded-lg border bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg font-semibold">Tax & Totals</h2>
-              <div className="space-y-4">
-                <InputField
-                  name="taxRate"
-                  label="Tax Rate (%)"
-                  placeholder="0.00"
-                  type={FieldType.Number}
-                  props={{
-                    min: 0,
-                    max: 100,
-                    step: 0.01
-                  }}
-                />
-                <div className="space-y-2 rounded-lg bg-gray-50 p-4">
+              <div className="space-y-2 rounded-lg bg-gray-50 p-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Subtotal:</span>
+                  <span className="font-semibold">${invoiceTotals.subtotal.toFixed(2)}</span>
+                </div>
+                {invoiceTotals.taxAmount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal:</span>
-                    <span className="font-semibold">${invoiceTotals.subtotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Tax ({watchedTaxRate}%):</span>
+                    <span className="text-gray-600">Tax:</span>
                     <span className="font-semibold">${invoiceTotals.taxAmount.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between border-t border-gray-300 pt-2 text-lg font-bold">
-                    <span>Total:</span>
-                    <span>${invoiceTotals.total.toFixed(2)}</span>
-                  </div>
+                )}
+                <div className="flex justify-between border-t border-gray-300 pt-2 text-lg font-bold">
+                  <span>Total:</span>
+                  <span>${invoiceTotals.total.toFixed(2)}</span>
                 </div>
               </div>
             </div>

@@ -17,7 +17,33 @@ export default function useGetRecurringInvoiceTemplateById(templateId: string | 
           `/recurring-invoice-templates/${templateId}`
         );
 
-        return response.data;
+        // Backend stores prices in cents; convert to dollars for display
+        const toDollars = (cents: number) => (cents ?? 0) / 100;
+        const template = response.data.template;
+        const transformedTemplate = {
+          ...template,
+          subtotal: toDollars(template.subtotal),
+          taxAmount: toDollars(template.taxAmount),
+          discountAmount: toDollars(template.discountAmount),
+          total: toDollars(template.total),
+          lineItems: template.lineItems.map((item) => ({
+            ...item,
+            unitPrice: toDollars(item.unitPrice),
+            amount: toDollars(item.amount),
+            taxRate: item.taxRate ?? 0,
+            taxAmount: item.taxAmount !== undefined ? toDollars(item.taxAmount) : 0
+          })),
+          ...(template.invoices?.length
+            ? {
+                invoices: template.invoices.map((inv) => ({
+                  ...inv,
+                  total: toDollars(inv.total)
+                }))
+              }
+            : {})
+        };
+
+        return { ...response.data, template: transformedTemplate };
       } catch (error) {
         // Handle axios errors with proper error messages
         if (error instanceof AxiosError) {

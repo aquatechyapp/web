@@ -14,6 +14,8 @@ export interface InvoiceLineItem {
   quantity: number;
   unitPrice: number;
   amount: number;
+  taxRate?: number;
+  taxAmount?: number;
 }
 
 /** Company owner info as returned on the invoice (for "From" section) */
@@ -31,7 +33,6 @@ export interface DetailedInvoiceCompanyOwner {
 export interface DetailedInvoice extends Invoice {
   lineItems: InvoiceLineItem[];
   subtotal: number;
-  taxRate: number;
   taxAmount: number;
   discountRate?: number;
   discountAmount?: number;
@@ -183,14 +184,18 @@ export function getDetailedInvoice(invoice: Invoice): DetailedInvoice {
     const quantity = randomInt(1, 4);
     const unitPrice = Math.round((Math.random() * 500 + 50) * 100) / 100;
     const amount = Math.round(quantity * unitPrice * 100) / 100;
-    
+    const taxRate = Math.round((Math.random() * 10) * 100) / 100; // 0-10%
+    const taxAmount = Math.round((amount * taxRate / 100) * 100) / 100;
+
     lineItems.push({
       description,
       quantity,
       unitPrice,
-      amount
+      amount,
+      taxRate,
+      taxAmount
     });
-    
+
     subtotal += amount;
   }
   
@@ -198,31 +203,34 @@ export function getDetailedInvoice(invoice: Invoice): DetailedInvoice {
   // Adjust the last item if needed
   if (lineItems.length > 0) {
     const adjustment = invoice.amount - subtotal;
-    lineItems[lineItems.length - 1].amount += adjustment;
-    lineItems[lineItems.length - 1].unitPrice = 
-      Math.round((lineItems[lineItems.length - 1].amount / lineItems[lineItems.length - 1].quantity) * 100) / 100;
+    const lastItem = lineItems[lineItems.length - 1];
+    lastItem.amount += adjustment;
+    lastItem.unitPrice = Math.round((lastItem.amount / lastItem.quantity) * 100) / 100;
+    lastItem.taxAmount = Math.round((lastItem.amount * (lastItem.taxRate ?? 0) / 100) * 100) / 100;
     subtotal = invoice.amount;
   } else {
     // Fallback if no items
+    const taxRate = Math.round((Math.random() * 10) * 100) / 100;
+    const taxAmount = Math.round((invoice.amount * taxRate / 100) * 100) / 100;
     lineItems.push({
       description: 'Service Fee',
       quantity: 1,
       unitPrice: invoice.amount,
-      amount: invoice.amount
+      amount: invoice.amount,
+      taxRate,
+      taxAmount
     });
     subtotal = invoice.amount;
   }
-  
-  // Calculate tax (typically 0-10%)
-  const taxRate = Math.round((Math.random() * 10) * 100) / 100; // 0-10%
-  const taxAmount = Math.round((subtotal * taxRate / 100) * 100) / 100;
+
+  // Invoice taxAmount = sum of all item taxAmounts
+  const taxAmount = Math.round(lineItems.reduce((sum, item) => sum + (item.taxAmount ?? 0), 0) * 100) / 100;
   const total = Math.round((subtotal + taxAmount) * 100) / 100;
-  
+
   return {
     ...invoice,
     lineItems,
     subtotal: Math.round(subtotal * 100) / 100,
-    taxRate,
     taxAmount,
     total,
     paymentTerms: randomElement(paymentTermsOptions),

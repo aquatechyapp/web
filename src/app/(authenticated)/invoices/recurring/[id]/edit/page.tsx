@@ -24,7 +24,6 @@ interface RecurringInvoiceFormData {
   delivery: RecurringInvoiceDelivery;
   paymentTerms: PaymentTermsDays;
   discountRate: number; // Percentage
-  taxRate: number;
   notes: string;
   paymentInstructions: string;
 }
@@ -69,7 +68,6 @@ export default function EditRecurringInvoicePage() {
       delivery: template?.delivery || RecurringInvoiceDelivery.SaveAsDraft,
       paymentTerms: template !== undefined? template.paymentTerms : PaymentTermsDays.ThirtyDays,
       discountRate: template?.discountRate || 0,
-      taxRate: template?.taxRate || 0,
       notes: template?.notes || '',
       paymentInstructions: template?.paymentInstructions || ''
     }
@@ -82,7 +80,6 @@ export default function EditRecurringInvoicePage() {
         delivery: template.delivery,
         paymentTerms: template.paymentTerms ? template.paymentTerms : PaymentTermsDays.ThirtyDays,
         discountRate: template.discountRate || 0,
-        taxRate: template.taxRate || 0,
         notes: template.notes || '',
         paymentInstructions: template.paymentInstructions || ''
       };
@@ -100,7 +97,6 @@ export default function EditRecurringInvoicePage() {
     }
   }, [template, isLoadingTemplate, form]);
 
-  const watchedTaxRate = form.watch('taxRate');
   const watchedDiscount = form.watch('discountRate');
 
   // Auth check
@@ -110,24 +106,19 @@ export default function EditRecurringInvoicePage() {
     }
   }, [user, router]);
 
-  // Calculate invoice totals
+  // Calculate invoice totals (taxAmount from template = sum of item taxAmounts)
   const invoiceTotals = useMemo(() => {
     if (!template) return { subtotal: 0, discountAmount: 0, subtotalAfterDiscount: 0, taxAmount: 0, total: 0 };
     
     const subtotal = template.subtotal || 0;
-    
-    // Apply discount
+    const taxAmount = template.taxAmount || 0;
     const discountRate = Number(watchedDiscount) || 0;
     const discountAmount = Math.round((subtotal * discountRate) / 100 * 100) / 100;
     const subtotalAfterDiscount = Math.round((subtotal - discountAmount) * 100) / 100;
-    
-    // Apply tax
-    const taxRate = Number(watchedTaxRate) || 0;
-    const taxAmount = Math.round((subtotalAfterDiscount * taxRate) / 100 * 100) / 100;
     const total = Math.round((subtotalAfterDiscount + taxAmount) * 100) / 100;
     
     return { subtotal, discountAmount, subtotalAfterDiscount, taxAmount, total };
-  }, [template, watchedTaxRate, watchedDiscount]);
+  }, [template, watchedDiscount]);
 
   const handleSubmit = (data: RecurringInvoiceFormData) => {
     if (!template) return;
@@ -137,7 +128,6 @@ export default function EditRecurringInvoicePage() {
       delivery: data.delivery,
       paymentTerms: data.paymentTerms,
       discountRate: Number(data.discountRate) || 0,
-      taxRate: Number(data.taxRate) || 0,
       notes: data.notes || undefined,
       paymentInstructions: data.paymentInstructions || undefined
     };
@@ -306,45 +296,32 @@ export default function EditRecurringInvoicePage() {
             {/* Tax and Totals */}
             <div className="rounded-lg border bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg font-semibold">Tax & Totals</h2>
-              <div className="space-y-4">
-                <InputField
-                  name="taxRate"
-                  label="Tax Rate (%)"
-                  placeholder="0.00"
-                  type={FieldType.Number}
-                  props={{
-                    min: 0,
-                    max: 100,
-                    step: 0.01
-                  }}
-                />
-                <div className="space-y-2 rounded-lg bg-gray-50 p-4">
+              <div className="space-y-2 rounded-lg bg-gray-50 p-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Subtotal:</span>
+                  <span className="font-semibold">${invoiceTotals.subtotal.toFixed(2)}</span>
+                </div>
+                {invoiceTotals.discountAmount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal:</span>
-                    <span className="font-semibold">${invoiceTotals.subtotal.toFixed(2)}</span>
+                    <span className="text-gray-600">Discount ({watchedDiscount}%):</span>
+                    <span className="font-semibold text-red-600">-${invoiceTotals.discountAmount.toFixed(2)}</span>
                   </div>
-                  {invoiceTotals.discountAmount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Discount ({watchedDiscount}%):</span>
-                      <span className="font-semibold text-red-600">-${invoiceTotals.discountAmount.toFixed(2)}</span>
-                    </div>
-                  )}
-                  {invoiceTotals.discountAmount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Subtotal after discount:</span>
-                      <span className="font-semibold">${invoiceTotals.subtotalAfterDiscount.toFixed(2)}</span>
-                    </div>
-                  )}
-                  {invoiceTotals.taxAmount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Tax ({watchedTaxRate}%):</span>
-                      <span className="font-semibold">${invoiceTotals.taxAmount.toFixed(2)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between border-t border-gray-300 pt-2 text-lg font-bold">
-                    <span>Total:</span>
-                    <span>${invoiceTotals.total.toFixed(2)}</span>
+                )}
+                {invoiceTotals.discountAmount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Subtotal after discount:</span>
+                    <span className="font-semibold">${invoiceTotals.subtotalAfterDiscount.toFixed(2)}</span>
                   </div>
+                )}
+                {invoiceTotals.taxAmount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Tax:</span>
+                    <span className="font-semibold">${invoiceTotals.taxAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t border-gray-300 pt-2 text-lg font-bold">
+                  <span>Total:</span>
+                  <span>${invoiceTotals.total.toFixed(2)}</span>
                 </div>
               </div>
             </div>

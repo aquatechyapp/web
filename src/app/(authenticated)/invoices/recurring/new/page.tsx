@@ -28,6 +28,7 @@ interface InvoiceLineItem {
   quantity: number;
   unitPrice: number;
   amount: number;
+  taxRate: number;
 }
 
 interface RecurringInvoiceFormData {
@@ -39,7 +40,6 @@ interface RecurringInvoiceFormData {
   paymentTerms: PaymentTermsDays;
   discountRate: number; // Percentage
   lineItems: InvoiceLineItem[];
-  taxRate: number;
   notes: string;
   paymentInstructions: string;
 }
@@ -77,7 +77,7 @@ export default function CreateRecurringInvoicePage() {
     defaultValues: {
       clientId: '',
       poolId: undefined,
-      startOn: new Date().toString(),
+      startOn: new Date(Date.now() + 24 * 60 * 60 * 1000).toString(),
       frequency: RecurringInvoiceFrequency.Monthly,
       delivery: RecurringInvoiceDelivery.SaveAsDraft,
       paymentTerms: PaymentTermsDays.ThirtyDays,
@@ -87,10 +87,10 @@ export default function CreateRecurringInvoicePage() {
           description: '',
           quantity: 1,
           unitPrice: 0,
-          amount: 0
+          amount: 0,
+          taxRate: 0
         }
       ],
-      taxRate: 0,
       notes: '',
       paymentInstructions: defaultPaymentInstructions
     }
@@ -98,7 +98,6 @@ export default function CreateRecurringInvoicePage() {
 
   const watchedClientId = form.watch('clientId');
   const watchedLineItems = form.watch('lineItems');
-  const watchedTaxRate = form.watch('taxRate');
   const watchedDiscount = form.watch('discountRate');
   const watchedStartOn = form.watch('startOn');
 
@@ -158,9 +157,10 @@ export default function CreateRecurringInvoicePage() {
     const updatedItems = currentItems.map((item) => {
       const quantity = Number(item.quantity) || 0;
       const unitPrice = Number(item.unitPrice) || 0;
+      const taxRate = Number(item.taxRate) ?? 0;
       const calculatedAmount = Math.round(quantity * unitPrice * 100) / 100;
       
-      return { ...item, amount: calculatedAmount, quantity, unitPrice };
+      return { ...item, amount: calculatedAmount, quantity, unitPrice, taxRate };
     });
     
     const hasChanges = updatedItems.some((item, index) => {
@@ -203,25 +203,27 @@ export default function CreateRecurringInvoicePage() {
       }));
   }, [pools]);
 
-  // Calculate invoice totals
+  // Calculate invoice totals (tax per item; template taxAmount = sum of item taxAmounts)
   const invoiceTotals = useMemo(() => {
     const subtotal = watchedLineItems.reduce((sum, item) => {
       const amount = Number(item.amount) || 0;
       return sum + amount;
     }, 0);
     
-    // Apply discount
     const discountRate = Number(watchedDiscount) || 0;
     const discountAmount = Math.round((subtotal * discountRate) / 100 * 100) / 100;
     const subtotalAfterDiscount = Math.round((subtotal - discountAmount) * 100) / 100;
     
-    // Apply tax
-    const taxRate = Number(watchedTaxRate) || 0;
-    const taxAmount = Math.round((subtotalAfterDiscount * taxRate) / 100 * 100) / 100;
+    const taxAmount = watchedLineItems.reduce((sum, item) => {
+      const amount = Number(item.amount) || 0;
+      const taxRate = Number(item.taxRate) ?? 0;
+      const itemTax = Math.round((amount * taxRate / 100) * 100) / 100;
+      return sum + itemTax;
+    }, 0);
     const total = Math.round((subtotalAfterDiscount + taxAmount) * 100) / 100;
     
     return { subtotal, discountAmount, subtotalAfterDiscount, taxAmount, total };
-  }, [watchedLineItems, watchedTaxRate, watchedDiscount]);
+  }, [watchedLineItems, watchedDiscount]);
 
   const handleAddLineItem = () => {
     const currentItems = form.getValues('lineItems');
@@ -231,7 +233,8 @@ export default function CreateRecurringInvoicePage() {
         description: '',
         quantity: 1,
         unitPrice: 0,
-        amount: 0
+        amount: 0,
+        taxRate: 0
       }
     ]);
   };
@@ -249,18 +252,18 @@ export default function CreateRecurringInvoicePage() {
   const handleLineItemChange = (index: number, field: keyof InvoiceLineItem, value: string | number) => {
     const currentItems = form.getValues('lineItems');
     const updatedItems = [...currentItems];
-    const numValue = (field === 'quantity' || field === 'unitPrice' || field === 'amount') 
-      ? Number(value) || 0 
+    const numValue = (field === 'quantity' || field === 'unitPrice' || field === 'amount' || field === 'taxRate')
+      ? Number(value) ?? 0
       : value;
-    
+
     updatedItems[index] = { ...updatedItems[index], [field]: numValue };
-    
+
     if (field === 'quantity' || field === 'unitPrice') {
       const quantity = field === 'quantity' ? (Number(value) || 0) : Number(updatedItems[index].quantity) || 0;
       const unitPrice = field === 'unitPrice' ? (Number(value) || 0) : Number(updatedItems[index].unitPrice) || 0;
       updatedItems[index].amount = Math.round(quantity * unitPrice * 100) / 100;
     }
-    
+
     form.setValue('lineItems', updatedItems, { shouldDirty: false });
   };
 
@@ -307,10 +310,12 @@ export default function CreateRecurringInvoicePage() {
       })
       .map((item) => {
         const unitPriceDollars = Number(item.unitPrice);
+        const taxRate = Number(item.taxRate) ?? 0;
         return {
           description: item.description.trim(),
           quantity: Number(item.quantity),
-          unitPrice: Math.round(unitPriceDollars * 100) // Backend stores in cents
+          unitPrice: Math.round(unitPriceDollars * 100), // Backend stores in cents
+          taxRate
         };
       });
 
@@ -333,7 +338,6 @@ export default function CreateRecurringInvoicePage() {
       delivery: formData.delivery,
       lineItems: validLineItems,
       subtotal: Math.round(subtotalDollars * 100), // Backend stores in cents
-      taxRate: Number(formData.taxRate) || 0,
       discountRate: Number(formData.discountRate) || 0,
       paymentTerms: formData.paymentTerms,
       notes: formData.notes || undefined,
@@ -484,7 +488,7 @@ export default function CreateRecurringInvoicePage() {
                         placeholder="Item description"
                         type={FieldType.TextArea}
                       />
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                         <InputField
                           name={`lineItems.${index}.quantity`}
                           label="Quantity"
@@ -509,6 +513,19 @@ export default function CreateRecurringInvoicePage() {
                               handleLineItemChange(index, 'unitPrice', parseFloat(e.target.value) || 0)
                           }}
                         />
+                        <InputField
+                          name={`lineItems.${index}.taxRate`}
+                          label="Tax Rate (%)"
+                          placeholder="0"
+                          type={FieldType.Number}
+                          props={{
+                            min: 0,
+                            max: 100,
+                            step: 0.01,
+                            onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                              handleLineItemChange(index, 'taxRate', parseFloat(e.target.value) ?? 0)
+                          }}
+                        />
                       </div>
                       <div className="text-right">
                         <span className="text-sm text-gray-600">Amount: </span>
@@ -523,45 +540,32 @@ export default function CreateRecurringInvoicePage() {
             {/* Tax and Totals */}
             <div className="rounded-lg border bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg font-semibold">Tax & Totals</h2>
-              <div className="space-y-4">
-                <InputField
-                  name="taxRate"
-                  label="Tax Rate (%)"
-                  placeholder="0.00"
-                  type={FieldType.Number}
-                  props={{
-                    min: 0,
-                    max: 100,
-                    step: 0.01
-                  }}
-                />
-                <div className="space-y-2 rounded-lg bg-gray-50 p-4">
+              <div className="space-y-2 rounded-lg bg-gray-50 p-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Subtotal:</span>
+                  <span className="font-semibold">${invoiceTotals.subtotal.toFixed(2)}</span>
+                </div>
+                {invoiceTotals.discountAmount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal:</span>
-                    <span className="font-semibold">${invoiceTotals.subtotal.toFixed(2)}</span>
+                    <span className="text-gray-600">Discount ({watchedDiscount}%):</span>
+                    <span className="font-semibold text-red-600">-${invoiceTotals.discountAmount.toFixed(2)}</span>
                   </div>
-                  {invoiceTotals.discountAmount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Discount ({watchedDiscount}%):</span>
-                      <span className="font-semibold text-red-600">-${invoiceTotals.discountAmount.toFixed(2)}</span>
-                    </div>
-                  )}
-                  {invoiceTotals.discountAmount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Subtotal after discount:</span>
-                      <span className="font-semibold">${invoiceTotals.subtotalAfterDiscount.toFixed(2)}</span>
-                    </div>
-                  )}
-                  {invoiceTotals.taxAmount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Tax ({watchedTaxRate}%):</span>
-                      <span className="font-semibold">${invoiceTotals.taxAmount.toFixed(2)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between border-t border-gray-300 pt-2 text-lg font-bold">
-                    <span>Total:</span>
-                    <span>${invoiceTotals.total.toFixed(2)}</span>
+                )}
+                {invoiceTotals.discountAmount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Subtotal after discount:</span>
+                    <span className="font-semibold">${invoiceTotals.subtotalAfterDiscount.toFixed(2)}</span>
                   </div>
+                )}
+                {invoiceTotals.taxAmount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Tax:</span>
+                    <span className="font-semibold">${invoiceTotals.taxAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t border-gray-300 pt-2 text-lg font-bold">
+                  <span>Total:</span>
+                  <span>${invoiceTotals.total.toFixed(2)}</span>
                 </div>
               </div>
             </div>

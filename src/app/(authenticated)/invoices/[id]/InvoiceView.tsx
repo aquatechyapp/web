@@ -161,11 +161,9 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
                 <span className="text-gray-600">Subtotal:</span>
                 <span className="font-semibold text-gray-900">${invoice.subtotal.toFixed(2)}</span>
               </div>
-              {invoice.taxRate > 0 && (
+              {invoice.taxAmount > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
-                    Tax ({invoice.taxRate.toFixed(2)}%):
-                  </span>
+                  <span className="text-gray-600">Tax:</span>
                   <span className="font-semibold text-gray-900">${invoice.taxAmount.toFixed(2)}</span>
                 </div>
               )}

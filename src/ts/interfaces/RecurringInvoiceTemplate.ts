@@ -39,10 +39,12 @@ export interface RecurringInvoiceTemplateLineItemInput {
   description: string;
   quantity: number;
   unitPrice: number;
+  taxRate?: number;
 }
 
 /**
  * Recurring Invoice Template Line Item (from API response)
+ * Each item has its own taxAmount; template taxAmount = sum of item taxAmounts
  */
 export interface RecurringInvoiceTemplateLineItem {
   id: string;
@@ -51,6 +53,8 @@ export interface RecurringInvoiceTemplateLineItem {
   quantity: number;
   unitPrice: number;
   amount: number;
+  taxRate?: number;
+  taxAmount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -101,7 +105,6 @@ export interface RecurringInvoiceTemplate {
   lastCreatedAt: string | null;
   nextScheduledDate: string;
   subtotal: number;
-  taxRate: number;
   taxAmount: number;
   discountRate: number;
   discountAmount: number;
@@ -127,7 +130,6 @@ export interface CreateRecurringInvoiceTemplateRequest {
   delivery: RecurringInvoiceDelivery;
   lineItems: RecurringInvoiceTemplateLineItemInput[];
   subtotal: number;
-  taxRate?: number;
   discountRate?: number;
   paymentTerms: PaymentTermsDays;
   notes?: string;
@@ -173,7 +175,6 @@ export interface UpdateRecurringInvoiceTemplateRequest {
   delivery?: RecurringInvoiceDelivery;
   lineItems?: RecurringInvoiceTemplateLineItemInput[];
   subtotal?: number;
-  taxRate?: number;
   discountRate?: number;
   paymentTerms?: PaymentTermsDays;
   notes?: string;

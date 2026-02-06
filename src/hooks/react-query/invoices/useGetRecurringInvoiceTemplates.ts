@@ -46,7 +46,9 @@ export default function useGetRecurringInvoiceTemplates(
         lineItems: template.lineItems.map((item) => ({
           ...item,
           unitPrice: toDollars(item.unitPrice),
-          amount: toDollars(item.amount)
+          amount: toDollars(item.amount),
+          taxRate: item.taxRate ?? 0,
+          taxAmount: item.taxAmount !== undefined ? toDollars(item.taxAmount) : 0
         })),
         ...(template.invoices?.length
           ? {
@@ -95,7 +97,9 @@ export default function useGetRecurringInvoiceTemplates(
           lineItems: template.lineItems.map((item) => ({
             ...item,
             unitPrice: toDollars(item.unitPrice),
-            amount: toDollars(item.amount)
+            amount: toDollars(item.amount),
+            taxRate: item.taxRate ?? 0,
+            taxAmount: item.taxAmount !== undefined ? toDollars(item.taxAmount) : 0
           })),
           ...(template.invoices?.length
             ? {
