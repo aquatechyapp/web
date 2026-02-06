@@ -54,16 +54,11 @@ export default function Page() {
 
   const handleLogin = (data: z.infer<typeof formSchema>) => {
     handleSubmit(data, {
-      onSuccess: (response) => {
-        const userId = response.data.user.id;
-        const hasVisitedBefore = localStorage.getItem(`first-visit-${userId}`);
-
-        if (!hasVisitedBefore) {
-          localStorage.setItem(`first-visit-${userId}`, 'true');
-          router.push('/onboarding');
-        } else {
-          router.push('/dashboard');
-        }
+      onSuccess: () => {
+        // Refresh so Next.js picks up the new cookies before navigating
+        router.refresh();
+        // Always go to dashboard; it (and other pages) redirect to /onboarding when profile is incomplete (e.g. user.firstName === '')
+        router.push('/dashboard');
       },
       onError: (error) => {
         if (

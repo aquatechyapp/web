@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError, isAxiosError } from 'axios';
 import Cookies from 'js-cookie';
-import { useRouter } from 'next/navigation';
 
 import { toast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
@@ -21,25 +20,12 @@ export const useResendConfirmation = (email: string) => {
 };
 
 export const useLoginUser = () => {
-  const { push } = useRouter();
-
   const { mutate, isPending, error } = useMutation({
     mutationFn: async (data: LoginData) => await clientAxios.post('/sessions/v2', data),
-    onSuccess: async ({ data }) => {
+    onSuccess: ({ data }) => {
       Cookies.set('accessToken', data.accessToken);
       Cookies.set('userId', data.user.id);
-
-      // Check if it's the first visit
-      const hasVisitedBefore = localStorage.getItem(`first-visit-${data.user.id}`);
-
-      if (!hasVisitedBefore) {
-        // First time user
-        localStorage.setItem(`first-visit-${data.user.id}`, 'true');
-        push('/quickstart');
-      } else {
-        // Returning user
-        push('/dashboard');
-      }
+      // Redirect is handled by the caller (login page) so it can call router.refresh() first
     },
     onError: (error): Error | AxiosError => {
       if (isAxiosError(error)) {
