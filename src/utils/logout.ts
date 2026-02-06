@@ -14,9 +14,9 @@ import { useWeekdayStore } from '@/store/weekday';
  * 5. Redirects to login page
  */
 export const performLogout = (queryClient: QueryClient, router: { push: (path: string) => void }) => {
-  // Remove authentication cookies
-  Cookies.remove('accessToken');
-  Cookies.remove('userId');
+  // Remove authentication cookies (path: '/' must match how they were set)
+  Cookies.remove('accessToken', { path: '/' });
+  Cookies.remove('userId', { path: '/' });
   
   // Clear React Query cache
   queryClient.resetQueries();
@@ -47,9 +47,9 @@ export const useLogout = () => {
   const resetWeekday = useWeekdayStore((state) => state.resetWeekday);
 
   return (queryClient: QueryClient, router: { push: (path: string) => void }) => {
-    // Remove authentication cookies
-    Cookies.remove('accessToken');
-    Cookies.remove('userId');
+    // Remove authentication cookies (path: '/' must match how they were set)
+    Cookies.remove('accessToken', { path: '/' });
+    Cookies.remove('userId', { path: '/' });
     
     // Clear React Query cache
     queryClient.resetQueries();

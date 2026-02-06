@@ -23,9 +23,10 @@ export const useLoginUser = () => {
   const { mutate, isPending, error } = useMutation({
     mutationFn: async (data: LoginData) => await clientAxios.post('/sessions/v2', data),
     onSuccess: ({ data }) => {
-      Cookies.set('accessToken', data.accessToken);
-      Cookies.set('userId', data.user.id);
-      // Redirect is handled by the caller (login page) so it can call router.refresh() first
+      // Use path: '/' so there is a single site-wide cookie (avoids duplicates with backend or path-specific cookies)
+      Cookies.set('accessToken', data.accessToken, { path: '/' });
+      Cookies.set('userId', data.user.id, { path: '/' });
+      // Redirect is handled by the caller (login page)
     },
     onError: (error): Error | AxiosError => {
       if (isAxiosError(error)) {

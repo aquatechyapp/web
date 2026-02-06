@@ -44,8 +44,8 @@ clientAxios.interceptors.response.use(
       if (error.response?.data?.message?.includes('Invalid credentials.')) {
         return Promise.reject(error);
       } else {
-        Cookies.remove('accessToken');
-        Cookies.remove('userId');
+        Cookies.remove('accessToken', { path: '/' });
+        Cookies.remove('userId', { path: '/' });
         window.location.href = window.location.protocol + '//' + window.location.host + '/login';
       }
     }
