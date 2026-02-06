@@ -263,6 +263,20 @@ export default function CreateInvoicePage() {
       .filter(Boolean)
       .join('\n');
 
+    // Company owner from invoice company (the company issuing the invoice)
+    const companyOwner = company
+      ? {
+          id: company.id,
+          name: company.name,
+          email: company.email,
+          phone: company.phone,
+          address: company.address,
+          city: company.city,
+          state: company.state,
+          zip: company.zip
+        }
+      : undefined;
+
     return {
       id: 'preview',
       clientId: watchedClientId || '',
@@ -293,10 +307,12 @@ export default function CreateInvoicePage() {
       paymentTerms: watchedPaymentTerms || '',
       notes: watchedNotes || '',
       paymentInstructions: watchedPaymentInstructions || '',
-      clientAddress
+      clientAddress,
+      companyOwner
     };
   }, [
     selectedClient,
+    company,
     invoiceTotals,
     watchedClientId,
     watchedIssuedDate,

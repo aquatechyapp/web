@@ -167,14 +167,11 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
                   <span className="font-semibold text-gray-900">${invoice.taxAmount.toFixed(2)}</span>
                 </div>
               )}
-              {invoice.discountRate && invoice.discountRate > 0 && invoice.discountAmount && invoice.discountAmount > 0 && (
+              {(invoice.discountAmount && invoice.discountAmount > 0) ? (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
-                    Discount ({invoice.discountRate.toFixed(2)}%):
-                  </span>
-                  <span className="font-semibold text-gray-900">-${invoice.discountAmount.toFixed(2)}</span>
+                  <span className="font-semibold text-gray-900">-${invoice.discountAmount?.toFixed(2)}</span>
                 </div>
-              )}
+              ) : null}
               <div className="flex justify-between border-t-2 border-gray-900 pt-2 text-lg font-bold">
                 <span className="text-gray-900">Total:</span>
                 <span className="text-gray-900">${invoice.total.toFixed(2)}</span>

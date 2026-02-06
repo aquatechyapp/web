@@ -285,6 +285,11 @@ export default function EditInvoicePage({ params: { id } }: Props) {
       .filter(Boolean)
       .join('\n');
 
+    // Company owner from invoice (the company issuing the invoice)
+    const companyOwner = invoiceData?.invoice?.companyOwner
+      ? ({ ...invoiceData.invoice.companyOwner } as DetailedInvoice['companyOwner'])
+      : undefined;
+
     return {
       id: id,
       invoiceNumber: watchedInvoiceNumber || '',
@@ -317,10 +322,12 @@ export default function EditInvoicePage({ params: { id } }: Props) {
       paymentTerms: watchedPaymentTerms || '',
       notes: watchedNotes || '',
       paymentInstructions: watchedPaymentInstructions || '',
-      clientAddress
+      clientAddress,
+      companyOwner
     };
   }, [
     selectedClient,
+    invoiceData?.invoice?.companyOwner,
     invoiceTotals,
     watchedInvoiceNumber,
     watchedClientId,
