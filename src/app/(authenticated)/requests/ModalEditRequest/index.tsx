@@ -44,7 +44,15 @@ const schema = z.object({
   category: z.string().min(1, { message: 'Category is required' }),
   description: z.string().min(1, { message: 'Description is required' }),
   photo: z.array(z.any()),
-  status: z.enum(['Pending', 'Processing', 'Done']),
+  status: z.enum([
+    'Pending',
+    'Processing',
+    'Done',
+    'ClientNotified',
+    'WaintingClientApproval',
+    'ApprovedByClient',
+    'RejectedByClient'
+  ]),
   outcome: z.string().optional(),
   createdBy: z.object({
     id: z.string(),

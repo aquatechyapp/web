@@ -10,7 +10,14 @@ export interface Request {
   poolId: string;
   createdAt: string;
   description: string;
-  status: 'Pending' | 'Processing' | 'Done';
+  status:
+    | 'Pending'
+    | 'Processing'
+    | 'Done'
+    | 'ClientNotified'
+    | 'WaintingClientApproval'
+    | 'ApprovedByClient'
+    | 'RejectedByClient';
   updatedAt: string;
   outcome: string;
   photos: string[];

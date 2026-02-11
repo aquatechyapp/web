@@ -7,7 +7,10 @@ import { Request } from '@/ts/interfaces/Request';
 import { RequestCategory } from '@/ts/enums/enums';
 import { format } from 'date-fns';
 
-const statusOptions = {
+const statusOptions: Record<
+  Request['status'],
+  { label: string; className: string }
+> = {
   Pending: {
     label: 'Pending',
     className: 'bg-red-100 text-red-600'
@@ -19,6 +22,22 @@ const statusOptions = {
   Done: {
     label: 'Done',
     className: 'bg-green-100 text-green-600'
+  },
+  ClientNotified: {
+    label: 'Client Notified',
+    className: 'bg-blue-100 text-blue-600'
+  },
+  WaintingClientApproval: {
+    label: 'Waiting Client Approval',
+    className: 'bg-amber-100 text-amber-600'
+  },
+  ApprovedByClient: {
+    label: 'Approved by Client',
+    className: 'bg-emerald-100 text-emerald-600'
+  },
+  RejectedByClient: {
+    label: 'Rejected by Client',
+    className: 'bg-red-100 text-red-600'
   }
 };
 
@@ -87,11 +106,15 @@ export const columns: ColumnDef<Request>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row: { original } }) => {
+      const option = statusOptions[original.status as Request['status']] ?? {
+        label: original.status,
+        className: 'bg-gray-100 text-gray-600'
+      };
       return (
         <div
-          className={`max-w-28 rounded-lg px-1 px-2 py-2 text-center font-semibold ${statusOptions[original.status].className}`}
+          className={`max-w-28 rounded-lg px-1 px-2 py-2 text-center font-semibold ${option.className}`}
         >
-          {original.status}
+          {option.label}
         </div>
       );
     }

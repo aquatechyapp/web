@@ -368,6 +368,26 @@ export const RequestStatus = [
     value: 'Done',
     name: 'Done',
     key: 'Done'
+  },
+  {
+    value: 'ClientNotified',
+    name: 'Client Notified',
+    key: 'ClientNotified'
+  },
+  {
+    value: 'WaintingClientApproval',
+    name: 'Waiting Client Approval',
+    key: 'WaintingClientApproval'
+  },
+  {
+    value: 'ApprovedByClient',
+    name: 'Approved by Client',
+    key: 'ApprovedByClient'
+  },
+  {
+    value: 'RejectedByClient',
+    name: 'Rejected by Client',
+    key: 'RejectedByClient'
   }
 ];
 
