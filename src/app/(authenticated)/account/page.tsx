@@ -115,9 +115,9 @@ export default function Page() {
               placeholder="Enter your address"
               onAddressSelect={handleAddressSelect}
             />
-            <InputField name="state" label="State" placeholder="State" disabled />
-            <InputField name="city" label="City" placeholder="City" disabled />
-            <InputField name="zip" label="Zip Code" placeholder="Zip Code" disabled />
+            <InputField name="state" label="State" placeholder="State" />
+            <InputField name="city" label="City" placeholder="City" />
+            <InputField name="zip" label="Zip Code" placeholder="Zip Code" />
           </div>
           <Typography element="h3">Contact Information</Typography>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">

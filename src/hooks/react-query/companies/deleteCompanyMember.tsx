@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
@@ -23,10 +24,11 @@ export const useDeleteCompanyMember = () => {
         variant: 'success'
       });
     },
-    onError: () => {
+    onError: (error: AxiosError<{ message: string }>) => {
       toast({
         duration: 5000,
         title: 'Error removing company member.',
+        description: error.response?.data?.message ?? 'Something went wrong.',
         variant: 'error'
       });
     }
