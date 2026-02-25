@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useDeletePool } from '@/hooks/react-query/pools/deletePool';
 import { useDeactivatePool } from '@/hooks/react-query/pools/deactivatePool';
 
-import { EquipmentTab, ChecklistTab, PoolInfoTab, RequestsTab, ServicesTab, AssignmentsTab } from './tabs';
+import { EquipmentTab, ChecklistTab, PoolInfoTab, PhotosTab, RequestsTab, ServicesTab, AssignmentsTab } from './tabs';
 import { useUpdatePool } from '@/hooks/react-query/pools/updatePool';
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
   clientId: string;
 };
 
-export type PoolTabOptions = 'pool_info' | 'services' | 'pool_assignments' | 'equipment' | 'checklist' | 'requests';
+export type PoolTabOptions = 'pool_info' | 'photos' | 'services' | 'pool_assignments' | 'equipment' | 'checklist' | 'requests';
 
 // Add these styles at the top of your component
 const tabStyles = 'px-4 py-2 text-sm transition-colors duration-200 hover:text-gray-700 hover:cursor-pointer';
@@ -154,6 +154,12 @@ function PoolCard({ pool, services, clientId }: Props) {
               Information
             </div>
             <div
+              onClick={() => handleTabChange('photos')}
+              className={`${tabStyles} whitespace-nowrap ${tab === 'photos' && activeTabStyles}`}
+            >
+              Photos
+            </div>
+            <div
               onClick={() => handleTabChange('services')}
               className={`${tabStyles} whitespace-nowrap ${tab === 'services' && activeTabStyles}`}
             >
@@ -189,6 +195,7 @@ function PoolCard({ pool, services, clientId }: Props) {
 
       <div className="p-6">
         {tab === 'pool_info' && <PoolInfoTab pool={pool} clientId={clientId} />}
+        {tab === 'photos' && <PhotosTab pool={pool} clientId={clientId} />}
         {tab === 'services' && <ServicesTab services={services} pool={pool} />}
         {tab === 'pool_assignments' && <AssignmentsTab pool={pool} clientId={clientId} />}
         {tab === 'equipment' && (
