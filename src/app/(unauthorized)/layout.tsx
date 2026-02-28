@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import aquatechyBackground from '/public/images/aquatechy-background.jpg';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -6,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="fixed left-0 top-0 -z-50 h-screen w-screen">
         <Image
           className="h-screen w-screen object-cover"
-          src="/images/aquatechy-background.png"
+          src={aquatechyBackground}
           alt="Aquatechy background"
           quality="100"
         />
