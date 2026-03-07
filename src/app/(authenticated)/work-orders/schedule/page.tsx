@@ -25,6 +25,7 @@ import DataTableServicesSkeleton from '../../services/DataTableServices/skeleton
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { X } from 'lucide-react';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
+import useGetByClients from '@/hooks/react-query/clients/getByClients';
 
 interface PaginatedResponse {
   services: any[];
@@ -75,13 +76,18 @@ const countAppliedFilters = (filters: UseGetWorkOrdersServicesParams): number =>
 export default function Page() {
   const router = useRouter();
   const { data: companies } = useGetCompanies();
-  const { data: clients, isLoading: isLoadingClients } = useGetAllClients();
-  const user = useUserStore((state) => state.user);
-  const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
-
   const filtersForm = useForm<UseGetWorkOrdersServicesParams>({
     defaultValues
   });
+  const { data: clients, isLoading: isLoadingClients } = useGetAllClients();
+  const clientId = filtersForm.watch('clientId') ?? undefined;
+  const { data: pools, isLoading: isLoadingPools } = useGetByClients(clientId);
+  const user = useUserStore((state) => state.user);
+  const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
+
+  console.log('clientId', clientId);
+  console.log('pools', pools);
+  console.log('filtersForm', filtersForm);
 
   const formValuesListner = filtersForm.watch();
   const appliedFilters = useMemo(() => countAppliedFilters(formValuesListner), [formValuesListner]);
@@ -95,7 +101,7 @@ export default function Page() {
   }, [user, router]);
 
   const onSubmit = async (formData: UseGetWorkOrdersServicesParams) => {
-    filtersForm.setValue('page', 1); // Reset to first page on new search
+    filtersForm.setValue('page', 1);
     await workOrdersServicesQuery.refetch({ ...formData, page: 1, limit: 20 });
   };
 
@@ -109,6 +115,7 @@ export default function Page() {
     filtersForm.reset(defaultValues);
     await workOrdersServicesQuery.refetch(defaultValues);
   };
+
 
   return (
     <div>
@@ -212,12 +219,12 @@ export default function Page() {
                               options={
                                 companies.length > 0
                                   ? companies.map((company) => {
-                                      return {
-                                        key: company.id,
-                                        value: company.id,
-                                        name: company.name
-                                      };
-                                    })
+                                    return {
+                                      key: company.id,
+                                      value: company.id,
+                                      name: company.name
+                                    };
+                                  })
                                   : []
                               }
                             />
@@ -242,15 +249,15 @@ export default function Page() {
                               options={
                                 members.length > 0
                                   ? members
-                                      .filter((member, index, self) => 
-                                        // Keep only the first occurrence of each member ID
-                                        index === self.findIndex(m => m.id === member.id)
-                                      )
-                                      .map((member) => ({
-                                        key: member.id,
-                                        value: member.id,
-                                        name: member.firstName + ' ' + member.lastName
-                                      }))
+                                    .filter((member, index, self) =>
+                                      // Keep only the first occurrence of each member ID
+                                      index === self.findIndex(m => m.id === member.id)
+                                    )
+                                    .map((member) => ({
+                                      key: member.id,
+                                      value: member.id,
+                                      name: member.firstName + ' ' + member.lastName
+                                    }))
                                   : []
                               }
                             />
@@ -272,14 +279,36 @@ export default function Page() {
                             <SelectField
                               placeholder={clients?.length || 0 > 0 ? 'Select client' : 'No clients available'}
                               {...field}
-                              options={buildSelectOptions(
-                                clients?.filter((client: Client) => client.pools.length > 0),
-                                {
-                                  key: 'id',
-                                  name: 'fullName',
-                                  value: 'id'
-                                }
-                              )}
+                              options={buildSelectOptions(clients || [], {
+                                key: 'id',
+                                name: 'fullName',
+                                value: 'id'
+                              })}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </FormControl>
+                </FormItem>
+
+                <FormItem className="w-full">
+                  <FormLabel>Pool</FormLabel>
+                  <FormControl>
+                    <FormField
+                      name="poolId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <SelectField
+                              {...field}
+                              disabled={!clientId || isLoadingPools}
+                              placeholder={isLoadingPools ? 'Loading pools...' : 'Select pool'}
+                              options={buildSelectOptions(pools || [], {
+                                key: 'id',
+                                name: 'name',
+                                value: 'id'
+                              })}
                             />
                           </FormControl>
                         </FormItem>
