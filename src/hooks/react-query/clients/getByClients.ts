@@ -5,8 +5,8 @@ export default function useGetByClients(clientId?: string) {
   return useQuery({
     queryKey: ['byClients', clientId],
     queryFn: async () => {
-      const response = await clientAxios.get(`/by-client/${clientId}`);
-      return response.data;
+      const response = await clientAxios.get(`/pools/by-client/${clientId}`);
+     return response.data?.pools || [];
     },
     enabled: !!clientId
   });

@@ -85,10 +85,6 @@ export default function Page() {
   const user = useUserStore((state) => state.user);
   const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
 
-  console.log('clientId', clientId);
-  console.log('pools', pools);
-  console.log('filtersForm', filtersForm);
-
   const formValuesListner = filtersForm.watch();
   const appliedFilters = useMemo(() => countAppliedFilters(formValuesListner), [formValuesListner]);
 
@@ -116,6 +112,8 @@ export default function Page() {
     await workOrdersServicesQuery.refetch(defaultValues);
   };
 
+  console.log('pools', pools);
+  console.log('formValuesListner', formValuesListner);
 
   return (
     <div>
