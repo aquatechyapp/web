@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { clientAxios } from '@/lib/clientAxios';
 
-export default function useGetByClients(clientId?: string) {
+export default function useGetPoolsByClient(clientId?: string) {
   return useQuery({
-    queryKey: ['byClients', clientId],
+    queryKey: ['poolsByClient', clientId],
     queryFn: async () => {
       const response = await clientAxios.get(`/pools/by-client/${clientId}`);
      return response.data?.pools || [];

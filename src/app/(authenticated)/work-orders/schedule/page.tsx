@@ -1,16 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { sub } from 'date-fns';
+import { useEffect, useMemo } from 'react';
 import { PaginationDemo } from '@/components/PaginationDemo';
 import SelectField from '@/components/SelectField';
 import { DatePicker } from '@/components/ui/date-picker';
-import useGetClients from '@/hooks/react-query/clients/getClients';
 import { useUserStore } from '@/store/user';
-import { SubcontractorStatus } from '@/ts/enums/enums';
-import { Client } from '@/ts/interfaces/Client';
 import { buildSelectOptions } from '@/utils/formUtils';
 
 import { DataTableWorkOrders } from './DataTableWorkOrders';
@@ -25,15 +20,8 @@ import DataTableServicesSkeleton from '../../services/DataTableServices/skeleton
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { X } from 'lucide-react';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
-import useGetByClients from '@/hooks/react-query/clients/getByClients';
-
-interface PaginatedResponse {
-  services: any[];
-  totalCount: number;
-  currentPage: number;
-  totalPages: number;
-  itemsPerPage: number;
-}
+import useGetPoolsByClient from '@/hooks/react-query/clients/getByClients';
+import { useForm } from 'react-hook-form';
 
 const defaultValues: UseGetWorkOrdersServicesParams = {
   from: (() => {
@@ -81,7 +69,7 @@ export default function Page() {
   });
   const { data: clients, isLoading: isLoadingClients } = useGetAllClients();
   const clientId = filtersForm.watch('clientId') ?? undefined;
-  const { data: pools, isLoading: isLoadingPools } = useGetByClients(clientId);
+  const { data: pools, isLoading: isLoadingPools } = useGetPoolsByClient(clientId);
   const user = useUserStore((state) => state.user);
   const { data: members } = useGetMembersOfAllCompaniesByUserId(user.id);
 
@@ -111,9 +99,6 @@ export default function Page() {
     filtersForm.reset(defaultValues);
     await workOrdersServicesQuery.refetch(defaultValues);
   };
-
-  console.log('pools', pools);
-  console.log('formValuesListner', formValuesListner);
 
   return (
     <div>
