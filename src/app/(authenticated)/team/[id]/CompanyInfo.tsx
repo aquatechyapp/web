@@ -71,9 +71,9 @@ export default function CompanyInfo({ company }: { company: Company }) {
             placeholder="Enter company address"
             onAddressSelect={handleAddressSelect}
           />
-          <InputField name="state" label="State" placeholder="State" disabled />
-          <InputField name="city" label="City" placeholder="City" disabled />
-          <InputField name="zip" label="Zip code" placeholder="Zip code" disabled />
+          <InputField name="state" label="State" placeholder="State"  />
+          <InputField name="city" label="City" placeholder="City"  />
+          <InputField name="zip" label="Zip code" placeholder="Zip code" />
         </div>
         <Typography element="h4" className="mt-2">
           Contact information

@@ -20,8 +20,8 @@ import DataTableServicesSkeleton from '../../services/DataTableServices/skeleton
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { X } from 'lucide-react';
 import useGetAllClients from '@/hooks/react-query/clients/getAllClients';
-import useGetPoolsByClient from '@/hooks/react-query/clients/getByClients';
 import { useForm } from 'react-hook-form';
+import useGetPoolsByClient from '@/hooks/react-query/pools/getByClients';
 
 const defaultValues: UseGetWorkOrdersServicesParams = {
   from: (() => {
