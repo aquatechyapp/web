@@ -287,9 +287,9 @@ export default function AddMemberPage() {
                 onAddressSelect={handleAddressSelect}
               />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <InputField name="state" label="State" placeholder="State" disabled />
-                <InputField name="city" label="City" placeholder="City" disabled />
-                <InputField name="zip" label="ZIP Code" placeholder="ZIP code" disabled />
+                <InputField name="state" label="State" placeholder="State"  />
+                <InputField name="city" label="City" placeholder="City"  />
+                <InputField name="zip" label="ZIP Code" placeholder="ZIP code"  />
               </div>
             </div>
             <SelectField
