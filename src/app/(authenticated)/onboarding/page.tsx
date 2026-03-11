@@ -460,7 +460,7 @@ export default function OnboardingPage() {
     if (assignments.length > 1) {
       const newAssignments = assignments.filter((_, i) => i !== index);
       setAssignments(newAssignments);
-      
+
       const newOptions = { ...assignmentDateOptions };
       delete newOptions[index];
       setAssignmentDateOptions(newOptions);
@@ -560,7 +560,7 @@ export default function OnboardingPage() {
         poolNotes: data.poolNotes,
         assignments: assignments
       };
-      
+
       await createClientWithAssignments(submissionData);
       // On success, the hook will redirect to /clients
     } catch (error) {
@@ -661,16 +661,16 @@ export default function OnboardingPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <AddressInput 
-                      name="address" 
-                      label="Address" 
+                    <AddressInput
+                      name="address"
+                      label="Address"
                       placeholder="Enter your address"
                       onAddressSelect={handlePersonalDataAddressSelect}
                     />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                      <InputField name="state" label="State" placeholder="State" disabled />
-                      <InputField name="city" label="City" placeholder="City" disabled />
-                      <InputField name="zip" label="Zip Code" placeholder="Zip Code" disabled />
+                      <InputField name="state" label="State" placeholder="State"  />
+                      <InputField name="city" label="City" placeholder="City"  />
+                      <InputField name="zip" label="Zip Code" placeholder="Zip Code" />
                     </div>
                   </div>
 
@@ -985,10 +985,10 @@ export default function OnboardingPage() {
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                          <SelectField 
+                          <SelectField
                             name={`weekday-${index}`}
-                            label="Weekday" 
-                            placeholder="Weekday" 
+                            label="Weekday"
+                            placeholder="Weekday"
                             options={Weekdays}
                             value={assignment.weekday}
                             onValueChange={(value) => updateAssignment(index, 'weekday', value)}
@@ -1042,8 +1042,8 @@ export default function OnboardingPage() {
                       <ArrowLeftIcon className="mr-2 h-4 w-4" />
                       Previous
                     </Button>
-                    <Button 
-                      disabled={isCreatingClient} 
+                    <Button
+                      disabled={isCreatingClient}
                       type="submit"
                       className="min-w-[120px]"
                     >
