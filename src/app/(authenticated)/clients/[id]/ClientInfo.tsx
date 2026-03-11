@@ -30,7 +30,8 @@ const formSchema = z.object({
   notes: defaultSchemas.stringOptional,
   clientCompany: defaultSchemas.stringOptional,
   type: defaultSchemas.clientType,
-  timezone: defaultSchemas.timezone
+  timezone: defaultSchemas.timezone,
+  addressLine2: defaultSchemas.stringOptional
 });
 
 type FormData = z.infer<typeof formSchema> & {
@@ -41,7 +42,7 @@ export default function ClientInfo({ client }: { client: Client }) {
   const { mutate, isPending } = useUpdateClient<FormData>();
   const [showAddressChangeDialog, setShowAddressChangeDialog] = useState(false);
   const initialAddress = client.address || '';
-  
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,7 +59,8 @@ export default function ClientInfo({ client }: { client: Client }) {
       address: initialAddress,
       clientCompany: client.company || '',
       type: client.type || 'Residential',
-      timezone: client.timezone
+      timezone: client.timezone,
+      addressLine2: client.addressLine2 || ''
     }
   });
 
@@ -66,7 +68,7 @@ export default function ClientInfo({ client }: { client: Client }) {
 
   const handleSubmit = async () => {
     const formValues = form.getValues();
-    
+
     // Check if address was changed
     if (formValues.address !== initialAddress) {
       setShowAddressChangeDialog(true);
@@ -97,7 +99,7 @@ export default function ClientInfo({ client }: { client: Client }) {
             <InputField name="firstName" label="First Name" placeholder="First Name" />
             <InputField name="lastName" label="Last Name" placeholder="Last Name" />
           </div>
-          
+
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
             <AddressInput
               name="address"
@@ -111,6 +113,11 @@ export default function ClientInfo({ client }: { client: Client }) {
               }}
             />
           </div>
+          <InputField
+            name="addressLine2"
+            label="Address Line 2"
+            placeholder="Apt, suite, unit"
+          />
           <div className="flex w-full flex-wrap gap-4 md:flex-nowrap [&>*]:flex-1">
             <InputField name="zip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
             <InputField name="clientCompany" label="Company" placeholder="Company" />

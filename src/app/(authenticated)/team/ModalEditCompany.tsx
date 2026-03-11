@@ -83,7 +83,8 @@ export const updateCompanySchema = z.object({
       required_error: 'email is required.',
       invalid_type_error: 'email must be a string.'
     })
-    .trim()
+    .trim(),
+    addressLine2: z.optional(z.string().trim())
 });
 
 export type FormSchema = z.infer<typeof updateCompanySchema>;

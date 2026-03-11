@@ -46,6 +46,7 @@ type CSVRow = {
   clientCompany: string;
   clientType: string;
   monthlyPayment: string;
+  poolAddressLine2?:string
 };
 
 // Add this type
@@ -237,6 +238,7 @@ export default function ImportFromCSV() {
             clientCompany: row.clientCompany || undefined,
             clientAddress: row.clientAddress,
             poolAddress: row.poolAddress,
+            poolAddressLine2: row.poolAddressLine2 || '',
             clientCity: row.clientCity,
             poolCity: row.poolCity,
             clientState: state,
@@ -425,6 +427,7 @@ export default function ImportFromCSV() {
                   <TableHead>Email</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Pool Address</TableHead>
+                  <TableHead>Pool Address Line 2</TableHead>
                   <TableHead>Pool City</TableHead>
                   <TableHead>Pool State</TableHead>
                   <TableHead>Pool Zip</TableHead>
@@ -448,6 +451,7 @@ export default function ImportFromCSV() {
                     <TableCell>{formatEmail(client.email)}</TableCell>
                     <TableCell>{client.clientType}</TableCell>
                     <TableCell>{client.poolAddress}</TableCell>
+                    <TableCell>{client.poolAddressLine2}</TableCell>
                     <TableCell>{client.poolCity}</TableCell>
                     <TableCell>{client.poolState}</TableCell>
                     <TableCell>{client.poolZip}</TableCell>

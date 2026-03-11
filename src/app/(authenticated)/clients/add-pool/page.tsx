@@ -70,8 +70,9 @@ const createPoolSchema = poolSchema
         })
         .trim()
         .min(1, { message: 'Address must be at least 1 character.' }),
-      monthlyPayment: defaultSchemas.monthlyPayment
-    })
+      monthlyPayment: defaultSchemas.monthlyPayment,
+    addressLine2: z.optional(z.string().trim())
+    }),
   );
 
 export type CreatePoolType = z.infer<typeof createPoolSchema>;
@@ -80,11 +81,11 @@ export default function AddPoolPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const clientId = searchParams.get('clientId');
-  
+
   // Get client data if clientId is provided
   const { data: client, isLoading: isClientLoading } = useGetClient(clientId || '');
 
-  
+
   // Use the existing hook
   const { mutate: addPool, isPending } = useAddPoolToClient();
 
@@ -101,7 +102,8 @@ export default function AddPoolPage() {
       notes: undefined,
       poolType: undefined,
       state: '',
-      zip: ''
+      zip: '',
+      addressLine2: ''
     }
   });
 
@@ -133,7 +135,7 @@ export default function AddPoolPage() {
         monthlyPayment: data.monthlyPayment ?? undefined,
         poolType: data.poolType as PoolType
       };
-      
+
       addPool(poolData, {
         onSuccess: () => {
           // Navigate back to client page after successful creation
@@ -153,7 +155,7 @@ export default function AddPoolPage() {
 
   return (
     <div className="w-full p-2">
-      <div 
+      <div
         className="mb-6 flex items-center cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
         onClick={() => router.back()}
       >
@@ -189,7 +191,11 @@ export default function AddPoolPage() {
                 }}
               />
             </div>
-
+     <InputField
+                name="addressLine2"
+                label="Address Line 2"
+                placeholder="Apt, suite, unit"
+              />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <StateAndCitySelect stateName="state" cityName="city" />
               <InputField name="zip" label="Zip Code" placeholder="Zip code" type={FieldType.Zip} />
@@ -252,4 +258,4 @@ export default function AddPoolPage() {
       </Form>
     </div>
   );
-} 
+}

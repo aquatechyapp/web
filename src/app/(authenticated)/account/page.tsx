@@ -33,7 +33,8 @@ const formSchema = z.object({
   zip: defaultSchemas.zipCode,
   state: defaultSchemas.state,
   city: defaultSchemas.city,
-  language: defaultSchemas.language
+  language: defaultSchemas.language,
+  addressLine2: defaultSchemas.addressLine2
 });
 
 export type IUserSchema = z.infer<typeof formSchema>;
@@ -54,7 +55,8 @@ export default function Page() {
       zip: user?.zip || '',
       state: user?.state || '',
       city: user?.city || '',
-      language: user?.language || LanguageOptions.English
+      language: user?.language || LanguageOptions.English,
+      addressLine2: user?.addressLine2 || ''
     },
     resolver: zodResolver(formSchema)
   });
@@ -91,11 +93,13 @@ export default function Page() {
     city: string;
     zipCode: string;
     timezone: IanaTimeZones;
+    addressLine2?: string;
   }) => {
     form.setValue('address', address.fullAddress);
     form.setValue('state', address.state);
     form.setValue('city', address.city);
     form.setValue('zip', address.zipCode);
+    form.setValue('addressLine2', address.addressLine2 || '');
   };
 
   return (
@@ -109,11 +113,16 @@ export default function Page() {
             <InputField name="company" label="Company" placeholder="Company" />
           </div>
           <div className="inline-flex flex-wrap items-start justify-start gap-4 self-stretch md:flex-nowrap">
-            <AddressInput 
-              name="address" 
-              label="Address" 
+            <AddressInput
+              name="address"
+              label="Address"
               placeholder="Enter your address"
               onAddressSelect={handleAddressSelect}
+            />
+            <InputField
+              name="addressLine2"
+              label="Address Line 2"
+              placeholder="Apt, suite, unit"
             />
             <InputField name="state" label="State" placeholder="State" />
             <InputField name="city" label="City" placeholder="City" />
