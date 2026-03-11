@@ -39,7 +39,7 @@ export interface CreateClientWithAssignmentsData {
   secondaryEmail?: string;
   invoiceEmail?: string;
   clientNotes?: string;
-  
+  clientAddressLine2?: string;
   // Pool data
   sameBillingAddress: boolean;
   animalDanger: boolean;
@@ -52,7 +52,7 @@ export interface CreateClientWithAssignmentsData {
   enterSide?: string;
   poolType?: string;
   poolNotes?: string;
-  
+
   // Assignments array
   assignments: Assignment[];
 }
@@ -82,7 +82,7 @@ export const useCreateClientWithMultipleAssignments = (options?: { redirectTo?: 
         ...data,
         assignments: JSON.stringify(processedAssignments)
       };
-      
+
       return await clientAxios.post('/client-pool-assignment', createFormData(formData), {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -115,4 +115,4 @@ export const useCreateClientWithMultipleAssignments = (options?: { redirectTo?: 
       });
     }
   });
-}; 
+};

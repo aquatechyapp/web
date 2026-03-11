@@ -37,6 +37,7 @@ export type CreateManyClientsInput = {
   poolType: 'Chlorine' | 'Salt' | 'Other';
   poolState: string;
   poolZip: string;
+  poolAddressLine2?: string;
 }[];
 
 export function useCreateManyClients() {

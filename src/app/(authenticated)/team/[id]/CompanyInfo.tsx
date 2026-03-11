@@ -31,7 +31,8 @@ export default function CompanyInfo({ company }: { company: Company }) {
       status: company.status || 'Active',
       phone: company.phone || '',
       email: company.email || '',
-      address: company.address || ''
+      address: company.address || '',
+      addressLine2: company.addressLine2 || ''
     }
   });
 
@@ -47,11 +48,13 @@ export default function CompanyInfo({ company }: { company: Company }) {
     city: string;
     zipCode: string;
     timezone: IanaTimeZones;
+    addressLine2?: string;
   }) => {
     form.setValue('address', address.fullAddress);
     form.setValue('state', address.state);
     form.setValue('city', address.city);
     form.setValue('zip', address.zipCode);
+    form.setValue('addressLine2', address.addressLine2);
   };
 
   return (
@@ -71,6 +74,11 @@ export default function CompanyInfo({ company }: { company: Company }) {
             placeholder="Enter company address"
             onAddressSelect={handleAddressSelect}
           />
+           <InputField
+                            name="addressLine2"
+                            label="Address Line 2"
+                            placeholder="Apt, suite, unit"
+                          />
           <InputField name="state" label="State" placeholder="State"  />
           <InputField name="city" label="City" placeholder="City"  />
           <InputField name="zip" label="Zip code" placeholder="Zip code" />

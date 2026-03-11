@@ -24,6 +24,7 @@ export type BasicData = {
   phone: string;
   email: string;
   addressCoords?: Coords;
+  addressLine2?: string;
 };
 
 export interface User extends BasicData {

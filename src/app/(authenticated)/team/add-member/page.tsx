@@ -34,7 +34,8 @@ const newUserSchema = existingUserSchema.extend({
   address: z.string().min(1, { message: 'Address is required.' }),
   city: z.string().min(1, { message: 'City is required.' }),
   state: z.string().min(1, { message: 'State is required.' }),
-  zip: z.string().min(1, { message: 'ZIP code is required.' })
+  zip: z.string().min(1, { message: 'ZIP code is required.' }),
+  addressLine2: z.optional(z.string().trim())
 });
 
 export default function AddMemberPage() {
@@ -69,7 +70,8 @@ export default function AddMemberPage() {
       address: '',
       city: '',
       state: '',
-      zip: ''
+      zip: '',
+      addressLine2: ''
     }
   });
 
@@ -80,11 +82,13 @@ export default function AddMemberPage() {
     city: string;
     zipCode: string;
     timezone: IanaTimeZones;
+    addressLine2?: string;
   }) => {
     newUserForm.setValue('address', address.fullAddress);
     newUserForm.setValue('state', address.state);
     newUserForm.setValue('city', address.city);
     newUserForm.setValue('zip', address.zipCode);
+    newUserForm.setValue('addressLine2', address.addressLine2);
   };
 
   // Submit handlers
@@ -124,7 +128,8 @@ export default function AddMemberPage() {
         city: data.city,
         state: data.state,
         zip: data.zip,
-        userAlreadyExists: false
+        userAlreadyExists: false,
+        addressLine2: data.addressLine2 || ''
       },
       {
         onSuccess: () => {
@@ -286,10 +291,15 @@ export default function AddMemberPage() {
                 placeholder="Enter address"
                 onAddressSelect={handleAddressSelect}
               />
+              <InputField
+                name="addressLine2"
+                label="Address Line 2"
+                placeholder="Apt, suite, unit"
+              />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <InputField name="state" label="State" placeholder="State"  />
-                <InputField name="city" label="City" placeholder="City"  />
-                <InputField name="zip" label="ZIP Code" placeholder="ZIP code"  />
+                <InputField name="state" label="State" placeholder="State" />
+                <InputField name="city" label="City" placeholder="City" />
+                <InputField name="zip" label="ZIP Code" placeholder="ZIP code" />
               </div>
             </div>
             <SelectField

@@ -15,6 +15,8 @@ function commonStringSchema(message: string, min: number = 1) {
 export const defaultSchemas = {
   stringOptional: z.string().optional(),
   address: commonStringSchema('Address'),
+  clientAddressLine2: z.string().trim().optional(),
+  addressLine2: z.string().trim().optional(),
   city: commonStringSchema('City'),
   email: z
     .string({
@@ -85,5 +87,5 @@ export const defaultSchemas = {
     required_error: 'Timezone is required.',
     invalid_type_error: 'Invalid timezone.'
   }),
-  frequency: z.string(z.enum([Frequency.WEEKLY, Frequency.E2WEEKS, Frequency.E3WEEKS, Frequency.E4WEEKS]))
+  frequency: z.string(z.enum([Frequency.WEEKLY, Frequency.E2WEEKS, Frequency.E3WEEKS, Frequency.E4WEEKS])),
 };
