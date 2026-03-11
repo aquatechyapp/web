@@ -76,7 +76,7 @@ const generatePaymentTermsText = (paymentTerm: PaymentTermsDays | string | null 
 export default function CreateInvoicePage() {
   const router = useRouter();
   const user = useUserStore((state) => state.user);
-  
+
   const { data: clients = [], isLoading: isLoadingClients } = useGetAllClients();
   const { mutate: createDraft, isPending: isCreatingDraft } = useCreateInvoiceAsDraft();
   const { mutate: createOnly, isPending: isCreatingOnly } = useCreateInvoice();
@@ -114,6 +114,9 @@ export default function CreateInvoicePage() {
   const selectedClient = useMemo(() => {
     return clients.find((c) => c.id === watchedClientId);
   }, [clients, watchedClientId]);
+
+  console.log('Selected Client:', selectedClient);
+  console.log('Client:', clients);
 
   // Get company ID from selected client
   const companyId = useMemo(() => {
@@ -161,7 +164,7 @@ export default function CreateInvoicePage() {
       const paymentTermsText = generatePaymentTermsText(companyDefaults.defaultPaymentTerm);
       const issuedDate = form.getValues('issuedDate') || new Date();
       const newDueDate = new Date(issuedDate.getTime() + days * 24 * 60 * 60 * 1000);
-      
+
       form.setValue('paymentTerms', paymentTermsText, { shouldDirty: false });
       form.setValue('dueDate', newDueDate, { shouldDirty: false });
     }
@@ -201,11 +204,11 @@ export default function CreateInvoicePage() {
       const unitPrice = Number(item.unitPrice) || 0;
       const taxRate = Number(item.taxRate) ?? 0;
       const calculatedAmount = Math.round(quantity * unitPrice * 100) / 100;
-      
+
       // Always update to ensure amounts are recalculated
       return { ...item, amount: calculatedAmount, quantity, unitPrice, taxRate };
     });
-    
+
     // Check if any values actually changed
     const hasChanges = updatedItems.some((item, index) => {
       const currentItem = currentItems[index];
@@ -219,7 +222,7 @@ export default function CreateInvoicePage() {
         item.unitPrice !== currentUnitPrice
       );
     });
-    
+
     if (hasChanges) {
       form.setValue('lineItems', updatedItems, { shouldDirty: false, shouldValidate: false });
     }
@@ -258,7 +261,7 @@ export default function CreateInvoicePage() {
 
     const clientAddress = [
       selectedClient.address,
-      `${selectedClient.city}, ${selectedClient.state} ${selectedClient.zip}`.trim()
+      `${selectedClient.city}, ${selectedClient.state} ${selectedClient.zip},`.trim()
     ]
       .filter(Boolean)
       .join('\n');
@@ -273,7 +276,8 @@ export default function CreateInvoicePage() {
           address: company.address,
           city: company.city,
           state: company.state,
-          zip: company.zip
+          zip: company.zip,
+          addressLine2: company.addressLine2 || ''
         }
       : undefined;
 
@@ -368,34 +372,34 @@ export default function CreateInvoicePage() {
   // Helper function to extract days from payment terms string
   const extractDaysFromPaymentTerms = (paymentTerms: string): number => {
     if (!paymentTerms) return 0;
-    
+
     // Handle "Due on Receipt" case
     if (paymentTerms.toLowerCase().includes('due on receipt') || paymentTerms.toLowerCase().includes('immediately')) {
       return 0;
     }
-    
+
     // Extract number from "Net X - Payment due within X days" format
     const match = paymentTerms.match(/Net\s+(\d+)/i);
     if (match && match[1]) {
       return parseInt(match[1], 10);
     }
-    
+
     // Fallback: try to extract any number from the string
     const numberMatch = paymentTerms.match(/(\d+)/);
     if (numberMatch && numberMatch[1]) {
       return parseInt(numberMatch[1], 10);
     }
-    
+
     return 0;
   };
 
   // Helper function to validate and prepare invoice data
   const prepareInvoiceData = (): CreateInvoiceAsDraftRequest | null => {
     const formData = form.getValues();
-    
+
     // Clear previous errors before validation
     form.clearErrors();
-    
+
     // Validate required fields
     if (!formData.clientId) {
       form.setError('clientId', { message: 'Client is required' }, { shouldFocus: true });
@@ -449,7 +453,7 @@ export default function CreateInvoicePage() {
     const issuedMinutes = issuedDate.getMinutes();
     const issuedSeconds = issuedDate.getSeconds();
     const issuedMilliseconds = issuedDate.getMilliseconds();
-    
+
     // Calculate dueDate by adding payment terms days to issuedDate
     const paymentTermsDays = extractDaysFromPaymentTerms(formData.paymentTerms || '');
     const dueDate = new Date(issuedDate);
@@ -477,7 +481,7 @@ export default function CreateInvoicePage() {
   const handleSaveDraft = async () => {
     // Trigger validation on all fields first to mark form as submitted
     await form.trigger();
-    
+
     // Then run our custom validation
     const invoiceData = prepareInvoiceData();
     if (!invoiceData) {
@@ -504,7 +508,7 @@ export default function CreateInvoicePage() {
   const handleCreateInvoice = async () => {
     // Trigger validation on all fields first to mark form as submitted
     await form.trigger();
-    
+
     // Then run our custom validation
     const invoiceData = prepareInvoiceData();
     if (!invoiceData) {
@@ -737,28 +741,28 @@ export default function CreateInvoicePage() {
                 </div>
               )
             }
-            
+
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3">
-              <Button 
-                variant="outline" 
-                onClick={handleSaveDraft} 
+              <Button
+                variant="outline"
+                onClick={handleSaveDraft}
                 className="flex-1 min-w-[120px]"
                 disabled={isCreatingDraft || isCreatingOnly || isCreatingAndSending}
               >
                 {isCreatingDraft ? 'Saving...' : 'Save as Draft'}
               </Button>
-              <Button 
+              <Button
                 variant="outline"
-                onClick={handleCreateOnly} 
+                onClick={handleCreateOnly}
                 className="flex-1 min-w-[120px]"
                 disabled={isCreatingDraft || isCreatingOnly || isCreatingAndSending}
               >
                 {isCreatingOnly ? 'Creating...' : 'Create Only'}
               </Button>
-              <Button 
-                onClick={handleCreateInvoice} 
+              <Button
+                onClick={handleCreateInvoice}
                 className="flex-1 min-w-[120px]"
                 disabled={isCreatingDraft || isCreatingOnly || isCreatingAndSending}
               >
