@@ -725,7 +725,7 @@ export default function Page() {
               </div>
               {!form.watch('sameBillingAddress') && (
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
-                  <InputField name="poolAddress" placeholder="Billing address" label="Billing address" />
+                  <InputField name="poolAddress" placeholder="Pool address" label="Pool address" />
                   <StateAndCitySelect stateName="poolState" cityName="poolCity" />
                   <InputField
                     className="min-w-fit"
