@@ -16,6 +16,7 @@ export const defaultSchemas = {
   stringOptional: z.string().optional(),
   address: commonStringSchema('Address'),
   clientAddressLine2: z.string().trim().optional(),
+  addressLine2: z.string().trim().optional(),
   city: commonStringSchema('City'),
   email: z
     .string({
