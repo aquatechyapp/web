@@ -44,6 +44,7 @@ export interface CreateClientWithAssignmentsData {
   sameBillingAddress: boolean;
   animalDanger: boolean;
   poolAddress?: string;
+  addressLine2?: string;
   poolState?: string;
   poolCity?: string;
   poolZip?: string;

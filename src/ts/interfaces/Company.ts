@@ -63,6 +63,7 @@ export type CompanyMember = {
   state: string;
   zip: string;
   addressCoords?: Coords;
+  addressLine2?: string | null;
 };
 
 export interface Company {

@@ -53,7 +53,8 @@ const additionalSchemas = z.object({
   companyOwnerId: z.string().min(1, {
     message: 'Company owner is required.'
   }),
-  clientAddressLine2: z.optional(z.string().trim())
+  clientAddressLine2: z.optional(z.string().trim()),
+  addressLine2: z.optional(z.string().trim())
   // Remove assignments from here since we handle them separately
 });
 
@@ -236,6 +237,7 @@ export default function Page() {
       form.setValue('poolState', form.getValues('clientState'));
       form.setValue('poolZip', form.getValues('clientZip'));
       form.setValue('clientAddressLine2', form.getValues('clientAddressLine2') || '');
+      form.setValue('addressLine2', form.getValues('clientAddressLine2') || '');
     }
   }
 
@@ -517,6 +519,7 @@ export default function Page() {
         sameBillingAddress: data.sameBillingAddress,
         animalDanger: data.animalDanger,
         poolAddress: data.poolAddress,
+        addressLine2: data.addressLine2 || '',
         poolState: data.poolState,
         poolCity: data.poolCity,
         poolZip: data.poolZip,
@@ -726,6 +729,11 @@ export default function Page() {
               {!form.watch('sameBillingAddress') && (
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                   <InputField name="poolAddress" placeholder="Pool address" label="Pool address" />
+                  <InputField
+                    name="addressLine2"
+                    label="Address Line 2"
+                    placeholder="Apt, suite, unit"
+                  />
                   <StateAndCitySelect stateName="poolState" cityName="poolCity" />
                   <InputField
                     className="min-w-fit"

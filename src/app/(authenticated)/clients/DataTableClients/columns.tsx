@@ -45,7 +45,7 @@ export const columns: ColumnDef<Client>[] = [
     cell: (props) => {
       return (
         <div className="">
-          {props.row.original.city}, {props.row.original.address}, {props.row.original.state}, {props.row.original.zip}.
+          {props.row.original.city}, {props.row.original.address} {props.row.original.addressLine2}, {props.row.original.state}, {props.row.original.zip}.
         </div>
       );
     },
