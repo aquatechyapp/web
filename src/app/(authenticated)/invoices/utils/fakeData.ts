@@ -28,7 +28,7 @@ export interface DetailedInvoiceCompanyOwner {
   city?: string;
   state?: string;
   zip?: string;
-  addressLine2: string;
+  addressLine2?: string;
 }
 
 export interface DetailedInvoice extends Invoice {

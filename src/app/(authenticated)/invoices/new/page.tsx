@@ -115,9 +115,6 @@ export default function CreateInvoicePage() {
     return clients.find((c) => c.id === watchedClientId);
   }, [clients, watchedClientId]);
 
-  console.log('Selected Client:', selectedClient);
-  console.log('Client:', clients);
-
   // Get company ID from selected client
   const companyId = useMemo(() => {
     return selectedClient?.companyOwner.id || '';
@@ -260,7 +257,7 @@ export default function CreateInvoicePage() {
     if (!selectedClient) return null;
 
     const clientAddress = [
-      selectedClient.address,
+      selectedClient.address, selectedClient.addressLine2,
       `${selectedClient.city}, ${selectedClient.state} ${selectedClient.zip},`.trim()
     ]
       .filter(Boolean)
