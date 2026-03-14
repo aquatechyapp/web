@@ -49,7 +49,7 @@ export function InvoiceView({ invoice }: InvoiceViewProps) {
   // Format company address from invoice companyOwner only
   const companyAddress = companyOwner
     ? [
-        companyOwner.address,
+        companyOwner.address, companyOwner.addressLine2,
         [companyOwner.city, companyOwner.state, companyOwner.zip].filter(Boolean).join(', ')
       ]
         .filter(Boolean)

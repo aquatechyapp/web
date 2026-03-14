@@ -28,6 +28,7 @@ export interface DetailedInvoiceCompanyOwner {
   city?: string;
   state?: string;
   zip?: string;
+  addressLine2?: string;
 }
 
 export interface DetailedInvoice extends Invoice {
@@ -87,14 +88,14 @@ export function generateFakeInvoices(count: number = 25): Invoice[] {
     const issuedDate = randomDate(sixMonthsAgo, now);
     const daysUntilDue = randomInt(15, 45);
     const dueDate = new Date(issuedDate.getTime() + daysUntilDue * 24 * 60 * 60 * 1000);
-    
+
     let status: Invoice['status'] = randomElement(statuses);
-    
+
     // If due date has passed and not paid or cancelled, mark as overdue
     if (dueDate < now && status !== 'paid' && status !== 'cancelled') {
       status = 'overdue';
     }
-    
+
     // If due date hasn't passed and status is overdue, change to unpaid
     if (dueDate >= now && status === 'overdue') {
       status = 'unpaid';
@@ -177,7 +178,7 @@ export function getDetailedInvoice(invoice: Invoice): DetailedInvoice {
   // Generate random line items (1-5 items)
   const numItems = randomInt(1, 5);
   const lineItems: InvoiceLineItem[] = [];
-  
+
   let subtotal = 0;
   for (let i = 0; i < numItems; i++) {
     const description = randomElement(serviceDescriptions);
@@ -198,7 +199,7 @@ export function getDetailedInvoice(invoice: Invoice): DetailedInvoice {
 
     subtotal += amount;
   }
-  
+
   // Ensure subtotal matches the invoice amount (approximately)
   // Adjust the last item if needed
   if (lineItems.length > 0) {
