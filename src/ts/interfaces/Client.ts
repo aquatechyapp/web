@@ -6,7 +6,6 @@ import { Company } from './Company';
 export interface Client {
   id: string;
   address: string;
-  addressLine2?: string;
   city: string;
   company: string;
   customerCode: string;
