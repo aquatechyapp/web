@@ -30,17 +30,24 @@ export default function TechnicianReportPage() {
   // define 'from' como 1 dia antes do 'to'
   const defaultFrom = useMemo(() => {
     const date = new Date();
-    date.setDate(date.getDate() - 1);
+    date.setDate(date.getDate() - 2);
     date.setHours(0, 0, 0, 0);
+    return date;
+  }, []);
+
+  const defaultTo = useMemo(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    date.setHours(23, 59, 59, 999);
     return date;
   }, []);
 
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedTechnician, setSelectedTechnician] = useState<string>('');
   const [fromDate, setFromDate] = useState<Date | undefined>(defaultFrom);
-  const [toDate, setToDate] = useState<Date | undefined>(new Date());
-  const [toDateString, setToDateString] = useState<string | undefined>(new Date().toISOString());
+  const [toDate, setToDate] = useState<Date | undefined>(defaultTo);
   const [fromDateString, setFromDateString] = useState<string | undefined>(defaultFrom.toISOString());
+  const [toDateString, setToDateString] = useState<string | undefined>(defaultTo.toISOString());
 
   const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>([]);
   const [serviceTypePayments, setServiceTypePayments] = useState<{[key: string]: {
@@ -177,10 +184,6 @@ export default function TechnicianReportPage() {
         serviceTypes: serviceTypesWithPayments,
         fromDate: fromDateString!,
         toDate: toDateString!,
-        // assignedToId: '68583a38ee3703ae8bbc6814',
-        // companyId: '6851cc016cf25bdb17a55ca6',
-        // fromDate: new Date('2025-09-29'),
-        // toDate: new Date('2025-10-04')
       } as any);
       setSelectedServiceTypes([]);
       setServiceTypePayments({});
@@ -202,14 +205,16 @@ export default function TechnicianReportPage() {
     for (const serviceTypeId of selectedServiceTypes) {
       const payment = serviceTypePayments[serviceTypeId];
       if (!payment) return false;
-      
+
       if (payment.calculateMethod === "amount") {
         const amount = parsePaymentValue(payment.paymentAmountPerService);
-        if (amount === null || amount < 0) {
+        // Require a filled, positive amount (0 or empty is not valid)
+        if (amount === null || amount <= 0) {
           return false;
         }
       } else if (payment.calculateMethod === "percentage") {
         const percentage = parsePaymentValue(payment.paymentPercentagePerService);
+        // Require a filled percentage in valid range (empty is not valid)
         if (percentage === null || percentage < 0 || percentage > 100) {
           return false;
         }
