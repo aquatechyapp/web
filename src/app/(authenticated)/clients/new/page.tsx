@@ -54,7 +54,6 @@ const additionalSchemas = z.object({
     message: 'Company owner is required.'
   }),
   clientAddressLine2: z.optional(z.string().trim()),
-  addressLine2: z.optional(z.string().trim())
   // Remove assignments from here since we handle them separately
 });
 
@@ -237,7 +236,6 @@ export default function Page() {
       form.setValue('poolState', form.getValues('clientState'));
       form.setValue('poolZip', form.getValues('clientZip'));
       form.setValue('clientAddressLine2', form.getValues('clientAddressLine2') || '');
-      form.setValue('addressLine2', form.getValues('clientAddressLine2') || '');
     }
   }
 
@@ -519,7 +517,6 @@ export default function Page() {
         sameBillingAddress: data.sameBillingAddress,
         animalDanger: data.animalDanger,
         poolAddress: data.poolAddress,
-        addressLine2: data.addressLine2 || '',
         poolState: data.poolState,
         poolCity: data.poolCity,
         poolZip: data.poolZip,
