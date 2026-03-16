@@ -36,7 +36,7 @@ export const columns: ColumnDef<Service>[] = [
           {original.pool?.clientOwner?.firstName} {original.pool?.clientOwner?.lastName}
         </div>
         <div>
-          {original.pool?.address}, {original.pool?.city}, {original.pool?.state}, {original.pool?.zip}
+          {original.pool?.address} {original.pool?.addressLine2}, {original.pool?.city}, {original.pool?.state}, {original.pool?.zip}
         </div>
       </>
       ) : (
@@ -45,7 +45,7 @@ export const columns: ColumnDef<Service>[] = [
             {original.clientOwner?.firstName} {original.clientOwner?.lastName}
           </div>
           <div>
-            {original.pool?.address}, {original.pool?.city}, {original.pool?.state}, {original.pool?.zip}
+            {original.pool?.address} {original.pool?.addressLine2}, {original.pool?.city}, {original.pool?.state}, {original.pool?.zip}
           </div>
         </>
       )
@@ -68,7 +68,7 @@ export const columns: ColumnDef<Service>[] = [
       // vem do back como string
       if (typeof date === 'string') date = new Date(date);
       if (!date) return false;
-      
+
       if (start && !end) {
         return date.getTime() >= start.getTime();
       } else if (!start && end) {

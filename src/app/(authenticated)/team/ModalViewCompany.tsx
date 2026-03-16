@@ -77,7 +77,8 @@ const schema = z.object({
       required_error: 'status is required.',
       invalid_type_error: "status must be 'Active' or 'Inactive'."
     })
-    .optional()
+    .optional(),
+    addressLine2:z.optional(z.string().trim())
 });
 
 export type FormSchema = z.infer<typeof schema>;
@@ -104,7 +105,8 @@ export function ModalViewCompany({ children, companyId }: PropsView) {
       city: selectedCompany?.city,
       state: selectedCompany?.state,
       zip: selectedCompany?.zip,
-      status: selectedCompany?.status
+      status: selectedCompany?.status,
+      addressLine2: selectedCompany?.addressLine2 || ''
     }
   });
 
@@ -130,7 +132,9 @@ export function ModalViewCompany({ children, companyId }: PropsView) {
                 <div className="mb-4">
                   <InputField name="address" label="Address" disabled placeholder="Address" />
                 </div>
-
+                 <div className="mb-4">
+                  <InputField name="addressLine2" label="Address Line 2" disabled placeholder="Address Line 2" />
+                </div>
                 <div className="mb-4">
                   <InputField name="city" label="City" disabled placeholder="City" />
                 </div>

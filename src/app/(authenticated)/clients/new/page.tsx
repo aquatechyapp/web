@@ -53,7 +53,7 @@ const additionalSchemas = z.object({
   companyOwnerId: z.string().min(1, {
     message: 'Company owner is required.'
   }),
-  clientAddressLine2: z.optional(z.string().trim())
+  clientAddressLine2: z.optional(z.string().trim()),
   // Remove assignments from here since we handle them separately
 });
 
@@ -726,6 +726,11 @@ export default function Page() {
               {!form.watch('sameBillingAddress') && (
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                   <InputField name="poolAddress" placeholder="Pool address" label="Pool address" />
+                  <InputField
+                    name="addressLine2"
+                    label="Address Line 2"
+                    placeholder="Apt, suite, unit"
+                  />
                   <StateAndCitySelect stateName="poolState" cityName="poolCity" />
                   <InputField
                     className="min-w-fit"

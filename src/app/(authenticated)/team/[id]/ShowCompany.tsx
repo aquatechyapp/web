@@ -40,7 +40,7 @@ export default function ShowCompany({ company }: Props) {
                 <div className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px] text-gray-800">
                   {company.name}
                 </div>
-                <div className="text-sm font-medium text-gray-500">{company.address}</div>
+                <div className="text-sm font-medium text-gray-500">{company.address}, {company.addressLine2}</div>
               </div>
             </div>
             <div className="flex flex-row flex-wrap items-start justify-start gap-[18px] self-start lg:flex-col lg:flex-nowrap">
@@ -119,7 +119,7 @@ export default function ShowCompany({ company }: Props) {
                 </div>
                 {tab === 'preferences' && <div className="h-0.5 self-stretch bg-gray-800" />}
               </div>
-                
+
             </div>
             {tab === 'company_info' ? (
               <CompanyInfo company={company} />
