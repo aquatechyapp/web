@@ -45,6 +45,7 @@ export interface CreateClientWithAssignmentsData {
   animalDanger: boolean;
   poolAddress?: string;
   addressLine2?: string;
+  poolAddressLine2?: string;
   poolState?: string;
   poolCity?: string;
   poolZip?: string;
