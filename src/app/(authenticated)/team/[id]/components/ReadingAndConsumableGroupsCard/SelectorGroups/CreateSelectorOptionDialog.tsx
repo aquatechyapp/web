@@ -12,9 +12,48 @@ import { Input } from '@/components/ui/input';
 
 import { CreateSelectorOptionRequest, SelectorDefinition, SelectorOption } from '@/ts/interfaces/SelectorGroups';
 
-const createSelectorOptionSchema = z.object({
-  text: z.string().min(1, 'Display text is required').max(100, 'Display text must be less than 100 characters'),
-});
+const SELECTOR_LIMITS = {
+  optionText: { min: 1, max: 50 },
+  optionValue: { min: 1, max: 50 },
+} as const;
+
+function generateSelectorOptionValueFromText(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '');
+}
+
+function getGeneratedOptionValueFromTextError(displayText: string): string | undefined {
+  const value = generateSelectorOptionValueFromText(displayText);
+  if (value.length < SELECTOR_LIMITS.optionValue.min) {
+    return 'Display text must yield a non-empty value (use letters or numbers).';
+  }
+  if (value.length > SELECTOR_LIMITS.optionValue.max) {
+    return `Value is too long (${value.length} characters). Use a shorter display text (max ${SELECTOR_LIMITS.optionValue.max} characters in the generated value).`;
+  }
+  return undefined;
+}
+
+const selectorOptionTextSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.optionText.min, 'Display text is required')
+  .max(SELECTOR_LIMITS.optionText.max, `Display text must be at most ${SELECTOR_LIMITS.optionText.max} characters`);
+
+const createSelectorOptionSchema = z
+  .object({
+    text: selectorOptionTextSchema,
+  })
+  .superRefine((data, ctx) => {
+    const msg = getGeneratedOptionValueFromTextError(data.text);
+    if (msg) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: msg, path: ['text'] });
+    }
+  });
 
 type CreateSelectorOptionFormData = z.infer<typeof createSelectorOptionSchema>;
 
@@ -51,17 +90,6 @@ export function CreateSelectorOptionDialog({
     }
   }, [open, form]);
 
-  // Helper function to generate value from text
-  const generateValueFromText = (text: string): string => {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9\s]/g, '') // Remove special characters except spaces
-      .replace(/\s+/g, '_') // Replace spaces with underscores
-      .replace(/_+/g, '_') // Replace multiple underscores with single underscore
-      .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
-  };
-
   // Helper function to get next available order
   const getNextOrder = (): number => {
     if (existingOptions.length === 0) return 0;
@@ -70,13 +98,13 @@ export function CreateSelectorOptionDialog({
   };
 
   const handleSubmit = (data: CreateSelectorOptionFormData) => {
-    const value = generateValueFromText(data.text);
+    const value = generateSelectorOptionValueFromText(data.text);
     const order = getNextOrder();
 
     onSubmit({
-      text: data.text,
-      value: value,
-      order: order,
+      text: data.text.trim(),
+      value,
+      order,
     });
   };
 
@@ -105,6 +133,7 @@ export function CreateSelectorOptionDialog({
                     <Input
                       placeholder="e.g., Excellent, Good, Fair, Poor, Yes, No, High, Medium, Low"
                       disabled={isLoading}
+                      maxLength={SELECTOR_LIMITS.optionText.max}
                       {...field}
                     />
                   </FormControl>

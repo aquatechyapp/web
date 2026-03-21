@@ -13,6 +13,7 @@ export const useLinkConsumableGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['service-type-groups'],
     mutationFn: async ({ serviceTypeId, data }: { serviceTypeId: string; data: LinkConsumableGroupRequest }): Promise<ServiceTypeConsumableGroupResponse> => {
       const response = await clientAxios.post(`/service-types/${serviceTypeId}/consumable-groups`, data);
       return response.data;

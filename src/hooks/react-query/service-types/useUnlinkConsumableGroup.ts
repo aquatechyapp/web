@@ -12,6 +12,7 @@ export const useUnlinkConsumableGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['service-type-groups'],
     mutationFn: async ({ serviceTypeId, consumableGroupId }: { serviceTypeId: string; consumableGroupId: string }): Promise<void> => {
       await clientAxios.delete(`/service-types/${serviceTypeId}/consumable-groups/${consumableGroupId}`);
     },

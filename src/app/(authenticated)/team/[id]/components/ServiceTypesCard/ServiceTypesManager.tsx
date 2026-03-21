@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useIsMutating } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -58,6 +59,9 @@ export function ServiceTypesManager({ companyId }: ServiceTypesManagerProps) {
   const { mutate: unlinkPhotoGroup } = useUnlinkPhotoGroup();
   const { mutate: linkSelectorGroup } = useLinkSelectorGroup();
   const { mutate: unlinkSelectorGroup } = useUnlinkSelectorGroup();
+
+  const isLinkingGroups =
+    useIsMutating({ mutationKey: ['service-type-groups'] }) > 0;
 
   const serviceTypes = serviceTypesData?.serviceTypes || [];
   const checklistTemplates = checklistTemplatesData?.templates || [];
@@ -227,6 +231,7 @@ export function ServiceTypesManager({ companyId }: ServiceTypesManagerProps) {
         companyId={companyId}
         onSubmit={handleUpdateServiceType}
         isLoading={isUpdating}
+        isLinkingGroups={isLinkingGroups}
         checklistTemplates={checklistTemplates}
         readingGroups={readingGroups}
         consumableGroups={consumableGroups}

@@ -16,22 +16,96 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
-import { CreateSelectorGroupRequest, CreateSelectorGroupDefinitionRequest, CreateSelectorGroupOptionRequest } from '@/ts/interfaces/SelectorGroups';
+import { CreateSelectorGroupRequest, CreateSelectorGroupDefinitionRequest } from '@/ts/interfaces/SelectorGroups';
 
-const createSelectorGroupSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
-  description: z.string().max(500, 'Description must be less than 500 characters').optional(),
-  isDefault: z.boolean().optional(),
-  selectorDefinitions: z.array(z.object({
-    question: z.string().min(1, 'Question is required').max(200, 'Question must be less than 200 characters'),
-    isRequired: z.boolean().optional(),
-    order: z.number().min(0, 'Order must be 0 or greater'),
-    options: z.array(z.object({
-      text: z.string().min(1, 'Option text is required').max(100, 'Option text must be less than 100 characters'),
-      order: z.number().min(0, 'Order must be 0 or greater'),
-    })).optional(),
-  })).optional(),
-});
+/** API: lengths on trimmed strings */
+const SELECTOR_LIMITS = {
+  groupName: { min: 1, max: 100 },
+  groupDescription: { max: 500 },
+  definitionQuestion: { min: 1, max: 200 },
+  optionText: { min: 1, max: 50 },
+  optionValue: { min: 1, max: 50 },
+} as const;
+
+function generateSelectorOptionValueFromText(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '');
+}
+
+const selectorGroupNameSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.groupName.min, 'Name is required')
+  .max(SELECTOR_LIMITS.groupName.max, `Name must be at most ${SELECTOR_LIMITS.groupName.max} characters`);
+
+const selectorDefinitionQuestionSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.definitionQuestion.min, 'Question is required')
+  .max(
+    SELECTOR_LIMITS.definitionQuestion.max,
+    `Question must be at most ${SELECTOR_LIMITS.definitionQuestion.max} characters`
+  );
+
+const selectorOptionTextSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.optionText.min, 'Display text is required')
+  .max(SELECTOR_LIMITS.optionText.max, `Display text must be at most ${SELECTOR_LIMITS.optionText.max} characters`);
+
+const nonNegativeOrderSchema = z.number().int().min(0, 'Order must be 0 or greater');
+
+const createSelectorGroupSchema = z
+  .object({
+    name: selectorGroupNameSchema,
+    description: z
+      .string()
+      .trim()
+      .max(
+        SELECTOR_LIMITS.groupDescription.max,
+        `Description must be at most ${SELECTOR_LIMITS.groupDescription.max} characters`
+      ),
+    isDefault: z.boolean().optional(),
+    selectorDefinitions: z
+      .array(
+        z.object({
+          question: selectorDefinitionQuestionSchema,
+          isRequired: z.boolean().optional(),
+          order: nonNegativeOrderSchema,
+          options: z
+            .array(
+              z.object({
+                text: selectorOptionTextSchema,
+                order: nonNegativeOrderSchema,
+              })
+            )
+            .optional(),
+        })
+      )
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    data.selectorDefinitions?.forEach((def, di) => {
+      def.options?.forEach((opt, oi) => {
+        const value = generateSelectorOptionValueFromText(opt.text);
+        if (value.length < SELECTOR_LIMITS.optionValue.min || value.length > SELECTOR_LIMITS.optionValue.max) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message:
+              value.length > SELECTOR_LIMITS.optionValue.max
+                ? `Value is too long (max ${SELECTOR_LIMITS.optionValue.max} characters). Shorten this option's text.`
+                : 'Display text must produce a non-empty value (use letters or numbers).',
+            path: ['selectorDefinitions', di, 'options', oi, 'text'],
+          });
+        }
+      });
+    });
+  });
 
 type CreateSelectorGroupFormData = z.infer<typeof createSelectorGroupSchema>;
 
@@ -78,21 +152,10 @@ export function CreateSelectorGroupDialog({
     }
   }, [open, form]);
 
-  // Helper function to generate value from text
-  const generateValueFromText = (text: string): string => {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9\s]/g, '')
-      .replace(/\s+/g, '_')
-      .replace(/_+/g, '_')
-      .replace(/^_|_$/g, '');
-  };
-
   const handleSubmit = (data: CreateSelectorGroupFormData) => {
     const requestData: CreateSelectorGroupRequest = {
-      name: data.name,
-      description: data.description || undefined,
+      name: data.name.trim(),
+      description: data.description?.trim() ? data.description.trim() : undefined,
       isDefault: data.isDefault,
       order: 0, // Will be set by backend
     };
@@ -101,7 +164,7 @@ export function CreateSelectorGroupDialog({
     if (data.selectorDefinitions && data.selectorDefinitions.length > 0) {
       requestData.selectorDefinitions = data.selectorDefinitions.map((def, defIndex) => {
         const definition: CreateSelectorGroupDefinitionRequest = {
-          question: def.question,
+          question: def.question.trim(),
           isRequired: def.isRequired || false,
           order: defIndex,
         };
@@ -109,8 +172,8 @@ export function CreateSelectorGroupDialog({
         // Process options if provided
         if (def.options && def.options.length > 0) {
           definition.options = def.options.map((option, optionIndex) => ({
-            text: option.text,
-            value: generateValueFromText(option.text),
+            text: option.text.trim(),
+            value: generateSelectorOptionValueFromText(option.text),
             order: optionIndex,
           }));
         }
@@ -146,6 +209,7 @@ export function CreateSelectorGroupDialog({
                       <Input
                         placeholder="e.g., Basic Questions, Equipment Status"
                         disabled={isLoading}
+                        maxLength={SELECTOR_LIMITS.groupName.max}
                         {...field}
                       />
                     </FormControl>
@@ -164,6 +228,7 @@ export function CreateSelectorGroupDialog({
                         placeholder="Optional description for this selector group"
                         className="resize-none"
                         disabled={isLoading}
+                        maxLength={SELECTOR_LIMITS.groupDescription.max}
                         {...field}
                       />
                     </FormControl>
@@ -249,6 +314,7 @@ export function CreateSelectorGroupDialog({
                                 <Input
                                   placeholder="e.g., Was the gate closed?"
                                   disabled={isLoading}
+                                  maxLength={SELECTOR_LIMITS.definitionQuestion.max}
                                   {...field}
                                 />
                               </FormControl>
@@ -312,6 +378,7 @@ export function CreateSelectorGroupDialog({
                                       <Input
                                         placeholder="e.g., Yes, No, Excellent, Good"
                                         disabled={isLoading}
+                                        maxLength={SELECTOR_LIMITS.optionText.max}
                                         {...field}
                                       />
                                     </FormControl>

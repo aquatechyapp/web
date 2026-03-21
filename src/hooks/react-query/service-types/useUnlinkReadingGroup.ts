@@ -12,6 +12,7 @@ export const useUnlinkReadingGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['service-type-groups'],
     mutationFn: async ({ serviceTypeId, readingGroupId }: { serviceTypeId: string; readingGroupId: string }): Promise<void> => {
       await clientAxios.delete(`/service-types/${serviceTypeId}/reading-groups/${readingGroupId}`);
     },

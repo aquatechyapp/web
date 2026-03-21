@@ -14,9 +14,26 @@ import { Switch } from '@/components/ui/switch';
 
 import { SelectorGroup, UpdateSelectorGroupRequest } from '@/ts/interfaces/SelectorGroups';
 
+const SELECTOR_LIMITS = {
+  groupName: { min: 1, max: 100 },
+  groupDescription: { max: 500 },
+} as const;
+
+const selectorGroupNameSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.groupName.min, 'Name is required')
+  .max(SELECTOR_LIMITS.groupName.max, `Name must be at most ${SELECTOR_LIMITS.groupName.max} characters`);
+
 const updateSelectorGroupSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
-  description: z.string().max(500, 'Description must be less than 500 characters').optional(),
+  name: selectorGroupNameSchema,
+  description: z
+    .string()
+    .trim()
+    .max(
+      SELECTOR_LIMITS.groupDescription.max,
+      `Description must be at most ${SELECTOR_LIMITS.groupDescription.max} characters`
+    ),
   isActive: z.boolean(),
 });
 
@@ -59,8 +76,8 @@ export function EditSelectorGroupDialog({
 
   const handleSubmit = (data: UpdateSelectorGroupFormData) => {
     onSubmit({
-      name: data.name,
-      description: data.description || undefined,
+      name: data.name.trim(),
+      description: data.description?.trim() ? data.description.trim() : undefined,
       isActive: data.isActive,
     });
   };
@@ -87,7 +104,11 @@ export function EditSelectorGroupDialog({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Basic Questions, Equipment Status" {...field} />
+                    <Input
+                      placeholder="e.g., Basic Questions, Equipment Status"
+                      maxLength={SELECTOR_LIMITS.groupName.max}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -103,6 +124,7 @@ export function EditSelectorGroupDialog({
                     <Textarea
                       placeholder="Optional description for this selector group"
                       className="resize-none"
+                      maxLength={SELECTOR_LIMITS.groupDescription.max}
                       {...field}
                     />
                   </FormControl>

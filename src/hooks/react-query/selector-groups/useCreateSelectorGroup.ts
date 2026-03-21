@@ -2,6 +2,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { clientAxios } from '@/lib/clientAxios';
 import { CreateSelectorGroupRequest, SelectorGroupResponse, CreateSelectorGroupDefinitionRequest, CreateSelectorGroupOptionRequest } from '@/ts/interfaces/SelectorGroups';
+
+function generateSelectorOptionValueFromText(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '');
+}
 import { useToast } from '@/components/ui/use-toast';
 
 interface CreateSelectorGroupParams {
@@ -18,8 +28,8 @@ export function useCreateSelectorGroup() {
       try {
         // Step 1: Create the selector group (without definitions)
         const groupData = {
-          name: data.name,
-          description: data.description,
+          name: data.name.trim(),
+          description: data.description?.trim() ? data.description.trim() : undefined,
           isDefault: data.isDefault,
           order: data.order || 0,
         };
@@ -33,7 +43,7 @@ export function useCreateSelectorGroup() {
 
           for (const defData of data.selectorDefinitions) {
             const definitionData = {
-              question: defData.question,
+              question: defData.question.trim(),
               isRequired: defData.isRequired || false,
               order: defData.order,
             };
@@ -46,14 +56,8 @@ export function useCreateSelectorGroup() {
             if (defData.options && defData.options.length > 0) {
               for (const optionData of defData.options) {
                 const optionRequestData = {
-                  text: optionData.text,
-                  value: optionData.value || optionData.text
-                    .toLowerCase()
-                    .trim()
-                    .replace(/[^a-z0-9\s]/g, '')
-                    .replace(/\s+/g, '_')
-                    .replace(/_+/g, '_')
-                    .replace(/^_|_$/g, ''),
+                  text: optionData.text.trim(),
+                  value: optionData.value?.trim() || generateSelectorOptionValueFromText(optionData.text),
                   order: optionData.order,
                 };
 

@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { X, Plus } from 'lucide-react';
+import { Loader2, X, Plus } from 'lucide-react';
 
 import { ServiceType, UpdateServiceTypeRequest } from '@/ts/interfaces/ServiceTypes';
 import { ChecklistTemplate } from '@/ts/interfaces/ChecklistTemplates';
@@ -24,6 +24,7 @@ import { ConsumableGroup } from '@/ts/interfaces/ConsumableGroups';
 import { PhotoGroup } from '@/ts/interfaces/PhotoGroups';
 import { SelectorGroup } from '@/ts/interfaces/SelectorGroups';
 import { useGetServiceTypes } from '@/hooks/react-query/service-types/useGetServiceTypes';
+import { cn } from '@/lib/utils';
 
 const updateServiceTypeSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
@@ -39,6 +40,7 @@ interface EditServiceTypeDialogProps {
   companyId: string;
   onSubmit: (data: UpdateServiceTypeRequest) => void;
   isLoading: boolean;
+  isLinkingGroups: boolean;
   checklistTemplates: ChecklistTemplate[];
   readingGroups: ReadingGroup[];
   consumableGroups: ConsumableGroup[];
@@ -61,6 +63,7 @@ export function EditServiceTypeDialog({
   companyId,
   onSubmit,
   isLoading,
+  isLinkingGroups,
   checklistTemplates,
   readingGroups,
   consumableGroups,
@@ -219,8 +222,21 @@ export function EditServiceTypeDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen && isLinkingGroups) return;
+        if (!nextOpen) handleClose();
+      }}
+    >
+      <DialogContent
+        className={cn(
+          'relative sm:max-w-[800px] max-h-[80vh] overflow-y-auto',
+          isLinkingGroups && '[&>button]:pointer-events-none [&>button]:invisible'
+        )}
+        onPointerDownOutside={(e) => isLinkingGroups && e.preventDefault()}
+        onEscapeKeyDown={(e) => isLinkingGroups && e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Configure Service Type: {currentServiceType.name}</DialogTitle>
           <DialogDescription>
@@ -838,6 +854,19 @@ export function EditServiceTypeDialog({
           </TabsContent>
         </Tabs>
 
+        {isLinkingGroups && (
+          <div
+            className="absolute inset-0 z-[100] flex flex-col items-center justify-center gap-3 rounded-lg bg-background/85 p-6 backdrop-blur-sm"
+            aria-busy="true"
+            aria-live="polite"
+          >
+            <Loader2 className="h-10 w-10 shrink-0 animate-spin text-primary" />
+            <p className="text-center text-sm font-medium">Do not close this screen</p>
+            <p className="text-center text-xs text-muted-foreground">
+              Saving links to this service type…
+            </p>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

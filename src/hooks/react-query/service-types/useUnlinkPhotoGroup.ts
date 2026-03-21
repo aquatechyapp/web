@@ -16,6 +16,7 @@ export const useUnlinkPhotoGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['service-type-groups'],
     mutationFn: async ({ serviceTypeId, photoGroupId }: UnlinkPhotoGroupParams): Promise<void> => {
       await clientAxios.delete(`/service-types/${serviceTypeId}/photo-groups/${photoGroupId}`);
     },

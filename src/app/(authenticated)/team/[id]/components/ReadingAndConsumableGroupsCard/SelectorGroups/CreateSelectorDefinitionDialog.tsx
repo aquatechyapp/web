@@ -13,8 +13,21 @@ import { Switch } from '@/components/ui/switch';
 
 import { CreateSelectorDefinitionRequest } from '@/ts/interfaces/SelectorGroups';
 
+const SELECTOR_LIMITS = {
+  definitionQuestion: { min: 1, max: 200 },
+} as const;
+
+const selectorDefinitionQuestionSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.definitionQuestion.min, 'Question is required')
+  .max(
+    SELECTOR_LIMITS.definitionQuestion.max,
+    `Question must be at most ${SELECTOR_LIMITS.definitionQuestion.max} characters`
+  );
+
 const createSelectorDefinitionSchema = z.object({
-  question: z.string().min(1, 'Question is required').max(200, 'Question must be less than 200 characters'),
+  question: selectorDefinitionQuestionSchema,
   isRequired: z.boolean(),
 });
 
@@ -55,7 +68,7 @@ export function CreateSelectorDefinitionDialog({
 
   const handleSubmit = (data: CreateSelectorDefinitionFormData) => {
     onSubmit({
-      question: data.question,
+      question: data.question.trim(),
       isRequired: data.isRequired,
     });
   };
@@ -78,7 +91,11 @@ export function CreateSelectorDefinitionDialog({
                 <FormItem>
                   <FormLabel>Question *</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., What is the pool condition?" {...field} />
+                    <Input
+                      placeholder="e.g., What is the pool condition?"
+                      maxLength={SELECTOR_LIMITS.definitionQuestion.max}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

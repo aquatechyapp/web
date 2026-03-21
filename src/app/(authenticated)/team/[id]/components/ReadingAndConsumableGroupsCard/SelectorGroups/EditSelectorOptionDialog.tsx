@@ -12,10 +12,29 @@ import { Input } from '@/components/ui/input';
 
 import { SelectorOption, UpdateSelectorOptionRequest, SelectorDefinition } from '@/ts/interfaces/SelectorGroups';
 
+const SELECTOR_LIMITS = {
+  optionText: { min: 1, max: 50 },
+  optionValue: { min: 1, max: 50 },
+} as const;
+
+const selectorOptionTextSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.optionText.min, 'Display text is required')
+  .max(SELECTOR_LIMITS.optionText.max, `Display text must be at most ${SELECTOR_LIMITS.optionText.max} characters`);
+
+const selectorOptionValueSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.optionValue.min, 'Value is required')
+  .max(SELECTOR_LIMITS.optionValue.max, `Value must be at most ${SELECTOR_LIMITS.optionValue.max} characters`);
+
+const nonNegativeOrderSchema = z.number().int().min(0, 'Order must be 0 or greater');
+
 const updateSelectorOptionSchema = z.object({
-  text: z.string().min(1, 'Text is required').max(100, 'Text must be less than 100 characters'),
-  value: z.string().min(1, 'Value is required').max(50, 'Value must be less than 50 characters'),
-  order: z.number().min(0, 'Order must be 0 or greater'),
+  text: selectorOptionTextSchema,
+  value: selectorOptionValueSchema,
+  order: nonNegativeOrderSchema,
 });
 
 type UpdateSelectorOptionFormData = z.infer<typeof updateSelectorOptionSchema>;
@@ -59,8 +78,8 @@ export function EditSelectorOptionDialog({
 
   const handleSubmit = (data: UpdateSelectorOptionFormData) => {
     onSubmit({
-      text: data.text,
-      value: data.value,
+      text: data.text.trim(),
+      value: data.value.trim(),
       order: data.order,
     });
   };
@@ -87,7 +106,11 @@ export function EditSelectorOptionDialog({
                 <FormItem>
                   <FormLabel>Display Text *</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Excellent, Good, Fair, Poor" {...field} />
+                    <Input
+                      placeholder="e.g., Excellent, Good, Fair, Poor"
+                      maxLength={SELECTOR_LIMITS.optionText.max}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

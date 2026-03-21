@@ -36,6 +36,197 @@ import { EditSelectorDefinitionDialog } from './EditSelectorDefinitionDialog';
 import { CreateSelectorOptionDialog } from './CreateSelectorOptionDialog';
 import { EditSelectorOptionDialog } from './EditSelectorOptionDialog';
 import ConfirmActionDialog from '@/components/confirm-action-dialog';
+import { useToast } from '@/components/ui/use-toast';
+import { z } from 'zod';
+
+/** API: lengths on trimmed strings */
+const SELECTOR_LIMITS = {
+  groupName: { min: 1, max: 100 },
+  groupDescription: { max: 500 },
+  definitionQuestion: { min: 1, max: 200 },
+  definitionDescription: { max: 500 },
+  optionText: { min: 1, max: 50 },
+  optionValue: { min: 1, max: 50 },
+} as const;
+
+const selectorGroupNameSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.groupName.min, 'Name is required')
+  .max(SELECTOR_LIMITS.groupName.max, `Name must be at most ${SELECTOR_LIMITS.groupName.max} characters`);
+
+const selectorGroupDescriptionSchema = z
+  .string()
+  .trim()
+  .max(SELECTOR_LIMITS.groupDescription.max, `Description must be at most ${SELECTOR_LIMITS.groupDescription.max} characters`);
+
+const selectorDefinitionQuestionSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.definitionQuestion.min, 'Question is required')
+  .max(
+    SELECTOR_LIMITS.definitionQuestion.max,
+    `Question must be at most ${SELECTOR_LIMITS.definitionQuestion.max} characters`
+  );
+
+const selectorDefinitionDescriptionSchema = z
+  .string()
+  .trim()
+  .max(
+    SELECTOR_LIMITS.definitionDescription.max,
+    `Description must be at most ${SELECTOR_LIMITS.definitionDescription.max} characters`
+  );
+
+const selectorOptionTextSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.optionText.min, 'Display text is required')
+  .max(SELECTOR_LIMITS.optionText.max, `Display text must be at most ${SELECTOR_LIMITS.optionText.max} characters`);
+
+const selectorOptionValueSchema = z
+  .string()
+  .trim()
+  .min(SELECTOR_LIMITS.optionValue.min, 'Value is required')
+  .max(SELECTOR_LIMITS.optionValue.max, `Value must be at most ${SELECTOR_LIMITS.optionValue.max} characters`);
+
+const nonNegativeOrderSchema = z.number().int().min(0, 'Order must be 0 or greater');
+
+function getSelectorGroupNameError(name: string): string | undefined {
+  const r = selectorGroupNameSchema.safeParse(name);
+  return r.success ? undefined : r.error.issues[0]?.message;
+}
+
+function getSelectorGroupDescriptionError(description: string | null | undefined): string | undefined {
+  if (description == null || description === '') return undefined;
+  const r = selectorGroupDescriptionSchema.safeParse(description);
+  return r.success ? undefined : r.error.issues[0]?.message;
+}
+
+function getSelectorDefinitionQuestionError(question: string): string | undefined {
+  const r = selectorDefinitionQuestionSchema.safeParse(question);
+  return r.success ? undefined : r.error.issues[0]?.message;
+}
+
+function getSelectorDefinitionDescriptionError(description: string | null | undefined): string | undefined {
+  if (description == null || description === '') return undefined;
+  const r = selectorDefinitionDescriptionSchema.safeParse(description);
+  return r.success ? undefined : r.error.issues[0]?.message;
+}
+
+function getSelectorOptionTextError(text: string): string | undefined {
+  const r = selectorOptionTextSchema.safeParse(text);
+  return r.success ? undefined : r.error.issues[0]?.message;
+}
+
+function getSelectorOptionValueError(value: string): string | undefined {
+  const r = selectorOptionValueSchema.safeParse(value);
+  return r.success ? undefined : r.error.issues[0]?.message;
+}
+
+function validateSelectorGroupFields(name: string, description: string | null | undefined): string | undefined {
+  return getSelectorGroupNameError(name) ?? getSelectorGroupDescriptionError(description ?? undefined);
+}
+
+function validateBatchDefinitionCreate(row: BatchSelectorDefinitionCreate): string | undefined {
+  const q = getSelectorDefinitionQuestionError(row.question);
+  if (q) return q;
+  const d = getSelectorDefinitionDescriptionError(row.description);
+  if (d) return d;
+  if (row.order !== undefined) {
+    const r = nonNegativeOrderSchema.safeParse(row.order);
+    if (!r.success) return r.error.issues[0]?.message;
+  }
+  return undefined;
+}
+
+function validateBatchDefinitionUpdate(update: {
+  question?: string;
+  description?: string | null;
+  order?: number;
+}): string | undefined {
+  if (update.question !== undefined) {
+    const q = getSelectorDefinitionQuestionError(update.question);
+    if (q) return q;
+  }
+  if (update.description !== undefined && update.description !== null) {
+    const d = getSelectorDefinitionDescriptionError(update.description);
+    if (d) return d;
+  }
+  if (update.order !== undefined) {
+    const r = nonNegativeOrderSchema.safeParse(update.order);
+    if (!r.success) return r.error.issues[0]?.message;
+  }
+  return undefined;
+}
+
+function validateBatchOptionCreate(row: BatchSelectorOptionCreate): string | undefined {
+  const t = getSelectorOptionTextError(row.text);
+  if (t) return t;
+  const v = getSelectorOptionValueError(row.value);
+  if (v) return v;
+  if (row.order !== undefined) {
+    const r = nonNegativeOrderSchema.safeParse(row.order);
+    if (!r.success) return r.error.issues[0]?.message;
+  }
+  return undefined;
+}
+
+function validateBatchOptionUpdate(update: {
+  text?: string;
+  value?: string;
+  order?: number;
+}): string | undefined {
+  if (update.text !== undefined) {
+    const t = getSelectorOptionTextError(update.text);
+    if (t) return t;
+  }
+  if (update.value !== undefined) {
+    const v = getSelectorOptionValueError(update.value);
+    if (v) return v;
+  }
+  if (update.order !== undefined) {
+    const r = nonNegativeOrderSchema.safeParse(update.order);
+    if (!r.success) return r.error.issues[0]?.message;
+  }
+  return undefined;
+}
+
+function validatePendingSelectorBatch(params: {
+  group?: { name: string; description: string | null };
+  definitionCreates: BatchSelectorDefinitionCreate[];
+  definitionUpdates: Map<string, Partial<SelectorDefinition>>;
+  optionCreates: BatchSelectorOptionCreate[];
+  optionUpdates: Map<string, Partial<SelectorOption>>;
+}): string | undefined {
+  if (params.group) {
+    const ge = validateSelectorGroupFields(params.group.name, params.group.description);
+    if (ge) return ge;
+  }
+
+  for (const create of params.definitionCreates) {
+    const err = validateBatchDefinitionCreate(create);
+    if (err) return err;
+  }
+
+  const definitionEntries = Array.from(params.definitionUpdates.entries());
+  for (let i = 0; i < definitionEntries.length; i++) {
+    const err = validateBatchDefinitionUpdate(definitionEntries[i][1]);
+    if (err) return err;
+  }
+
+  for (const create of params.optionCreates) {
+    const err = validateBatchOptionCreate(create);
+    if (err) return err;
+  }
+
+  const optionEntries = Array.from(params.optionUpdates.entries());
+  for (let i = 0; i < optionEntries.length; i++) {
+    const err = validateBatchOptionUpdate(optionEntries[i][1]);
+    if (err) return err;
+  }
+
+  return undefined;
+}
 
 // Draggable Selector Definition Row Component
 interface DraggableSelectorDefinitionRowProps {
@@ -210,6 +401,7 @@ export function ComprehensiveSelectorGroupManager({
 
   const { data: definitionsData, isLoading: definitionsLoading } = useGetSelectorDefinitions(selectorGroup?.id || '');
   const { mutate: batchUpdateSelectorGroup, isPending: isBulkUpdating } = useBatchUpdateSelectorGroup(companyId);
+  const { toast } = useToast();
 
   // Initialize local state when data loads or dialog opens
   useEffect(() => {
@@ -547,7 +739,23 @@ export function ComprehensiveSelectorGroupManager({
   };
 
   const handleSaveAllChanges = () => {
-    if (hasPendingChanges() && selectorGroup) {
+    if (hasPendingChanges() && selectorGroup && localGroup) {
+      const validationError = validatePendingSelectorBatch({
+        group: { name: localGroup.name, description: localGroup.description },
+        definitionCreates: pendingChanges.definitionCreates,
+        definitionUpdates: pendingChanges.definitionUpdates,
+        optionCreates: pendingChanges.optionCreates,
+        optionUpdates: pendingChanges.optionUpdates,
+      });
+      if (validationError) {
+        toast({
+          variant: 'error',
+          title: 'Cannot save',
+          description: validationError,
+        });
+        return;
+      }
+
       const batchData: CrudSelectorGroupRequest = {
         selectorDefinitionsUpdates: [],
         selectorDefinitionsCreates: [],
@@ -711,6 +919,7 @@ export function ComprehensiveSelectorGroupManager({
                     value={localGroup.name}
                     onChange={(e) => handleGroupUpdate('name', e.target.value)}
                     disabled={isBulkUpdating}
+                    maxLength={SELECTOR_LIMITS.groupName.max}
                   />
                 </div>
                 <div className="flex-1 mt-2 sm:mt-0">
@@ -721,6 +930,7 @@ export function ComprehensiveSelectorGroupManager({
                     onChange={(e) => handleGroupUpdate('description', e.target.value)}
                     disabled={isBulkUpdating}
                     rows={2}
+                    maxLength={SELECTOR_LIMITS.groupDescription.max}
                   />
                 </div>
               </div>
