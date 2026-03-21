@@ -19,13 +19,13 @@ export default function BulkActionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClients, setSelectedClients] = useState<Set<string>>(new Set());
-  
+
   // Get real client data
   const { data: allClients = [], isLoading } = useGetAllClients();
-  
+
   // Hook for updating bulk preferences
   const { mutate: updateBulkPreferences, isPending: isUpdating } = useUpdateBulkPreferences();
-  
+
   // Toast hook
   const { toast } = useToast();
 
@@ -60,11 +60,11 @@ export default function BulkActionsPage() {
   };
 
   const handlePreferenceChange = (clientId: string, preference: string, value: boolean) => {
-    setClients(prev => prev.map(client => 
-      client.id === clientId 
-        ? { 
-            ...client, 
-            preferences: { 
+    setClients(prev => prev.map(client =>
+      client.id === clientId
+        ? {
+            ...client,
+            preferences: {
               ...client.preferences,
               serviceEmailPreferences: {
                 ...client.preferences?.serviceEmailPreferences,
@@ -85,11 +85,11 @@ export default function BulkActionsPage() {
       // Only include preferences that have been modified
       const originalClient = allClients.find(c => c.id === clientId);
       const modifiedPreferences: any = {};
-      
+
       if (client.preferences?.serviceEmailPreferences) {
         const originalPrefs = originalClient?.preferences?.serviceEmailPreferences;
         const currentPrefs = client.preferences.serviceEmailPreferences;
-        
+
         // Check each preference and only include if it's different from original
         if (originalPrefs?.sendEmails !== currentPrefs.sendEmails) {
           modifiedPreferences.sendEmails = currentPrefs.sendEmails;
@@ -140,7 +140,7 @@ export default function BulkActionsPage() {
 
     // Call the API
     updateBulkPreferences({ clients: clientsToUpdate as BulkPreferenceUpdate[] });
-    
+
     // Clear selection after successful update
     setSelectedClients(new Set());
   };
@@ -175,7 +175,7 @@ export default function BulkActionsPage() {
             className="flex-1"
           />
         </div>
-        
+
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -245,7 +245,7 @@ export default function BulkActionsPage() {
                 </TableCell>
                 <TableCell>
                   <div className="text-sm text-gray-600">
-                    {client.address}, {client.city}, {client.state} {client.zip}
+                    {client.address} {client.addressLine2}, {client.city}, {client.state} {client.zip}
                   </div>
                 </TableCell>
                 <TableCell className="text-center">
@@ -296,7 +296,7 @@ export default function BulkActionsPage() {
                     }}
                   />
                 </TableCell> */}
-                <TableCell className="text-center"> 
+                <TableCell className="text-center">
                   <Checkbox
                     checked={client.preferences?.serviceEmailPreferences?.attachReadingsGroups || false}
                     onCheckedChange={(checked) => {

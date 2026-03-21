@@ -67,4 +67,5 @@ export const editPoolSchema = z.object({
   zip: defaultSchemas.zipCode.optional(),
   animalDanger: z.boolean().optional(),
   isActive: z.boolean().optional(),
+  addressLine2: z.optional(z.string().trim())
 });

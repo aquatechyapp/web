@@ -63,6 +63,7 @@ export type CompanyMember = {
   state: string;
   zip: string;
   addressCoords?: Coords;
+  addressLine2?: string | null;
 };
 
 export interface Company {
@@ -71,6 +72,7 @@ export interface Company {
   email: string;
   phone: string;
   address: string;
+  addressLine2?: string | null;
   city: string;
   state: string;
   zip: string;
@@ -152,6 +154,8 @@ export interface InviteMember {
   state?: string | null;
   zip?: string | null;
   userAlreadyExists: boolean;
+  addressLine2?: string | null;
+  poolAddressLine2?: string | null;
 }
 
 export interface AcceptInvitation {

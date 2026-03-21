@@ -31,6 +31,7 @@ export interface Client {
   type: ClientType;
   timezone: IanaTimeZones;
   status: string;
+  addressLine2?: string;
   preferences?: {
     serviceEmailPreferences: {
       sendEmails: boolean;

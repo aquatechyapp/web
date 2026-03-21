@@ -43,7 +43,8 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
       poolType: pool.poolType,
       notes: pool.notes || '',
       zip: pool.zip || '',
-      animalDanger: pool.animalDanger || false
+      animalDanger: pool.animalDanger || false,
+      addressLine2: pool.addressLine2 || ''
     }
   });
 
@@ -70,7 +71,7 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
             Basic information
           </Typography>
         </div>
-        
+
         <AddressInput
           name="address"
           label="Address"
@@ -81,7 +82,11 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
             form.setValue('zip', zipCode, { shouldValidate: true });
           }}
         />
-
+        <InputField
+          name="addressLine2"
+          label="Address Line 2"
+          placeholder="Apt, suite, unit"
+        />
         <div className="Form inline-flex flex-wrap items-start justify-start self-stretch md:flex-nowrap gap-4">
           <StateAndCitySelect cityName="city" stateName="state" />
           <InputField name="zip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
@@ -134,7 +139,7 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
             label="Chemical type"
           />
         </div>
-        
+
         <div className="flex flex-col gap-2 mt-2">
           <div className="inline-flex items-start justify-start gap-2">
             <InputField
@@ -144,7 +149,7 @@ export default function PoolInfoTab({ pool, clientId }: PoolInfoTabProps) {
             />
           </div>
         </div>
-        
+
         <div className="mt-2 w-full">
           <InputField type={FieldType.TextArea} name="notes" placeholder="Location notes..." />
         </div>

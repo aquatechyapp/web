@@ -52,7 +52,9 @@ const additionalSchemas = z.object({
   timezone: defaultSchemas.timezone,
   companyOwnerId: z.string().min(1, {
     message: 'Company owner is required.'
-  })
+  }),
+  clientAddressLine2: z.optional(z.string().trim()),
+  poolAddressLine2: z.optional(z.string().trim())
   // Remove assignments from here since we handle them separately
 });
 
@@ -214,7 +216,7 @@ export default function Page() {
       clientType: 'Residential',
       monthlyPayment: 0,
       companyOwnerId: ownerAdminOfficeCompanies.length === 1 ? ownerAdminOfficeCompanies[0].id : undefined,
-      
+
     }
   });
 
@@ -234,6 +236,8 @@ export default function Page() {
       form.setValue('poolCity', form.getValues('clientCity'));
       form.setValue('poolState', form.getValues('clientState'));
       form.setValue('poolZip', form.getValues('clientZip'));
+      form.setValue('clientAddressLine2', form.getValues('clientAddressLine2') || '');
+      form.setValue('poolAddressLine2', form.getValues('poolAddressLine2') || '');
     }
   }
 
@@ -372,7 +376,7 @@ export default function Page() {
     if (assignments.length > 1) {
       const newAssignments = assignments.filter((_, i) => i !== index);
       setAssignments(newAssignments);
-      
+
       // Update assignment date options
       const newOptions = { ...assignmentDateOptions };
       delete newOptions[index];
@@ -384,7 +388,7 @@ export default function Page() {
   const updateAssignment = (index: number, field: keyof Assignment, value: string) => {
     const newAssignments = [...assignments];
     const assignment = newAssignments[index];
-    
+
     // When frequency changes, reset fields appropriately
     if (field === 'frequency') {
       if (value === Frequency.ONCE) {
@@ -411,7 +415,7 @@ export default function Page() {
     } else {
       newAssignments[index] = { ...assignment, [field]: value };
     }
-    
+
     setAssignments(newAssignments);
     const updatedAssignment = newAssignments[index];
 
@@ -471,7 +475,7 @@ export default function Page() {
       if (!assignment.assignmentToId || !assignment.serviceTypeId || !assignment.frequency) {
         return true;
       }
-      
+
       if (assignment.frequency === Frequency.ONCE) {
         // For ONCE frequency, only scheduledTo is required
         return !assignment.scheduledTo;
@@ -509,7 +513,9 @@ export default function Page() {
         email: data.email,
         secondaryEmail: data.secondaryEmail || undefined,
         clientNotes: data.clientNotes,
-        
+        clientAddressLine2: data.clientAddressLine2 || undefined,
+        poolAddressLine2: data.clientAddressLine2 || undefined,
+
         // Pool data
         sameBillingAddress: data.sameBillingAddress,
         animalDanger: data.animalDanger,
@@ -522,11 +528,10 @@ export default function Page() {
         enterSide: data.enterSide,
         poolType: data.poolType,
         poolNotes: data.poolNotes,
-        
         // Assignments
         assignments: assignments
       };
-      
+
       await mutateAsync(submissionData);
       steps.goToStep(0);
       form.reset();
@@ -545,12 +550,13 @@ export default function Page() {
     }
   }
 
-  const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip] = form.watch([
+  const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip,clientAddressLine2] = form.watch([
     'sameBillingAddress',
     'clientAddress',
     'clientCity',
     'clientState',
-    'clientZip'
+    'clientZip',
+    'clientAddressLine2'
   ]);
 
   const handleCheckboxSameBillingAddress = useMemo(() => {
@@ -559,9 +565,10 @@ export default function Page() {
       clientAddress,
       clientCity,
       clientState,
-      clientZip
+      clientZip,
+      clientAddressLine2
     };
-  }, [sameBillingAddress, clientAddress, clientCity, clientState, clientZip]);
+  }, [sameBillingAddress, clientAddress, clientCity, clientState, clientZip, clientAddressLine2]);
 
   useEffect(() => {
     handleSameBillingAddress();
@@ -632,6 +639,11 @@ export default function Page() {
                   }}
                 />
               </div>
+              <InputField
+                name="clientAddressLine2"
+                label="Address Line 2"
+                placeholder="Apt, suite, unit"
+              />
               <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                 <StateAndCitySelect />
                 <InputField name="clientZip" label="Zip code" placeholder="Zip code" type={FieldType.Zip} />
@@ -719,6 +731,11 @@ export default function Page() {
               {!form.watch('sameBillingAddress') && (
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                   <InputField name="poolAddress" placeholder="Pool address" label="Pool address" />
+                  <InputField
+                    name="clientAddressLine2"
+                    label="Pool Address Line 2"
+                    placeholder="Apt, suite, unit"
+                  />
                   <StateAndCitySelect stateName="poolState" cityName="poolCity" />
                   <InputField
                     className="min-w-fit"
@@ -843,10 +860,10 @@ export default function Page() {
                       onValueChange={(value) => updateAssignment(index, 'frequency', value)}
                     />
                     {assignment.frequency !== Frequency.ONCE && (
-                      <SelectField 
+                      <SelectField
                         name={`weekday-${index}`} // Make name unique
-                        label="Weekday" 
-                        placeholder="Weekday" 
+                        label="Weekday"
+                        placeholder="Weekday"
                         options={Weekdays}
                         value={assignment.weekday || ''}
                         onValueChange={(value) => updateAssignment(index, 'weekday', value)}
@@ -921,10 +938,10 @@ export default function Page() {
                   <ArrowLeftIcon className="mr-2 h-4 w-4" />
                   Previous
                 </Button>
-                <Button 
-                  disabled={isPending} 
+                <Button
+                  disabled={isPending}
                   type="submit"
-                 
+
                 >
                   {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
                   Add client

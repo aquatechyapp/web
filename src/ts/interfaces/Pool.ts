@@ -37,6 +37,7 @@ export type Pool = {
   checklistTemplates?: ChecklistTemplate[];
   paymentUnit?: number;
   photos?: string[];
+  addressLine2?: string;
 };
 
 // Used only to add a pool to a client

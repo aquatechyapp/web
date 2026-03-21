@@ -67,7 +67,8 @@ const schema = z.object({
       invalid_type_error: 'Zip must be a string.'
     })
     .trim()
-    .min(1, { message: 'Zip must be at least 1 character.' })
+    .min(1, { message: 'Zip must be at least 1 character.' }),
+    addressLine2: z.optional(z.string().trim())
 });
 
 export type CreateCompanyData = z.infer<typeof schema>;
@@ -85,7 +86,8 @@ export default function AddCompanyPage() {
       address: '',
       city: '',
       state: '',
-      zip: ''
+      zip: '',
+      addressLine2: ''
     }
   });
 
@@ -168,7 +170,11 @@ export default function AddCompanyPage() {
                     }, 500);
                   }}
                 />
-
+                 <InputField
+                  name="addressLine2"
+                  label="Address Line 2"
+                  placeholder="Apt, suite, unit"
+                />
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <CompanyStateAndCitySelect stateName="state" cityName="city" />
                   <InputField

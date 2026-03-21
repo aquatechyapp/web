@@ -76,7 +76,7 @@ export default function ShowClient({ client }: Props) {
                 <span className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px] text-gray-800">
                   {client.fullName} {!client.isActive ? <span className="text-red-500 text-sm">Inactive</span> : null}
                 </span>
-                <div className="text-sm font-medium text-gray-500">{client.address}</div>
+                <div className="text-sm font-medium text-gray-500">{client.address}, {client.addressLine2}</div>
               </div>
             </div>
             <div className="flex flex-row flex-wrap items-start justify-start gap-[18px] self-start lg:flex-col lg:flex-nowrap">
