@@ -54,6 +54,7 @@ const additionalSchemas = z.object({
     message: 'Company owner is required.'
   }),
   clientAddressLine2: z.optional(z.string().trim()),
+  poolAddressLine2: z.optional(z.string().trim())
   // Remove assignments from here since we handle them separately
 });
 
@@ -236,6 +237,7 @@ export default function Page() {
       form.setValue('poolState', form.getValues('clientState'));
       form.setValue('poolZip', form.getValues('clientZip'));
       form.setValue('clientAddressLine2', form.getValues('clientAddressLine2') || '');
+      form.setValue('poolAddressLine2', form.getValues('poolAddressLine2') || '');
     }
   }
 
@@ -512,6 +514,7 @@ export default function Page() {
         secondaryEmail: data.secondaryEmail || undefined,
         clientNotes: data.clientNotes,
         clientAddressLine2: data.clientAddressLine2 || undefined,
+        poolAddressLine2: data.clientAddressLine2 || undefined,
 
         // Pool data
         sameBillingAddress: data.sameBillingAddress,
@@ -547,12 +550,13 @@ export default function Page() {
     }
   }
 
-  const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip] = form.watch([
+  const [sameBillingAddress, clientAddress, clientCity, clientState, clientZip,clientAddressLine2] = form.watch([
     'sameBillingAddress',
     'clientAddress',
     'clientCity',
     'clientState',
-    'clientZip'
+    'clientZip',
+    'clientAddressLine2'
   ]);
 
   const handleCheckboxSameBillingAddress = useMemo(() => {
@@ -561,9 +565,10 @@ export default function Page() {
       clientAddress,
       clientCity,
       clientState,
-      clientZip
+      clientZip,
+      clientAddressLine2
     };
-  }, [sameBillingAddress, clientAddress, clientCity, clientState, clientZip]);
+  }, [sameBillingAddress, clientAddress, clientCity, clientState, clientZip, clientAddressLine2]);
 
   useEffect(() => {
     handleSameBillingAddress();
@@ -727,8 +732,8 @@ export default function Page() {
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch sm:flex-row">
                   <InputField name="poolAddress" placeholder="Pool address" label="Pool address" />
                   <InputField
-                    name="addressLine2"
-                    label="Address Line 2"
+                    name="clientAddressLine2"
+                    label="Pool Address Line 2"
                     placeholder="Apt, suite, unit"
                   />
                   <StateAndCitySelect stateName="poolState" cityName="poolCity" />
