@@ -2,7 +2,7 @@ import { dataTagSymbol, useMutation, useQueryClient } from '@tanstack/react-quer
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
-import { IUserSchema } from '@/app/(authenticated)/account/page';
+import { IUserSchema } from '@/app/(authenticated)/settings/profile/page';
 
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';

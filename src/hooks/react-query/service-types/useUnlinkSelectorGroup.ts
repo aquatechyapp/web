@@ -17,6 +17,7 @@ export function useUnlinkSelectorGroup() {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['service-type-groups'],
     mutationFn: async ({ serviceTypeId, selectorGroupId }: UnlinkSelectorGroupParams): Promise<{ message: string }> => {
       const response = await clientAxios.delete(`/service-types/${serviceTypeId}/selector-groups/${selectorGroupId}`);
       return response.data;

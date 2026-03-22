@@ -23,7 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useUserStore } from '@/store/user';
 import { Client } from '@/ts/interfaces/Client';
-import { ModalAddCompany } from '../../team/ModalAddCompany';
+import { ModalAddCompany } from '../../settings/companies/team/ModalAddCompany';
 import { PaginationDemo } from '@/components/PaginationDemo';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 

@@ -26,7 +26,7 @@ export default function QuickStartPage() {
       title: 'Complete Your Profile',
       description: 'Add your personal information and contact details.',
       completed: false,
-      redirectUrl: '/account',
+      redirectUrl: '/settings/profile',
       actionText: 'Go to Profile'
     },
     {
@@ -42,8 +42,8 @@ export default function QuickStartPage() {
       title: 'Add your team',
       description: 'Invite team members, assign roles, and set up permissions for your pool service staff.',
       completed: false,
-      redirectUrl: '/team',
-      actionText: 'Manage team'
+      redirectUrl: '/settings/companies',
+      actionText: 'Manage companies'
     },
     {
       id: 6,

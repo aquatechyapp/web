@@ -31,6 +31,7 @@ export const useLinkPhotoGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['service-type-groups'],
     mutationFn: async ({ serviceTypeId, data }: LinkPhotoGroupParams): Promise<ServiceTypePhotoGroupResponse> => {
       const response = await clientAxios.post(`/service-types/${serviceTypeId}/photo-groups`, data);
       return response.data;

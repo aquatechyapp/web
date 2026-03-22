@@ -514,7 +514,7 @@ export default function ImportFromSkimmer() {
             <DialogTitle className="text-center">No Companies Available</DialogTitle>
             <DialogDescription>Please create a company before importing clients.</DialogDescription>
           </DialogHeader>
-          <Button type="button" onClick={() => router.push('/team/myCompanies')}>
+          <Button type="button" onClick={() => router.push('/settings/companies')}>
             Create Company
           </Button>
         </DialogContent>

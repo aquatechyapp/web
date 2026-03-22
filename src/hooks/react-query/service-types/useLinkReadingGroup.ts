@@ -13,6 +13,7 @@ export const useLinkReadingGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['service-type-groups'],
     mutationFn: async ({ serviceTypeId, data }: { serviceTypeId: string; data: LinkReadingGroupRequest }): Promise<ServiceTypeReadingGroupResponse> => {
       const response = await clientAxios.post(`/service-types/${serviceTypeId}/reading-groups`, data);
       return response.data;

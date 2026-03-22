@@ -4,12 +4,10 @@ import { AxiosError } from 'axios';
 import { useToast } from '../../../components/ui/use-toast';
 import { clientAxios } from '../../../lib/clientAxios';
 import { InviteMember } from '@/ts/interfaces/Company';
-import Cookies from 'js-cookie';
 
 export const useInviteMemberToACompany = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const userId = Cookies.get('userId');
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: InviteMember) => await clientAxios.post('/companies/invite', data),
@@ -27,7 +25,7 @@ export const useInviteMemberToACompany = () => {
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['companyMembers', userId] });
+      queryClient.invalidateQueries({ queryKey: ['companyMembers'] });
       toast({
         variant: 'success',
         duration: 5000,

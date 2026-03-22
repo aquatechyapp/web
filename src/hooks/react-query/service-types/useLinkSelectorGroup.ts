@@ -18,6 +18,7 @@ export function useLinkSelectorGroup() {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['service-type-groups'],
     mutationFn: async ({ serviceTypeId, data }: LinkSelectorGroupParams): Promise<ServiceTypeSelectorGroupResponse> => {
       const response = await clientAxios.post(`/service-types/${serviceTypeId}/selector-groups`, data);
       return response.data;

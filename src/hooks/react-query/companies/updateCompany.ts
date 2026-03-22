@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useShallow } from 'zustand/react/shallow';
 
-import { FormSchema } from '@/app/(authenticated)/team/ModalEditCompany';
+import { FormSchema } from '@/app/(authenticated)/settings/companies/team/ModalEditCompany';
 import { useUserStore } from '@/store/user';
 
 import { useToast } from '../../../components/ui/use-toast';

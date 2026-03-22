@@ -17,15 +17,15 @@ const types = {
     icon: RouteIcon,
     href: '/routes/assignments'
   },
-  my_team: {
-    title: 'My team',
+  companies: {
+    title: 'Companies',
     color: 'from-red-500 to-orange-300',
     icon: TeamIcon,
-    href: '/team'
+    href: '/settings/companies'
   }
 };
 
-type ActionButtonType = 'add_client' | 'route_dashboard' | 'my_team';
+type ActionButtonType = 'add_client' | 'route_dashboard' | 'companies';
 
 type Props = {
   type: ActionButtonType;

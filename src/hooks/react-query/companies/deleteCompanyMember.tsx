@@ -18,6 +18,8 @@ export const useDeleteCompanyMember = () => {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['companyMembers'] });
+      // exact: true so we do not invalidate ['companies', id] detail queries (refetch would 404 after quit)
+      queryClient.invalidateQueries({ queryKey: ['companies'], exact: true });
       toast({
         duration: 5000,
         title: 'Company member was removed successfully.',
