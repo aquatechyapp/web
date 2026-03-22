@@ -2,13 +2,12 @@ import { Libraries } from '@react-google-maps/api';
 import {
   CheckSquare,
   CircleDollarSign,
-  CircleUser,
   FileBarChartIcon,
   FileText,
   Import,
   ListChecks,
   Mails,
-  Settings2,
+  Cog,
   UserPlus,
   Users,
   PlayCircle,
@@ -18,7 +17,6 @@ import {
 
 import RouteIcon from '@/components/ui/route-icon';
 import TabIcon from '@/components/ui/tab-icon';
-import TeamIcon from '@/components/ui/team-icon';
 
 import { Frequency } from '@/ts/enums/enums';
 import { Menu } from '@/ts/interfaces/Others';
@@ -287,55 +285,32 @@ export const routes: Menu[] = [
       }
     }
   },
-  {
-    text: 'My team',
-    submenu: {
-      myAccount: {
-        text: 'My team',
-        href: '/team',
-        title: 'My team',
-        description: 'Manage your team and add new technicians'
-      },
-      myCompanies: {
-        text: 'My companies',
-        href: '/team/myCompanies',
-        title: 'My companies',
-        description: 'Manage your companies and edit their information.'
-      }
-      // generateReports: {
-      //   text: 'Generate Reports',
-      //   href: '/team/generateReports',
-      //   title: 'Generate Service and Payment Reports',
-      //   description: 'Select who you want to generate a report from and select an interval.',
-      //   icon: FileBarChartIcon
-      // }
-    },
-    href: '/team',
-    icon: TeamIcon,
-    title: 'My team',
-    description: 'Manage your team and add new technicians'
-  },
 
   {
-    text: 'My Account',
-    description: 'Edit your profile information',
+    text: 'Settings',
+    href: '/settings',
+    icon: Cog,
+    title: 'Settings',
     submenu: {
       profile: {
         text: 'Profile',
-        href: '/account',
+        href: '/settings/profile',
         title: 'Profile'
       },
       subscription: {
         text: 'Subscription',
-        href: '/account/subscription',
+        href: '/settings/subscription',
         title: 'Subscription',
         icon: CircleDollarSign,
         description: 'Manage your subscription and see our plans'
+      },
+      companies: {
+        text: 'Companies',
+        href: '/settings/companies',
+        title: 'Companies',
+        description: 'Manage your companies and edit their information.'
       }
-    },
-    href: '/account',
-    icon: CircleUser,
-    title: 'My Account'
+    }
   }
 ];
 

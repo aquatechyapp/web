@@ -10,8 +10,9 @@ export const useDeleteCompany = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ companyId }: { companyId: string }) =>
       await clientAxios.delete(`/companies`, { data: { companyId } }),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['companies', variables.companyId] });
       toast({
         duration: 5000,
         title: 'Company was deleted successfully.',

@@ -1,17 +1,15 @@
 'use client';
 
+import { PlusIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { Input } from '@/components/ui/input';
-import { useUserStore } from '@/store/user';
-
-import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
-import { CompanyWithMyRole } from '@/ts/interfaces/Company';
-import { CompanyCard } from '../CompanyCard';
-import { ModalAddCompany } from '../ModalAddCompany';
-import { PlusIcon } from 'lucide-react';
+import { CompanyCard } from '@/app/(authenticated)/settings/companies/team/CompanyCard';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
+import { useUserStore } from '@/store/user';
+import { CompanyWithMyRole } from '@/ts/interfaces/Company';
 
 export default function Page() {
   const user = useUserStore((state) => state.user);
@@ -28,12 +26,12 @@ export default function Page() {
     if (user.firstName === '') {
       router.push('/onboarding');
     }
-  }, [user]);
+  }, [user, router]);
 
   return (
     <div className="p-2">
       <div className="flex flex-col items-stretch gap-4 md:flex-row md:items-center">
-        <Button onClick={() => router.push('/team/add-company')}>
+        <Button onClick={() => router.push('/settings/companies/team/add-company')}>
           <PlusIcon className="mr-2" />
           Add company
         </Button>
@@ -42,14 +40,14 @@ export default function Page() {
           placeholder="Filter by name..."
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
-          className="w-full md:max-w-sm"
+          className="w-full min-w-0 md:flex-1"
         />
       </div>
 
       <div className="mt-3">
         <div className="flex flex-wrap justify-center gap-2 self-stretch md:justify-normal">
           {filteredCompanies && (
-            <div className="flex flex-col w-full gap-2 md:flex-row md:flex-wrap md:justify-start">
+            <div className="flex w-full flex-col gap-2 md:flex-row md:flex-wrap md:justify-start">
               {filteredCompanies.map((company: CompanyWithMyRole) => (
                 <CompanyCard
                   key={company.id}

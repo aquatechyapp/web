@@ -5,8 +5,8 @@ import * as z from 'zod';
 import InputField from '@/components/InputField';
 import { Form } from '@/components/ui/form';
 
-import { Button } from '../../../components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
+import { Button } from '../../../../../components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../../../../components/ui/dialog';
 
 import { useEditCompanyMember } from '@/hooks/react-query/companies/updateCompanyMember';
 import SelectField from '@/components/SelectField';

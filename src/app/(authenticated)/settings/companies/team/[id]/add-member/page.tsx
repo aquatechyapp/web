@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeftIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -12,14 +12,12 @@ import SelectField from '@/components/SelectField';
 import { AddressInput } from '@/components/AddressInput';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { useToast } from '@/components/ui/use-toast';
-
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import useGetCompany from '@/hooks/react-query/companies/getCompany';
 import { useInviteMemberToACompany } from '@/hooks/react-query/companies/inviteMember';
-import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { Company } from '@/ts/interfaces/Company';
-import { IanaTimeZones, FieldType } from '@/ts/enums/enums';
+import { FieldType, IanaTimeZones } from '@/ts/enums/enums';
 
-// Schemas
 const existingUserSchema = z.object({
   companyId: z.string().min(1, { message: 'Company must be selected.' }),
   email: z.string().email({ message: 'Invalid email format.' }),
@@ -38,20 +36,34 @@ const newUserSchema = existingUserSchema.extend({
   addressLine2: z.optional(z.string().trim())
 });
 
-export default function AddMemberPage() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const { mutate: inviteMember, isPending } = useInviteMemberToACompany();
-  const { data: companies } = useGetCompanies();
+function isValidObjectId(id: string): boolean {
+  const objectIdRegex = /^[a-fA-F0-9]{24}$/;
+  return objectIdRegex.test(id);
+}
 
-  // Step state
+type Props = {
+  params: { id: string };
+};
+
+export default function AddMemberPage({ params: { id } }: Props) {
+  if (!id || !isValidObjectId(id)) {
+    notFound();
+  }
+
+  const router = useRouter();
+  const { mutate: inviteMember, isPending } = useInviteMemberToACompany();
+  const { data: company, isLoading: isCompanyLoading } = useGetCompany(id);
+
   const [step, setStep] = useState<null | 'existing' | 'new'>(null);
 
-  // Forms
+  const redirectAfterInvite = () => {
+    router.push(`/settings/companies/team/${id}`);
+  };
+
   const existingUserForm = useForm<z.infer<typeof existingUserSchema>>({
     resolver: zodResolver(existingUserSchema),
     defaultValues: {
-      companyId: '',
+      companyId: id,
       email: '',
       role: 'Cleaner'
     }
@@ -60,12 +72,12 @@ export default function AddMemberPage() {
   const newUserForm = useForm<z.infer<typeof newUserSchema>>({
     resolver: zodResolver(newUserSchema),
     defaultValues: {
-      companyId: '',
+      companyId: id,
       email: '',
       role: 'Cleaner',
       firstName: '',
       lastName: '',
-      company: '', // Add company default value
+      company: '',
       phone: '',
       address: '',
       city: '',
@@ -75,7 +87,18 @@ export default function AddMemberPage() {
     }
   });
 
-  // Address handler for new user
+  useEffect(() => {
+    existingUserForm.setValue('companyId', id);
+    newUserForm.setValue('companyId', id);
+  }, [id, existingUserForm, newUserForm]);
+
+  useEffect(() => {
+    const c = company as Company | undefined;
+    if (c?.name && newUserForm.getValues('company') === '') {
+      newUserForm.setValue('company', c.name);
+    }
+  }, [company, newUserForm]);
+
   const handleAddressSelect = (address: {
     fullAddress: string;
     state: string;
@@ -91,7 +114,6 @@ export default function AddMemberPage() {
     newUserForm.setValue('addressLine2', address.addressLine2);
   };
 
-  // Submit handlers
   function handleExistingUserSubmit(data: z.infer<typeof existingUserSchema>) {
     inviteMember(
       {
@@ -102,19 +124,13 @@ export default function AddMemberPage() {
       },
       {
         onSuccess: () => {
-          toast({
-            variant: 'success',
-            title: 'Member invited successfully',
-            description: 'The member will receive an invitation email.'
-          });
-          router.push('/team');
+          redirectAfterInvite();
         }
       }
     );
   }
 
   function handleNewUserSubmit(data: z.infer<typeof newUserSchema>) {
-    // Send all the data including the company field
     inviteMember(
       {
         userInvitedEmail: data.email,
@@ -133,56 +149,59 @@ export default function AddMemberPage() {
       },
       {
         onSuccess: () => {
-          toast({
-            variant: 'success',
-            title: 'Member invited successfully',
-            description: 'The member will receive an invitation email.'
-          });
-          router.push('/team');
+          redirectAfterInvite();
         }
       }
     );
   }
 
-  // UI
+  const handleBack = () => setStep(null);
+
+  const companyName = (company as Company | undefined)?.name ?? '';
+
+  if (isCompanyLoading) {
+    return <LoadingSpinner />;
+  }
+
   if (!step) {
     return (
-      <div className="w-full p-5 lg:p-8 flex flex-col items-center justify-center min-h-[60vh]">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+      <div className="flex min-h-[60vh] w-full flex-col items-center justify-center p-5 lg:p-8">
+        <div className="mb-6 w-full max-w-md self-start">
+          <Button variant="ghost" className="gap-2" onClick={() => router.push(`/settings/companies/team/${id}`)}>
+            <ArrowLeftIcon className="h-4 w-4" />
+            Back to company
+          </Button>
+        </div>
+        <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
           Add New Member
+          {companyName ? (
+            <span className="mt-2 block text-lg font-medium text-gray-600">{companyName}</span>
+          ) : null}
         </h1>
-
-        <div className="flex flex-col gap-4 w-full max-w-md">
+        <div className="mt-6 flex w-full max-w-md flex-col gap-4">
           <Button
-            className="w-full py-4 min-h-[3rem] text-center md:py-2 md:min-h-auto"
+            className="min-h-[3rem] w-full py-4 text-center md:min-h-auto md:py-2"
             onClick={() => setStep('new')}
           >
             The user is new on Aquatechy
           </Button>
-
           <Button
-            className="w-full py-4 min-h-[3rem] text-center md:py-2 md:min-h-auto"
+            className="min-h-[3rem] w-full py-4 text-center md:min-h-auto md:py-2"
             variant="outline"
             onClick={() => setStep('existing')}
           >
             The user already has an account on Aquatechy
           </Button>
         </div>
-
       </div>
-
     );
   }
 
-  // Back button handler
-  const handleBack = () => setStep(null);
-
-  // Existing user form
   if (step === 'existing') {
     return (
       <div className="w-full p-5 lg:p-8">
         <div
-          className="mb-6 flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+          className="mb-6 flex cursor-pointer items-center rounded-lg p-2 transition-colors hover:bg-gray-50"
           onClick={handleBack}
         >
           <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -191,24 +210,11 @@ export default function AddMemberPage() {
           <span className="text-sm font-normal text-gray-600">Back</span>
         </div>
         <div className="mx-auto w-full">
-          <h1 className="text-2xl font-bold text-gray-900 mb-8">Invite Existing User</h1>
+          <h1 className="mb-8 text-2xl font-bold text-gray-900">Invite Existing User</h1>
           <Form {...existingUserForm}>
             <form onSubmit={existingUserForm.handleSubmit(handleExistingUserSubmit)} className="space-y-6">
-              <SelectField
-                name="companyId"
-                label="Company"
-                placeholder="Select company"
-                options={companies?.map((company: Company) => ({
-                  key: company.id,
-                  name: company.name,
-                  value: company.id
-                })) || []}
-              />
-              <InputField
-                name="email"
-                label="User E-mail"
-                placeholder="Enter user e-mail"
-              />
+              <input type="hidden" {...existingUserForm.register('companyId')} />
+              <InputField name="email" label="User E-mail" placeholder="Enter user e-mail" />
               <SelectField
                 name="role"
                 label="Role"
@@ -235,11 +241,10 @@ export default function AddMemberPage() {
     );
   }
 
-  // New user form
   return (
     <div className="w-full p-5 lg:p-8">
       <div
-        className="mb-6 flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+        className="mb-6 flex cursor-pointer items-center rounded-lg p-2 transition-colors hover:bg-gray-50"
         onClick={handleBack}
       >
         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -248,41 +253,18 @@ export default function AddMemberPage() {
         <span className="text-sm font-normal text-gray-600">Back</span>
       </div>
       <div className="mx-auto w-full">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8">Create and Invite New User</h1>
+        <h1 className="mb-8 text-2xl font-bold text-gray-900">Create and Invite New User</h1>
         <Form {...newUserForm}>
           <form onSubmit={newUserForm.handleSubmit(handleNewUserSubmit)} className="space-y-6">
-            <SelectField
-              name="companyId"
-              label="Company"
-              placeholder="Select company"
-              options={companies?.map((company: Company) => ({
-                key: company.id,
-                name: company.name,
-                value: company.id
-              })) || []}
-            />
+            <input type="hidden" {...newUserForm.register('companyId')} />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <InputField name="firstName" label="First Name" placeholder="Enter first name" />
               <InputField name="lastName" label="Last Name" placeholder="Enter last name" />
-              <InputField
-                name="company"
-                label="Company"
-                placeholder="Enter company name"
-              />
+              <InputField name="company" label="Company" placeholder="Enter company name" />
             </div>
-
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <InputField
-                name="email"
-                label="Email"
-                placeholder="Enter email address"
-              />
-              <InputField
-                name="phone"
-                label="Phone"
-                placeholder="Enter phone number"
-                type={FieldType.Phone}
-              />
+              <InputField name="email" label="Email" placeholder="Enter email address" />
+              <InputField name="phone" label="Phone" placeholder="Enter phone number" type={FieldType.Phone} />
             </div>
             <div className="space-y-4">
               <AddressInput
@@ -291,11 +273,7 @@ export default function AddMemberPage() {
                 placeholder="Enter address"
                 onAddressSelect={handleAddressSelect}
               />
-              <InputField
-                name="addressLine2"
-                label="Address Line 2"
-                placeholder="Apt, suite, unit"
-              />
+              <InputField name="addressLine2" label="Address Line 2" placeholder="Apt, suite, unit" />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <InputField name="state" label="State" placeholder="State" />
                 <InputField name="city" label="City" placeholder="City" />
