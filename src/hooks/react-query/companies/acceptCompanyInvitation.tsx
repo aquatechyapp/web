@@ -24,7 +24,7 @@ export const useAcceptCompanyInvitation = () => {
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['companies'], exact: true });
       return toast({
         variant: 'success',
         duration: 5000,

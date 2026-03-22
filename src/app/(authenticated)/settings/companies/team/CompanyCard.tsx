@@ -1,17 +1,13 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { Camera } from 'lucide-react';
-import { useState, useRef } from 'react';
+'use client';
+
+import { useRouter } from 'next/navigation';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { getInitials } from '@/utils/others';
 import { Separator } from '../../../../../components/ui/separator';
-import { useEditCompanyLogo } from '@/hooks/react-query/companies/updateCompanyLogo';
-import AvatarEditor from 'react-avatar-editor';
+import { cn } from '@/lib/utils';
+import { getInitials } from '@/utils/others';
 
-import DropdownMenuCompany from './DropdownMenuCompany';
-import { Slider } from '@/components/ui/slider';
+import { CompanyMembershipAction } from './CompanyMembershipAction';
 
 type Props = {
   companyId: string;
@@ -24,115 +20,59 @@ type Props = {
 };
 
 export function CompanyCard({ companyId, name, email, phone, role, status, imageUrl }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [zoom, setZoom] = useState(1);
-  const editorRef = useRef<AvatarEditor>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { handleSubmit, isPending } = useEditCompanyLogo();
-
-  const canEditLogo = role === 'Owner' || role === 'Admin' || role === 'Office';
+  const router = useRouter();
   const isPendingAcceptance = status !== 'Active';
+  const canOpenCompanyPage = role === 'Owner' || role === 'Admin';
 
-  const handleImageSelect = () => {
-    if (!canEditLogo) return;
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && canEditLogo) {
-      setSelectedImage(file);
-      setIsOpen(true);
-    }
-  };
-
-  const handleSave = async () => {
-    if (editorRef.current && selectedImage) {
-      const canvas = editorRef.current.getImageScaledToCanvas();
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const file = new File([blob], selectedImage.name, { type: 'image/png' });
-          handleSubmit({
-            companyId,
-            logo: file
-          });
-          setIsOpen(false);
-          setSelectedImage(null);
-        }
-      }, 'image/png');
-    }
+  const goToCompany = () => {
+    if (!canOpenCompanyPage) return;
+    router.push(`/settings/companies/team/${companyId}`);
   };
 
   return (
-    <div className="relative inline-flex w-full flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:max-w-80">
-      {/* Pending Acceptance Strip */}
+    <div
+      className={cn(
+        'relative inline-flex w-full flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:max-w-80',
+        canOpenCompanyPage && 'cursor-pointer'
+      )}
+      onClick={canOpenCompanyPage ? goToCompany : undefined}
+      onKeyDown={
+        canOpenCompanyPage
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                goToCompany();
+              }
+            }
+          : undefined
+      }
+      role={canOpenCompanyPage ? 'link' : undefined}
+      tabIndex={canOpenCompanyPage ? 0 : undefined}
+    >
       {isPendingAcceptance && (
-        <div className="absolute -top-0 left-0 rounded-tl-lg bg-yellow-500 px-3 py-1 text-center text-xs font-medium text-white">
+        <div className="pointer-events-none absolute -top-0 left-0 rounded-tl-lg bg-yellow-500 px-3 py-1 text-center text-xs font-medium text-white">
           Pending Acceptance
         </div>
       )}
 
-      {companyId ? <DropdownMenuCompany companyId={companyId} /> : null}
-      <div className="flex h-[138px] flex-col items-center justify-start gap-4 self-stretch mt-2">
-        <div className={`relative ${canEditLogo ? 'group cursor-pointer' : ''}`} onClick={handleImageSelect}>
-          <Avatar className="size-24">
-            <AvatarImage src={imageUrl || ''} alt={`${name} logo`} />
-            <AvatarFallback className="text-2xl">{getInitials(name)}</AvatarFallback>
-          </Avatar>
-          {canEditLogo && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-              <Camera className="size-8 text-white" />
-            </div>
-          )}
-          {canEditLogo && (
-            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
-          )}
-        </div>
-        <div className="flex h-[42px] flex-col items-center justify-center gap-1 self-stretch">
+      <div className="mt-2 flex flex-col items-center justify-start gap-3 self-stretch">
+        <Avatar className="size-24">
+          <AvatarImage src={imageUrl || ''} alt={`${name} logo`} />
+          <AvatarFallback className="text-2xl">{getInitials(name)}</AvatarFallback>
+        </Avatar>
+        <div className="flex w-full flex-col items-center gap-2">
           <div className="self-stretch text-center text-sm font-semibold text-gray-800">{name}</div>
+          <div className="flex min-h-9 w-full shrink-0 items-center justify-center">
+            {companyId ? (
+              <CompanyMembershipAction
+                companyId={companyId}
+                companyName={name}
+                membershipStatus={status as 'Active' | 'Inactive'}
+              />
+            ) : null}
+          </div>
         </div>
       </div>
-
-      {canEditLogo && (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Update Company Logo</DialogTitle>
-            </DialogHeader>
-            <div className="flex flex-col items-center gap-4">
-              {selectedImage && (
-                <>
-                  <div className="rounded-lg border p-2">
-                    <AvatarEditor
-                      ref={editorRef}
-                      image={selectedImage}
-                      width={250}
-                      height={250}
-                      border={0}
-                      borderRadius={125}
-                      color={[0, 0, 0, 0.6]}
-                      scale={zoom}
-                    />
-                  </div>
-                  <div className="w-full px-4">
-                    <p className="mb-2 text-sm text-gray-500">Zoom</p>
-                    <Slider value={[zoom]} onValueChange={(value) => setZoom(value[0])} min={1} max={3} step={0.1} />
-                  </div>
-                </>
-              )}
-              <div className="flex w-full justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSave} disabled={isPending}>
-                  {isPending ? 'Updating...' : 'Update Logo'}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
 
       <Separator />
       <div className="flex h-[52px] flex-col items-center justify-center gap-2.5 self-stretch">

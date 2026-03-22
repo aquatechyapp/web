@@ -17,8 +17,9 @@ export const useEditCompanyLogo = () => {
           'Content-Type': 'multipart/form-data'
         }
       }),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['companies', variables.companyId] });
 
       toast({
         duration: 5000,
