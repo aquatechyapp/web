@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { Info } from 'lucide-react';
 
 import { BasicServicesDataTable } from '@/components/basic-services-datatable';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Service } from '@/ts/interfaces/Service';
 import { Pool } from '@/ts/interfaces/Pool';
 import { columns } from '../components/services-datatable/columns';
@@ -24,6 +26,15 @@ export default function ServicesTab({ services, pool }: ServicesTabProps) {
 
   return (
     <>
+      <Alert className="mb-4 border-blue-200 bg-blue-50 dark:border-blue-900/50 dark:bg-blue-950/30">
+        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        <AlertTitle className="font-semibold text-blue-900 dark:text-blue-100">Recent services only</AlertTitle>
+        <AlertDescription className="mt-2 text-blue-800 dark:text-blue-200">
+          This tab shows services from the last four months. To view older services, open{' '}
+          <span className="font-medium">Services</span> from the left sidebar.
+        </AlertDescription>
+      </Alert>
+
       <BasicServicesDataTable
         columns={columns}
         data={sortedServices}

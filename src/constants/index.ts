@@ -301,7 +301,6 @@ export const routes: Menu[] = [
         text: 'Subscription',
         href: '/settings/subscription',
         title: 'Subscription',
-        icon: CircleDollarSign,
         description: 'Manage your subscription and see our plans'
       },
       companies: {
