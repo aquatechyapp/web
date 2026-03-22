@@ -6,6 +6,41 @@ const nextConfig = {
         source: '/',
         destination: '/dashboard',
         permanent: true
+      },
+      {
+        source: '/team',
+        destination: '/settings/companies',
+        permanent: true
+      },
+      {
+        source: '/team/myCompanies',
+        destination: '/settings/companies',
+        permanent: true
+      },
+      {
+        source: '/team/add-member',
+        destination: '/settings/companies',
+        permanent: true
+      },
+      {
+        source: '/team/add-company',
+        destination: '/settings/companies/team/add-company',
+        permanent: true
+      },
+      {
+        source: '/team/generateReports',
+        destination: '/settings/companies/team/generateReports',
+        permanent: true
+      },
+      {
+        source: '/team/:id/add-member',
+        destination: '/settings/companies/team/:id/add-member',
+        permanent: true
+      },
+      {
+        source: '/team/:id',
+        destination: '/settings/companies/team/:id',
+        permanent: true
       }
     ];
   },

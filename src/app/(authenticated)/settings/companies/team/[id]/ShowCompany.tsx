@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDeactivateClient } from '@/hooks/react-query/clients/deactivateClient';
 
 import { Company } from '@/ts/interfaces/Company';
+import { CompanyTeamTab } from './components/CompanyTeamTab';
 import CompanyInfo from './CompanyInfo';
 import Preferences from './Preferences';
 
@@ -20,7 +21,7 @@ export default function ShowCompany({ company }: Props) {
   const [open, setOpen] = useState(false);
 
   // const { mutate: mutateAddPool } = useAddPoolToClient();
-  const [tab, setTab] = useState<'company_info' | 'preferences'>('company_info');
+  const [tab, setTab] = useState<'company_info' | 'preferences' | 'team'>('company_info');
 
   const selectedTabStyles = 'text-gray-800 font-semibold';
 
@@ -119,13 +120,25 @@ export default function ShowCompany({ company }: Props) {
                 </div>
                 {tab === 'preferences' && <div className="h-0.5 self-stretch bg-gray-800" />}
               </div>
-
+              <div
+                onClick={() => setTab('team')}
+                className="inline-flex flex-col items-start justify-start gap-2.5"
+              >
+                <div
+                  className={`text-sm text-gray-500 hover:cursor-pointer ${tab === 'team' && selectedTabStyles}`}
+                >
+                  Team
+                </div>
+                {tab === 'team' && <div className="h-0.5 self-stretch bg-gray-800" />}
+              </div>
             </div>
             {tab === 'company_info' ? (
               <CompanyInfo company={company} />
             ) : tab === 'preferences' ? (
               <Preferences company={company} />
-            ) : null}
+            ) : (
+              <CompanyTeamTab company={company} />
+            )}
           </div>
         </div>
       </div>

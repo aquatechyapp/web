@@ -36,7 +36,7 @@ export const useCreateCompany = (options?: { skipRedirect?: boolean }) => {
         title: 'Company created successfully'
       });
       if (!options?.skipRedirect) {
-        router.push('/team/myCompanies');
+        router.push('/settings/companies');
       }
     }
   });

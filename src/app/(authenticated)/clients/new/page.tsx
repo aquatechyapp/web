@@ -960,7 +960,7 @@ export default function Page() {
             <DialogTitle className="text-center">No Companies Available</DialogTitle>
             <DialogDescription>Please create a company before adding a client.</DialogDescription>
           </DialogHeader>
-          <Button onClick={() => router.push('/team/myCompanies')}>Create Company</Button>
+          <Button onClick={() => router.push('/settings/companies')}>Create Company</Button>
         </DialogContent>
       </Dialog>
     </Form>

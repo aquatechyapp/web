@@ -6,8 +6,8 @@ import { useState } from 'react';
 import InputField from '@/components/InputField';
 import { Form } from '@/components/ui/form';
 
-import { Button } from '../../../components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
+import { Button } from '../../../../../components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../../../../components/ui/dialog';
 import { CompanyWithMyRole } from '@/ts/interfaces/Company';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 import { useAcceptCompanyInvitation } from '@/hooks/react-query/companies/acceptCompanyInvitation';

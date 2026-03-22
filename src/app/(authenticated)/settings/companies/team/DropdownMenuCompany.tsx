@@ -2,15 +2,15 @@ import React from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdDeleteOutline, MdEdit } from 'react-icons/md';
 
-import { LoadingSpinner } from '../../../components/LoadingSpinner';
-import { Button } from '../../../components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
+import { LoadingSpinner } from '../../../../../components/LoadingSpinner';
+import { Button } from '../../../../../components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '../../../../../components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuShortcut,
   DropdownMenuTrigger
-} from '../../../components/ui/dropdown-menu';
+} from '../../../../../components/ui/dropdown-menu';
 import { useDeleteCompany } from '@/hooks/react-query/companies/deleteCompany';
 import { ModalEditCompany } from './ModalEditCompany';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
@@ -54,7 +54,7 @@ export default function DropdownMenuCompany({ companyId }: Props) {
                   className="flex w-full cursor-pointer items-center rounded p-1 text-gray-700 hover:bg-blue-50"
                   onClick={(e) => {
                     e.preventDefault(); // Prevent modal from opening
-                    router.push(`/team/${companyId}`);
+                    router.push(`/settings/companies/team/${companyId}`);
                   }}
                 >
                   View

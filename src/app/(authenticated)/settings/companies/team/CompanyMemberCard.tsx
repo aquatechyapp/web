@@ -2,15 +2,33 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { getInitials } from '@/utils/others';
 
-import { Separator } from '../../../components/ui/separator';
+import { Separator } from '../../../../../components/ui/separator';
 
 import { CompanyMember } from '@/ts/interfaces/Company';
 
 import DropdownMenuCompanyMember from './DropdownMenuCompanyMember';
 
-export function CompanyMemberCard({ status, company, id, firstName, lastName, email, phone, role, address, city, state, zip }: CompanyMember) {
+type Props = CompanyMember & {
+  hideCompanyRow?: boolean;
+};
+
+export function CompanyMemberCard({
+  status,
+  company,
+  id,
+  firstName,
+  lastName,
+  email,
+  phone,
+  role,
+  address,
+  city,
+  state,
+  zip,
+  hideCompanyRow = false
+}: Props) {
   return (
-    <div className="relative flex w-full flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:w-80">
+    <div className="relative flex w-full cursor-pointer flex-col items-center justify-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 md:w-80">
       {id && (
         <DropdownMenuCompanyMember
           status={status}
@@ -44,10 +62,12 @@ export function CompanyMemberCard({ status, company, id, firstName, lastName, em
       <Separator />
 
       <div className="flex flex-col gap-2 w-full">
-        <div className="flex justify-between text-xs text-gray-500 w-full">
-          <span>Company</span>
-          <span className="text-gray-400 truncate text-right">{company.name}</span>
-        </div>
+        {!hideCompanyRow && (
+          <div className="flex w-full justify-between text-xs text-gray-500">
+            <span>Company</span>
+            <span className="truncate text-right text-gray-400">{company.name}</span>
+          </div>
+        )}
 
         <div className="flex justify-between text-xs text-gray-500 w-full">
           <span>Role</span>

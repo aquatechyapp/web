@@ -10,13 +10,13 @@ import { defaultSchemas } from '@/schemas/defaultSchemas';
 import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
 
-import { Button } from '../../../components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
+import { Button } from '../../../../../components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../../../../components/ui/dialog';
 import { useEditCompany } from '@/hooks/react-query/companies/updateCompany';
 import { Company } from '@/ts/interfaces/Company';
 import useGetCompanies from '@/hooks/react-query/companies/getCompanies';
 
-const schema = z.object({
+export const updateCompanySchema = z.object({
   companyId: z
     .string({
       required_error: 'companyId is required.',
@@ -78,18 +78,25 @@ const schema = z.object({
       invalid_type_error: "status must be 'Active' or 'Inactive'."
     })
     .optional(),
-    addressLine2:z.optional(z.string().trim())
+  email: z
+    .string({
+      required_error: 'email is required.',
+      invalid_type_error: 'email must be a string.'
+    })
+    .trim(),
+    addressLine2: z.optional(z.string().trim())
 });
 
-export type FormSchema = z.infer<typeof schema>;
+export type FormSchema = z.infer<typeof updateCompanySchema>;
 
-type PropsView = {
+type PropsEdit = {
   children: React.ReactNode;
   companyId: string;
 };
 
-export function ModalViewCompany({ children, companyId }: PropsView) {
-  const { data: companies, isLoading } = useGetCompanies();
+export function ModalEditCompany({ children, companyId }: PropsEdit) {
+  const { data: companies, isLoading, isSuccess } = useGetCompanies();
+  const { handleSubmit } = useEditCompany();
 
   // search on user.workRelationsAsAEmployer and user.workRelationsAsASubcontractor
 
@@ -97,7 +104,7 @@ export function ModalViewCompany({ children, companyId }: PropsView) {
   selectedCompany = companies.find((company) => company.id === companyId);
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(updateCompanySchema),
     defaultValues: {
       name: selectedCompany?.name,
       phone: selectedCompany?.phone,
@@ -106,47 +113,71 @@ export function ModalViewCompany({ children, companyId }: PropsView) {
       state: selectedCompany?.state,
       zip: selectedCompany?.zip,
       status: selectedCompany?.status,
-      addressLine2: selectedCompany?.addressLine2 || ''
+      email: selectedCompany?.email
     }
   });
+
+  function handleEditCompany() {
+    const a = {
+      companyId: companyId,
+      name: form.getValues('name'),
+      phone: form.getValues('phone'),
+      address: form.getValues('address'),
+      city: form.getValues('city'),
+      state: form.getValues('state'),
+      zip: form.getValues('zip'),
+      status: form.getValues('status'),
+      email: form.getValues('email')
+    };
+
+    handleSubmit(a);
+  }
 
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent>
-        <DialogTitle>View company</DialogTitle>
+        <DialogTitle>Edit company</DialogTitle>
         <DialogHeader></DialogHeader>
         <Form {...form}>
-          <form>
-            <div className="inline-flex w-full flex-col items-start justify-start gap-8">
+          <form onSubmit={handleEditCompany}>
+            <div className="inline-flex w-full flex-col items-start justify-start gap-8 bg-white">
               <div className="justify-start self-stretch">
                 <div className="mb-4">
-                  <InputField name="name" label="Name" disabled placeholder="name" />
+                  <InputField name="name" label="Name" placeholder="name" />
                 </div>
 
                 <div className="mb-4">
-                  <InputField name="phone" label="Phone" disabled placeholder="phone" />
+                  <InputField name="email" label="E-mail" placeholder="E-mail" />
                 </div>
 
                 <div className="mb-4">
-                  <InputField name="address" label="Address" disabled placeholder="Address" />
-                </div>
-                 <div className="mb-4">
-                  <InputField name="addressLine2" label="Address Line 2" disabled placeholder="Address Line 2" />
-                </div>
-                <div className="mb-4">
-                  <InputField name="city" label="City" disabled placeholder="City" />
+                  <InputField name="phone" label="Phone" placeholder="phone" />
                 </div>
 
                 <div className="mb-4">
-                  <InputField name="state" label="State" disabled placeholder="State" />
+                  <InputField name="address" label="Address" placeholder="Address" />
                 </div>
 
                 <div className="mb-4">
-                  <InputField name="zip" label="Zip" disabled placeholder="Zip" />
+                  <InputField name="city" label="City" placeholder="City" />
+                </div>
+
+                <div className="mb-4">
+                  <InputField name="state" label="State" placeholder="State" />
+                </div>
+
+                <div className="mb-4">
+                  <InputField name="zip" label="Zip" placeholder="Zip" />
                 </div>
               </div>
+
+              <DialogTrigger asChild>
+                <Button className="w-full" type="submit">
+                  Save
+                </Button>
+              </DialogTrigger>
             </div>
           </form>
         </Form>

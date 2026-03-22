@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { getInitials } from '@/utils/others';
-import { Separator } from '../../../components/ui/separator';
+import { Separator } from '../../../../../components/ui/separator';
 import { useEditCompanyLogo } from '@/hooks/react-query/companies/updateCompanyLogo';
 import AvatarEditor from 'react-avatar-editor';
 
