@@ -5,3 +5,4 @@ node_modules/
 
 #Ignore lock files - Different developers can use managers differences
 *-lock.*
+.next-env.d
