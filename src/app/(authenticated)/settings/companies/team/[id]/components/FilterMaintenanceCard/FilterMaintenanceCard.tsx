@@ -55,6 +55,7 @@ const filterFields = [
     itens: [
       {
         label: 'Require photo to every filter cleaned or replaced',
+        subLabel: '(only on grow plan)',
         description: 'Technicians must take photos when cleaning or replacing filters',
         name: 'filterCleaningMustHavePhotos'
       }
@@ -134,13 +135,15 @@ export function FilterMaintenanceCard({
                 </div>
                 <div className="col-span-4 flex flex-col gap-2">
                   {field.itens.map((item) => {
-                    const isFilterEmailField = item.name === 'sendFilterCleaningEmails';
+                    const isGrowOnlyField =
+                      item.name === 'sendFilterCleaningEmails' ||
+                      item.name === 'filterCleaningMustHavePhotos';
 
                     return (
                       <div key={item.name} className="flex w-full items-center gap-4">
                         <div className={field.type === FieldType.Default ? 'w-full' : ''}>
                           <InputField
-                            disabled={isFilterEmailField && isFreePlan}
+                            disabled={isFreePlan && isGrowOnlyField}
                             name={item.name}
                             type={'type' in item ? item.type : field.type}
                             placeholder={field.type === FieldType.Default ? item.label : ''}
