@@ -89,7 +89,9 @@ export default function Page({ company }: { company: Company }) {
       sendSkippedServiceEmails: company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails || false,
       filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28,
       filterReplacementIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterReplacementIntervalDays || 365,
-      filterCleaningMustHavePhotos: company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false,
+      filterCleaningMustHavePhotos: isFreePlan
+        ? false
+        : company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false,
       sendFilterCleaningEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false,
 
       // New fields
@@ -223,7 +225,9 @@ export default function Page({ company }: { company: Company }) {
       case 'filterReplacementIntervalDays':
         return company.preferences?.equipmentMaintenancePreferences?.filterReplacementIntervalDays || 365;
       case 'filterCleaningMustHavePhotos':
-        return company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false;
+        return isFreePlan
+          ? false
+          : company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false;
       case 'sendFilterCleaningEmails':
         return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendFilterCleaningEmails || false;
       case 'allowAnticipatedServices':
@@ -311,7 +315,7 @@ export default function Page({ company }: { company: Company }) {
       equipmentMaintenancePreferences: {
         filterCleaningIntervalDays: Number(filterCleaningIntervalDays),
         filterReplacementIntervalDays: Number(filterReplacementIntervalDays),
-        filterCleaningMustHavePhotos
+        filterCleaningMustHavePhotos: isFreePlan ? false : filterCleaningMustHavePhotos
       },
       serviceEmailPreferences: {
         sendEmails,
