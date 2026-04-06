@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import Link from 'next/link';
 import { z } from 'zod';
 import { useShallow } from 'zustand/react/shallow';
 import { Mail, ChevronDown } from 'lucide-react';
@@ -9,6 +9,14 @@ import { Mail, ChevronDown } from 'lucide-react';
 import InputField from '@/components/InputField';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store/user';
 import { FieldType } from '@/ts/enums/enums';
@@ -38,7 +46,7 @@ const schema = z.object({
   serviceTypes: z.record(z.string(), serviceTypeEmailSchema)
 });
 
-interface EmailPreferencesCardProps {
+export interface EmailPreferencesCardProps {
   company: Company;
   form: any;
   onEmailSubmit: (data: z.infer<typeof schema>) => void;
@@ -68,9 +76,7 @@ export function EmailPreferencesCard({
   };
 
   return (
-    <Card className={cn('w-full border-2', {
-      'opacity-50': isFreePlan
-    })}>
+    <Card className="w-full border-2">
       <CardHeader 
         className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b cursor-pointer hover:from-blue-100 hover:to-indigo-100 transition-colors"
         onClick={toggleMainCardCollapsed}
@@ -138,6 +144,7 @@ function EmailPreferencesContent({
   // NOW the hook is called only when the card is expanded
   const { data: serviceTypesData, isLoading } = useGetServiceTypes(company.id);
   const [activeServiceTypeId, setActiveServiceTypeId] = useState<string | null>(null);
+  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
   const updateEmailPreferences = useUpdateServiceTypeEmailPreferences(activeServiceTypeId || '');
 
   const toggleServiceTypeCollapsed = (serviceTypeId: string) => {
@@ -217,6 +224,26 @@ function EmailPreferencesContent({
 
   return (
     <CardContent className="p-6">
+      {isFreePlan && (
+        <div className="mb-8 space-y-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <p className="text-center text-sm text-amber-900">
+            You are on the Free plan. You can set CC email, turn automatic service emails on or off, and choose whether to
+            include photo groups. Other email customization requires Grow.
+          </p>
+          <div className="flex justify-center">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="border-amber-300 bg-white text-amber-950 hover:bg-amber-100"
+              onClick={() => setUpgradeDialogOpen(true)}
+            >
+              Customize everything? Upgrade your plan
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* CC Email Section */}
       <div className="mb-8">
         <Card className="border border-gray-200">
@@ -241,11 +268,7 @@ function EmailPreferencesContent({
                   {...form.register('ccEmail')}
                   type="email"
                   placeholder="Enter CC email address"
-                  disabled={isFreePlan}
-                  className={cn(
-                    "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
-                    isFreePlan && "opacity-50 cursor-not-allowed bg-gray-100"
-                  )}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
@@ -326,7 +349,7 @@ function EmailPreferencesContent({
             <div className="mt-6 flex justify-center">
               <Button 
                 type="button"
-                disabled={isFreePlan || isEmailPending} 
+                disabled={isEmailPending} 
                 className="w-full max-w-xs"
                 onClick={(e) => {
                   e.preventDefault();
@@ -393,7 +416,6 @@ function EmailPreferencesContent({
                     </div>
                     <div className="col-span-4 flex items-center gap-4">
                       <InputField
-                        disabled={isFreePlan}
                         name={`${serviceType.id}.sendAutomaticEmails`}
                         type={FieldType.Switch}
                       />
@@ -550,7 +572,6 @@ function EmailPreferencesContent({
                       </div>
                       <div className="col-span-4 flex items-center gap-4">
                         <InputField
-                          disabled={isFreePlan}
                           name={`${serviceType.id}.sendPhotoGroups`}
                           type={FieldType.Switch}
                         />
@@ -601,7 +622,7 @@ function EmailPreferencesContent({
                         <div className="flex justify-center">
                           <Button 
                             type="button"
-                            disabled={isFreePlan || updateEmailPreferences.isPending} 
+                            disabled={updateEmailPreferences.isPending} 
                             className="w-full max-w-xs"
                             onClick={(e) => {
                               e.preventDefault();
@@ -628,14 +649,33 @@ function EmailPreferencesContent({
           );
         })}
       </div>
-      
-      {isFreePlan && (
-        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-center text-sm text-yellow-800">
-            Email notifications are only available on the Grow plan
+
+      <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
+        <DialogContent className="sm:max-w-md" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader>
+            <DialogTitle>Unlock full email customization</DialogTitle>
+            <DialogDescription className="text-left text-base text-foreground">
+              To customize skipped-service notifications, email header, body, footer, and all inclusion options in service
+              emails, upgrade to the Grow plan.
+            </DialogDescription>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            <Link
+              href="/settings/subscription"
+              className="font-medium text-blue-600 underline underline-offset-4 hover:text-blue-800"
+              onClick={() => setUpgradeDialogOpen(false)}
+            >
+              View subscription plans
+            </Link>{' '}
+            to compare plans and upgrade.
           </p>
-        </div>
-      )}
+          <DialogFooter>
+            <Button type="button" onClick={() => setUpgradeDialogOpen(false)}>
+              Got it
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </CardContent>
   );
 }

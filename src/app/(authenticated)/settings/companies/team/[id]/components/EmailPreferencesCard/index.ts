@@ -1,2 +1,2 @@
-export { EmailPreferencesCard } from './EmailPreferencesCard';
+export { EmailPreferencesCard, type EmailPreferencesCardProps } from './EmailPreferencesCard';
 
