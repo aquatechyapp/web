@@ -1,9 +1,11 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import InputField from '@/components/InputField';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -21,6 +23,7 @@ import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect';
 import { FieldType } from '@/ts/enums/enums';
 import { Client } from '@/ts/interfaces/Client';
 import { useUpdateClientPreferences } from '@/hooks/react-query/clients/updatePreferences';
+import { useUserStore } from '@/store/user';
 
 const schema = z.object({
   sendEmails: z.boolean(),
@@ -40,6 +43,15 @@ const schema = z.object({
 export default function EmailPreferences({ client }: { client: Client }) {
   const { isPending, mutate } = useUpdateClientPreferences(client.id);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const { isFreePlan } = useUserStore(
+    useShallow((state) => ({
+      isFreePlan: state.isFreePlan
+    }))
+  );
+
+  const companyTeamHref = client.companyOwner?.id
+    ? `/settings/companies/team/${client.companyOwner.id}`
+    : '/settings/companies';
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -98,6 +110,27 @@ export default function EmailPreferences({ client }: { client: Client }) {
     <>
       <Form {...form}>
         <form className="w-full flex-col items-center" onSubmit={form.handleSubmit(() => setShowConfirmModal(true))}>
+          {isFreePlan && (
+            <div className="mb-6 space-y-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <p className="text-sm text-amber-900">
+                On the Free plan you can turn on service emails for this client. Only <strong>photos</strong> will be sent in
+                those emails—readings, consumables, selectors, checklist, and any custom email content are not included or
+                customizable on Free.
+              </p>
+              <p className="text-sm text-amber-900">
+                Service emails must also be enabled and configured in your{' '}
+                <Link
+                  href={companyTeamHref}
+                  className="font-medium text-blue-700 underline underline-offset-4 hover:text-blue-900"
+                >
+                  company email preferences
+                </Link>{' '}
+                (open your company, go to the Preferences tab, then Email notifications). Match those settings so emails
+                send the way you expect.
+              </p>
+            </div>
+          )}
+
           <div className="flex w-full flex-col gap-2 divide-y border-gray-200 [&>:nth-child(3)]:pt-2">
             {fields.map((field) => (
               <div key={field.label} className="grid w-full grid-cols-1 items-center space-y-4 md:grid-cols-12">

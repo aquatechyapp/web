@@ -86,7 +86,7 @@ export default function Page({ company }: { company: Company }) {
       //   ? false
       //   : company.preferences?.serviceEmailPreferences?.attachServicePhotos || false,
       ccEmail: company.preferences?.serviceEmailPreferences?.ccEmail || undefined,
-      sendSkippedServiceEmails: isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails || false,
+      sendSkippedServiceEmails: company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails || false,
       filterCleaningIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28,
       filterReplacementIntervalDays: company.preferences?.equipmentMaintenancePreferences?.filterReplacementIntervalDays || 365,
       filterCleaningMustHavePhotos: company.preferences?.equipmentMaintenancePreferences?.filterCleaningMustHavePhotos || false,
@@ -215,9 +215,9 @@ export default function Page({ company }: { company: Company }) {
       case 'attachCustomChecklist':
         return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.attachCustomChecklist || false;
       case 'ccEmail':
-        return isFreePlan ? undefined : company.preferences?.serviceEmailPreferences?.ccEmail || undefined;
+        return company.preferences?.serviceEmailPreferences?.ccEmail || undefined;
       case 'sendSkippedServiceEmails':
-        return isFreePlan ? false : company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails || false;
+        return company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails || false;
       case 'filterCleaningIntervalDays':
         return company.preferences?.equipmentMaintenancePreferences?.filterCleaningIntervalDays || 28;
       case 'filterReplacementIntervalDays':
@@ -234,7 +234,12 @@ export default function Page({ company }: { company: Company }) {
   };
 
   // Handle CC email submission
-  const handleCcEmailSubmit = (ccEmail: string, sendSkippedServiceEmails: boolean) => {
+  const handleCcEmailSubmit = (ccEmail: string, _sendSkippedFromForm: boolean) => {
+    const preservedSkipped =
+      isFreePlan
+        ? (company.preferences?.serviceEmailPreferences?.sendSkippedServiceEmails ?? false)
+        : form.getValues('sendSkippedServiceEmails');
+
     const updateData = {
       serviceEmailPreferences: {
         sendEmails: form.getValues('sendEmails'),
@@ -245,7 +250,7 @@ export default function Page({ company }: { company: Company }) {
         attachCustomChecklist: form.getValues('attachCustomChecklist'),
         ccEmail,
         sendFilterCleaningEmails: form.getValues('sendFilterCleaningEmails'),
-        sendSkippedServiceEmails: form.getValues('sendSkippedServiceEmails')
+        sendSkippedServiceEmails: preservedSkipped
       },
       companyId: company.id
     };
