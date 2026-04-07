@@ -4,24 +4,20 @@ import { notFound, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAcceptCompanyInvitation } from '@/hooks/react-query/companies/acceptCompanyInvitation';
-
-function isValidObjectId(id: string): boolean {
-  const objectIdRegex = /^[a-fA-F0-9]{24}$/;
-  return objectIdRegex.test(id);
-}
+import { useAcceptInvitationByToken } from '@/hooks/react-query/companies/acceptInvitationByToken';
 
 type Props = {
   params: { userCompanyId: string };
 };
 
 export default function AcceptCompanyInvitationPage({ params: { userCompanyId } }: Props) {
-  if (!userCompanyId || !isValidObjectId(userCompanyId)) {
+  const invitationTokenId = userCompanyId?.trim();
+  if (!invitationTokenId) {
     notFound();
   }
 
   const router = useRouter();
-  const { mutate, isPending } = useAcceptCompanyInvitation();
+  const { mutate, isPending } = useAcceptInvitationByToken();
   const hasRequested = useRef(false);
   const [showError, setShowError] = useState(false);
 
@@ -30,7 +26,7 @@ export default function AcceptCompanyInvitationPage({ params: { userCompanyId } 
     hasRequested.current = true;
 
     mutate(
-      { userCompanyId, status: 'Active' },
+      { invitationTokenId, status: 'Active' },
       {
         onSuccess: () => {
           router.push('/login');
@@ -40,7 +36,7 @@ export default function AcceptCompanyInvitationPage({ params: { userCompanyId } 
         }
       }
     );
-  }, [mutate, router, userCompanyId]);
+  }, [mutate, router, invitationTokenId]);
 
   return (
     <Card className="w-full max-w-md">
@@ -59,7 +55,7 @@ export default function AcceptCompanyInvitationPage({ params: { userCompanyId } 
         {showError && !isPending && (
           <p className="text-center text-sm text-muted-foreground">
             Something went wrong. Please try again or contact{' '}
-            <span className="font-semibold text-primary">contact@aquatechy.com</span>
+            <span className="font-semibold text-primary">contact@aquatechyapp.com</span>
           </p>
         )}
       </CardContent>

@@ -163,6 +163,11 @@ export interface AcceptInvitation {
   status: Status;
 }
 
+export interface AcceptInvitationByToken {
+  invitationTokenId: string;
+  status: Status;
+}
+
 export interface CompanyWithMyRole extends Company {
   role?: 'Owner' | 'Admin' | 'Office' | 'Technician' | 'Cleaner';
   status: Status;
