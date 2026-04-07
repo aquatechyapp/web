@@ -10,7 +10,7 @@ export const useAcceptInvitationByToken = () => {
   const { toast } = useToast();
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: AcceptInvitationByToken) =>
-      await clientAxios.patch('/invitation/token', data),
+      await clientAxios.patch('/users/invitation/token', data),
 
     onError: (
       error: AxiosError<{
