@@ -3,6 +3,17 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const whitelist = ['/login', '/signup', '/userconfirmation', '/recover', '/resetpassword', '/server-offline', '/unsubscribe', '/clients/unsubscribe', '/users/unsubscribe', '/geo-blocked'];
 
+function isPublicRoute(pathname: string) {
+  if (whitelist.some((path) => path === pathname)) {
+    return true;
+  }
+  // Token-based company invite links must work for logged-out users (e.g. email → Safari / private tabs).
+  if (pathname === '/accept-company-invitation' || pathname.startsWith('/accept-company-invitation/')) {
+    return true;
+  }
+  return false;
+}
+
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
@@ -16,7 +27,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // for public routes, we don't need to check for a token
-  if (whitelist.some((path) => path === pathname)) {
+  if (isPublicRoute(pathname)) {
     return NextResponse.next();
   }
 
