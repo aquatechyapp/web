@@ -1,5 +1,6 @@
 'use client';
 
+import { AxiosError } from 'axios';
 import { notFound } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
@@ -19,6 +20,7 @@ export default function AcceptCompanyInvitationPage({ params: { userCompanyId } 
   const { mutate, isPending } = useAcceptInvitationByToken();
   const hasRequested = useRef(false);
   const [showError, setShowError] = useState(false);
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
   useEffect(() => {
     if (hasRequested.current) return;
@@ -30,7 +32,12 @@ export default function AcceptCompanyInvitationPage({ params: { userCompanyId } 
         onSuccess: () => {
           window.location.assign('https://www.aquatechyapp.com/download');
         },
-        onError: () => {
+        onError: (error) => {
+          const message =
+            error instanceof AxiosError && typeof error.response?.data?.message === 'string'
+              ? error.response.data.message
+              : null;
+          setErrorDetail(message);
           setShowError(true);
         }
       }
@@ -52,10 +59,14 @@ export default function AcceptCompanyInvitationPage({ params: { userCompanyId } 
           />
         )}
         {showError && !isPending && (
-          <p className="text-center text-sm text-muted-foreground">
-            Something went wrong. Please try again or contact{' '}
-            <span className="font-semibold text-primary">contact@aquatechyapp.com</span>
-          </p>
+          <div className="flex flex-col gap-2 text-center text-sm text-muted-foreground">
+            {errorDetail && <p className="text-destructive">{errorDetail}</p>}
+            <p>
+              {!errorDetail && 'Something went wrong. '}
+              Please try again or contact{' '}
+              <span className="font-semibold text-primary">contact@aquatechyapp.com</span>
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>

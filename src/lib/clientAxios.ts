@@ -41,13 +41,20 @@ clientAxios.interceptors.response.use(
     }
 
     if (error.response?.status === 401) {
-      if (error.response?.data?.message?.includes('Invalid credentials.')) {
+      const requestUrl = error.config?.url ?? '';
+      // Public flows that must handle 401 on-page (global redirect hides the real error)
+      const skipLoginRedirect =
+        error.response?.data?.message?.includes('Invalid credentials.') ||
+        requestUrl.includes('/users/invitation/token');
+
+      if (skipLoginRedirect) {
         return Promise.reject(error);
-      } else {
-        Cookies.remove('accessToken', { path: '/' });
-        Cookies.remove('userId', { path: '/' });
-        window.location.href = window.location.protocol + '//' + window.location.host + '/login';
       }
+
+      Cookies.remove('accessToken', { path: '/' });
+      Cookies.remove('userId', { path: '/' });
+      window.location.href = window.location.protocol + '//' + window.location.host + '/login';
+      return Promise.reject(error);
     }
     if (error && error.response && error.response.status >= 500) {
       console.log('Server Error');
