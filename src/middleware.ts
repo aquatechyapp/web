@@ -1,12 +1,17 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const whitelist = ['/login', '/signup', '/accept-company-invitation', '/userconfirmation', '/recover', '/resetpassword', '/server-offline', '/unsubscribe', '/clients/unsubscribe', '/users/unsubscribe', '/geo-blocked'];
+const whitelist = ['/login', '/signup', '/userconfirmation', '/recover', '/resetpassword', '/server-offline', '/unsubscribe', '/clients/unsubscribe', '/users/unsubscribe', '/geo-blocked'];
 
 function isPublicRoute(pathname: string) {
   if (whitelist.some((path) => path === pathname)) {
     return true;
   }
+
+  if (pathname.startsWith('/accept-company-invitation/')) {
+    return true;
+  }
+
   return false;
 }
 
@@ -30,11 +35,11 @@ export async function middleware(req: NextRequest) {
   // check if token exists
   const token = req.cookies.get('accessToken')?.value;
 
-  // if no token found, redirect to login page
+  // // if no token found, redirect to login page
   if (!token || token === '') {
     return NextResponse.rewrite(new URL('/login', req.url));
   }
-  
+
   return NextResponse.next();
 }
 
