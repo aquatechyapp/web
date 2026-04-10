@@ -1,14 +1,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const whitelist = ['/login', '/signup', '/userconfirmation', '/recover', '/resetpassword', '/server-offline', '/unsubscribe', '/clients/unsubscribe', '/users/unsubscribe', '/geo-blocked'];
+const whitelist = ['/login', '/signup', '/accept-company-invitation', '/userconfirmation', '/recover', '/resetpassword', '/server-offline', '/unsubscribe', '/clients/unsubscribe', '/users/unsubscribe', '/geo-blocked'];
 
 function isPublicRoute(pathname: string) {
   if (whitelist.some((path) => path === pathname)) {
-    return true;
-  }
-  // Token-based company invite links must work for logged-out users (e.g. email → Safari / private tabs).
-  if (pathname === '/accept-company-invitation' || pathname.startsWith('/accept-company-invitation/')) {
     return true;
   }
   return false;
@@ -38,21 +34,7 @@ export async function middleware(req: NextRequest) {
   if (!token || token === '') {
     return NextResponse.rewrite(new URL('/login', req.url));
   }
-
-  // // verify token
-  // let decodedToken;
-  // try {
-  //   decodedToken = await jwtVerify(token, new TextEncoder().encode(`${process.env.JWT_SECRET}`));
-  // } catch (err) {
-  //   return NextResponse.rewrite(new URL('/login', req.url));
-  // }
-
-  // // if token is not valid, redirect to login page
-  // if (!decodedToken) {
-  //   return NextResponse.rewrite(new URL('/login', req.url));
-  // }
-
-  // if token is valid, allow access to the dashboard
+  
   return NextResponse.next();
 }
 
