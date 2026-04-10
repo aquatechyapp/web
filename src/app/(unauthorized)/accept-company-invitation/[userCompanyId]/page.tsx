@@ -1,6 +1,6 @@
 'use client';
 
-import { notFound, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +16,6 @@ export default function AcceptCompanyInvitationPage({ params: { userCompanyId } 
     notFound();
   }
 
-  const router = useRouter();
   const { mutate, isPending } = useAcceptInvitationByToken();
   const hasRequested = useRef(false);
   const [showError, setShowError] = useState(false);
@@ -29,14 +28,14 @@ export default function AcceptCompanyInvitationPage({ params: { userCompanyId } 
       { invitationTokenId, status: 'Active' },
       {
         onSuccess: () => {
-          router.push('/login');
+          window.location.assign('https://www.aquatechyapp.com/download');
         },
         onError: () => {
           setShowError(true);
         }
       }
     );
-  }, [mutate, router, invitationTokenId]);
+  }, [mutate, invitationTokenId]);
 
   return (
     <Card className="w-full max-w-md">
