@@ -60,8 +60,10 @@ export function DataTableClients<TValue>({ columns, data, onFiltersChange }: Dat
       const bValue = b[sortColumn];
 
       if (aValue === undefined || bValue === undefined) return 0;
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      const aKey = aValue == null ? '' : String(aValue);
+      const bKey = bValue == null ? '' : String(bValue);
+      if (aKey < bKey) return sortOrder === 'asc' ? -1 : 1;
+      if (aKey > bKey) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
   }, [data, sortColumn, sortOrder]);

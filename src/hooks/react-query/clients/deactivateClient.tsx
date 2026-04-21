@@ -24,7 +24,7 @@ export const useDeactivateClient = () => {
       push('/clients');
       toast({
         duration: 5000,
-        title: 'Client deactivated successfully',
+        title: 'Client is now inactive',
         variant: 'success'
       });
     },
@@ -36,7 +36,7 @@ export const useDeactivateClient = () => {
       toast({
         duration: 5000,
         variant: 'error',
-        title: 'Error deactivating client',
+        title: 'Error marking client as inactive',
         description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     }

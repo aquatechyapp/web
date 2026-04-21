@@ -10,7 +10,7 @@ export interface Client {
   company: string;
   customerCode: string;
   createdAt: string;
-  deactivatedAt: string;
+  deactivatedAt: string | null;
   email: string;
   secondaryEmail?: string;
   invoiceEmail: string;

@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { useState } from 'react';
 import { MdDeleteOutline } from 'react-icons/md';
 
@@ -64,7 +65,9 @@ function PoolCard({ pool, services, clientId }: Props) {
               <h3 className="text-sm text-gray-900">{pool.name}</h3>
               
               {!pool.isActive && (
-                <span className="text-sm text-red-500 font-medium">(Deactivated)</span>
+                <span className="text-sm font-medium text-red-500">
+                  (Inactive since {pool.deactivatedAt ? format(new Date(pool.deactivatedAt), 'MMMM d, yyyy') : null})
+                </span>
               )}
             </div>
 
@@ -94,7 +97,7 @@ function PoolCard({ pool, services, clientId }: Props) {
                       </DialogTitle>
                       <DialogDescription>
                         {pool.isActive
-                          ? 'Are you sure you want to deactivate this pool?'
+                          ? 'Are you sure you want to mark this pool as inactive?'
                           : 'Are you sure you want to activate this pool?'}
                       </DialogDescription>
                     </DialogHeader>
