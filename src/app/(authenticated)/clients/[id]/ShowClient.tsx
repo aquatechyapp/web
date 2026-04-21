@@ -8,7 +8,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
-import { useAddPoolToClient } from '@/hooks/react-query/clients/addPoolToClient';
 import { useUpdateClient } from '@/hooks/react-query/clients/updateClient';
 import { Client } from '@/ts/interfaces/Client';
 import { calculateTotalAssignmentsOfAllPools, calculateTotalMonthlyOfAllPools } from '@/utils';
@@ -21,7 +20,6 @@ import EmailPreferences from './EmailPreferences';
 import { Separator } from '@/components/ui/separator';
 import { ModalDeleteClient } from '../DataTableClients/ModalDeleteClient';
 import { useDeleteClient } from '@/hooks/react-query/clients/deleteClient';
-import { notFound } from 'next/navigation';
 
 type Props = {
   client: Client;
@@ -73,8 +71,16 @@ export default function ShowClient({ client }: Props) {
                 </AvatarFallback>
               </Avatar>
               <div className="flex h-[54px] flex-col items-center justify-center gap-1 self-stretch">
-                <span className="z-10 self-stretch text-wrap text-center text-xl font-semibold leading-[30px] text-gray-800">
-                  {client.fullName} {!client.isActive ? <span className="text-red-500 text-sm">Inactive</span> : null}
+                <span className="z-10 flex flex-col items-center gap-0.5 self-stretch text-wrap text-center text-xl font-semibold leading-[30px] text-gray-800">
+                  <span>
+                    {client.fullName}{' '}
+                    {!client.isActive ? <span className="text-sm font-medium text-red-500">Inactive</span> : null}
+                  </span>
+                  {!client.isActive && client.deactivatedAt ? (
+                    <span className="text-xs font-normal text-gray-500">
+                      Inactive since {format(new Date(client.deactivatedAt), 'MMMM d, yyyy')}
+                    </span>
+                  ) : null}
                 </span>
                 <div className="text-sm font-medium text-gray-500">{client.address}, {client.addressLine2}</div>
               </div>

@@ -14,7 +14,12 @@ export function ModalDeactivateClient({ open, setOpen, handleSubmit, isActive }:
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="mb-2">Are you sure?</DialogTitle>
-          <DialogDescription className="text-start">This action will {isActive ? 'deactivate' : 'activate'} the client. {isActive ? 'The client will no longer be active but their data will be preserved.' : 'The client will be active again.'}</DialogDescription>
+          <DialogDescription className="text-start">
+            This action will {isActive ? 'mark the client as inactive' : 'activate the client'}.{' '}
+            {isActive
+              ? 'The client will no longer be active but their data will be preserved.'
+              : 'The client will be active again.'}
+          </DialogDescription>
         </DialogHeader>
         <div className="flex justify-around">
           <Button

@@ -18,7 +18,7 @@ export type Pool = {
   companyOwner?: Company;
   coords: Coords;
   createdAt: Date;
-  deactivatedAt: string;
+  deactivatedAt: string | null;
   enterSide: string;
   isActive: boolean;
   lockerCode?: string;

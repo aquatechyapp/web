@@ -37,7 +37,7 @@ export const useDeactivatePool = (queryKey: string[], poolId: string) => {
       
       toast({
         duration: 5000,
-        title: 'Pool deactivated successfully',
+        title: 'Pool is now inactive',
         variant: 'success'
       });
     },
@@ -49,7 +49,7 @@ export const useDeactivatePool = (queryKey: string[], poolId: string) => {
       toast({
         duration: 2000,
         variant: 'error',
-        title: 'Error deactivating pool',
+        title: 'Error marking pool as inactive',
         description: error.response?.data?.message ? error.response.data.message : 'Internal server error'
       });
     }
